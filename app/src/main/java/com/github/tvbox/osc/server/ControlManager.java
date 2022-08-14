@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.receiver.SearchReceiver;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -55,7 +56,7 @@ public class ControlManager {
             return;
         }
         do {
-            mServer = new RemoteServer(RemoteServer.serverPort, mContext);
+            mServer = new RemoteServer(RemoteServer.serverPort, App.getInstance());
             mServer.setDataReceiver(new DataReceiver() {
                 @Override
                 public void onTextReceived(String text) {

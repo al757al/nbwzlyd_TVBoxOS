@@ -1,61 +1,68 @@
-package com.github.tvbox.osc.base;
+package com.github.tvbox.osc.base
 
-import androidx.multidex.MultiDexApplication;
-
-import com.github.tvbox.osc.callback.EmptyCallback;
-import com.github.tvbox.osc.callback.LoadingCallback;
-import com.github.tvbox.osc.data.AppDataManager;
-import com.github.tvbox.osc.server.ControlManager;
-import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.OkGoHelper;
-import com.github.tvbox.osc.util.PlayerHelper;
-import com.kingja.loadsir.core.LoadSir;
-import com.orhanobut.hawk.Hawk;
-
-import me.jessyan.autosize.AutoSize;
-import me.jessyan.autosize.AutoSizeConfig;
-import me.jessyan.autosize.unit.Subunits;
+import androidx.multidex.MultiDexApplication
+import com.github.tvbox.osc.startup.DatabaseTask
+import com.github.tvbox.osc.startup.PlayerTask
+import com.github.tvbox.osc.startup.ServerTask
+import com.github.tvbox.osc.startup.UITask
+import com.github.tvbox.osc.util.HawkConfig
+import com.github.tvbox.osc.util.LOG
+import com.orhanobut.hawk.Hawk
+import com.rousetime.android_startup.StartupManager
 
 /**
  * @author pj567
  * @date :2020/12/17
  * @description:
  */
-public class App extends MultiDexApplication {
-    private static App instance;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        instance = this;
-        initParams();
-        // OKGo
-        OkGoHelper.init();
-        // 初始化Web服务器
-        ControlManager.init(this);
-        //初始化数据库
-        AppDataManager.init();
-        LoadSir.beginBuilder()
-                .addCallback(new EmptyCallback())
-                .addCallback(new LoadingCallback())
-                .commit();
-        AutoSizeConfig.getInstance().setCustomFragment(true).getUnitsManager()
-                .setSupportDP(false)
-                .setSupportSP(false)
-                .setSupportSubunits(Subunits.MM);
-        PlayerHelper.init();
+class App : MultiDexApplication() {
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
+//        initParams()
+        val time = System.currentTimeMillis()
+        StartupManager.Builder()
+            .addStartup(UITask())
+            .addStartup(ServerTask())
+            .addStartup(DatabaseTask())
+            .addStartup(PlayerTask())
+            .build(this)
+            .start().await()
+        LOG.e("COSTEnd   " + (System.currentTimeMillis() - time))
+//        val time = System.currentTimeMillis()
+//        initParams()
+//        // OKGo
+//        OkGoHelper.init()
+//        // 初始化Web服务器
+//        ControlManager.init(this)
+//        //初始化数据库
+//        AppDataManager.init()
+//        MMKV.initialize(this)
+//        LOG.e("COST-1   " + (System.currentTimeMillis() - time))
+//        LoadSir.beginBuilder()
+//            .addCallback(EmptyCallback())
+//            .addCallback(LoadingCallback())
+//            .commit()
+//        AutoSizeConfig.getInstance().setCustomFragment(true).unitsManager
+//            .setSupportDP(false)
+//            .setSupportSP(false).supportSubunits = Subunits.MM
+//        LOG.e("COST0   " + (System.currentTimeMillis() - time))
+//        PlayerHelper.init()
+//        LOG.e("COSTEnd   " + (System.currentTimeMillis() - time))
     }
 
-    private void initParams() {
+    private fun initParams() {
         // Hawk
-        Hawk.init(this).build();
-        Hawk.put(HawkConfig.DEBUG_OPEN, false);
+        Hawk.init(this).build()
+        Hawk.put(HawkConfig.DEBUG_OPEN, false)
         if (!Hawk.contains(HawkConfig.PLAY_TYPE)) {
-            Hawk.put(HawkConfig.PLAY_TYPE, 1);
+            Hawk.put(HawkConfig.PLAY_TYPE, 1)
         }
     }
 
-    public static App getInstance() {
-        return instance;
+    companion object {
+        @JvmStatic
+        var instance: App? = null
+            private set
     }
 }

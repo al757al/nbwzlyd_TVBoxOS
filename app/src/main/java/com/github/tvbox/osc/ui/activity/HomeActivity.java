@@ -1,6 +1,5 @@
 package com.github.tvbox.osc.ui.activity;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.IntEvaluator;
@@ -48,7 +47,6 @@ import com.github.tvbox.osc.ui.tv.widget.ViewObj;
 import com.github.tvbox.osc.util.AppManager;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
@@ -102,20 +100,22 @@ public class HomeActivity extends BaseActivity {
         return R.layout.activity_home;
     }
 
-    boolean useCacheConfig = false;
+    boolean useCacheConfig = true;
 
     @Override
     protected void init() {
         EventBus.getDefault().register(this);
-        ControlManager.get().startServer();
         initView();
         initViewModel();
-        useCacheConfig = false;
+        useCacheConfig = true;
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
             Bundle bundle = intent.getExtras();
             useCacheConfig = bundle.getBoolean("useCache", false);
         }
+        // 初始化Web服务器
+        ControlManager.init(this);
+        ControlManager.get().startServer();
         initData();
     }
 
@@ -230,11 +230,6 @@ public class HomeActivity extends BaseActivity {
         if (dataInitOk && jarInitOk) {
             showLoading();
             sourceViewModel.getSort(ApiConfig.get().getHomeSourceBean().getKey());
-            if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                LOG.e("有");
-            } else {
-                LOG.e("无");
-            }
             return;
         }
         showLoading();

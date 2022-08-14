@@ -2,7 +2,6 @@ package com.github.tvbox.osc.ui.adapter
 
 import android.text.TextUtils
 import android.util.Log
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -10,6 +9,8 @@ import com.chad.library.adapter.base.BaseViewHolder
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.api.ApiConfig
 import com.github.tvbox.osc.bean.VodInfo
+import com.github.tvbox.osc.ext.letGone
+import com.github.tvbox.osc.ext.letVisible
 import com.github.tvbox.osc.picasso.RoundTransformation
 import com.github.tvbox.osc.util.DefaultConfig
 import com.github.tvbox.osc.util.MD5
@@ -24,14 +25,23 @@ import me.jessyan.autosize.utils.AutoSizeUtils
 class HistoryAdapter : BaseQuickAdapter<VodInfo, BaseViewHolder>(R.layout.item_grid, ArrayList()) {
     override fun convert(helper: BaseViewHolder, item: VodInfo) {
         val tvYear = helper.getView<TextView>(R.id.tvYear)
+        val tvSource = helper.getView<TextView>(R.id.tvLang)
         Log.d("derek110", "convert: $item")
         if (item.year <= 0) {
-            tvYear.visibility = View.GONE;
+            tvYear.letGone()
         } else {
-            tvYear.text = item.year.toString();
-            tvYear.visibility = View.VISIBLE;
+            tvYear.text = item.year.toString()
+            tvYear.letVisible()
         }
-        tvYear.text = ApiConfig.get().getSource(item.sourceKey).name
+        val sourceName = ApiConfig.get().getSource(item.sourceKey).name
+        if (!sourceName.isNullOrEmpty()) {
+            tvSource.text = sourceName
+            tvSource.letVisible()
+        } else {
+            tvSource.letGone()
+        }
+
+
         /*TextView tvLang = helper.getView(R.id.tvLang);
         if (TextUtils.isEmpty(item.lang)) {
             tvLang.setVisibility(View.GONE);

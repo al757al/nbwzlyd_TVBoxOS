@@ -16,7 +16,7 @@
         <item name="windowNoTitle">true</item>
         <item name="android:keepScreenOn">true</item>
         <!--        <item name="android:windowBackground">@drawable/main_bg</item>-->
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">@drawable/vod_thumb</item>
     </style>
     <!-- 自定义dialog样式 -->
     <style name="CustomDialogStyle" parent="@android:style/Theme.Dialog">

@@ -28,5 +28,6 @@ public class HawkConfig {
     public static final String LIVE_CONNECT_TIMEOUT = "live_connect_timeout";
     public static final String LIVE_SHOW_NET_SPEED = "live_show_net_speed";
     public static final String LIVE_SHOW_TIME = "live_show_time";
+    public static final String CACHE_DATA_KEY = "CACHE_DATA_KEY";//缓存的接口数据
     public static final String FAST_SEARCH_MODE = "fast_search_mode";
 }

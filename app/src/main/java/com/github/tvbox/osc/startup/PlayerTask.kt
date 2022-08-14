@@ -1,0 +1,22 @@
+package com.github.tvbox.osc.startup
+
+import android.content.Context
+import com.github.tvbox.osc.util.PlayerHelper
+import com.rousetime.android_startup.AndroidStartup
+import com.rousetime.android_startup.executor.ExecutorManager
+import java.util.concurrent.Executor
+
+class PlayerTask : AndroidStartup<String>() {
+    override fun callCreateOnMainThread(): Boolean = false
+
+    override fun create(context: Context): String? {
+        PlayerHelper.init()
+        return PlayerTask::class.simpleName
+
+    }
+
+    override fun waitOnMainThread() = false
+    override fun createExecutor(): Executor {
+        return ExecutorManager.instance.cpuExecutor
+    }
+}
