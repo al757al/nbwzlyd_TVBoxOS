@@ -52,6 +52,35 @@ public class VodInfo implements Serializable {
     public String playerCfg = "";
     public boolean reverseSort = false;
 
+    @Override
+    public String toString() {
+        return "VodInfo{" +
+                "last='" + last + '\'' +
+                ", id='" + id + '\'' +
+                ", tid=" + tid +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", dt='" + dt + '\'' +
+                ", pic='" + pic + '\'' +
+                ", lang='" + lang + '\'' +
+                ", area='" + area + '\'' +
+                ", year=" + year +
+                ", state='" + state + '\'' +
+                ", note='" + note + '\'' +
+                ", actor='" + actor + '\'' +
+                ", director='" + director + '\'' +
+                ", seriesFlags=" + seriesFlags +
+                ", seriesMap=" + seriesMap +
+                ", des='" + des + '\'' +
+                ", playFlag='" + playFlag + '\'' +
+                ", playIndex=" + playIndex +
+                ", playNote='" + playNote + '\'' +
+                ", sourceKey='" + sourceKey + '\'' +
+                ", playerCfg='" + playerCfg + '\'' +
+                ", reverseSort=" + reverseSort +
+                '}';
+    }
+
     public void setVideo(Movie.Video video) {
         last = video.last;
         id = video.id;
