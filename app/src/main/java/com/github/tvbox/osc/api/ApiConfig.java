@@ -1,7 +1,5 @@
 package com.github.tvbox.osc.api;
 
-import static com.github.tvbox.osc.util.HawkConfig.CACHE_DATA_KEY;
-
 import android.app.Activity;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -19,9 +17,7 @@ import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.MD5;
-import com.github.tvbox.osc.util.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -30,7 +26,6 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
-import com.tencent.mmkv.MMKV;
 
 import org.json.JSONObject;
 
@@ -90,22 +85,15 @@ public class ApiConfig {
             callback.error("-1");
             return;
         }
-//        File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(apiUrl));
-        long time = System.currentTimeMillis();
-        String cacheData = Hawk.get(CACHE_DATA_KEY);
-        LOG.e("costTime" + (System.currentTimeMillis() - time));
-        long time2 = System.currentTimeMillis();
-        MMKV.defaultMMKV().getString(CACHE_DATA_KEY, "");
-        LOG.e("costTimeMMKV  " + (System.currentTimeMillis() - time2));
-        if (cacheData != null && !StringUtils.isStrEmpty(cacheData)) {
+        File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(apiUrl));
+        if (useCache && cache.exists()) {
             try {
-                parseJson(apiUrl, cacheData);
+                parseJson(apiUrl, cache);
                 callback.success();
                 return;
             } catch (Throwable th) {
                 th.printStackTrace();
             }
-            return;
         }
         String apiFix = apiUrl;
         if (apiUrl.startsWith("clan://")) {
@@ -120,21 +108,19 @@ public class ApiConfig {
                         try {
                             String json = response.body();
                             parseJson(apiUrl, response.body());
-                            Hawk.put(CACHE_DATA_KEY, response.body());
-                            MMKV.defaultMMKV().putString(CACHE_DATA_KEY, response.body());
-//                            try {
-//                                File cacheDir = cache.getParentFile();
-//                                if (!cacheDir.exists())
-//                                    cacheDir.mkdirs();
-//                                if (cache.exists())
-//                                    cache.delete();
-//                                FileOutputStream fos = new FileOutputStream(cache);
-//                                fos.write(json.getBytes("UTF-8"));
-//                                fos.flush();
-//                                fos.close();
-//                            } catch (Throwable th) {
-//                                th.printStackTrace();
-//                            }
+                            try {
+                                File cacheDir = cache.getParentFile();
+                                if (!cacheDir.exists())
+                                    cacheDir.mkdirs();
+                                if (cache.exists())
+                                    cache.delete();
+                                FileOutputStream fos = new FileOutputStream(cache);
+                                fos.write(json.getBytes("UTF-8"));
+                                fos.flush();
+                                fos.close();
+                            } catch (Throwable th) {
+                                th.printStackTrace();
+                            }
                             callback.success();
                         } catch (Throwable th) {
                             th.printStackTrace();
@@ -145,15 +131,15 @@ public class ApiConfig {
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-//                        if (cache.exists()) {
-//                            try {
-//                                parseJson(apiUrl, cache);
-//                                callback.success();
-//                                return;
-//                            } catch (Throwable th) {
-//                                th.printStackTrace();
-//                            }
-//                        }
+                        if (cache.exists()) {
+                            try {
+                                parseJson(apiUrl, cache);
+                                callback.success();
+                                return;
+                            } catch (Throwable th) {
+                                th.printStackTrace();
+                            }
+                        }
                         callback.error("拉取配置失败\n" + (response.getException() != null ? response.getException().getMessage() : ""));
                     }
 
