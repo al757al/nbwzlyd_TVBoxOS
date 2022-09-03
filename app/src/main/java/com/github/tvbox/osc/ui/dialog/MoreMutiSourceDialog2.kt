@@ -137,15 +137,17 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
         }
         val lastSelectBean =
             KVStorage.getBean(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, MoreSourceBean::class.java)
+        var index = 0
         DEFAULT_DATA.findFirst {
             it.sourceUrl == lastSelectBean?.sourceUrl
         }?.let {
             it.isSelected = true
-            mAdapter.setNewData(DEFAULT_DATA)
-            mRecyclerView?.post {
-                mRecyclerView?.scrollToPosition(mAdapter.data.indexOf(it))
+            index = mAdapter.data.indexOf(it)
 
-            }
+        }
+        mAdapter.setNewData(DEFAULT_DATA)
+        mRecyclerView?.post {
+            mRecyclerView?.scrollToPosition(index)
         }
     }
 

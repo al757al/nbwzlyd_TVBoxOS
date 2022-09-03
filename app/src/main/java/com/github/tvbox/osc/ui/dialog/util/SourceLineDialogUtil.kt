@@ -22,7 +22,7 @@ import org.json.JSONObject
 
 class SourceLineDialogUtil(private val context: Context) {
 
-    private var DEFAULT_URL = "https://gitea.com/apkcore/apk_release/raw/branch/main/"
+    private var DEFAULT_URL = "https://gitea.com/apkcore/apk_release/raw/branch/main/tv/update_yuan"
     private val dialog by lazy {
         SelectDialog<MoreSourceBean>(context)
     }
