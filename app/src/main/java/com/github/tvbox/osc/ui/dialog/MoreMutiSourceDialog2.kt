@@ -142,7 +142,7 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
         }?.let {
             it.isSelected = true
             mAdapter.setNewData(DEFAULT_DATA)
-            mRecyclerView?.handler?.post {
+            mRecyclerView?.post {
                 mRecyclerView?.scrollToPosition(mAdapter.data.indexOf(it))
 
             }

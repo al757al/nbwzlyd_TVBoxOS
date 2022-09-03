@@ -129,6 +129,7 @@ class SourceLineDialogUtil(private val context: Context) {
 
             }, list, select)
         }
+
         dialog.show()
     }
 
