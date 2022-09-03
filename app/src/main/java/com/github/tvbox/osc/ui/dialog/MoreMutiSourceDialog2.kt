@@ -106,6 +106,8 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
                 mRecyclerView?.scrollToPosition(0)
                 saveList.add(sourceBean)
                 KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, saveList)
+                mSourceUrlEdit?.setText("")
+                mSourceNameEdit?.setText("")
             } else {
                 Toast.makeText(this@MoreMutiSourceDialog2.context, "请输入仓库地址！", Toast.LENGTH_LONG)
                     .show()
