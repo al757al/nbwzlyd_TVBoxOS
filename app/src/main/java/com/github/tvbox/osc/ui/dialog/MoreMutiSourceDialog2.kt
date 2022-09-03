@@ -25,7 +25,7 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
         MoreSourceAdapter()
     }
 
-    private val DEFAULT_DATA = mutableListOf<MoreSourceBean>(
+    private val DEFAULT_DATA = mutableListOf(
         MoreSourceBean().apply {
             this.sourceName = "apkcore仓库"
             this.sourceUrl =
