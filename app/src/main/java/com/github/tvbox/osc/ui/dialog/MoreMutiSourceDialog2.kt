@@ -163,8 +163,6 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
 
     private fun selectItem(position: Int) {
         val selectData = mAdapter.data[position]
-        var selectedUrl = ""
-        var selectName = ""
         mLastSelectBean?.let {
             it.isSelected = false
             val index = mAdapter.data.indexOf(it)
@@ -172,8 +170,6 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
         }
         selectData.let {
             it.isSelected = true
-            selectedUrl = it.sourceUrl
-            selectName = it.sourceName
             mAdapter.notifyItemChanged(position)
             mRecyclerView?.setSelectedPosition(position)
         }
