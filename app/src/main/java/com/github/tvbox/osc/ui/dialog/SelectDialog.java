@@ -41,11 +41,8 @@ public class SelectDialog<T> extends BaseDialog {
         TvRecyclerView tvRecyclerView = ((TvRecyclerView) findViewById(R.id.list));
         tvRecyclerView.setAdapter(adapter);
         tvRecyclerView.setSelectedPosition(select);
-        tvRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                tvRecyclerView.scrollToPosition(select);
-            }
-        });
+        tvRecyclerView.post(() -> tvRecyclerView.scrollToPosition(select));
     }
+
+
 }

@@ -7,9 +7,12 @@ package com.github.tvbox.osc.util;
  */
 public class HawkConfig {
     public static final String API_URL = "api_url";
+    public static final String API_URL_BEAN = "api_url_bean";
     public static final String SHOW_PREVIEW = "show_preview";
     public static final String API_HISTORY = "api_history";
     public static final String HOME_API = "home_api";
+    public static final String CUSTOM_STORE_HOUSE = "custom_store_house";//自定义多源仓库地址
+    public static final String CUSTOM_STORE_HOUSE_SELECTED = "custom_store_house_selected";//选中的仓库地址
     public static final String DEFAULT_PARSE = "parse_default";
     public static final String DEBUG_OPEN = "debug_open";
     public static final String PARSE_WEBVIEW = "parse_webview"; // true 系统 false xwalk

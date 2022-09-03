@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.ui.fragment;
 
 import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,14 +14,18 @@ import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.base.BaseLazyFragment;
 import com.github.tvbox.osc.bean.IJKCode;
+import com.github.tvbox.osc.bean.MoreSourceBean;
 import com.github.tvbox.osc.bean.SourceBean;
+import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.AboutDialog;
 import com.github.tvbox.osc.ui.dialog.ApiDialog;
 import com.github.tvbox.osc.ui.dialog.BackupDialog;
+import com.github.tvbox.osc.ui.dialog.MoreMutiSourceDialog2;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;
+import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.HistoryHelper;
@@ -33,6 +38,7 @@ import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -78,6 +84,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     protected void init() {
+        EventBus.getDefault().register(this);
         tvFastSearchText = findViewById(R.id.showFastSearchText);
         tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
         tvShowPreviewText = findViewById(R.id.showPreviewText);
@@ -97,7 +104,13 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvMediaCodec.setText(Hawk.get(HawkConfig.IJK_CODEC, ""));
         tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
         tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
-        tvApi.setText(Hawk.get(HawkConfig.API_URL, ""));
+        String apiUrl = Hawk.get(HawkConfig.API_URL, "");
+        MoreSourceBean moreSourceBean = Hawk.get(HawkConfig.API_URL_BEAN);
+        if (moreSourceBean == null) {
+            tvApi.setText(apiUrl);
+        } else if (TextUtils.equals(moreSourceBean.getSourceUrl(), apiUrl)) {
+            tvApi.setText(moreSourceBean.getSourceName());
+        }
         tvDns.setText(OkGoHelper.dnsHttpsList.get(Hawk.get(HawkConfig.DOH_URL, 0)));
         tvHomeRec.setText(getHomeRecName(Hawk.get(HawkConfig.HOME_REC, 0)));
         tvHistoryNum.setText(HistoryHelper.getHistoryNumName(Hawk.get(HawkConfig.HISTORY_NUM, 0)));
@@ -195,6 +208,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         public void click(SourceBean value, int pos) {
                             ApiConfig.get().setSourceBean(value);
                             tvHomeApi.setText(ApiConfig.get().getHomeSourceBean().getName());
+                            dialog.dismiss();
+                            if (getActivity() != null) {
+                                getActivity().onBackPressed();
+                            }
                         }
 
                         @Override
@@ -216,41 +233,38 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 }
             }
         });
-        findViewById(R.id.llDns).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FastClickCheckUtil.check(v);
-                int dohUrl = Hawk.get(HawkConfig.DOH_URL, 0);
+        findViewById(R.id.llDns).setOnClickListener(v -> {
+            FastClickCheckUtil.check(v);
+            int dohUrl = Hawk.get(HawkConfig.DOH_URL, 0);
 
-                SelectDialog<String> dialog = new SelectDialog<>(mActivity);
-                dialog.setTip("请选择安全DNS");
-                dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
-                    @Override
-                    public void click(String value, int pos) {
-                        tvDns.setText(OkGoHelper.dnsHttpsList.get(pos));
-                        Hawk.put(HawkConfig.DOH_URL, pos);
-                        String url = OkGoHelper.getDohUrl(pos);
-                        OkGoHelper.dnsOverHttps.setUrl(url.isEmpty() ? null : HttpUrl.get(url));
-                        IjkMediaPlayer.toggleDotPort(pos > 0);
-                    }
+            SelectDialog<String> dialog = new SelectDialog<>(mActivity);
+            dialog.setTip("请选择安全DNS");
+            dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
+                @Override
+                public void click(String value, int pos) {
+                    tvDns.setText(OkGoHelper.dnsHttpsList.get(pos));
+                    Hawk.put(HawkConfig.DOH_URL, pos);
+                    String url = OkGoHelper.getDohUrl(pos);
+                    OkGoHelper.dnsOverHttps.setUrl(url.isEmpty() ? null : HttpUrl.get(url));
+                    IjkMediaPlayer.toggleDotPort(pos > 0);
+                }
 
-                    @Override
-                    public String getDisplay(String val) {
-                        return val;
-                    }
-                }, new DiffUtil.ItemCallback<String>() {
-                    @Override
-                    public boolean areItemsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
-                        return oldItem.equals(newItem);
-                    }
+                @Override
+                public String getDisplay(String val) {
+                    return val;
+                }
+            }, new DiffUtil.ItemCallback<String>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
+                    return oldItem.equals(newItem);
+                }
 
-                    @Override
-                    public boolean areContentsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
-                        return oldItem.equals(newItem);
-                    }
-                }, OkGoHelper.dnsHttpsList, dohUrl);
-                dialog.show();
-            }
+                @Override
+                public boolean areContentsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
+                    return oldItem.equals(newItem);
+                }
+            }, OkGoHelper.dnsHttpsList, dohUrl);
+            dialog.show();
         });
         findViewById(R.id.llApi).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -561,6 +575,20 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
             }
         });
+        findViewById(R.id.more_source).setOnClickListener(v -> {
+            new SourceLineDialogUtil(ModelSettingFragment.this.mContext).
+                    getData(() -> {
+                        if (getActivity() != null) {
+                            getActivity().onBackPressed();
+                        }
+                        return null;
+                    });
+
+        });
+        findViewById(R.id.default_more_source).setOnClickListener(v -> {
+            new MoreMutiSourceDialog2(ModelSettingFragment.this.mContext).show();
+
+        });
     }
 
     @Override
@@ -577,6 +605,22 @@ public class ModelSettingFragment extends BaseLazyFragment {
         } else {
             return "豆瓣热播";
         }
+    }
+
+    @Subscribe
+    public void onUrlChange(RefreshEvent refreshEvent) {
+        if (refreshEvent == null) {
+            return;
+        }
+        if (refreshEvent.type == RefreshEvent.TYPE_API_URL_CHANGE) {
+            tvApi.setText((String) refreshEvent.obj);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     String getSearchView(int type) {

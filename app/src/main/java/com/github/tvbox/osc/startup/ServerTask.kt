@@ -1,7 +1,9 @@
 package com.github.tvbox.osc.startup
 
 import android.content.Context
+import com.github.tvbox.osc.base.App
 import com.github.tvbox.osc.util.OkGoHelper
+import com.lzy.okgo.OkGo
 import com.rousetime.android_startup.AndroidStartup
 import com.rousetime.android_startup.Startup
 import com.rousetime.android_startup.executor.ExecutorManager
@@ -13,6 +15,7 @@ class ServerTask : AndroidStartup<String>() {
     override fun create(context: Context): String? {
         // OKGo
         OkGoHelper.init()
+        OkGo.getInstance().init(App.instance)
         return ServerTask::class.simpleName
 
     }

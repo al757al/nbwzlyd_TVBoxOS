@@ -97,6 +97,7 @@ dependencies {
 
     implementation 'com.github.getActivity:XXPermissions:13.6'
     implementation 'com.tencent:mmkv:1.2.14'
+    implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'io.github.idisfkj:android-startup:1.0.7'
 
 }

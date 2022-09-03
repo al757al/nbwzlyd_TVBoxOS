@@ -5,7 +5,6 @@ import android.animation.AnimatorSet;
 import android.animation.IntEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -138,16 +137,17 @@ public class HomeActivity extends BaseActivity {
                         public void run() {
                             TextView textView = view.findViewById(R.id.tvTitle);
                             textView.getPaint().setFakeBoldText(false);
-                            if(sortFocused == p){
+                            if (sortFocused == p) {
                                 view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(300).start();
                                 textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
-                            }else {
+                            } else {
                                 view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start();
                                 textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
                                 view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
                             }
                             textView.invalidate();
                         }
+
                         public View v = view;
                         public int p = position;
                     }, 10);
@@ -397,8 +397,10 @@ public class HomeActivity extends BaseActivity {
         BaseLazyFragment baseLazyFragment = this.fragments.get(i);
         if (baseLazyFragment instanceof GridFragment) {
             View view = this.sortFocusView;
-            GridFragment grid = (GridFragment)baseLazyFragment;
-            if(grid.restoreView() ){ return; }// 还原上次保存的UI内容
+            GridFragment grid = (GridFragment) baseLazyFragment;
+            if (grid.restoreView()) {
+                return;
+            }// 还原上次保存的UI内容
             if (view != null && !view.isFocused()) {
                 this.sortFocusView.requestFocus();
             } else if (this.sortFocused != 0) {
@@ -560,7 +562,9 @@ public class HomeActivity extends BaseActivity {
             dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
                 @Override
                 public void click(SourceBean value, int pos) {
+                    dialog.dismiss();
                     ApiConfig.get().setSourceBean(value);
+                    restartHomeActivity(homeSourceKey);
                 }
 
                 @Override
@@ -578,32 +582,20 @@ public class HomeActivity extends BaseActivity {
                     return oldItem.getKey().equals(newItem.getKey());
                 }
             }, sites, sites.indexOf(ApiConfig.get().getHomeSourceBean()));
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    if (homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, ""))) {
-//                        Intent intent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplication().getPackageName());
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
-//                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                        Bundle bundle = new Bundle();
-//                        bundle.putBoolean("useCache", true);
-//                        intent.putExtras(bundle);
-//                        getApplicationContext().startActivity(intent);
-//                        System.exit(0);
-
-                        Intent intent =new Intent(getApplicationContext(), HomeActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean("useCache", true);
-                        intent.putExtras(bundle);
-                        HomeActivity.this.startActivity(intent);
-//                        android.os.Process.killProcess(android.os.Process.myPid());
-//                        System.exit(0);
-
-                    }
-                }
-            });
+            dialog.setOnDismissListener(dialog1 -> restartHomeActivity(homeSourceKey));
             dialog.show();
+        }
+    }
+
+    private void restartHomeActivity(String homeSourceKey) {
+        if (homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, ""))) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("useCache", true);
+            intent.putExtras(bundle);
+            HomeActivity.this.startActivity(intent);
+
         }
     }
 
