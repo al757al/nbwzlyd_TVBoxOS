@@ -9,7 +9,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.bean.MoreSourceBean
-import com.github.tvbox.osc.ext.findFirst
 import com.github.tvbox.osc.ext.removeFirstIf
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
@@ -93,7 +92,7 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
             val sourceUrl0 = mSourceUrlEdit?.text.toString()
             val sourceName0 = mSourceNameEdit?.text.toString()
             if (sourceUrl0.isEmpty()) {
-                Toast.makeText(this@MoreMutiSourceDialog2.context, "请输入源地址！", Toast.LENGTH_LONG)
+                Toast.makeText(this@MoreMutiSourceDialog2.context, "请输入仓库地址！", Toast.LENGTH_LONG)
                     .show()
                 return@setOnClickListener
             }
@@ -138,12 +137,13 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
         val lastSelectBean =
             KVStorage.getBean(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, MoreSourceBean::class.java)
         var index = 0
-        DEFAULT_DATA.findFirst {
-            it.sourceUrl == lastSelectBean?.sourceUrl
-        }?.let {
-            it.isSelected = true
-            index = mAdapter.data.indexOf(it)
-
+        DEFAULT_DATA.forEach {
+            if (it.sourceUrl != lastSelectBean?.sourceUrl) {
+                it.isSelected = false
+            } else {
+                it.isSelected = true
+                index = DEFAULT_DATA.indexOf(it)
+            }
         }
         mAdapter.setNewData(DEFAULT_DATA)
         mRecyclerView?.post {
