@@ -65,6 +65,7 @@
             android:layout_marginTop="@dimen/vs_10"
             android:layout_marginBottom="@dimen/vs_10"
             android:paddingRight="@dimen/vs_50"
+            android:layout_marginLeft="@dimen/vs_40"
             app:tv_selectedItemIsCentered="true" />
 
         <com.github.tvbox.osc.ui.tv.widget.NoScrollViewPager

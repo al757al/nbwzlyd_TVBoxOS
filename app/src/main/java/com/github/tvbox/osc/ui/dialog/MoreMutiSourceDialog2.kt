@@ -25,60 +25,58 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
         MoreSourceAdapter()
     }
 
-    companion object {
-        private val DEFAULT_DATA = mutableListOf<MoreSourceBean>(
-            MoreSourceBean().apply {
-                this.sourceName = "apkcore仓库"
-                this.sourceUrl =
-                    "https://gitea.com/apkcore/apk_release/raw/branch/main/tv/update_yuan"
-            },
-            MoreSourceBean().apply {
-                this.sourceName = "xinyonghuu仓库"
-                this.sourceUrl =
-                    "https://gitea.com/xinyonghuu/apk_release/raw/branch/main/tv/update_yuan"
-            },
-            MoreSourceBean().apply {
-                this.sourceName = "ye仓库"
-                this.sourceUrl =
-                    "https://gitea.com/ye/apk_release/raw/branch/main/tv/update_yuan"
-            }, MoreSourceBean().apply {
-                this.sourceName = "xnpc仓库"
-                this.sourceUrl =
-                    "https://gitea.com/xnpc/apk_release/raw/branch/main/tv/update_yuan"
-            }, MoreSourceBean().apply {
-                this.sourceName = "manthow仓库"
-                this.sourceUrl =
-                    "https://gitea.com/manthow/apk_release/raw/branch/main/tv/update_yuan"
-            }, MoreSourceBean().apply {
-                this.sourceName = "thorjsbox仓库"
-                this.sourceUrl =
-                    "https://gitea.com/thorjsbox/apk_release/raw/branch/main/tv/update_yuan"
-            }, MoreSourceBean().apply {
-                this.sourceName = "zhanghong仓库"
-                this.sourceUrl =
-                    "https://gitea.com/zhanghong/apk_release/raw/branch/main/tv/update_yuan"
-            }, MoreSourceBean().apply {
-                this.sourceName = "bo仓库"
-                this.sourceUrl =
-                    "https://gitea.com/bo/apk_release/raw/branch/main/tv/update_yuan"
-            },
-            MoreSourceBean().apply {
-                this.sourceName = "白嫖仓库"
-                this.sourceUrl =
-                    "https://gitea.com/33/3/raw/branch/3/3/3/tv/update_yuan"
-            },
-            MoreSourceBean().apply {
-                this.sourceName = "ygfxz仓库"
-                this.sourceUrl =
-                    "https://gitea.com/ygfxz/apk_release/raw/branch/main/tv/update_yuan"
-            },
-            MoreSourceBean().apply {
-                this.sourceName = "syzxasdc仓库"
-                this.sourceUrl =
-                    "https://gitea.com/syzxasdc/apk_release1/raw/branch/main/tv/update_yuan"
-            }
-        )
-    }
+    private val DEFAULT_DATA = mutableListOf<MoreSourceBean>(
+        MoreSourceBean().apply {
+            this.sourceName = "apkcore仓库"
+            this.sourceUrl =
+                "https://gitea.com/apkcore/apk_release/raw/branch/main/tv/update_yuan"
+        },
+        MoreSourceBean().apply {
+            this.sourceName = "xinyonghuu仓库"
+            this.sourceUrl =
+                "https://gitea.com/xinyonghuu/apk_release/raw/branch/main/tv/update_yuan"
+        },
+        MoreSourceBean().apply {
+            this.sourceName = "ye仓库"
+            this.sourceUrl =
+                "https://gitea.com/ye/apk_release/raw/branch/main/tv/update_yuan"
+        }, MoreSourceBean().apply {
+            this.sourceName = "xnpc仓库"
+            this.sourceUrl =
+                "https://gitea.com/xnpc/apk_release/raw/branch/main/tv/update_yuan"
+        }, MoreSourceBean().apply {
+            this.sourceName = "manthow仓库"
+            this.sourceUrl =
+                "https://gitea.com/manthow/apk_release/raw/branch/main/tv/update_yuan"
+        }, MoreSourceBean().apply {
+            this.sourceName = "thorjsbox仓库"
+            this.sourceUrl =
+                "https://gitea.com/thorjsbox/apk_release/raw/branch/main/tv/update_yuan"
+        }, MoreSourceBean().apply {
+            this.sourceName = "zhanghong仓库"
+            this.sourceUrl =
+                "https://gitea.com/zhanghong/apk_release/raw/branch/main/tv/update_yuan"
+        }, MoreSourceBean().apply {
+            this.sourceName = "bo仓库"
+            this.sourceUrl =
+                "https://gitea.com/bo/apk_release/raw/branch/main/tv/update_yuan"
+        },
+        MoreSourceBean().apply {
+            this.sourceName = "白嫖仓库"
+            this.sourceUrl =
+                "https://gitea.com/33/3/raw/branch/3/3/3/tv/update_yuan"
+        },
+        MoreSourceBean().apply {
+            this.sourceName = "ygfxz仓库"
+            this.sourceUrl =
+                "https://gitea.com/ygfxz/apk_release/raw/branch/main/tv/update_yuan"
+        },
+        MoreSourceBean().apply {
+            this.sourceName = "syzxasdc仓库"
+            this.sourceUrl =
+                "https://gitea.com/syzxasdc/apk_release1/raw/branch/main/tv/update_yuan"
+        }
+    )
 
     init {
         setContentView(R.layout.more_source_dialog_select)
@@ -109,7 +107,7 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
                 saveList.add(sourceBean)
                 KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, saveList)
             } else {
-                Toast.makeText(this@MoreMutiSourceDialog2.context, "请输入正确的源地址！", Toast.LENGTH_LONG)
+                Toast.makeText(this@MoreMutiSourceDialog2.context, "请输入仓库地址！", Toast.LENGTH_LONG)
                     .show()
             }
 
