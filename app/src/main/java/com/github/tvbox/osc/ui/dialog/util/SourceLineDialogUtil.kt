@@ -60,32 +60,36 @@ class SourceLineDialogUtil(private val context: Context) {
     }
 
     private fun inflateData(response: Response<String>?, onSelect: () -> Unit) {
-        val json = JSONObject(response?.body().toString())
-        val urls: JSONArray = json.getJSONArray("urls")
-        //暂时不开放vip，因为有18+，不适合家庭使用
-        if (json.has("vip")) {
-            val vips = json.getJSONArray("vip")
-        }
-        val length = urls.length();
-        val data = mutableListOf<MoreSourceBean>()
-        for (i in 0 until length) {
-            val jsonObj = urls.getJSONObject(i)
-            val moreSourceBean = MoreSourceBean().apply {
-                sourceUrl = jsonObj.getString("url")
-                sourceName = jsonObj.getString("name")
-                isServer = true
+        try {
+            val json = JSONObject(response?.body().toString())
+            val urls: JSONArray = json.getJSONArray("urls")
+            //暂时不开放vip，因为有18+，不适合家庭使用
+            if (json.has("vip")) {
+                val vips = json.getJSONArray("vip")
             }
-            data.add(moreSourceBean)
+            val length = urls.length();
+            val data = mutableListOf<MoreSourceBean>()
+            for (i in 0 until length) {
+                val jsonObj = urls.getJSONObject(i)
+                val moreSourceBean = MoreSourceBean().apply {
+                    sourceUrl = jsonObj.getString("url")
+                    sourceName = jsonObj.getString("name")
+                    isServer = true
+                }
+                data.add(moreSourceBean)
+            }
+            val selectUrl = Hawk.get(HawkConfig.API_URL, "")
+            val findData = data.findFirst {
+                it.sourceUrl == selectUrl
+            }
+            var select = 0
+            findData?.let {
+                select = data.indexOf(findData)
+            }
+            showDialog(data, select, onSelect = onSelect)
+        } catch (e: Exception) {
+            Toast.makeText(context, "解析地址失败，检查你的仓库地址是否正确", Toast.LENGTH_LONG).show()
         }
-        val selectUrl = Hawk.get(HawkConfig.API_URL, "")
-        val findData = data.findFirst {
-            it.sourceUrl == selectUrl
-        }
-        var select = 0
-        findData?.let {
-            select = data.indexOf(findData)
-        }
-        showDialog(data, select, onSelect = onSelect)
     }
 
     private fun showDialog(list: List<MoreSourceBean>, select: Int, onSelect: () -> Unit) {
