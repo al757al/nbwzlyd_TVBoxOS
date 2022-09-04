@@ -45,36 +45,43 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
             this.sourceName = "apkcore仓库"
             this.sourceUrl =
                 "https://gitea.com/apkcore/apk_release/raw/branch/main/tv/update_yuan"
+            this.isServer = true
         },
         MoreSourceBean().apply {
             this.sourceName = "ye仓库"
             this.sourceUrl =
                 "https://gitea.com/ye/apk_release/raw/branch/main/tv/update_yuan"
+            this.isServer = true
         },
         MoreSourceBean().apply {
             this.sourceName = "xnpc仓库"
             this.sourceUrl =
                 "https://gitea.com/xnpc/apk_release/raw/branch/main/tv/update_yuan"
+            this.isServer = true
         },
         MoreSourceBean().apply {
             this.sourceName = "manthow仓库"
             this.sourceUrl =
                 "https://gitea.com/manthow/apk_release/raw/branch/main/tv/update_yuan"
+            this.isServer = true
         },
         MoreSourceBean().apply {
             this.sourceName = "thorjsbox仓库"
             this.sourceUrl =
                 "https://gitea.com/thorjsbox/apk_release/raw/branch/main/tv/update_yuan"
+            this.isServer = true
         },
         MoreSourceBean().apply {
             this.sourceName = "zhanghong仓库"
             this.sourceUrl =
                 "https://gitea.com/zhanghong/apk_release/raw/branch/main/tv/update_yuan"
+            this.isServer = true
         },
         MoreSourceBean().apply {
             this.sourceName = "bo仓库"
             this.sourceUrl =
                 "https://gitea.com/bo/apk_release/raw/branch/main/tv/update_yuan"
+            this.isServer = true
         },
     )
 
@@ -130,27 +137,32 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
 
 
     private fun getMutiSource() {
+        val result = DEFAULT_DATA.filter {
+            !KVStorage.getBoolean(it.sourceUrl, false)
+        }.toMutableList()
+
         val custom = KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
         if (custom.isNotEmpty()) {
-            DEFAULT_DATA.addAll(0, custom)
+            result.addAll(0, custom)
         }
         val lastSelectBean =
             KVStorage.getBean(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, MoreSourceBean::class.java)
         var index = 0
-        DEFAULT_DATA.forEach {
+        result.forEach {
             if (it.sourceUrl != lastSelectBean?.sourceUrl) {
                 it.isSelected = false
             } else {
                 it.isSelected = true
-                index = DEFAULT_DATA.indexOf(it)
+                index = result.indexOf(it)
             }
         }
-        mAdapter.setNewData(DEFAULT_DATA)
+        mAdapter.setNewData(result)
         mRecyclerView?.post {
             mRecyclerView?.scrollToPosition(index)
         }
     }
 
+    //删除仓库地址
     private fun deleteItem(position: Int) {
         val deleteData = mAdapter.data[position]
         val custom = KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
@@ -158,6 +170,9 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
             it.sourceUrl == deleteData.sourceUrl
         }
         KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, custom)
+        if (deleteData.isServer) {
+            KVStorage.putBoolean(deleteData.sourceUrl, true)
+        }
         mAdapter.remove(position)
     }
 
@@ -184,13 +199,13 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
         override fun createBaseViewHolder(view: View?): BaseViewHolder {
             val holder = super.createBaseViewHolder(view)
             holder.addOnClickListener(R.id.tvDel)
+            holder.setVisible(R.id.tvDel, true)
             holder.addOnClickListener(R.id.tvName)
             return holder
         }
 
         override fun convert(holder: BaseViewHolder, item: MoreSourceBean) {
             showDefault(item, holder)
-            holder.setGone(R.id.tvDel, !item.isServer && !item.isSelected)
             if (item.isSelected) {
                 var text = holder.getView<TextView>(R.id.tvName).text
                 text = "√ $text"

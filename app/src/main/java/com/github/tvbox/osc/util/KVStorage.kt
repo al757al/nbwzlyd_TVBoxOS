@@ -14,6 +14,14 @@ object KVStorage {
         MMKV.defaultMMKV().putString(key, defaultValue)
     }
 
+    fun putBoolean(key: String, defaultValue: Boolean) {
+        MMKV.defaultMMKV().putBoolean(key, defaultValue)
+    }
+
+    fun getBoolean(key: String, defaultValue: Boolean): Boolean {
+        return MMKV.defaultMMKV().getBoolean(key, defaultValue)
+    }
+
     fun getInt(key: String, defaultValue: Int): Int {
         return MMKV.defaultMMKV().getInt(key, defaultValue)
     }
