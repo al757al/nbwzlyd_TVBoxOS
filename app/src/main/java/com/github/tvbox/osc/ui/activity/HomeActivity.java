@@ -510,35 +510,25 @@ public class HomeActivity extends BaseActivity {
             }
         });
         if (hide && topHide == 0) {
-            animatorSet.playTogether(new Animator[]{
-                    ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
-                            new Object[]{
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 10.0f)),
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 0.0f))
-                            }),
+            animatorSet.playTogether(ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
+                            AutoSizeUtils.mm2px(this.mContext, 10.0f),
+                            AutoSizeUtils.mm2px(this.mContext, 0.0f)),
                     ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
-                            new Object[]{
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f)),
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f))
-                            }),
-                    ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{1.0f, 0.0f})});
+                            AutoSizeUtils.mm2px(this.mContext, 50.0f),
+                            AutoSizeUtils.mm2px(this.mContext, 1.0f)),
+                    ObjectAnimator.ofFloat(this.topLayout, "alpha", 1.0f, 0.0f));
             animatorSet.setDuration(200);
             animatorSet.start();
             return;
         }
         if (!hide && topHide == 1) {
-            animatorSet.playTogether(new Animator[]{
-                    ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
-                            new Object[]{
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 0.0f)),
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 10.0f))
-                            }),
+            animatorSet.playTogether(ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
+                            AutoSizeUtils.mm2px(this.mContext, 0.0f),
+                            AutoSizeUtils.mm2px(this.mContext, 10.0f)),
                     ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
-                            new Object[]{
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f)),
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
-                            }),
-                    ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
+                            AutoSizeUtils.mm2px(this.mContext, 1.0f),
+                            AutoSizeUtils.mm2px(this.mContext, 50.0f)),
+                    ObjectAnimator.ofFloat(this.topLayout, "alpha", 0.0f, 1.0f));
             animatorSet.setDuration(200);
             animatorSet.start();
             return;
@@ -582,7 +572,6 @@ public class HomeActivity extends BaseActivity {
                     return oldItem.getKey().equals(newItem.getKey());
                 }
             }, sites, sites.indexOf(ApiConfig.get().getHomeSourceBean()));
-            dialog.setOnDismissListener(dialog1 -> restartHomeActivity(homeSourceKey));
             dialog.show();
         }
     }
@@ -595,7 +584,6 @@ public class HomeActivity extends BaseActivity {
             bundle.putBoolean("useCache", true);
             intent.putExtras(bundle);
             HomeActivity.this.startActivity(intent);
-
         }
     }
 
