@@ -40,23 +40,28 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
             this.sourceName = "ye仓库"
             this.sourceUrl =
                 "https://gitea.com/ye/apk_release/raw/branch/main/tv/update_yuan"
-        }, MoreSourceBean().apply {
+        },
+        MoreSourceBean().apply {
             this.sourceName = "xnpc仓库"
             this.sourceUrl =
                 "https://gitea.com/xnpc/apk_release/raw/branch/main/tv/update_yuan"
-        }, MoreSourceBean().apply {
+        },
+        MoreSourceBean().apply {
             this.sourceName = "manthow仓库"
             this.sourceUrl =
                 "https://gitea.com/manthow/apk_release/raw/branch/main/tv/update_yuan"
-        }, MoreSourceBean().apply {
+        },
+        MoreSourceBean().apply {
             this.sourceName = "thorjsbox仓库"
             this.sourceUrl =
                 "https://gitea.com/thorjsbox/apk_release/raw/branch/main/tv/update_yuan"
-        }, MoreSourceBean().apply {
+        },
+        MoreSourceBean().apply {
             this.sourceName = "zhanghong仓库"
             this.sourceUrl =
                 "https://gitea.com/zhanghong/apk_release/raw/branch/main/tv/update_yuan"
-        }, MoreSourceBean().apply {
+        },
+        MoreSourceBean().apply {
             this.sourceName = "bo仓库"
             this.sourceUrl =
                 "https://gitea.com/bo/apk_release/raw/branch/main/tv/update_yuan"
