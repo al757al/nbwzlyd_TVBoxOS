@@ -1,5 +1,7 @@
 package com.github.tvbox.osc.player.controller;
 
+import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -32,16 +34,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
-
 import java.util.Date;
+import java.util.List;
 
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
-import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
-
 public class VodController extends BaseController {
+
     public VodController(@NonNull @NotNull Context context) {
         super(context);
         mHandlerCallback = new HandlerCallback() {
@@ -87,6 +87,8 @@ public class VodController extends BaseController {
         };
     }
 
+    SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
     SeekBar mSeekBar;
     TextView mCurrentTime;
     TextView mTotalTime;
@@ -119,19 +121,18 @@ public class VodController extends BaseController {
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 6000;//闲置多少毫秒秒关闭底栏  默认6秒
-
+    private TextView mNetSpeed;
     private Runnable myRunnable2 = new Runnable() {
         @Override
         public void run() {
             Date date = new Date();
-            SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             mPlayPauseTime.setText(timeFormat.format(date));
-
-            mPlayLoadNetSpeed.setText(PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed()));
-
+            String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
+            mPlayLoadNetSpeed.setText(speed);
+            mNetSpeed.setText(speed);
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
-            mVideoSize.setText("[ " + width + " X " + height +" ]");
+            mVideoSize.setText("[ " + width + " X " + height + " ]");
 
             mHandler.postDelayed(this, 1000);
         }
@@ -170,6 +171,7 @@ public class VodController extends BaseController {
         mPlayerTimeStepBtn = findViewById(R.id.play_time_step);
         mPlayPauseTime = findViewById(R.id.tv_sys_time);
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
+        mNetSpeed = findViewById(R.id.tv_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
 
         myHandle=new Handler();
