@@ -36,7 +36,7 @@ class SourceLineDialogUtil(private val context: Context) {
     }
 
     fun getData(onSelect: () -> Unit) {
-        OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
+        OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
             .cacheTime(24 * 60 * 60 * 1000).execute(object : StringCallback() {
                 override fun onSuccess(response: Response<String>?) {
                     inflateData(response, onSelect)
@@ -59,7 +59,11 @@ class SourceLineDialogUtil(private val context: Context) {
             })
     }
 
-    private fun inflateData(response: Response<String>?, onSelect: () -> Unit) {
+    private fun inflateData(
+        response: Response<String>?,
+        onSelect: () -> Unit,
+        isCache: Boolean = false
+    ) {
         try {
             val json = JSONObject(response?.body().toString())
             val urls: JSONArray = json.getJSONArray("urls")
@@ -88,7 +92,9 @@ class SourceLineDialogUtil(private val context: Context) {
             }
             showDialog(data, select, onSelect = onSelect)
         } catch (e: Exception) {
-            Toast.makeText(context, "解析地址失败，检查你的仓库地址是否正确", Toast.LENGTH_LONG).show()
+            if (!isCache) {
+                Toast.makeText(context, "Json解析失败，有可能仓库被删了", Toast.LENGTH_LONG).show()
+            }
         }
     }
 

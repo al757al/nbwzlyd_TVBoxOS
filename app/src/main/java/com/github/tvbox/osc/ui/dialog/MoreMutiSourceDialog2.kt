@@ -27,14 +27,24 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
 
     private val DEFAULT_DATA = mutableListOf(
         MoreSourceBean().apply {
+            this.sourceName = "白嫖仓库"
+            this.sourceUrl =
+                "https://gitea.com/33/3/raw/branch/3/3/3/tv/update_yuan"
+        },
+        MoreSourceBean().apply {
+            this.sourceName = "ygfxz仓库"
+            this.sourceUrl =
+                "https://gitea.com/ygfxz/apk_release/raw/branch/main/tv/update_yuan"
+        },
+        MoreSourceBean().apply {
+            this.sourceName = "syzxasdc仓库"
+            this.sourceUrl =
+                "https://gitea.com/syzxasdc/apk_release1/raw/branch/main/tv/update_yuan"
+        },
+        MoreSourceBean().apply {
             this.sourceName = "apkcore仓库"
             this.sourceUrl =
                 "https://gitea.com/apkcore/apk_release/raw/branch/main/tv/update_yuan"
-        },
-        MoreSourceBean().apply {
-            this.sourceName = "xinyonghuu仓库"
-            this.sourceUrl =
-                "https://gitea.com/xinyonghuu/apk_release/raw/branch/main/tv/update_yuan"
         },
         MoreSourceBean().apply {
             this.sourceName = "ye仓库"
@@ -66,21 +76,6 @@ class MoreMutiSourceDialog2(context: Context) : BaseDialog(context) {
             this.sourceUrl =
                 "https://gitea.com/bo/apk_release/raw/branch/main/tv/update_yuan"
         },
-        MoreSourceBean().apply {
-            this.sourceName = "白嫖仓库"
-            this.sourceUrl =
-                "https://gitea.com/33/3/raw/branch/3/3/3/tv/update_yuan"
-        },
-        MoreSourceBean().apply {
-            this.sourceName = "ygfxz仓库"
-            this.sourceUrl =
-                "https://gitea.com/ygfxz/apk_release/raw/branch/main/tv/update_yuan"
-        },
-        MoreSourceBean().apply {
-            this.sourceName = "syzxasdc仓库"
-            this.sourceUrl =
-                "https://gitea.com/syzxasdc/apk_release1/raw/branch/main/tv/update_yuan"
-        }
     )
 
     init {
