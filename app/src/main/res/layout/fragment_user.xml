@@ -9,7 +9,6 @@
     android:padding="@dimen/vs_40">
 
     <LinearLayout
-        android:id="@+id/tvUserHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clipChildren="false"

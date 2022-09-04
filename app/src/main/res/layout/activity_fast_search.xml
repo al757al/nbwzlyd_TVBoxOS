@@ -43,7 +43,6 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/llWord"
             android:layout_width="@dimen/vs_180"
             android:layout_height="match_parent"
             android:orientation="vertical"
