@@ -8,7 +8,6 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,7 +87,7 @@ public class PlayFragment extends BaseLazyFragment {
     private TextView mPlayLoadTip;
     private ImageView mPlayLoadErr;
     private ProgressBar mPlayLoading;
-    private VodController mController;
+    public VodController mController;
     private SourceViewModel sourceViewModel;
     private Handler mHandler;
 
@@ -105,17 +104,14 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     private void initView() {
-        mHandler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(@NonNull Message msg) {
-                switch (msg.what) {
-                    case 100:
-                        stopParse();
-                        errorWithRetry("嗅探错误", false);
-                        break;
-                }
-                return false;
+        mHandler = new Handler(msg -> {
+            switch (msg.what) {
+                case 100:
+                    stopParse();
+                    errorWithRetry("嗅探错误", false);
+                    break;
             }
+            return false;
         });
         mVideoView = findViewById(R.id.mVideoView);
         mPlayLoadTip = findViewById(R.id.play_load_tip);
@@ -125,6 +121,7 @@ public class PlayFragment extends BaseLazyFragment {
         mController.setCanChangePosition(true);
         mController.setEnableInNormal(true);
         mController.setGestureEnabled(true);
+        mController.hidePlayPauseTime();
         ProgressManager progressManager = new ProgressManager() {
             @Override
             public void saveProgress(String url, long progress) {

@@ -1,8 +1,11 @@
 package com.github.tvbox.osc.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Html;
@@ -16,8 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.ClipboardManager;
-import android.content.ClipData;
 
 import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.Observer;
@@ -71,12 +72,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
-
-import android.graphics.Paint;
-import android.text.TextPaint;
-import androidx.annotation.NonNull;
-import android.graphics.Typeface;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author pj567
@@ -353,12 +348,24 @@ public class DetailActivity extends BaseActivity {
                     if (showPreview && !fullWindows) toggleFullPreview();
                     if (!showPreview || reload) {
                         jumpToPlay();
-                        firstReverse=false;
+                        firstReverse = false;
                     }
                 }
             }
         });
         setLoadSir(llLayout);
+    }
+
+    private void hideTime() {
+        if (playFragment.mController != null) {
+            playFragment.mController.hidePlayPauseTime();
+        }
+    }
+
+    private void showTime() {
+        if (playFragment.mController != null) {
+            playFragment.mController.showPlayPauseTime();
+        }
     }
 
     private List<Runnable> pauseRunnable = null;
@@ -828,5 +835,10 @@ public class DetailActivity extends BaseActivity {
         tvSort.setFocusable(!fullWindows);
         tvCollect.setFocusable(!fullWindows);
         tvQuickSearch.setFocusable(!fullWindows);
+        if (fullWindows) {
+            showTime();
+        } else {
+            hideTime();
+        }
     }
 }

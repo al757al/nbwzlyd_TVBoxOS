@@ -46,6 +46,19 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_sys_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="@dimen/vs_20"
+        android:tag="vod_control_pause_time"
+        android:text="00:00:00"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ts_24" />
+
     <LinearLayout
         android:id="@+id/tv_top_r_container"
         android:layout_width="match_parent"
@@ -59,25 +72,13 @@
         android:layout_marginTop="@dimen/vs_10"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_sys_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:padding="@dimen/vs_20"
-            android:tag="vod_control_pause_time"
-            android:text="00:00:00"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/ts_24" />
 
         <TextView
             android:id="@+id/tv_net_speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginTop="-20mm"
+            android:layout_marginTop="22mm"
             android:ellipsize="end"
             android:maxLines="1"
             android:padding="@dimen/vs_20"

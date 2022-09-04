@@ -37,7 +37,7 @@ class SourceLineDialogUtil(private val context: Context) {
 
     fun getData(onSelect: () -> Unit) {
         OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
-            .cacheTime(24 * 60 * 60 * 1000).execute(object : StringCallback() {
+            .cacheTime(10 * 60 * 1000).execute(object : StringCallback() {
                 override fun onSuccess(response: Response<String>?) {
                     inflateData(response, onSelect)
                 }

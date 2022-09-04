@@ -42,52 +42,8 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 
 public class VodController extends BaseController {
 
-    public VodController(@NonNull @NotNull Context context) {
-        super(context);
-        mHandlerCallback = new HandlerCallback() {
-            @Override
-            public void callback(Message msg) {
-                switch (msg.what) {
-                    case 1000: { // seek 刷新
-                        mProgressRoot.setVisibility(VISIBLE);
-                        break;
-                    }
-                    case 1001: { // seek 关闭
-                        mProgressRoot.setVisibility(GONE);
-                        break;
-                    }
-                    case 1002: { // 显示底部菜单
-                        mBottomRoot.setVisibility(VISIBLE);
-                        mTopRoot1.setVisibility(VISIBLE);
-                        mTopRoot2.setVisibility(VISIBLE);
-                        mPlayTitle.setVisibility(GONE);
-                        mBottomRoot.requestFocus();
-                        break;
-                    }
-                    case 1003: { // 隐藏底部菜单
-                        mBottomRoot.setVisibility(GONE);
-                        mTopRoot1.setVisibility(GONE);
-                        mTopRoot2.setVisibility(GONE);
-                        break;
-                    }
-                    case 1004: { // 设置速度
-                        if (isInPlaybackState()) {
-                            try {
-                                float speed = (float) mPlayerConfig.getDouble("sp");
-                                mControlWrapper.setSpeed(speed);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        } else
-                            mHandler.sendEmptyMessageDelayed(1004, 100);
-                        break;
-                    }
-                }
-            }
-        };
-    }
-
     SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
 
     SeekBar mSeekBar;
     TextView mCurrentTime;
@@ -122,25 +78,89 @@ public class VodController extends BaseController {
     Runnable myRunnable;
     int myHandleSeconds = 6000;//闲置多少毫秒秒关闭底栏  默认6秒
     private TextView mNetSpeed;
+    SimpleDateFormat timeFormat2 = new SimpleDateFormat("HH:mm:ss");
     private Runnable myRunnable2 = new Runnable() {
         @Override
         public void run() {
-            Date date = new Date();
-            mPlayPauseTime.setText(timeFormat.format(date));
+            showLastedTime();
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeed.setText(speed);
             mNetSpeed.setText(speed);
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height + " ]");
-
             mHandler.postDelayed(this, 1000);
         }
     };
 
+    public VodController(@NonNull @NotNull Context context) {
+        super(context);
+        mHandlerCallback = new HandlerCallback() {
+            @Override
+            public void callback(Message msg) {
+                switch (msg.what) {
+                    case 1000: { // seek 刷新
+                        mProgressRoot.setVisibility(VISIBLE);
+                        break;
+                    }
+                    case 1001: { // seek 关闭
+                        mProgressRoot.setVisibility(GONE);
+                        break;
+                    }
+                    case 1002: { // 显示底部菜单
+                        mBottomRoot.setVisibility(VISIBLE);
+                        mTopRoot1.setVisibility(VISIBLE);
+                        showLastedTime();
+                        mTopRoot2.setVisibility(VISIBLE);
+                        mPlayTitle.setVisibility(GONE);
+                        mBottomRoot.requestFocus();
+                        break;
+                    }
+                    case 1003: { // 隐藏底部菜单
+                        mBottomRoot.setVisibility(GONE);
+                        mTopRoot1.setVisibility(GONE);
+                        showLastedTime();
+                        mTopRoot2.setVisibility(GONE);
+                        break;
+                    }
+                    case 1004: { // 设置速度
+                        if (isInPlaybackState()) {
+                            try {
+                                float speed = (float) mPlayerConfig.getDouble("sp");
+                                mControlWrapper.setSpeed(speed);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else
+                            mHandler.sendEmptyMessageDelayed(1004, 100);
+                        break;
+                    }
+                }
+            }
+        };
+    }
 
+    //显示最新时间
+    private void showLastedTime() {
+        Date date = new Date();
+        if (mTopRoot1.getVisibility() == VISIBLE) {
+            mPlayPauseTime.setText(timeFormat.format(date));
+        } else {
+            mPlayPauseTime.setText(timeFormat2.format(date));
+        }
+    }
 
+    public void hidePlayPauseTime() {
+        if (mPlayPauseTime != null) {
+            mPlayPauseTime.setVisibility(GONE);
+        }
+    }
 
+    public void showPlayPauseTime() {
+        if (mPlayPauseTime != null) {
+            mPlayPauseTime.setVisibility(VISIBLE);
+        }
+    }
 
     @Override
     protected void initView() {
