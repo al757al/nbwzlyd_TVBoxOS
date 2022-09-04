@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,6 +105,10 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void init() {
         EventBus.getDefault().register(this);
+        String homeUrl = Hawk.get(HawkConfig.API_URL, "");
+        if (TextUtils.isEmpty(homeUrl)) {
+            Hawk.put(HawkConfig.API_URL, "https://gitea.com/Yoursmile/TVBox/raw/branch/main/XC.json");
+        }
         initView();
         initViewModel();
         useCacheConfig = true;
