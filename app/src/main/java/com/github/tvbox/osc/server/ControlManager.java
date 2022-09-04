@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.github.tvbox.osc.base.App;
+import com.github.tvbox.osc.bean.MoreSourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.receiver.SearchReceiver;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -82,9 +83,14 @@ public class ControlManager {
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PUSH_URL, url));
                 }
 
+
+
                 @Override
-                public void onMoreUrlReceive(String url) {
-                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_MORE_URL, url));
+                public void onStorePushReceive(String name, String url) {
+                    MoreSourceBean moreSourceBean = new MoreSourceBean();
+                    moreSourceBean.setSourceName(name);
+                    moreSourceBean.setSourceUrl(url);
+                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_STORE_PUSH, moreSourceBean));
                 }
             });
             try {

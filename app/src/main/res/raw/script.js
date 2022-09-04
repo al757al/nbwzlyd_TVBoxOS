@@ -10,6 +10,11 @@ function push() {
     doAction('push', { url: $('#push_url').val() });
 }
 
+function pushStore() {
+    doAction('pushStore', { pushStore_name: $('#diy_store_name').val(), pushStore_url: $('#diy_store_url').val()});
+}
+
+
 function doAction(action, kv) {
     kv['do'] = action;
     // alert(JSON.stringify(kv));

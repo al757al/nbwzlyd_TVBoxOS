@@ -2704,7 +2704,6 @@ page {
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
   flex-direction: column;
-  line-height: 1.4;
   min-height: 100%;
   box-sizing: border-box;
   background-color: #fff;

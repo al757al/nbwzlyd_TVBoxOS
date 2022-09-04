@@ -50,10 +50,13 @@ public class InputRequestProcess implements RequestProcess {
                             mDataReceiver.onPushReceived(params.get("url").trim());
                             break;
                         }
-                        case "more_url": {
-                            mDataReceiver.onMoreUrlReceive(params.get("url").trim());
+
+                        case "pushStore": {
+                            mDataReceiver.onStorePushReceive(params.get("pushStore_name").trim(),
+                                    params.get("pushStore_url").trim());
                             break;
                         }
+
                     }
                 }
                 return RemoteServer.createPlainTextResponse(NanoHTTPD.Response.Status.OK, "ok");

@@ -17,5 +17,5 @@ public interface DataReceiver {
 
     void onPushReceived(String url);
 
-    void onMoreUrlReceive(String url);
+    void onStorePushReceive(String name ,String url);
 }
