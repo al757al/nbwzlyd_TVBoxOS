@@ -270,7 +270,7 @@ $(function () {
 
 window.onload=function (){
     const url = window.location.href;
-    let imageUrl = url.split("raw")[0] + "raw/tuiguang.webp"
+    let imageUrl = url.split("raw")[0] + "raw/tuiguang.jpg"
     let tag0 = document.getElementById("tuiguang0")
     let tag1 = document.getElementById("tuiguang1")
     tag0.src = imageUrl
