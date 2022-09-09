@@ -265,14 +265,23 @@ $(function () {
     $('.weui-tabbar__item').on('click', function () {
         showPanel(parseInt($(this).attr('id').substr(3)));
     });
+
 });
 
-var url = window.location.href;
-if (url.indexOf('push.html') > 0)
-    showPanel(2);
-else if (url.indexOf('api.html') > 0)
-    showPanel(3);
-else if (url.indexOf('all.html') > 0)
-    showPanel(3);
-else
-    showPanel(1);
+window.onload=function (){
+    const url = window.location.href;
+    let imageUrl = url.split("raw")[0] + "raw/tuiguang.webp"
+    let tag0 = document.getElementById("tuiguang0")
+    let tag1 = document.getElementById("tuiguang1")
+    tag0.src = imageUrl
+    tag1.src = imageUrl
+}
+// const url = window.location.href;
+// if (url.indexOf('push.html') > 0)
+//     showPanel(2);
+// else if (url.indexOf('api.html') > 0)
+//     showPanel(3);
+// else if (url.indexOf('all.html') > 0)
+//     showPanel(3);
+// else
+//     showPanel(1);

@@ -56,7 +56,6 @@ body {
     vertical-align: middle;
 }
 
-.tuiguang {
+#tuiguang0,#tuiguang1 {
     width: 50%;
-    margin-left: 30px;
 }
