@@ -24,6 +24,7 @@ import com.github.tvbox.osc.player.thirdparty.MXPlayer;
 import com.github.tvbox.osc.player.thirdparty.ReexPlayer;
 import com.github.tvbox.osc.ui.adapter.ParseAdapter;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
@@ -73,6 +74,7 @@ public class VodController extends BaseController {
     TextView mPlayPauseTime;
     TextView mPlayLoadNetSpeed;
     TextView mVideoSize;
+    private boolean mIsFullScreen = false;
 
     Handler myHandle;
     Runnable myRunnable;
@@ -82,7 +84,7 @@ public class VodController extends BaseController {
     private Runnable myRunnable2 = new Runnable() {
         @Override
         public void run() {
-            showLastedTime();
+            handleLastedTime();
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeed.setText(speed);
             mNetSpeed.setText(speed);
@@ -110,7 +112,7 @@ public class VodController extends BaseController {
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
                         mTopRoot1.setVisibility(VISIBLE);
-                        showLastedTime();
+                        showNowTime(true);
                         mTopRoot2.setVisibility(VISIBLE);
                         mPlayTitle.setVisibility(GONE);
                         mBottomRoot.requestFocus();
@@ -119,7 +121,7 @@ public class VodController extends BaseController {
                     case 1003: { // 隐藏底部菜单
                         mBottomRoot.setVisibility(GONE);
                         mTopRoot1.setVisibility(GONE);
-                        showLastedTime();
+                        showNowTime(false);
                         mTopRoot2.setVisibility(GONE);
                         break;
                     }
@@ -140,8 +142,22 @@ public class VodController extends BaseController {
         };
     }
 
+    private void showNowTime(boolean forceShow) {
+        handleLastedTime();
+        if (forceShow) {
+            mPlayPauseTime.setVisibility(View.VISIBLE);
+            return;
+        }
+        boolean showTime = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
+        if (showTime) {
+            mPlayPauseTime.setVisibility(View.VISIBLE);
+        } else {
+            mPlayPauseTime.setVisibility(View.GONE);
+        }
+    }
+
     //显示最新时间
-    private void showLastedTime() {
+    private void handleLastedTime() {
         Date date = new Date();
         if (mTopRoot1.getVisibility() == VISIBLE) {
             mPlayPauseTime.setText(timeFormat.format(date));
@@ -150,15 +166,18 @@ public class VodController extends BaseController {
         }
     }
 
-    public void hidePlayPauseTime() {
-        if (mPlayPauseTime != null) {
-            mPlayPauseTime.setVisibility(GONE);
+    public void setIsFullScreen(boolean isFullScreen) {
+        mIsFullScreen = isFullScreen;
+        if (mPlayPauseTime == null) {
+            return;
         }
-    }
-
-    public void showPlayPauseTime() {
-        if (mPlayPauseTime != null) {
-            mPlayPauseTime.setVisibility(VISIBLE);
+        if (!isFullScreen) {
+            mPlayPauseTime.setVisibility(GONE);
+        } else {
+            boolean showTime = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
+            if (showTime) {
+                mPlayPauseTime.setVisibility(VISIBLE);
+            }
         }
     }
 
@@ -194,7 +213,7 @@ public class VodController extends BaseController {
         mNetSpeed = findViewById(R.id.tv_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
 
-        myHandle=new Handler();
+        myHandle = new Handler();
         myRunnable = new Runnable() {
             @Override
             public void run() {
@@ -726,7 +745,7 @@ public class VodController extends BaseController {
                     return true;
                 }
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
-            } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
+            } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_MENU) {
                 if (!isBottomVisible()) {
                     showBottom();
                     myHandle.postDelayed(myRunnable, myHandleSeconds);

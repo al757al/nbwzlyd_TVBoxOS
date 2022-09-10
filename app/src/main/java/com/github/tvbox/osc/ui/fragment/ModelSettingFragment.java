@@ -29,6 +29,7 @@ import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.HistoryHelper;
+import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.OkGoHelper;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.lzy.okgo.OkGo;
@@ -591,6 +592,21 @@ public class ModelSettingFragment extends BaseLazyFragment {
             new MoreMutiSourceDialog2(ModelSettingFragment.this.mContext).show();
 
         });
+        TextView textView = findViewById(R.id.sys_time_switch);
+        boolean isLastOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
+        setTimeSwitch(textView, isLastOpen);
+        textView.setOnClickListener(v -> {
+            setTimeSwitch(textView, !isLastOpen);
+            KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, !isLastOpen);
+        });
+    }
+
+    private void setTimeSwitch(TextView textView, boolean isLastOpen) {
+        if (isLastOpen) {
+            textView.setText("时间展示     开");
+        } else {
+            textView.setText("时间展示     关");
+        }
     }
 
     @Override

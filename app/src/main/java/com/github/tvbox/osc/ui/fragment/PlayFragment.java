@@ -121,7 +121,6 @@ public class PlayFragment extends BaseLazyFragment {
         mController.setCanChangePosition(true);
         mController.setEnableInNormal(true);
         mController.setGestureEnabled(true);
-        mController.hidePlayPauseTime();
         ProgressManager progressManager = new ProgressManager() {
             @Override
             public void saveProgress(String url, long progress) {

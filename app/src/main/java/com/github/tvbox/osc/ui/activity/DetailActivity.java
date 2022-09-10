@@ -356,17 +356,6 @@ public class DetailActivity extends BaseActivity {
         setLoadSir(llLayout);
     }
 
-    private void hideTime() {
-        if (playFragment.mController != null) {
-            playFragment.mController.hidePlayPauseTime();
-        }
-    }
-
-    private void showTime() {
-        if (playFragment.mController != null) {
-            playFragment.mController.showPlayPauseTime();
-        }
-    }
 
     private List<Runnable> pauseRunnable = null;
 
@@ -835,10 +824,9 @@ public class DetailActivity extends BaseActivity {
         tvSort.setFocusable(!fullWindows);
         tvCollect.setFocusable(!fullWindows);
         tvQuickSearch.setFocusable(!fullWindows);
-        if (fullWindows) {
-            showTime();
-        } else {
-            hideTime();
+
+        if (playFragment.mController != null) {
+            playFragment.mController.setIsFullScreen(fullWindows);
         }
     }
 }
