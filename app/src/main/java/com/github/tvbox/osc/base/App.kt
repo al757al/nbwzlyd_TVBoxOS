@@ -1,5 +1,6 @@
 package com.github.tvbox.osc.base
 
+import android.text.TextUtils
 import androidx.multidex.MultiDexApplication
 import com.github.tvbox.osc.startup.DatabaseTask
 import com.github.tvbox.osc.startup.PlayerTask
@@ -19,7 +20,7 @@ class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-//        initParams()
+        initParams()
         val time = System.currentTimeMillis()
         StartupManager.Builder()
             .addStartup(UITask())
@@ -54,9 +55,15 @@ class App : MultiDexApplication() {
     private fun initParams() {
         // Hawk
         Hawk.init(this).build()
-        Hawk.put(HawkConfig.DEBUG_OPEN, false)
         if (!Hawk.contains(HawkConfig.PLAY_TYPE)) {
             Hawk.put(HawkConfig.PLAY_TYPE, 1)
+        }
+        val homeUrl = Hawk.get(HawkConfig.API_URL, "")
+        if (TextUtils.isEmpty(homeUrl)) {
+            Hawk.put(
+                HawkConfig.API_URL,
+                "https://gitea.com/Yoursmile/TVBox/raw/branch/main/XC.json"
+            )
         }
     }
 
