@@ -51,7 +51,7 @@ android {
             ndk {
                 abiFilters 'armeabi-v7a'
             }
-            debuggable true
+            debuggable false
         }
     }
 
