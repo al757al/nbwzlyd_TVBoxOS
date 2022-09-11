@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply from: 'and_res_guard.gradle'
 android {
     compileSdkVersion 30
 
@@ -21,6 +22,15 @@ android {
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
+    signingConfigs {
+        release {
+            keyAlias 'TVBOX'
+            keyPassword '1378TVBOX'
+            storeFile file('/Users/liyaodong/Documents/androidTV/TVBOX_KEY_STORE')
+            storePassword '1378TVBOX'
+        }
+    }
+
 
     buildTypes {
         debug {
@@ -34,10 +44,14 @@ android {
         release {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             minifyEnabled true
-
+            //是否移除无用资源
+            zipAlignEnabled true
+            //混淆的配置文件
+            signingConfig signingConfigs.release
             ndk {
                 abiFilters 'armeabi-v7a'
             }
+            debuggable true
         }
     }
 
