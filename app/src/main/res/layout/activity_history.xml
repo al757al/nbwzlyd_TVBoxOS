@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
@@ -43,6 +44,7 @@
             android:text="确定键删除当前选中记录"
             android:textColor="@android:color/white"
             android:textSize="@dimen/ts_24"
+            tools:visibility="visible"
             android:visibility="gone" />
 
         <TextView
@@ -56,6 +58,21 @@
             android:gravity="center"
             android:padding="@dimen/vs_10"
             android:text="删除记录"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ts_24" />
+
+        <TextView
+            android:id="@+id/tvDelAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/vs_10"
+            android:background="@drawable/shape_user_focus"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:padding="@dimen/vs_10"
+            android:text="一键删除所有记录"
             android:textColor="@android:color/white"
             android:textSize="@dimen/ts_24" />
     </LinearLayout>

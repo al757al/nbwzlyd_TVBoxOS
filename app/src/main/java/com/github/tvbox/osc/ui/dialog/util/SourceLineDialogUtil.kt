@@ -51,7 +51,7 @@ class SourceLineDialogUtil(private val context: Context) {
                     super.onError(response)
                     Toast.makeText(
                         context,
-                        "接口请求失败",
+                        "接口请求失败${response?.exception?.message}",
                         Toast.LENGTH_LONG
                     ).show()
                 }

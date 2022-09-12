@@ -23,6 +23,7 @@ import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
+import com.github.tvbox.osc.ui.dialog.SourceStoreDialog2;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.google.gson.Gson;
@@ -110,6 +111,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvSetting.setOnClickListener(this);
         tvHistory.setOnClickListener(this);
         tvPush.setOnClickListener(this);
+        findViewById(R.id.changeStore).setOnClickListener(this);
         tvCollect.setOnClickListener(this);
         tvLive.setOnFocusChangeListener(focusChangeListener);
         tvSearch.setOnFocusChangeListener(focusChangeListener);
@@ -129,17 +131,17 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
                     bundle.putString("sourceKey", vod.sourceKey);
-                    if(Hawk.get(HawkConfig.HOME_REC, 0)==1 && Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
+                    if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
                         bundle.putString("title", vod.name);
                         jumpActivity(FastSearchActivity.class, bundle);
-                    }else {
+                    } else {
                         jumpActivity(DetailActivity.class, bundle);
                     }
                 } else {
                     Intent newIntent;
-                    if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
+                    if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
                         newIntent = new Intent(mContext, FastSearchActivity.class);
-                    }else {
+                    } else {
                         newIntent = new Intent(mContext, SearchActivity.class);
                     }
                     newIntent.putExtra("title", vod.name);
@@ -260,6 +262,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             jumpActivity(PushActivity.class);
         } else if (v.getId() == R.id.tvFavorite) {
             jumpActivity(CollectActivity.class);
+        } else if (v.getId() == R.id.changeStore) {
+            new SourceStoreDialog2(getActivity()).show();
         }
     }
 

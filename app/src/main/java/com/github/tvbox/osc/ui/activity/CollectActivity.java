@@ -71,6 +71,7 @@ public class CollectActivity extends BaseActivity {
                 if (direction == View.FOCUS_UP) {
                     tvDel.setFocusable(true);
                     tvDel.requestFocus();
+
                 }
                 return false;
             }

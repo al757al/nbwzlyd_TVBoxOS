@@ -932,6 +932,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/vs_20"
             android:text="时间展示     关"
+            android:focusable="true"
             android:textColor="@android:color/white"
             android:textSize="@dimen/ts_24" />
     </LinearLayout>

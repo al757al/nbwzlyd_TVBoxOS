@@ -5,7 +5,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        applicationId 'com.github.tvbox.osd_1'
+        applicationId 'com.mygithub0.tvbox0.osd_1'
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
@@ -113,5 +113,7 @@ dependencies {
     implementation 'com.tencent:mmkv:1.2.14'
 //    implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'io.github.idisfkj:android-startup:1.0.7'
+    implementation 'org.jsoup:jsoup:1.14.1'
+
 
 }

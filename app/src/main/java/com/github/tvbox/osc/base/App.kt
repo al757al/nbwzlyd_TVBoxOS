@@ -62,7 +62,7 @@ class App : MultiDexApplication() {
         if (TextUtils.isEmpty(homeUrl)) {
             Hawk.put(
                 HawkConfig.API_URL,
-                "https://gitea.com/Yoursmile/TVBox/raw/branch/main/XC.json"
+                "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/xiaopingguo/xiaopingguo.json"
             )
         }
     }

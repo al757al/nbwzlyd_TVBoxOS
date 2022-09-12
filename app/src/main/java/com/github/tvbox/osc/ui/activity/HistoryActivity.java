@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.base.BaseActivity;
@@ -56,6 +57,7 @@ public class HistoryActivity extends BaseActivity {
         EventBus.getDefault().register(this);
         tvDel = findViewById(R.id.tvDel);
         tvDelTip = findViewById(R.id.tvDelTip);
+        TextView tvDelAll = findViewById(R.id.tvDelAll);
         mGridView = findViewById(R.id.mGridView);
         mGridView.setHasFixedSize(true);
         mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, isBaseOnWidth() ? 5 : 6));
@@ -67,15 +69,23 @@ public class HistoryActivity extends BaseActivity {
                 toggleDelMode();
             }
         });
-        mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
-            @Override
-            public boolean onInBorderKeyEvent(int direction, View focused) {
-                if (direction == View.FOCUS_UP) {
-                    tvDel.setFocusable(true);
-                    tvDel.requestFocus();
-                }
-                return false;
+        tvDelAll.setOnClickListener(v -> {
+            List<VodInfo> data = historyAdapter.getData();
+            for (VodInfo datum : data) {
+                RoomDataManger.deleteVodRecord(datum.sourceKey, datum);
             }
+            data.clear();
+            historyAdapter.notifyDataSetChanged();
+            Toast.makeText(mContext, "删除成功~", Toast.LENGTH_SHORT).show();
+        });
+        mGridView.setOnInBorderKeyEventListener((direction, focused) -> {
+            if (direction == View.FOCUS_UP) {
+                tvDel.setFocusable(true);
+                tvDel.requestFocus();
+                tvDelAll.setFocusable(true);
+                tvDelAll.requestFocus();
+            }
+            return false;
         });
         mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override

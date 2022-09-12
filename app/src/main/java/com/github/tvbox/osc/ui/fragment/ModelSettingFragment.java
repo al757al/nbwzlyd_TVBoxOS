@@ -22,8 +22,8 @@ import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.AboutDialog;
 import com.github.tvbox.osc.ui.dialog.ApiDialog;
 import com.github.tvbox.osc.ui.dialog.BackupDialog;
-import com.github.tvbox.osc.ui.dialog.MoreMutiSourceDialog2;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
+import com.github.tvbox.osc.ui.dialog.SourceStoreDialog2;
 import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
@@ -69,6 +69,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvSearchView;
     private TextView tvShowPreviewText;
     private TextView tvFastSearchText;
+
+    boolean isLastOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
+
 
     public static ModelSettingFragment newInstance() {
         return new ModelSettingFragment().setArguments();
@@ -579,7 +582,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             }
         });
         findViewById(R.id.more_source).setOnClickListener(v -> {
-            new SourceLineDialogUtil(ModelSettingFragment.this.mContext).
+            new SourceLineDialogUtil(mActivity).
                     getData(() -> {
                         if (getActivity() != null) {
                             getActivity().onBackPressed();
@@ -589,15 +592,15 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
         });
         findViewById(R.id.default_more_source).setOnClickListener(v -> {
-            new MoreMutiSourceDialog2(ModelSettingFragment.this.mContext).show();
+            new SourceStoreDialog2(mActivity).show();
 
         });
         TextView textView = findViewById(R.id.sys_time_switch);
-        boolean isLastOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
         setTimeSwitch(textView, isLastOpen);
         textView.setOnClickListener(v -> {
-            setTimeSwitch(textView, !isLastOpen);
-            KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, !isLastOpen);
+            isLastOpen = !isLastOpen;
+            setTimeSwitch(textView, isLastOpen);
+            KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isLastOpen);
         });
     }
 
