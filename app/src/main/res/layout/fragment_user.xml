@@ -6,7 +6,7 @@
     android:clipToPadding="false"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/vs_40"
-    android:paddingTop="@dimen/vs_10">
+    android:paddingTop="@dimen/vs_20">
 
     <include
         android:layout_width="match_parent"
@@ -296,8 +296,8 @@
         android:clipChildren="false"
         android:clipToPadding="false"
         android:orientation="horizontal"
-        android:paddingTop="@dimen/vs_20"
-        app:tv_horizontalSpacingWithMargins="@dimen/vs_10"
+        android:layout_marginTop="@dimen/vs_20"
+        app:tv_horizontalSpacingWithMargins="@dimen/vs_5"
         app:tv_selectedItemIsCentered="true"
         app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
 
