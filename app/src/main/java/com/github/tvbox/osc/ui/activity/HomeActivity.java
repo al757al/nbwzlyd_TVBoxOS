@@ -49,6 +49,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
+import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -201,6 +202,12 @@ public class HomeActivity extends BaseActivity {
             }
         });
         setLoadSir(this.contentLayout);
+        findViewById(R.id.tvLive).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "hhhhh", Toast.LENGTH_SHORT).show();
+            }
+        });
         //mHandler.postDelayed(mFindFocus, 500);
     }
 
@@ -461,11 +468,11 @@ public class HomeActivity extends BaseActivity {
                 if (sortFocused != currentSelected) {
                     currentSelected = sortFocused;
                     mViewPager.setCurrentItem(sortFocused, false);
-                    if (sortFocused == 0) {
-                        changeTop(false);
-                    } else {
-                        changeTop(true);
-                    }
+//                    if (sortFocused == 0) {
+//                        changeTop(false);
+//                    } else {
+//                        changeTop(true);
+//                    }
                 }
             }
         }

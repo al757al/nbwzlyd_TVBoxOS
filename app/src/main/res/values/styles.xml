@@ -39,4 +39,16 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+
+    <declare-styleable name="DrawableTextView">
+        <attr name="leftDrawableWidth" format="dimension" />
+        <attr name="leftDrawableHeight" format="dimension" />
+        <attr name="rightDrawableWidth" format="dimension" />
+        <attr name="rightDrawableHeight" format="dimension" />
+        <attr name="topDrawableWidth" format="dimension" />
+        <attr name="topDrawableHeight" format="dimension" />
+        <attr name="bottomDrawableWidth" format="dimension" />
+        <attr name="bottomDrawableHeight" format="dimension" />
+    </declare-styleable>
+
 </resources>

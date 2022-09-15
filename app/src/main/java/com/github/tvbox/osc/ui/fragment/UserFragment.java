@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -36,6 +37,7 @@ import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 
+import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -50,12 +52,12 @@ import java.util.List;
  * @description:
  */
 public class UserFragment extends BaseLazyFragment implements View.OnClickListener {
-    private LinearLayout tvLive;
-    private LinearLayout tvSearch;
-    private LinearLayout tvSetting;
-    private LinearLayout tvHistory;
-    private LinearLayout tvCollect;
-    private LinearLayout tvPush;
+    private TextView tvLive;
+    private TextView tvSearch;
+    private TextView tvSetting;
+    private TextView tvHistory;
+    private TextView tvCollect;
+    private TextView tvPush;
     private HomeHotVodAdapter homeHotVodAdapter;
     private List<Movie.Video> homeSourceRec;
 
@@ -166,6 +168,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
             }
         });
+        tvHotList.setLayoutManager(new V7GridLayoutManager(getContext(),5));
         tvHotList.setAdapter(homeHotVodAdapter);
 
         initHomeHotVod(homeHotVodAdapter);
