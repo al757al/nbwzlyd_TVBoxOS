@@ -78,6 +78,9 @@ public class ApiConfig {
         }
         return instance;
     }
+    public static void release(){
+        instance = null;
+    }
 
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
         String apiUrl = Hawk.get(HawkConfig.API_URL, "");

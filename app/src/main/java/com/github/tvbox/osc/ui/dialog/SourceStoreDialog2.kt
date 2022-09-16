@@ -1,11 +1,13 @@
 package com.github.tvbox.osc.ui.dialog
 
 import android.app.Activity
+import android.view.Gravity
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.blankj.utilcode.util.ToastUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.github.tvbox.osc.R
@@ -13,6 +15,7 @@ import com.github.tvbox.osc.bean.MoreSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
 import com.github.tvbox.osc.ext.removeFirstIf
 import com.github.tvbox.osc.server.ControlManager
+import com.github.tvbox.osc.ui.activity.HomeActivity
 import com.github.tvbox.osc.ui.activity.SettingActivity
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil
 import com.github.tvbox.osc.ui.tv.QRCodeGen
@@ -275,6 +278,9 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
         SourceLineDialogUtil(activity).getData {
             if (activity is SettingActivity) {
                 activity.onBackPressed()
+            }
+            if (activity is HomeActivity){
+                activity.forceRestartHomeActivity()
             }
 
         }

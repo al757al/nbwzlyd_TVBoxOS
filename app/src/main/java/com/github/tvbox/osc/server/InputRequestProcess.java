@@ -1,5 +1,9 @@
 package com.github.tvbox.osc.server;
 
+import android.view.Gravity;
+
+import com.blankj.utilcode.util.ToastUtils;
+
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -52,8 +56,12 @@ public class InputRequestProcess implements RequestProcess {
                         }
 
                         case "pushStore": {
-                            mDataReceiver.onStorePushReceive(params.get("pushStore_name").trim(),
-                                    params.get("pushStore_url").trim());
+                            String name = params.get("pushStore_name");
+                            String url = params.get("pushStore_url");
+                            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setDurationIsLong(true)
+                                    .show("收到了推送地址-->" + url);
+                            mDataReceiver.onStorePushReceive(name.trim(),
+                                    url.trim());
                             break;
                         }
 
