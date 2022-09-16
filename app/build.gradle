@@ -11,6 +11,10 @@ android {
         versionCode 2
         versionName '1.0.4'
         multiDexEnabled true
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
         //设置room的Schema的位置
         javaCompileOptions {
             annotationProcessorOptions {
@@ -114,6 +118,8 @@ dependencies {
 //    implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'io.github.idisfkj:android-startup:1.0.7'
     implementation 'org.jsoup:jsoup:1.14.1'
+    implementation 'com.google.android:flexbox:2.0.1'
+    implementation 'com.tencent.bugly:crashreport:latest.release'
 
 
 }

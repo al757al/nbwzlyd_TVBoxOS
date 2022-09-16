@@ -4,6 +4,7 @@ import android.content.Context
 import com.github.tvbox.osc.data.AppDataManager
 import com.rousetime.android_startup.AndroidStartup
 import com.rousetime.android_startup.executor.ExecutorManager
+import com.tencent.bugly.crashreport.CrashReport
 import com.tencent.mmkv.MMKV
 import java.util.concurrent.Executor
 

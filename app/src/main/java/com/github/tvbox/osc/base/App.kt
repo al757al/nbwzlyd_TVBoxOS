@@ -1,5 +1,7 @@
 package com.github.tvbox.osc.base
 
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import androidx.multidex.MultiDexApplication
 import com.github.tvbox.osc.startup.DatabaseTask
@@ -10,6 +12,7 @@ import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.LOG
 import com.orhanobut.hawk.Hawk
 import com.rousetime.android_startup.StartupManager
+import com.tencent.bugly.crashreport.CrashReport
 
 /**
  * @author pj567
@@ -54,6 +57,7 @@ class App : MultiDexApplication() {
 
     private fun initParams() {
         // Hawk
+        CrashReport.initCrashReport(this, "cb38e2920c", false);
         Hawk.init(this).build()
         if (!Hawk.contains(HawkConfig.PLAY_TYPE)) {
             Hawk.put(HawkConfig.PLAY_TYPE, 1)

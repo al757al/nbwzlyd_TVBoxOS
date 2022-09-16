@@ -44,6 +44,9 @@
 -keep public class * extends android.view.View
 -keep public class com.android.vending.licensing.ILicensingService
 
+#bugly
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}
 # 保留support下的所有类及其内部类
 -keep class android.support.** {*;}
 # 保留继承的
