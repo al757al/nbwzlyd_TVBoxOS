@@ -160,8 +160,10 @@ public class VodController extends BaseController {
     private void handleLastedTime() {
         Date date = new Date();
         if (mTopRoot1.getVisibility() == VISIBLE) {
+            mPlayPauseTime.setAlpha(1);
             mPlayPauseTime.setText(timeFormat.format(date));
         } else {
+            mPlayPauseTime.setAlpha(0.6f);
             mPlayPauseTime.setText(timeFormat2.format(date));
         }
     }

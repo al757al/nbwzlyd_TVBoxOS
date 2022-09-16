@@ -64,6 +64,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -85,13 +86,12 @@ public class HomeActivity extends BaseActivity {
     public View sortFocusView = null;
     private Handler mHandler = new Handler();
     private long mExitTime = 0;
-    private Runnable mRunnable = new Runnable() {
+    SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss", Locale.CHINA);
+    private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
         @Override
         public void run() {
             Date date = new Date();
-            @SuppressLint("SimpleDateFormat")
-            SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
             tvDate.setText(timeFormat.format(date));
             mHandler.postDelayed(this, 1000);
         }

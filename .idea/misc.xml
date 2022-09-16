@@ -40,7 +40,7 @@
         <entry key="app/src/main/res/layout/dialog_api_history.xml" value="0.12059620596205962" />
         <entry key="app/src/main/res/layout/dialog_select.xml" value="0.13504968383017163" />
         <entry key="app/src/main/res/layout/dialog_tip.xml" value="0.12579042457091238" />
-        <entry key="app/src/main/res/layout/fragment_model.xml" value="0.27629547119140624" />
+        <entry key="app/src/main/res/layout/fragment_model.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_user.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_dialog_api_history.xml" value="0.1120144534778681" />
         <entry key="app/src/main/res/layout/item_dialog_select.xml" value="0.165" />
