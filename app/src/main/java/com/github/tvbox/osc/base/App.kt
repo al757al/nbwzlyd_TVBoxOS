@@ -1,8 +1,10 @@
 package com.github.tvbox.osc.base
 
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
+import androidx.multidex.BuildConfig
 import androidx.multidex.MultiDexApplication
 import com.github.tvbox.osc.startup.DatabaseTask
 import com.github.tvbox.osc.startup.PlayerTask
@@ -13,6 +15,7 @@ import com.github.tvbox.osc.util.LOG
 import com.orhanobut.hawk.Hawk
 import com.rousetime.android_startup.StartupManager
 import com.tencent.bugly.crashreport.CrashReport
+import leakcanary.LeakCanary
 
 /**
  * @author pj567
