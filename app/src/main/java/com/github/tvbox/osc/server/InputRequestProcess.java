@@ -58,7 +58,7 @@ public class InputRequestProcess implements RequestProcess {
                         case "pushStore": {
                             String name = params.get("pushStore_name");
                             String url = params.get("pushStore_url");
-                            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setDurationIsLong(true)
+                            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setDurationIsLong(false)
                                     .show("收到了推送地址-->" + url);
                             mDataReceiver.onStorePushReceive(name.trim(),
                                     url.trim());
