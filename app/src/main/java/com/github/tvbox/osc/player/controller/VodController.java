@@ -77,6 +77,7 @@ public class VodController extends BaseController {
     TextView mVideoSize;
     private boolean mIsFullScreen = false;
     public SimpleSubtitleView mSubtitleView;
+    public TextView mZimuBtn;
 
     Handler myHandle;
     Runnable myRunnable;
@@ -217,6 +218,7 @@ public class VodController extends BaseController {
         mNetSpeed = findViewById(R.id.tv_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
         mSubtitleView = findViewById(R.id.subtitle_view);
+        mZimuBtn = findViewById(R.id.zimu_select);
 
         myHandle = new Handler();
         myRunnable = new Runnable() {
@@ -525,6 +527,13 @@ public class VodController extends BaseController {
                 updatePlayerCfgView();
             }
         });
+        mZimuBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.selectSubtitle();
+                hideBottom();
+            }
+        });
     }
 
     @Override
@@ -588,6 +597,8 @@ public class VodController extends BaseController {
         void replay(boolean replay);
 
         void errReplay();
+
+        void selectSubtitle();
     }
 
     public void setListener(VodControlListener listener) {
