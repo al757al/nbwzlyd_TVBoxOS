@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
+import com.blankj.utilcode.util.ToastUtils
 import com.github.tvbox.osc.bean.MoreSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
 import com.github.tvbox.osc.ext.findFirst
@@ -36,15 +37,17 @@ class SourceLineDialogUtil(private val context: Context) {
     }
 
     fun getData(onSelect: () -> Unit) {
-        OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
-            .cacheTime(10 * 60 * 1000).execute(object : StringCallback() {
+        OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
+            .cacheTime(10 * 60 * 60 * 1000).execute(object : StringCallback() {
                 override fun onSuccess(response: Response<String>?) {
                     inflateData(response, onSelect)
+                    ToastUtils.showShort("我是接口来的")
                 }
 
                 override fun onCacheSuccess(response: Response<String>?) {
                     super.onCacheSuccess(response)
                     inflateData(response, onSelect)
+                    ToastUtils.showShort("我是缓存来的")
                 }
 
                 override fun onError(response: Response<String>?) {
