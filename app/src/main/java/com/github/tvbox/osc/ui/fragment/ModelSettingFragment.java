@@ -591,7 +591,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     });
 
         });
-        findViewById(R.id.default_more_source).setOnClickListener(v -> {
+        findViewById(R.id.default_more_store).setOnClickListener(v -> {
             new SourceStoreDialog2(mActivity).show();
 
         });

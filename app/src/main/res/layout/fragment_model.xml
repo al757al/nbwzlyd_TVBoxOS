@@ -852,7 +852,7 @@
 
 
             <LinearLayout
-                android:id="@+id/default_more_source"
+                android:id="@+id/default_more_store"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/vs_60"
                 android:layout_marginStart="@dimen/vs_5"
