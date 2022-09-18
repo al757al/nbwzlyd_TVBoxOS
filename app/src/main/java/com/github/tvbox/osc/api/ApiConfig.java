@@ -17,6 +17,7 @@ import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.MD5;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -217,7 +218,6 @@ public class ApiConfig {
     }
 
     private void parseJson(String apiUrl, File f) throws Throwable {
-        System.out.println("从本地缓存加载" + f.getAbsolutePath());
         BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         StringBuilder sb = new StringBuilder();
         String s = "";
@@ -292,25 +292,42 @@ public class ApiConfig {
         // 直播源
         liveChannelGroupList.clear();           //修复从后台切换重复加载频道列表
         try {
-            String lives = infoJson.get("lives").getAsJsonArray().toString();
-            int index = lives.indexOf("proxy://");
+            //https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt
+            boolean isCustomLiveUrl;
+            String liveSource = KVStorage.getString(HawkConfig.LIVE_SOURCE_URL_CURRENT, "");
+            if (TextUtils.isEmpty(liveSource)) {//自定义直播地址是空，走线上
+                isCustomLiveUrl = false;
+                liveSource = infoJson.get("lives").getAsJsonArray().toString();
+            } else {
+                isCustomLiveUrl = true;
+                liveSource = "proxy://do=live&type=txt&ext=" + liveSource;
+            }
+            int index = liveSource.indexOf("proxy://");
             if (index != -1) {
-                int endIndex = lives.lastIndexOf("\"");
-                String url = lives.substring(index, endIndex);
-                url = DefaultConfig.checkReplaceProxy(url);
-
+                String realUrl;
+                if (isCustomLiveUrl) {
+                    realUrl = DefaultConfig.checkReplaceProxy(liveSource);
+                } else {
+                    int endIndex = liveSource.lastIndexOf("\"");
+                    realUrl = DefaultConfig.checkReplaceProxy(liveSource.substring(index, endIndex));
+                }
                 //clan
-                String extUrl = Uri.parse(url).getQueryParameter("ext");
+                String extUrl = Uri.parse(realUrl).getQueryParameter("ext");
                 if (extUrl != null && !extUrl.isEmpty()) {
-                    String extUrlFix = new String(Base64.decode(extUrl, Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
+                    String extUrlFix = "";
+                    if (extUrl.startsWith("http") || realUrl.startsWith("https")) {
+                        extUrlFix = extUrl;
+                    } else {
+                        extUrlFix = new String(Base64.decode(extUrl, Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
+                    }
                     if (extUrlFix.startsWith("clan://")) {
                         extUrlFix = clanContentFix(clanToAddress(apiUrl), extUrlFix);
                         extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
-                        url = url.replace(extUrl, extUrlFix);
+                        realUrl = realUrl.replace(extUrl, extUrlFix);
                     }
                 }
                 LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
-                liveChannelGroup.setGroupName(url);
+                liveChannelGroup.setGroupName(realUrl);
                 liveChannelGroupList.add(liveChannelGroup);
             } else {
                 loadLives(infoJson.get("lives").getAsJsonArray());
