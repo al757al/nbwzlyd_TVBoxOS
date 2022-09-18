@@ -347,7 +347,7 @@ public class PlayFragment extends BaseLazyFragment {
                 mVodPlayerCfg.put("pl", Hawk.get(HawkConfig.PLAY_TYPE, 1));
             }
             if (!mVodPlayerCfg.has("pr")) {
-                mVodPlayerCfg.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 1));
+                mVodPlayerCfg.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 2);
             }
             if (!mVodPlayerCfg.has("ijk")) {
                 mVodPlayerCfg.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, ""));
