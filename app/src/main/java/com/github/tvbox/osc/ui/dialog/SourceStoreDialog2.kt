@@ -338,8 +338,10 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
         when (refreshEvent.type) {
             RefreshEvent.TYPE_STORE_PUSH -> {
                 val moreSourceBean = refreshEvent.obj as MoreSourceBean
+                ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setDurationIsLong(false)
+                    .show("收到了推送地址-->${moreSourceBean.sourceUrl}")
                 mSourceNameEdit?.setText(moreSourceBean.sourceName)
-                mSourceUrlEdit?.setText(moreSourceBean.sourceUrl)
+                findViewById<EditText>(R.id.input_source_url)?.setText(moreSourceBean.sourceUrl)
             }
         }
 

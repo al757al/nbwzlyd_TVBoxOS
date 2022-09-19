@@ -41,13 +41,11 @@ class SourceLineDialogUtil(private val context: Context) {
             .cacheTime(10 * 60 * 60 * 1000).execute(object : StringCallback() {
                 override fun onSuccess(response: Response<String>?) {
                     inflateData(response, onSelect)
-                    ToastUtils.showShort("我是接口来的")
                 }
 
                 override fun onCacheSuccess(response: Response<String>?) {
                     super.onCacheSuccess(response)
                     inflateData(response, onSelect)
-                    ToastUtils.showShort("我是缓存来的")
                 }
 
                 override fun onError(response: Response<String>?) {

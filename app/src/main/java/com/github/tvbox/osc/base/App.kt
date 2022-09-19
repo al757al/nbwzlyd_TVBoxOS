@@ -15,7 +15,6 @@ import com.github.tvbox.osc.util.LOG
 import com.orhanobut.hawk.Hawk
 import com.rousetime.android_startup.StartupManager
 import com.tencent.bugly.crashreport.CrashReport
-import leakcanary.LeakCanary
 
 /**
  * @author pj567
