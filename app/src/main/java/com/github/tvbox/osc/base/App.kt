@@ -1,10 +1,6 @@
 package com.github.tvbox.osc.base
 
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.text.TextUtils
-import androidx.multidex.BuildConfig
 import androidx.multidex.MultiDexApplication
 import com.github.tvbox.osc.startup.DatabaseTask
 import com.github.tvbox.osc.startup.PlayerTask
@@ -66,10 +62,10 @@ class App : MultiDexApplication() {
         }
         val homeUrl = Hawk.get(HawkConfig.API_URL, "")
         if (TextUtils.isEmpty(homeUrl)) {
-            Hawk.put(
-                HawkConfig.API_URL,
-                "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/xiaopingguo/xiaopingguo.json"
-            )
+//            Hawk.put(
+//                HawkConfig.API_URL,
+//                "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/xiaopingguo/xiaopingguo.json"
+//            )
         }
         Hawk.put(HawkConfig.IJK_CODEC, "硬解码");
     }

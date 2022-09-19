@@ -126,24 +126,7 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
                     .show()
                 return@setOnClickListener
             }
-            if (sourceUrl0.startsWith("http") || sourceUrl0.startsWith("https")) {
-                val saveList =
-                    KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
-                val sourceBean = MoreSourceBean().apply {
-                    this.sourceUrl = sourceUrl0
-                    this.sourceName = sourceName0.ifEmpty { "自用仓库" + saveList.size }
-                    this.isServer = false
-                }
-                mAdapter.addData(0, sourceBean)
-                mRecyclerView?.scrollToPosition(0)
-                saveList.add(sourceBean)
-                KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, saveList)
-                mSourceUrlEdit?.setText("")
-                mSourceNameEdit?.setText("")
-            } else {
-                Toast.makeText(this@SourceStoreDialog2.context, "请输入仓库地址！", Toast.LENGTH_LONG)
-                    .show()
-            }
+            saveCustomSourceBean(sourceUrl0, sourceName0)
 
         }
         mAdapter.setOnItemChildClickListener { adapter, view, position ->
@@ -158,7 +141,29 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
             }
         }
         refeshQRcode()
-        getMutiSource()
+//        getMutiSource()
+        inflateCustomSource(mutableListOf())
+    }
+
+    private fun saveCustomSourceBean(sourceUrl0: String, sourceName0: String) {
+        if (sourceUrl0.startsWith("http") || sourceUrl0.startsWith("https")) {
+            val saveList =
+                KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
+            val sourceBean = MoreSourceBean().apply {
+                this.sourceUrl = sourceUrl0
+                this.sourceName = sourceName0.ifEmpty { "自用仓库" + saveList.size }
+                this.isServer = false
+            }
+            mAdapter.addData(0, sourceBean)
+            mRecyclerView?.scrollToPosition(0)
+            saveList.add(0, sourceBean)
+            KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, saveList)
+            mSourceUrlEdit?.setText("")
+            mSourceNameEdit?.setText("")
+        } else {
+            Toast.makeText(this@SourceStoreDialog2.context, "请输入仓库地址！", Toast.LENGTH_LONG)
+                .show()
+        }
     }
 
 
@@ -215,32 +220,36 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
                 it.value
             }.toMutableList()
 
-            val custom =
-                KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
-            if (custom.isNotEmpty()) {
-                result.addAll(0, custom)
-            }
-            val lastSelectBean =
-                KVStorage.getBean(
-                    HawkConfig.CUSTOM_STORE_HOUSE_SELECTED,
-                    MoreSourceBean::class.java
-                )
-            var index = 0
-            result.forEach {
-                if (it.sourceUrl != lastSelectBean?.sourceUrl) {
-                    it.isSelected = false
-                } else {
-                    it.isSelected = true
-                    index = result.indexOf(it)
-                }
-            }
-            mAdapter.setNewData(result)
-            mRecyclerView?.post {
-                mRecyclerView?.scrollToPosition(index)
-            }
+            inflateCustomSource(result)
 
         } catch (e: Exception) {
             Toast.makeText(context, "JSON解析失败${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun inflateCustomSource(result: MutableList<MoreSourceBean>) {
+        val custom =
+            KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
+        if (custom.isNotEmpty()) {
+            result.addAll(0, custom)
+        }
+        val lastSelectBean =
+            KVStorage.getBean(
+                HawkConfig.CUSTOM_STORE_HOUSE_SELECTED,
+                MoreSourceBean::class.java
+            )
+        var index = 0
+        result.forEach {
+            if (it.sourceUrl != lastSelectBean?.sourceUrl) {
+                it.isSelected = false
+            } else {
+                it.isSelected = true
+                index = result.indexOf(it)
+            }
+        }
+        mAdapter.setNewData(result)
+        mRecyclerView?.post {
+            mRecyclerView?.scrollToPosition(index)
         }
     }
 
@@ -340,8 +349,9 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
                 val moreSourceBean = refreshEvent.obj as MoreSourceBean
                 ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setDurationIsLong(false)
                     .show("收到了推送地址-->${moreSourceBean.sourceUrl}")
-                mSourceNameEdit?.setText(moreSourceBean.sourceName)
-                findViewById<EditText>(R.id.input_source_url)?.setText(moreSourceBean.sourceUrl)
+                saveCustomSourceBean(moreSourceBean.sourceUrl, moreSourceBean.sourceName)
+//                mSourceNameEdit?.setText(moreSourceBean.sourceName)
+//                findViewById<EditText>(R.id.input_source_url)?.setText(moreSourceBean.sourceUrl)
             }
         }
 

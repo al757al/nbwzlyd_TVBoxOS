@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipChildren="false"
+    android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
 
@@ -13,6 +12,7 @@
         android:layout_width="@dimen/vs_120"
         android:layout_height="@dimen/vs_100"
         android:layout_gravity="center"
+        android:layout_margin="@dimen/vs_10"
         android:background="@drawable/shape_user_focus"
         android:drawableTop="@drawable/icon_history"
         android:drawablePadding="@dimen/vs_5"
@@ -25,6 +25,7 @@
         android:textAlignment="gravity"
         android:textColor="@color/color_CCFFFFFF"
         android:textSize="@dimen/ts_30"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:topDrawableHeight="@dimen/vs_40"
@@ -49,8 +50,9 @@
         android:textAlignment="gravity"
         android:textColor="@color/color_CCFFFFFF"
         android:textSize="@dimen/ts_30"
+        app:layout_constraintBottom_toBottomOf="@id/tvHistory"
         app:layout_constraintLeft_toRightOf="@id/tvHistory"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvHistory"
         app:topDrawableHeight="@dimen/vs_40"
         app:topDrawableWidth="@dimen/vs_40" />
 
@@ -73,8 +75,9 @@
         android:textAlignment="gravity"
         android:textColor="@color/color_CCFFFFFF"
         android:textSize="@dimen/ts_30"
+        app:layout_constraintBottom_toBottomOf="@id/tvLive"
         app:layout_constraintLeft_toRightOf="@id/tvLive"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvLive"
         app:topDrawableHeight="@dimen/vs_40"
         app:topDrawableWidth="@dimen/vs_40" />
 
@@ -97,8 +100,9 @@
         android:textAlignment="gravity"
         android:textColor="@color/color_CCFFFFFF"
         android:textSize="@dimen/ts_30"
+        app:layout_constraintBottom_toBottomOf="@id/tvSearch"
         app:layout_constraintLeft_toRightOf="@id/tvSearch"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvSearch"
         app:topDrawableHeight="@dimen/vs_40"
         app:topDrawableWidth="@dimen/vs_40" />
 
@@ -120,8 +124,9 @@
         android:textAlignment="gravity"
         android:textColor="@color/color_CCFFFFFF"
         android:textSize="@dimen/ts_30"
+        app:layout_constraintBottom_toBottomOf="@id/tvPush"
         app:layout_constraintLeft_toRightOf="@id/tvPush"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvPush"
         app:topDrawableHeight="@dimen/vs_40"
         app:topDrawableWidth="@dimen/vs_40" />
 
@@ -143,8 +148,9 @@
         android:textAlignment="gravity"
         android:textColor="@color/color_CCFFFFFF"
         android:textSize="@dimen/ts_30"
+        app:layout_constraintBottom_toBottomOf="@id/tvSetting"
         app:layout_constraintLeft_toRightOf="@id/tvSetting"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvSetting"
         app:topDrawableHeight="@dimen/vs_40"
         app:topDrawableWidth="@dimen/vs_40" />
 
@@ -166,6 +172,7 @@
         android:textAlignment="gravity"
         android:textColor="@color/color_CCFFFFFF"
         android:textSize="@dimen/ts_30"
+        app:layout_constraintBottom_toBottomOf="@id/tvFavorite"
         app:layout_constraintLeft_toRightOf="@id/tvFavorite"
         app:layout_constraintTop_toTopOf="@id/tvFavorite"
         app:topDrawableHeight="@dimen/vs_40"

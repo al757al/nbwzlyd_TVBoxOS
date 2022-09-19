@@ -2,13 +2,10 @@ package com.github.tvbox.osc.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -38,8 +35,8 @@ import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
-
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -268,8 +265,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         } else if (v.getId() == R.id.tvFavorite) {
             jumpActivity(CollectActivity.class);
         } else if (v.getId() == R.id.changeStore) {
-            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("敬请期待新功能~~~~");
-//            new SourceStoreDialog2(getActivity()).show();
+//            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("敬请期待新功能~~~~");
+            new SourceStoreDialog2(getActivity()).show();
         }
     }
 

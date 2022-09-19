@@ -49,7 +49,7 @@
     <com.owen.tvrecyclerview.widget.TvRecyclerView
         android:id="@+id/list"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/vs_300"
         android:layout_marginBottom="@dimen/vs_10"
         android:orientation="vertical"
         android:paddingRight="@dimen/vs_30"
