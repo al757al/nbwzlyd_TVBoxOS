@@ -57,6 +57,10 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
         super.dismiss()
     }
 
+    companion object{
+        private const val DEFAULT_STORE_URL = "ABC"
+    }
+
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
 
 //    private val DEFAULT_DATA = mutableListOf(
@@ -145,8 +149,11 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
             }
         }
         refeshQRcode()
-//        getMutiSource()
-        inflateCustomSource(mutableListOf())
+        if ("ABC" == DEFAULT_STORE_URL) {
+            inflateCustomSource(mutableListOf())
+        } else {
+            getMutiSource()
+        }
     }
 
     private fun saveCustomSourceBean(sourceUrl0: String, sourceName0: String) {
@@ -172,7 +179,7 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
 
 
     private fun getMutiSource() {
-        OkGo.get<String>("https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku.txt")
+        OkGo.get<String>(DEFAULT_STORE_URL)
             .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
             .cacheTime(3 * 24 * 60 * 60 * 1000).execute(object : StringCallback() {
                 override fun onSuccess(response: Response<String>?) {
