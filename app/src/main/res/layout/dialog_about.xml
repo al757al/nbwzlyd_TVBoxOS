@@ -16,7 +16,6 @@
         android:layout_height="@dimen/vs_300"
         android:layout_marginRight="@dimen/vs_20"
         android:scaleType="centerCrop"
-        android:src="@drawable/zanshang"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
