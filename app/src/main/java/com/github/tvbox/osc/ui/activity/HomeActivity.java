@@ -23,6 +23,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.viewpager.widget.ViewPager;
 
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.BaseActivity;
@@ -480,6 +483,10 @@ public class HomeActivity extends BaseActivity {
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
 
         }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU && event.getAction() == KeyEvent.ACTION_UP){
+            ToastUtils.make().show("进入设置页");
+            ActivityUtils.startActivity(new Intent(this,SettingActivity.class));
+        }
         return super.dispatchKeyEvent(event);
     }
 
@@ -575,6 +582,8 @@ public class HomeActivity extends BaseActivity {
             dialog.show();
         }
     }
+
+
 
     private void restartHomeActivity(String homeSourceKey) {
         if (homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, ""))) {

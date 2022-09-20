@@ -133,14 +133,14 @@ class SourceLineDialogUtil(private val context: Context) {
                     oldItem: MoreSourceBean,
                     newItem: MoreSourceBean
                 ): Boolean {
-                    return TextUtils.equals(oldItem.sourceUrl, newItem.sourceUrl)
+                    return oldItem.uniKey ==newItem.uniKey
                 }
 
                 override fun areContentsTheSame(
                     oldItem: MoreSourceBean,
                     newItem: MoreSourceBean
                 ): Boolean {
-                    return TextUtils.equals(oldItem.sourceUrl, newItem.sourceUrl)
+                    return oldItem.uniKey ==newItem.uniKey
                 }
 
             }, list, select)

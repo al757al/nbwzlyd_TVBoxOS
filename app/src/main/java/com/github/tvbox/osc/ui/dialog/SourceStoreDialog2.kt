@@ -7,6 +7,9 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
+import com.blankj.utilcode.util.SpanUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -17,6 +20,7 @@ import com.github.tvbox.osc.ext.removeFirstIf
 import com.github.tvbox.osc.server.ControlManager
 import com.github.tvbox.osc.ui.activity.HomeActivity
 import com.github.tvbox.osc.ui.activity.SettingActivity
+import com.github.tvbox.osc.ui.dialog.util.AdapterDiffCallBack
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
@@ -154,7 +158,7 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
                 this.sourceName = sourceName0.ifEmpty { "自用仓库" + saveList.size }
                 this.isServer = false
             }
-            mAdapter.addData( sourceBean)
+            mAdapter.addData(sourceBean)
             mRecyclerView?.scrollToPosition(0)
             saveList.add(sourceBean)
             KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, saveList)
@@ -247,7 +251,12 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
                 index = result.indexOf(it)
             }
         }
-        mAdapter.setNewData(result)
+
+        val diffResult = DiffUtil.calculateDiff(AdapterDiffCallBack(mAdapter.data, result), false)
+        //为了适配diffUtil才这么写的
+        mAdapter.data.clear()
+        mAdapter.data.addAll(result)
+        diffResult.dispatchUpdatesTo(mAdapter)
         mRecyclerView?.post {
             mRecyclerView?.scrollToPosition(index)
         }
@@ -309,9 +318,14 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
         override fun convert(holder: BaseViewHolder, item: MoreSourceBean) {
             showDefault(item, holder)
             if (item.isSelected) {
-                var text = holder.getView<TextView>(R.id.tvName).text
-                text = "√ $text"
-                holder.setText(R.id.tvName, text)
+                val text = holder.getView<TextView>(R.id.tvName).text
+                holder.setText(R.id.tvName,
+                    SpanUtils.with(holder.getView(R.id.tvName)).appendImage(
+                        ContextCompat.getDrawable(
+                            holder.getView<TextView>(R.id.tvName).context,
+                            R.drawable.ic_select_fill
+                        )!!
+                    ).append(" ").append(text).create())
             } else {
                 showDefault(item, holder)
             }
