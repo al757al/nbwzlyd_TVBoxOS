@@ -154,9 +154,9 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
                 this.sourceName = sourceName0.ifEmpty { "自用仓库" + saveList.size }
                 this.isServer = false
             }
-            mAdapter.addData(0, sourceBean)
+            mAdapter.addData( sourceBean)
             mRecyclerView?.scrollToPosition(0)
-            saveList.add(0, sourceBean)
+            saveList.add(sourceBean)
             KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, saveList)
             mSourceUrlEdit?.setText("")
             mSourceNameEdit?.setText("")
