@@ -1,5 +1,7 @@
 package com.github.tvbox.osc.ui.activity;
 
+import static android.view.KeyEvent.FLAG_LONG_PRESS;
+
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.IntEvaluator;
@@ -483,9 +485,17 @@ public class HomeActivity extends BaseActivity {
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
 
         }
-        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU && event.getAction() == KeyEvent.ACTION_UP){
-            ToastUtils.make().show("进入设置页");
-            ActivityUtils.startActivity(new Intent(this,SettingActivity.class));
+        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
+            //长按
+            if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS)!= 0){
+                if (event.getAction() == KeyEvent.ACTION_DOWN){
+                    ActivityUtils.startActivity(new Intent(this, SettingActivity.class));
+                }
+            }else {
+                if (event.getAction() == KeyEvent.ACTION_UP)
+                    showSiteSwitch();
+            }
+
         }
         return super.dispatchKeyEvent(event);
     }
@@ -582,7 +592,6 @@ public class HomeActivity extends BaseActivity {
             dialog.show();
         }
     }
-
 
 
     private void restartHomeActivity(String homeSourceKey) {
