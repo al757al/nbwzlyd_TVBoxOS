@@ -112,7 +112,7 @@ class SourceLineDialogUtil(private val context: Context) {
                 override fun click(moreSourceBea: MoreSourceBean?, pos: Int) {
                     //更新源
                     Hawk.put(HawkConfig.API_URL, moreSourceBea?.sourceUrl)
-                    Hawk.put(HawkConfig.API_URL_BEAN, moreSourceBea)
+                    KVStorage.putBean(HawkConfig.API_URL_BEAN, moreSourceBea)
                     EventBus.getDefault().post(
                         RefreshEvent(
                             RefreshEvent.TYPE_API_URL_CHANGE,
