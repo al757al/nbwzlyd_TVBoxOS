@@ -40,12 +40,14 @@ import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.SourceBean;
+import com.github.tvbox.osc.bean.Subtitle;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.CacheManager;
 import com.github.tvbox.osc.event.RefreshEvent;
+import com.github.tvbox.osc.player.MyVideoView;
 import com.github.tvbox.osc.player.controller.VodController;
-import com.github.tvbox.osc.player.thirdparty.MXPlayer;
-import com.github.tvbox.osc.player.thirdparty.ReexPlayer;
+import com.github.tvbox.osc.ui.dialog.SearchSubtitleDialog;
+import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -59,6 +61,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
+import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
 
 import org.greenrobot.eventbus.EventBus;
@@ -73,6 +76,7 @@ import org.xwalk.core.XWalkWebResourceRequest;
 import org.xwalk.core.XWalkWebResourceResponse;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -82,10 +86,9 @@ import java.util.concurrent.Executors;
 
 import me.jessyan.autosize.AutoSize;
 import xyz.doikki.videoplayer.player.ProgressManager;
-import xyz.doikki.videoplayer.player.VideoView;
 
 public class PlayActivity extends BaseActivity {
-    private VideoView mVideoView;
+    private MyVideoView mVideoView;
     private TextView mPlayLoadTip;
     private ImageView mPlayLoadErr;
     private ProgressBar mPlayLoading;
@@ -187,8 +190,72 @@ public class PlayActivity extends BaseActivity {
             public void errReplay() {
                 errorWithRetry("视频播放出错", false);
             }
+
+            @Override
+            public void selectSubtitle() {
+                SubtitleDialog subtitleDialog = new SubtitleDialog(PlayActivity.this);
+                subtitleDialog.setSubtitleViewListener(new SubtitleDialog.SubtitleViewListener() {
+                    @Override
+                    public void setTextSize(int size) {
+                        mController.mSubtitleView.setTextSize(size);
+                    }
+                    @Override
+                    public void setSubtitleDelay(int milliseconds) {
+                        mController.mSubtitleView.setSubtitleDelay(milliseconds);
+                    }
+                });
+                subtitleDialog.setSearchSubtitleListener(new SubtitleDialog.SearchSubtitleListener() {
+                    @Override
+                    public void openSearchSubtitleDialog() {
+                        SearchSubtitleDialog searchSubtitleDialog = new SearchSubtitleDialog(PlayActivity.this);
+                        searchSubtitleDialog.setSubtitleLoader(new SearchSubtitleDialog.SubtitleLoader() {
+                            @Override
+                            public void loadSubtitle(Subtitle subtitle) {
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        String zimuUrl = subtitle.getUrl();
+                                        LOG.i("Remote Subtitle Url: " + zimuUrl);
+                                        setSubtitle(zimuUrl);//设置字幕
+                                    }
+                                });
+                            }
+                        });
+                        searchSubtitleDialog.show();
+                    }
+                });
+                subtitleDialog.setLocalFileChooserListener(new SubtitleDialog.LocalFileChooserListener() {
+                    @Override
+                    public void openLocalFileChooserDialog() {
+                        new ChooserDialog(PlayActivity.this)
+                                .withFilter(false, false, "srt", "ass", "scc", "stl", "ttml")
+                                .withStartFile("/storage/emulated/0/Download")
+                                .withChosenListener(new ChooserDialog.Result() {
+                                    @Override
+                                    public void onChoosePath(String path, File pathFile) {
+                                        LOG.i("Local Subtitle Path: " + path);
+                                        setSubtitle(path);//设置字幕
+                                    }
+                                })
+                                .build()
+                                .show();
+                    }
+                });
+                subtitleDialog.show();
+            }
         });
         mVideoView.setVideoController(mController);
+    }
+
+    //设置字幕
+    void setSubtitle(String path) {
+        if (path != null && path .length() > 0) {
+            // 设置字幕
+            mController.mSubtitleView.setVisibility(View.INVISIBLE);
+            mController.mSubtitleView.setSubtitlePath(path);
+            mController.mSubtitleView.setVisibility(View.VISIBLE);
+        }
     }
 
     void setTip(String msg, boolean loading, boolean err) {
@@ -232,6 +299,7 @@ public class PlayActivity extends BaseActivity {
                 stopParse();
                 if (mVideoView != null) {
                     mVideoView.release();
+
                     if (url != null) {
                         try {
                             int playerType = mVodPlayerCfg.getInt("pl");
@@ -240,16 +308,7 @@ public class PlayActivity extends BaseActivity {
                                 String playTitle = mVodInfo.name + " " + vs.name;
                                 setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + "进行播放", true, false);
                                 boolean callResult = false;
-                                switch (playerType) {
-                                    case 10: {
-                                        callResult = MXPlayer.run(PlayActivity.this, url, playTitle, playSubtitle, headers);
-                                        break;
-                                    }
-                                    case 11: {
-                                        callResult = ReexPlayer.run(PlayActivity.this, url, playTitle, playSubtitle, headers);
-                                        break;
-                                    }
-                                }
+                                callResult = PlayerHelper.runExternalPlayer(playerType, PlayActivity.this, url, playTitle, playSubtitle, headers);
                                 setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + (callResult ? "成功" : "失败"), callResult, !callResult);
                                 return;
                             }
@@ -266,6 +325,17 @@ public class PlayActivity extends BaseActivity {
                         }
                         mVideoView.start();
                         mController.resetSpeed();
+
+                        //加载字幕开始
+                        // 绑定MediaPlayer
+                        mController.mSubtitleView.bindToMediaPlayer(mVideoView.getMediaPlayer());
+                        mController.mSubtitleView.setVisibility(View.INVISIBLE);
+                        if (playSubtitle != null && playSubtitle .length() > 0) {
+                            // 设置字幕
+                            mController.mSubtitleView.setSubtitlePath(playSubtitle);
+                            mController.mSubtitleView.setVisibility(View.VISIBLE);
+                        }
+                        //加载字幕结束
                     }
                 }
             }
@@ -317,11 +387,11 @@ public class PlayActivity extends BaseActivity {
                         }
                     } catch (Throwable th) {
 //                        errorWithRetry("获取播放信息错误", true);
-                        Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mContext, "获取播放信息错误1", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-//                    errorWithRetry("获取播放信息错误", true);
-                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
+                    errorWithRetry("获取播放信息错误", true);
+//                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -474,7 +544,8 @@ public class PlayActivity extends BaseActivity {
         String playTitleInfo = mVodInfo.name + " " + vs.name;
         mController.setTitle(playTitleInfo);
 
-//        playUrl(null, null);
+        stopParse();
+        if(mVideoView!=null) mVideoView.release();
         String progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex;
         //存储播放进度
         Object bodyKey=CacheManager.getCache(MD5.string2MD5(progressKey));
@@ -837,7 +908,7 @@ public class PlayActivity extends BaseActivity {
         }
     }
 
-//    void loadUrl(String url) {
+    //    void loadUrl(String url) {
 //        runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -854,40 +925,40 @@ public class PlayActivity extends BaseActivity {
 //            }
 //        });
 //    }
-        void loadUrl(String url) {
-                runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // webUserAgent = "Mozilla/5.0 (Linux; Android 6.0.1; Moto G (4)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Mobile Safari/537.36";
-                    if (mXwalkWebView != null) {
-                        mXwalkWebView.stopLoading();
-                        Map<String, String > map = new HashMap<String, String>() ;
+    void loadUrl(String url) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // webUserAgent = "Mozilla/5.0 (Linux; Android 6.0.1; Moto G (4)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Mobile Safari/537.36";
+                if (mXwalkWebView != null) {
+                    mXwalkWebView.stopLoading();
+                    Map<String, String > map = new HashMap<String, String>() ;
 
-                        if(webUserAgent != null) {
-                            mXwalkWebView.getSettings().setUserAgentString(webUserAgent);
-                        }
-                        //mXwalkWebView.clearCache(true);
-                        if(webHeaderMap != null){
-                            mXwalkWebView.loadUrl(url,webHeaderMap);
-                        }else {
-                            mXwalkWebView.loadUrl(url);
-                        }
+                    if(webUserAgent != null) {
+                        mXwalkWebView.getSettings().setUserAgentString(webUserAgent);
                     }
-                    if (mSysWebView != null) {
-                        mSysWebView.stopLoading();
-                        if(webUserAgent != null) {
-                            mSysWebView.getSettings().setUserAgentString(webUserAgent);
-                        }
-                        //mSysWebView.clearCache(true);
-                        if(webHeaderMap != null){
-                            mSysWebView.loadUrl(url,webHeaderMap);
-                        }else {
-                            mSysWebView.loadUrl(url);
-                        }
+                    //mXwalkWebView.clearCache(true);
+                    if(webHeaderMap != null){
+                        mXwalkWebView.loadUrl(url,webHeaderMap);
+                    }else {
+                        mXwalkWebView.loadUrl(url);
                     }
                 }
-            });
-        }
+                if (mSysWebView != null) {
+                    mSysWebView.stopLoading();
+                    if(webUserAgent != null) {
+                        mSysWebView.getSettings().setUserAgentString(webUserAgent);
+                    }
+                    //mSysWebView.clearCache(true);
+                    if(webHeaderMap != null){
+                        mSysWebView.loadUrl(url,webHeaderMap);
+                    }else {
+                        mSysWebView.loadUrl(url);
+                    }
+                }
+            }
+        });
+    }
 
     void stopLoadWebView(boolean destroy) {
         runOnUiThread(new Runnable() {
@@ -1051,9 +1122,9 @@ public class PlayActivity extends BaseActivity {
         }
 
         WebResourceResponse checkIsVideo(String url, HashMap<String, String> headers) {
-            if (url.endsWith("/favicon.ico")) {
-                return new WebResourceResponse("image/png", null, null);
-            }
+//            if (url.endsWith("/favicon.ico")) {
+//                return new WebResourceResponse("image/png", null, null);
+//            }
             LOG.i("shouldInterceptRequest url:" + url);
             boolean ad;
             if (!loadedUrls.containsKey(url)) {
@@ -1224,9 +1295,9 @@ public class PlayActivity extends BaseActivity {
         public XWalkWebResourceResponse shouldInterceptLoadRequest(XWalkView view, XWalkWebResourceRequest request) {
             String url = request.getUrl().toString();
             // suppress favicon requests as we don't display them anywhere
-            if (url.endsWith("/favicon.ico")) {
-                return createXWalkWebResourceResponse("image/png", null, null);
-            }
+//            if (url.endsWith("/favicon.ico")) {
+//                return createXWalkWebResourceResponse("image/png", null, null);
+//            }
             LOG.i("shouldInterceptLoadRequest url:" + url);
             boolean ad;
             if (!loadedUrls.containsKey(url)) {
