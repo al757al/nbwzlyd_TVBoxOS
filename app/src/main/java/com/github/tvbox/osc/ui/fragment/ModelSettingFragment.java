@@ -2,6 +2,7 @@ package com.github.tvbox.osc.ui.fragment;
 
 import android.content.DialogInterface;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -109,7 +110,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
         tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
         String apiUrl = Hawk.get(HawkConfig.API_URL, "");
-        MoreSourceBean moreSourceBean = Hawk.get(HawkConfig.API_URL_BEAN);
+        MoreSourceBean moreSourceBean = KVStorage.getBean(HawkConfig.API_URL_BEAN,MoreSourceBean.class);
         if (moreSourceBean == null) {
             tvApi.setText(apiUrl);
         } else if (TextUtils.equals(moreSourceBean.getSourceUrl(), apiUrl)) {

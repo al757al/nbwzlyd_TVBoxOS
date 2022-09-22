@@ -9,8 +9,8 @@
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvHistory"
-        android:layout_width="@dimen/vs_120"
-        android:layout_height="@dimen/vs_100"
+        android:layout_width="@dimen/vs_140"
+        android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_margin="@dimen/vs_10"
         android:background="@drawable/shape_user_focus"
@@ -28,14 +28,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:topDrawableHeight="@dimen/vs_40"
-        app:topDrawableWidth="@dimen/vs_40" />
+        app:topDrawableHeight="@dimen/vs_50"
+        app:topDrawableWidth="@dimen/vs_50"/>
 
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvLive"
-        android:layout_width="@dimen/vs_120"
-        android:layout_height="@dimen/vs_100"
+        android:layout_width="@dimen/vs_140"
+        android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
         android:background="@drawable/shape_user_focus"
@@ -53,14 +53,14 @@
         app:layout_constraintBottom_toBottomOf="@id/tvHistory"
         app:layout_constraintLeft_toRightOf="@id/tvHistory"
         app:layout_constraintTop_toTopOf="@id/tvHistory"
-        app:topDrawableHeight="@dimen/vs_40"
-        app:topDrawableWidth="@dimen/vs_40" />
+        app:topDrawableHeight="@dimen/vs_50"
+        app:topDrawableWidth="@dimen/vs_50"/>
 
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvSearch"
-        android:layout_width="@dimen/vs_120"
-        android:layout_height="@dimen/vs_100"
+        android:layout_width="@dimen/vs_140"
+        android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
         android:background="@drawable/shape_user_focus"
@@ -78,14 +78,63 @@
         app:layout_constraintBottom_toBottomOf="@id/tvLive"
         app:layout_constraintLeft_toRightOf="@id/tvLive"
         app:layout_constraintTop_toTopOf="@id/tvLive"
-        app:topDrawableHeight="@dimen/vs_40"
-        app:topDrawableWidth="@dimen/vs_40" />
+        app:topDrawableHeight="@dimen/vs_50"
+        app:topDrawableWidth="@dimen/vs_50"/>
+
+
+    <com.github.tvbox.osc.ui.view.DrawableTextView
+        android:id="@+id/changeStore"
+        android:layout_width="@dimen/vs_140"
+        android:layout_height="@dimen/vs_120"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/vs_10"
+        android:background="@drawable/shape_user_focus"
+        android:drawableTop="@drawable/ic_change"
+        android:drawablePadding="@dimen/vs_5"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/vs_20"
+        android:paddingVertical="@dimen/vs_10"
+        android:text="换仓"
+        android:textAlignment="gravity"
+        android:textColor="@color/color_CCFFFFFF"
+        android:textSize="@dimen/ts_30"
+        app:layout_constraintBottom_toBottomOf="@id/tvSearch"
+        app:layout_constraintLeft_toRightOf="@id/tvSearch"
+        app:layout_constraintTop_toTopOf="@id/tvSearch"
+        app:topDrawableHeight="@dimen/vs_50"
+        app:topDrawableWidth="@dimen/vs_50" />
+
+    <com.github.tvbox.osc.ui.view.DrawableTextView
+        android:id="@+id/changeLine"
+        android:layout_width="@dimen/vs_140"
+        android:layout_height="@dimen/vs_120"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/vs_10"
+        android:background="@drawable/shape_user_focus"
+        android:drawableTop="@drawable/ic_change_line"
+        android:drawablePadding="@dimen/vs_5"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/vs_20"
+        android:paddingVertical="@dimen/vs_10"
+        android:text="换线路"
+        android:textAlignment="gravity"
+        android:textColor="@color/color_CCFFFFFF"
+        android:textSize="@dimen/ts_28"
+        app:layout_constraintBottom_toBottomOf="@id/changeStore"
+        app:layout_constraintLeft_toRightOf="@id/changeStore"
+        app:layout_constraintTop_toTopOf="@id/changeStore"
+        app:topDrawableHeight="@dimen/vs_50"
+        app:topDrawableWidth="@dimen/vs_50" />
 
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvPush"
-        android:layout_width="@dimen/vs_120"
-        android:layout_height="@dimen/vs_100"
+        android:layout_width="@dimen/vs_140"
+        android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
         android:background="@drawable/shape_user_focus"
@@ -100,17 +149,40 @@
         android:textAlignment="gravity"
         android:textColor="@color/color_CCFFFFFF"
         android:textSize="@dimen/ts_30"
-        app:layout_constraintBottom_toBottomOf="@id/tvSearch"
-        app:layout_constraintLeft_toRightOf="@id/tvSearch"
-        app:layout_constraintTop_toTopOf="@id/tvSearch"
-        app:topDrawableHeight="@dimen/vs_40"
-        app:topDrawableWidth="@dimen/vs_40" />
+        app:layout_constraintBottom_toBottomOf="@id/tvFavorite"
+        app:layout_constraintLeft_toRightOf="@id/tvFavorite"
+        app:layout_constraintTop_toTopOf="@id/tvFavorite"
+        app:topDrawableHeight="@dimen/vs_50"
+        app:topDrawableWidth="@dimen/vs_50"/>
 
+    <com.github.tvbox.osc.ui.view.DrawableTextView
+        android:id="@+id/tvFavorite"
+        android:layout_width="@dimen/vs_140"
+        android:layout_height="@dimen/vs_120"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/vs_10"
+        android:background="@drawable/shape_user_focus"
+        android:drawableTop="@drawable/icon_collect"
+        android:drawablePadding="@dimen/vs_5"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/vs_20"
+        android:paddingVertical="@dimen/vs_10"
+        android:text="收藏"
+        android:textAlignment="gravity"
+        android:textColor="@color/color_CCFFFFFF"
+        android:textSize="@dimen/ts_30"
+        app:layout_constraintBottom_toBottomOf="@id/changeLine"
+        app:layout_constraintLeft_toRightOf="@id/changeLine"
+        app:layout_constraintTop_toTopOf="@id/changeLine"
+        app:topDrawableHeight="@dimen/vs_50"
+        app:topDrawableWidth="@dimen/vs_50" />
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvSetting"
-        android:layout_width="@dimen/vs_120"
-        android:layout_height="@dimen/vs_100"
+        android:layout_width="@dimen/vs_140"
+        android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
         android:background="@drawable/shape_user_focus"
@@ -127,55 +199,6 @@
         app:layout_constraintBottom_toBottomOf="@id/tvPush"
         app:layout_constraintLeft_toRightOf="@id/tvPush"
         app:layout_constraintTop_toTopOf="@id/tvPush"
-        app:topDrawableHeight="@dimen/vs_40"
-        app:topDrawableWidth="@dimen/vs_40" />
-
-    <com.github.tvbox.osc.ui.view.DrawableTextView
-        android:id="@+id/tvFavorite"
-        android:layout_width="@dimen/vs_120"
-        android:layout_height="@dimen/vs_100"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/vs_10"
-        android:background="@drawable/shape_user_focus"
-        android:drawableTop="@drawable/icon_collect"
-        android:drawablePadding="@dimen/vs_5"
-        android:focusable="true"
-        android:focusableInTouchMode="false"
-        android:gravity="center"
-        android:paddingHorizontal="@dimen/vs_20"
-        android:paddingVertical="@dimen/vs_10"
-        android:text="收藏"
-        android:textAlignment="gravity"
-        android:textColor="@color/color_CCFFFFFF"
-        android:textSize="@dimen/ts_30"
-        app:layout_constraintBottom_toBottomOf="@id/tvSetting"
-        app:layout_constraintLeft_toRightOf="@id/tvSetting"
-        app:layout_constraintTop_toTopOf="@id/tvSetting"
-        app:topDrawableHeight="@dimen/vs_40"
-        app:topDrawableWidth="@dimen/vs_40" />
-
-    <com.github.tvbox.osc.ui.view.DrawableTextView
-        android:id="@+id/changeStore"
-        android:layout_width="@dimen/vs_120"
-        android:layout_height="@dimen/vs_100"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/vs_10"
-        android:background="@drawable/shape_user_focus"
-        android:drawableTop="@drawable/ic_change"
-        android:drawablePadding="@dimen/vs_5"
-        android:focusable="true"
-        android:focusableInTouchMode="false"
-        android:gravity="center"
-        android:paddingHorizontal="@dimen/vs_20"
-        android:paddingVertical="@dimen/vs_10"
-        android:text="换仓"
-        android:textAlignment="gravity"
-        android:textColor="@color/color_CCFFFFFF"
-        android:textSize="@dimen/ts_30"
-        app:layout_constraintBottom_toBottomOf="@id/tvFavorite"
-        app:layout_constraintLeft_toRightOf="@id/tvFavorite"
-        app:layout_constraintTop_toTopOf="@id/tvFavorite"
-        app:topDrawableHeight="@dimen/vs_40"
-        app:topDrawableWidth="@dimen/vs_40" />
-
+        app:topDrawableHeight="@dimen/vs_50"
+        app:topDrawableWidth="@dimen/vs_50"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

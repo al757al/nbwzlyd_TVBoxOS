@@ -265,7 +265,6 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         } else if (v.getId() == R.id.tvFavorite) {
             jumpActivity(CollectActivity.class);
         } else if (v.getId() == R.id.changeStore) {
-//            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("敬请期待新功能~~~~");
             new SourceStoreDialog2(getActivity()).show();
         }
     }
