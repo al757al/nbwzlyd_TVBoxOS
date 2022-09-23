@@ -33,6 +33,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DiffUtil;
 
 import com.github.catvod.crawler.Spider;
 import com.github.tvbox.osc.R;
@@ -44,9 +45,14 @@ import com.github.tvbox.osc.bean.Subtitle;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.CacheManager;
 import com.github.tvbox.osc.event.RefreshEvent;
+import com.github.tvbox.osc.player.IjkMediaPlayer;
 import com.github.tvbox.osc.player.MyVideoView;
+import com.github.tvbox.osc.player.TrackInfo;
+import com.github.tvbox.osc.player.TrackInfoBean;
 import com.github.tvbox.osc.player.controller.VodController;
+import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SearchSubtitleDialog;
+import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
@@ -65,6 +71,7 @@ import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xwalk.core.XWalkJavascriptResult;
@@ -80,11 +87,13 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import me.jessyan.autosize.AutoSize;
+import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
 
 public class PlayActivity extends BaseActivity {
@@ -211,17 +220,20 @@ public class PlayActivity extends BaseActivity {
                         searchSubtitleDialog.setSubtitleLoader(new SearchSubtitleDialog.SubtitleLoader() {
                             @Override
                             public void loadSubtitle(Subtitle subtitle) {
-
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         String zimuUrl = subtitle.getUrl();
                                         LOG.i("Remote Subtitle Url: " + zimuUrl);
                                         setSubtitle(zimuUrl);//设置字幕
+                                        if (searchSubtitleDialog != null) {
+                                            searchSubtitleDialog.dismiss();
+                                        }
                                     }
                                 });
                             }
                         });
+                        searchSubtitleDialog.setSearchWord(mVodInfo.playNote);
                         searchSubtitleDialog.show();
                     }
                 });
@@ -244,6 +256,67 @@ public class PlayActivity extends BaseActivity {
                 });
                 subtitleDialog.show();
             }
+
+            @Override
+            public void selectAudioTrack() {
+                AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
+                if (!(mediaPlayer instanceof IjkMediaPlayer)) {
+                    return;
+                }
+                TrackInfo trackInfo = null;
+                if (mediaPlayer instanceof IjkMediaPlayer) {
+                    trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
+                }
+                if (trackInfo == null) {
+                    Toast.makeText(mContext, "没有音轨", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                List<TrackInfoBean> bean = trackInfo.getAudio();
+                if (bean.size() < 1) return;
+                SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(PlayActivity.this);
+                dialog.setTip("切换音轨");
+                dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
+                    @Override
+                    public void click(TrackInfoBean value, int pos) {
+                        try {
+                            for (TrackInfoBean audio : bean) {
+                                audio.selected = audio.index == value.index;
+                            }
+                            mediaPlayer.pause();
+                            long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
+                            if (mediaPlayer instanceof IjkMediaPlayer) {
+                                ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
+                            }
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mediaPlayer.seekTo(progress);
+                                    mediaPlayer.start();
+                                }
+                            }, 800);
+                            dialog.dismiss();
+                        } catch (Exception e) {
+                            LOG.e("切换音轨出错");
+                        }
+                    }
+
+                    @Override
+                    public String getDisplay(TrackInfoBean val) {
+                        return val.index + " : " + val.language;
+                    }
+                }, new DiffUtil.ItemCallback<TrackInfoBean>() {
+                    @Override
+                    public boolean areItemsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
+                        return oldItem.index == newItem.index;
+                    }
+
+                    @Override
+                    public boolean areContentsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
+                        return oldItem.index == newItem.index;
+                    }
+                }, bean, trackInfo.getAudioSelected(false));
+                dialog.show();
+            }
         });
         mVideoView.setVideoController(mController);
     }
@@ -252,7 +325,7 @@ public class PlayActivity extends BaseActivity {
     void setSubtitle(String path) {
         if (path != null && path .length() > 0) {
             // 设置字幕
-            mController.mSubtitleView.setVisibility(View.INVISIBLE);
+            mController.mSubtitleView.setVisibility(View.GONE);
             mController.mSubtitleView.setSubtitlePath(path);
             mController.mSubtitleView.setVisibility(View.VISIBLE);
         }
@@ -329,11 +402,18 @@ public class PlayActivity extends BaseActivity {
                         //加载字幕开始
                         // 绑定MediaPlayer
                         mController.mSubtitleView.bindToMediaPlayer(mVideoView.getMediaPlayer());
-                        mController.mSubtitleView.setVisibility(View.INVISIBLE);
+                        mController.mSubtitleView.setVisibility(View.GONE);
+                        mController.mSubtitleView.setPlaySubtitleCacheKey(subtitleCacheKey);
                         if (playSubtitle != null && playSubtitle .length() > 0) {
                             // 设置字幕
                             mController.mSubtitleView.setSubtitlePath(playSubtitle);
                             mController.mSubtitleView.setVisibility(View.VISIBLE);
+                        } else {
+                            String subtitlePathCache = (String)CacheManager.getCache(MD5.string2MD5(subtitleCacheKey));
+                            if (subtitlePathCache != null && !subtitlePathCache.isEmpty()) {
+                                mController.mSubtitleView.setSubtitlePath(subtitlePathCache);
+                                mController.mSubtitleView.setVisibility(View.VISIBLE);
+                            }
                         }
                         //加载字幕结束
                     }
@@ -353,6 +433,7 @@ public class PlayActivity extends BaseActivity {
                         boolean parse = info.optString("parse", "1").equals("1");
                         boolean jx = info.optString("jx", "0").equals("1");
                         playSubtitle = info.optString("subt", /*"https://dash.akamaized.net/akamai/test/caption_test/ElephantsDream/ElephantsDream_en.vtt"*/"");
+                        subtitleCacheKey = info.optString("subtKey", null);
                         String playUrl = info.optString("playUrl", "");
                         String flag = info.optString("flag");
                         String url = info.getString("url");
@@ -546,11 +627,13 @@ public class PlayActivity extends BaseActivity {
 
         stopParse();
         if(mVideoView!=null) mVideoView.release();
+        String subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex + "-subt";
         String progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex;
-        //存储播放进度
-        Object bodyKey=CacheManager.getCache(MD5.string2MD5(progressKey));
         //重新播放清除现有进度
-        if (reset) {CacheManager.delete(MD5.string2MD5(progressKey), 0);}
+        if (reset) {
+            CacheManager.delete(MD5.string2MD5(progressKey), 0);
+            CacheManager.delete(MD5.string2MD5(subtitleCacheKey), "");
+        }
         if (Thunder.play(vs.url, new Thunder.ThunderCallback() {
             @Override
             public void status(int code, String info) {
@@ -573,12 +656,11 @@ public class PlayActivity extends BaseActivity {
             mController.showParse(false);
             return;
         }
-        sourceViewModel.getPlay(sourceKey, mVodInfo.playFlag, progressKey, vs.url);
-        //执行重新播放后还原之前的进度
-//        if (reset) CacheManager.save(MD5.string2MD5(progressKey),bodyKey);
+        sourceViewModel.getPlay(sourceKey, mVodInfo.playFlag, progressKey, vs.url, subtitleCacheKey);
     }
 
     private String playSubtitle;
+    private String subtitleCacheKey;
     private String progressKey;
     private String parseFlag;
     private String webUrl;
