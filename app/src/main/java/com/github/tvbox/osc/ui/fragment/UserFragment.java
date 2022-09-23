@@ -18,12 +18,14 @@ import com.github.tvbox.osc.ui.activity.CollectActivity;
 import com.github.tvbox.osc.ui.activity.DetailActivity;
 import com.github.tvbox.osc.ui.activity.FastSearchActivity;
 import com.github.tvbox.osc.ui.activity.HistoryActivity;
+import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.activity.LivePlayActivity;
 import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
 import com.github.tvbox.osc.ui.dialog.SourceStoreDialog2;
+import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.google.gson.Gson;
@@ -40,10 +42,14 @@ import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 /**
  * @author pj567
@@ -112,7 +118,10 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvSetting.setOnClickListener(this);
         tvHistory.setOnClickListener(this);
         tvPush.setOnClickListener(this);
-        findViewById(R.id.changeStore).setOnClickListener(this);
+        TextView changeStore = findViewById(R.id.changeStore);
+        TextView changeLine = findViewById(R.id.changeLine);
+        changeStore.setOnClickListener(this);
+        changeLine.setOnClickListener(this);
         tvCollect.setOnClickListener(this);
         tvLive.setOnFocusChangeListener(focusChangeListener);
         tvSearch.setOnFocusChangeListener(focusChangeListener);
@@ -120,6 +129,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvHistory.setOnFocusChangeListener(focusChangeListener);
         tvPush.setOnFocusChangeListener(focusChangeListener);
         tvCollect.setOnFocusChangeListener(focusChangeListener);
+        changeLine.setOnFocusChangeListener(focusChangeListener);
+        changeStore.setOnFocusChangeListener(focusChangeListener);
         TvRecyclerView tvHotList = findViewById(R.id.tvHotList);
         homeHotVodAdapter = new HomeHotVodAdapter();
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -266,6 +277,11 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             jumpActivity(CollectActivity.class);
         } else if (v.getId() == R.id.changeStore) {
             new SourceStoreDialog2(getActivity()).show();
+        }else if (v.getId() == R.id.changeLine){
+            new SourceLineDialogUtil(getContext()).getData(() -> {
+                ((HomeActivity)getActivity()).forceRestartHomeActivity();
+                return null;
+            });
         }
     }
 

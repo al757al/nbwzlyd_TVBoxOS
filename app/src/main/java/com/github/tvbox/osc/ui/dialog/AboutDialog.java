@@ -19,14 +19,10 @@ public class AboutDialog extends BaseDialog {
         super(context);
         setContentView(R.layout.dialog_about);
         TextView textView = findViewById(R.id.title1);
-        ImageView imageView = findViewById(R.id.zanshang);
 
-        SpanUtils.with(textView).append("新功能的开发占用了非常多的周末时间，一直用爱发电，不过也希望你们能赞赏我喝杯咖啡")
-                .append("\n").append("微信公众号搜索").append("安卓哥开发").setBold().setForegroundColor(Color.RED)
-                .append("可以联系我给软件提出自己的建议，我将在有限的时间里开发出新的功能").create();
-        Picasso.get().load("https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/jpg/zanshang.jpeg").
-                error(R.drawable.erweima)
-                .placeholder(R.drawable.anim_loading)
-                .into(imageView);
+        SpanUtils.with(textView).append("版本号V1.0.6 更新日志:")
+                .append("\n").append("1.调整首页历史等按钮的大小，适配TV更大气\n2.仓库推送顺序改为正向排序\n3.首页长按遥控器菜单键跳转设置页，短按切花首页源" +
+                        "\n4.修复覆盖安装点击设置页会崩溃的问题\n6.删除内置赞赏码和公众号，起了一个非常不好的头，抱歉\n7.支持反编译内置仓库，beta版本，自行研究不一定生效" +
+                        "\n8.支持首页换线路了，不用再跳转设置页了，撒花~").create();
     }
 }
