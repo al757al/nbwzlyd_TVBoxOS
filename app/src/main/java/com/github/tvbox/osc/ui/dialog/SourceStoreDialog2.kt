@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.ui.dialog
 
 import android.app.Activity
+import android.graphics.Color
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
@@ -33,6 +34,7 @@ import com.owen.tvrecyclerview.widget.TvRecyclerView
 import me.jessyan.autosize.utils.AutoSizeUtils
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.json.JSONArray
 import org.json.JSONObject
 
 //多源地址
@@ -57,8 +59,8 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
         super.dismiss()
     }
 
-    companion object{
-        private const val DEFAULT_STORE_URL = "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt"
+    companion object {
+        private const val DEFAULT_STORE_URL = "ABC"
     }
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
@@ -149,10 +151,10 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
             }
         }
         refeshQRcode()
-        if ("ABC" == DEFAULT_STORE_URL) {
-            inflateCustomSource(mutableListOf())
-        } else {
+        if (DEFAULT_STORE_URL.startsWith("http") || DEFAULT_STORE_URL.startsWith("https")) {
             getMutiSource()
+        } else {
+            inflateCustomSource(mutableListOf())
         }
     }
 
@@ -206,23 +208,33 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
     private fun serverString2Json(response: Response<String>?) {
         try {
             val jsonObj = JSONObject(response?.body() ?: return)
-            val jsonArray = jsonObj.getJSONArray("storeHouse")
-            for (i in 0 until jsonArray.length()) {
-                val childJsonObj = jsonArray.getJSONObject(i)
-                val sourceName = childJsonObj.optString("sourceName")
-                val sourceUrl = childJsonObj.optString("sourceUrl")
+            var jsonArray: JSONArray? = null
+            if (!jsonObj.has("storeHouse")) {
+                val text =
+                    SpanUtils().append("你的仓库格式不对\n请参考公众号").append(" <仓库定义规则> ")
+                        .setBold()
+                        .setForegroundColor(Color.RED).append("文章").create()
+                ToastUtils.showShort(text)
+                inflateCustomSource(mutableListOf())
+            } else {
+                jsonArray = jsonObj.getJSONArray("storeHouse")
+            }
+            for (i in 0 until (jsonArray?.length() ?: 0)) {
+                val childJsonObj = jsonArray?.getJSONObject(i)
+                val sourceName = childJsonObj?.optString("sourceName")
+                val sourceUrl = childJsonObj?.optString("sourceUrl")
                 val sourceBean = DEFAULT_DATA[sourceUrl]
                 if (sourceBean == null) {
                     val moreSourceBean = MoreSourceBean().apply {
-                        this.sourceName = childJsonObj.optString("sourceName")
-                        this.sourceUrl = childJsonObj.optString("sourceUrl")
+                        this.sourceName = childJsonObj?.optString("sourceName") ?: ""
+                        this.sourceUrl = childJsonObj?.optString("sourceUrl") ?: ""
                         this.isServer = true
                     }
-                    DEFAULT_DATA[sourceUrl] = moreSourceBean
+                    DEFAULT_DATA[sourceUrl ?: ""] = moreSourceBean
                 } else {
-                    sourceBean.sourceName = sourceName
-                    sourceBean.sourceUrl = sourceUrl
-                    DEFAULT_DATA[sourceUrl] = sourceBean
+                    sourceBean.sourceName = sourceName ?: ""
+                    sourceBean.sourceUrl = sourceUrl ?: ""
+                    DEFAULT_DATA[sourceUrl ?: ""] = sourceBean
                 }
             }
             val result = DEFAULT_DATA.filter {
@@ -304,7 +316,7 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
             if (activity is SettingActivity) {
                 activity.onBackPressed()
             }
-            if (activity is HomeActivity){
+            if (activity is HomeActivity) {
                 activity.forceRestartHomeActivity()
             }
 
@@ -326,13 +338,15 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
             showDefault(item, holder)
             if (item.isSelected) {
                 val text = holder.getView<TextView>(R.id.tvName).text
-                holder.setText(R.id.tvName,
+                holder.setText(
+                    R.id.tvName,
                     SpanUtils.with(holder.getView(R.id.tvName)).appendImage(
                         ContextCompat.getDrawable(
                             holder.getView<TextView>(R.id.tvName).context,
                             R.drawable.ic_select_fill
                         )!!
-                    ).append(" ").append(text).create())
+                    ).append(" ").append(text).create()
+                )
             } else {
                 showDefault(item, holder)
             }
