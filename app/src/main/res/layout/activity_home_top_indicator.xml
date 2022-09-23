@@ -9,7 +9,7 @@
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvHistory"
-        android:layout_width="@dimen/vs_140"
+        android:layout_width="@dimen/vs_132"
         android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_margin="@dimen/vs_10"
@@ -34,7 +34,7 @@
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvLive"
-        android:layout_width="@dimen/vs_140"
+        android:layout_width="@dimen/vs_132"
         android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
@@ -59,7 +59,7 @@
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvSearch"
-        android:layout_width="@dimen/vs_140"
+        android:layout_width="@dimen/vs_132"
         android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
@@ -84,7 +84,7 @@
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/changeStore"
-        android:layout_width="@dimen/vs_140"
+        android:layout_width="@dimen/vs_132"
         android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
@@ -108,7 +108,7 @@
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/changeLine"
-        android:layout_width="@dimen/vs_140"
+        android:layout_width="@dimen/vs_132"
         android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
@@ -133,7 +133,7 @@
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvPush"
-        android:layout_width="@dimen/vs_140"
+        android:layout_width="@dimen/vs_132"
         android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
@@ -157,7 +157,7 @@
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvFavorite"
-        android:layout_width="@dimen/vs_140"
+        android:layout_width="@dimen/vs_132"
         android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
@@ -181,7 +181,7 @@
 
     <com.github.tvbox.osc.ui.view.DrawableTextView
         android:id="@+id/tvSetting"
-        android:layout_width="@dimen/vs_140"
+        android:layout_width="@dimen/vs_132"
         android:layout_height="@dimen/vs_120"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"

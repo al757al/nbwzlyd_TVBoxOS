@@ -34,6 +34,8 @@
     <dimen name="vs_100">100mm</dimen>
     <dimen name="vs_120">120mm</dimen>
     <dimen name="vs_128">128mm</dimen>
+    <dimen name="vs_132">132mm</dimen>
+    <dimen name="vs_135">135mm</dimen>
     <dimen name="vs_140">140mm</dimen>
     <dimen name="vs_150">150mm</dimen>
     <dimen name="vs_160">160mm</dimen>
