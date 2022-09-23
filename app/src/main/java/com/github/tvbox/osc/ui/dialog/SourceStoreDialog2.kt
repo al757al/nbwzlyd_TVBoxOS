@@ -60,65 +60,10 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
     }
 
     companion object {
-        private const val DEFAULT_STORE_URL = "ABC"
+        private  var DEFAULT_STORE_URL = "ABC"
     }
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
-
-//    private val DEFAULT_DATA = mutableListOf(
-//        MoreSourceBean().apply {
-//            this.sourceName = "1号仓库"
-//            this.sourceUrl =
-//                "https://gitea.com/33/3/raw/branch/3/3/3/tv/update_yuan"
-//        },
-//        MoreSourceBean().apply {
-//            this.sourceName = "ygfxz仓库"
-//            this.sourceUrl =
-//                "https://gitea.com/ygfxz/apk_release/raw/branch/main/tv/update_yuan"
-//        },
-//        MoreSourceBean().apply {
-//            this.sourceName = "syzxasdc仓库"
-//            this.sourceUrl =
-//                "https://gitea.com/syzxasdc/apk_release1/raw/branch/main/tv/update_yuan"
-//        },
-//        MoreSourceBean().apply {
-//            this.sourceName = "ye仓库"
-//            this.sourceUrl =
-//                "https://gitea.com/ye/apk_release/raw/branch/main/tv/update_yuan"
-//            this.isServer = true
-//        },
-//        MoreSourceBean().apply {
-//            this.sourceName = "xnpc仓库"
-//            this.sourceUrl =
-//                "https://gitea.com/xnpc/apk_release/raw/branch/main/tv/update_yuan"
-//            this.isServer = true
-//        },
-//        MoreSourceBean().apply {
-//            this.sourceName = "manthow仓库"
-//            this.sourceUrl =
-//                "https://gitea.com/manthow/apk_release/raw/branch/main/tv/update_yuan"
-//            this.isServer = true
-//        },
-//        MoreSourceBean().apply {
-//            this.sourceName = "thorjsbox仓库"
-//            this.sourceUrl =
-//                "https://gitea.com/thorjsbox/apk_release/raw/branch/main/tv/update_yuan"
-//            this.isServer = true
-//        },
-//        MoreSourceBean().apply {
-//            this.sourceName = "zhanghong仓库"
-//            this.sourceUrl =
-//                "https://gitea.com/zhanghong/apk_release/raw/branch/main/tv/update_yuan"
-//            this.isServer = true
-//        },
-//        MoreSourceBean().apply {
-//            this.sourceName = "bo仓库"
-//            this.sourceUrl =
-//                "https://gitea.com/bo/apk_release/raw/branch/main/tv/update_yuan"
-//            this.isServer = true
-//        },
-//    )
-
     init {
         setContentView(R.layout.more_source_dialog_select)
         mRecyclerView = findViewById(R.id.list)
@@ -381,11 +326,12 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
         when (refreshEvent.type) {
             RefreshEvent.TYPE_STORE_PUSH -> {
                 val moreSourceBean = refreshEvent.obj as MoreSourceBean
-                ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setDurationIsLong(false)
-                    .show("收到了推送地址-->${moreSourceBean.sourceUrl}")
-                saveCustomSourceBean(moreSourceBean.sourceUrl, moreSourceBean.sourceName)
-//                mSourceNameEdit?.setText(moreSourceBean.sourceName)
-//                findViewById<EditText>(R.id.input_source_url)?.setText(moreSourceBean.sourceUrl)
+                if ("多仓" == moreSourceBean.sourceName) {
+                    DEFAULT_STORE_URL = moreSourceBean.sourceUrl
+                    getMutiSource()
+                } else {
+                    saveCustomSourceBean(moreSourceBean.sourceUrl, moreSourceBean.sourceName)
+                }
             }
         }
 
