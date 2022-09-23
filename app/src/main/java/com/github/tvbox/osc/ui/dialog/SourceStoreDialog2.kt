@@ -215,7 +215,6 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
                         .setBold()
                         .setForegroundColor(Color.RED).append("文章").create()
                 ToastUtils.showShort(text)
-                inflateCustomSource(mutableListOf())
             } else {
                 jsonArray = jsonObj.getJSONArray("storeHouse")
             }
