@@ -23,7 +23,7 @@ import org.json.JSONObject
 
 class SourceLineDialogUtil(private val context: Context) {
 
-    private var DEFAULT_URL = "https://gitea.com/apkcore/apk_release/raw/branch/main/tv/update_yuan"
+    private var DEFAULT_URL = ""
     private val dialog by lazy {
         SelectDialog<MoreSourceBean>(context)
     }
@@ -37,6 +37,10 @@ class SourceLineDialogUtil(private val context: Context) {
     }
 
     fun getData(onSelect: () -> Unit) {
+        if (TextUtils.isEmpty(DEFAULT_URL)){
+            ToastUtils.showShort("请先选择一个仓库哦~")
+            return
+        }
         OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
             .cacheTime(10 * 60 * 60 * 1000).execute(object : StringCallback() {
                 override fun onSuccess(response: Response<String>?) {

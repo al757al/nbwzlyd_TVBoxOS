@@ -30,7 +30,7 @@ android {
         release {
             keyAlias 'TVBOX'
             keyPassword '1378TVBOX'
-            storeFile file('/Users/liyaodong/Documents/androidTV/TVBOX_KEY_STORE.jks')
+            storeFile file('TVBOX_KEY_STORE.jks')
             storePassword '1378TVBOX'
         }
     }

@@ -58,7 +58,7 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
     }
 
     companion object{
-        private const val DEFAULT_STORE_URL = "ABC"
+        private const val DEFAULT_STORE_URL = "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt"
     }
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
@@ -206,7 +206,7 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
     private fun serverString2Json(response: Response<String>?) {
         try {
             val jsonObj = JSONObject(response?.body() ?: return)
-            val jsonArray = jsonObj.getJSONArray("urls")
+            val jsonArray = jsonObj.getJSONArray("storeHouse")
             for (i in 0 until jsonArray.length()) {
                 val childJsonObj = jsonArray.getJSONObject(i)
                 val sourceName = childJsonObj.optString("sourceName")
