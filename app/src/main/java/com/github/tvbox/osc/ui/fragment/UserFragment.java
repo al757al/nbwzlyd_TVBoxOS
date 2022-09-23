@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -280,6 +281,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         }else if (v.getId() == R.id.changeLine){
             new SourceLineDialogUtil(getContext()).getData(() -> {
                 ((HomeActivity)getActivity()).forceRestartHomeActivity();
+                ToastUtils.make().show("线路已切换，若加载数据失败可尝试切换首页数据源或者再次切换线路");
                 return null;
             });
         }
