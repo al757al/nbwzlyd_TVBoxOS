@@ -2,7 +2,6 @@ package com.github.tvbox.osc.ui.dialog
 
 import android.app.Activity
 import android.graphics.Color
-import android.view.Gravity
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -38,7 +37,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 //多源地址
-class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) {
+class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private var mRecyclerView: TvRecyclerView? = null
     private var mAddMoreBtn: TextView? = null
     private var mLastSelectBean: MoreSourceBean? = null
@@ -60,7 +59,8 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
     }
 
     companion object {
-        private  var DEFAULT_STORE_URL = "ABC"
+        //https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt
+        private  var DEFAULT_STORE_URL = "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt"
     }
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
@@ -77,7 +77,7 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
             val sourceUrl0 = mSourceUrlEdit?.text.toString()
             val sourceName0 = mSourceNameEdit?.text.toString()
             if (sourceUrl0.isEmpty()) {
-                Toast.makeText(this@SourceStoreDialog2.context, "请输入仓库地址！", Toast.LENGTH_LONG)
+                Toast.makeText(this@SourceStoreDialog.context, "请输入仓库地址！", Toast.LENGTH_LONG)
                     .show()
                 return@setOnClickListener
             }
@@ -119,7 +119,7 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
             mSourceUrlEdit?.setText("")
             mSourceNameEdit?.setText("")
         } else {
-            Toast.makeText(this@SourceStoreDialog2.context, "请输入仓库地址！", Toast.LENGTH_LONG)
+            Toast.makeText(this@SourceStoreDialog.context, "请输入仓库地址！", Toast.LENGTH_LONG)
                 .show()
         }
     }
@@ -254,7 +254,7 @@ class SourceStoreDialog2(private val activity: Activity) : BaseDialog(activity) 
         }
         mLastSelectBean = selectData
         KVStorage.putBean(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, selectData)
-        this@SourceStoreDialog2.dismiss()
+        this@SourceStoreDialog.dismiss()
         Toast.makeText(context, "稍等片刻，正在打开线路切换弹框", Toast.LENGTH_SHORT).show()
         SourceLineDialogUtil(activity).getData {
             if (activity is SettingActivity) {

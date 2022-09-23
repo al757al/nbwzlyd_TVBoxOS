@@ -40,21 +40,6 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
         String getDisplay(T val);
     }
 
-
-    public static DiffUtil.ItemCallback<String> stringDiff = new DiffUtil.ItemCallback<String>() {
-
-        @Override
-        public boolean areItemsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
-            return oldItem.equals(newItem);
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
-            return oldItem.equals(newItem);
-        }
-    };
-
-
     private ArrayList<T> data = new ArrayList<>();
 
     private int select = 0;
@@ -71,6 +56,14 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
         data.addAll(newData);
         select = defaultSelect;
         notifyDataSetChanged();
+    }
+
+    public void setSelect(int select){
+        this.select = select;
+    }
+
+    public ArrayList<T> getData() {
+        return data;
     }
 
     @Override
