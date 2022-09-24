@@ -1,7 +1,5 @@
 package com.github.tvbox.osc.ui.activity;
 
-import static android.view.KeyEvent.FLAG_LONG_PRESS;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.IntEvaluator;
@@ -26,7 +24,6 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -106,22 +103,7 @@ public class HomeActivity extends BaseActivity {
 
     boolean useCacheConfig = true;
 
-    @Override
-    protected void init() {
-        EventBus.getDefault().register(this);
-        initView();
-        initViewModel();
-        useCacheConfig = true;
-        Intent intent = getIntent();
-        if (intent != null && intent.getExtras() != null) {
-            Bundle bundle = intent.getExtras();
-            useCacheConfig = bundle.getBoolean("useCache", false);
-        }
-        // 初始化Web服务器
-        ControlManager.init(this);
-        ControlManager.get().startServer();
-        initData();
-    }
+    private boolean isLoadingShow = false;
 
     private void initView() {
         this.topLayout = findViewById(R.id.topLayout);
@@ -209,12 +191,33 @@ public class HomeActivity extends BaseActivity {
         //mHandler.postDelayed(mFindFocus, 500);
     }
 
+    @Override
+    protected void init() {
+        EventBus.getDefault().register(this);
+        initView();
+        initViewModel();
+        useCacheConfig = true;
+//        Intent intent = getIntent();
+//        if (intent != null && intent.getExtras() != null) {
+//            Bundle bundle = intent.getExtras();
+//            useCacheConfig = bundle.getBoolean("useCache", false);
+//        }
+        // 初始化Web服务器
+        ControlManager.init(this);
+        ControlManager.get().startServer();
+        initData();
+    }
+
+    private boolean dataInitOk = false;
+    private boolean jarInitOk = false;
+
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
             @Override
             public void onChanged(AbsSortXml absXml) {
                 showSuccess();
+                isLoadingShow = false;
                 if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
                     sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true));
                 } else {
@@ -225,19 +228,16 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    private boolean dataInitOk = false;
-    private boolean jarInitOk = false;
-
     private void initData() {
         SourceBean home = ApiConfig.get().getHomeSourceBean();
         if (home != null && home.getName() != null && !home.getName().isEmpty())
             tvName.setText(home.getName());
         if (dataInitOk && jarInitOk) {
-            showLoading();
             sourceViewModel.getSort(ApiConfig.get().getHomeSourceBean().getKey());
             return;
         }
         showLoading();
+        isLoadingShow = true;
         if (dataInitOk && !jarInitOk) {
             if (!ApiConfig.get().getSpider().isEmpty()) {
                 ApiConfig.get().loadJar(useCacheConfig, ApiConfig.get().getSpider(), new ApiConfig.LoadConfigCallback() {
@@ -419,6 +419,11 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void exit() {
+        if (isLoadingShow) {
+            return;
+        } else {//避免出异常导致无法退出app
+            isLoadingShow = false;
+        }
         if (System.currentTimeMillis() - mExitTime < 2000) {
             //这一段借鉴来自 q群老哥 IDCardWeb
             EventBus.getDefault().unregister(this);
@@ -487,15 +492,21 @@ public class HomeActivity extends BaseActivity {
         }
         if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
             //长按
-            if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS)!= 0){
-                if (event.getAction() == KeyEvent.ACTION_DOWN){
+            if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     ActivityUtils.startActivity(new Intent(this, SettingActivity.class));
                 }
-            }else {
+            } else {
                 if (event.getAction() == KeyEvent.ACTION_UP)
                     showSiteSwitch();
             }
 
+        }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (isLoadingShow) {
+                ToastUtils.showShort("跳过loading~");
+                showSuccess();
+            }
         }
         return super.dispatchKeyEvent(event);
     }
