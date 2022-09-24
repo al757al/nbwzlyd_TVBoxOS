@@ -60,10 +60,11 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     companion object {
         //https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt
-        private  var DEFAULT_STORE_URL = "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt"
+        private var DEFAULT_STORE_URL = "ABC"
     }
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
+
     init {
         setContentView(R.layout.more_source_dialog_select)
         mRecyclerView = findViewById(R.id.list)
@@ -195,18 +196,28 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     }
 
     private fun inflateCustomSource(result: MutableList<MoreSourceBean>) {
-        val custom =
-            KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
-        if (custom.isNotEmpty()) {
-            result.addAll(0, custom)
+        val localData = KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
+        if (localData.isEmpty()) {//如果本地保存的是空的，就把新的结果放进去
+            localData.addAll(result)
+        } else {//否则进行匹配，只保存本地没有的
+            val customMap = localData.associateBy { it.uniKey }
+            val newResultMap = result.associateBy { it.uniKey }
+
+            newResultMap.forEach {
+                if (customMap[it.key] == null) {
+                    localData.add(it.value)
+                }
+            }
         }
+        //更新最新的地址
+        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, localData)
         val lastSelectBean =
             KVStorage.getBean(
                 HawkConfig.CUSTOM_STORE_HOUSE_SELECTED,
                 MoreSourceBean::class.java
             )
         var index = 0
-        result.forEach {
+        localData.forEach {
             if (it.sourceUrl != lastSelectBean?.sourceUrl) {
                 it.isSelected = false
             } else {
@@ -218,10 +229,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         val diffResult = DiffUtil.calculateDiff(AdapterDiffCallBack(mAdapter.data, result), false)
         //为了适配diffUtil才这么写的
         mAdapter.data.clear()
-        mAdapter.data.addAll(result)
+        mAdapter.data.addAll(localData)
         diffResult.dispatchUpdatesTo(mAdapter)
-        mRecyclerView?.post {
-            mRecyclerView?.scrollToPosition(index)
+        if (index != -1) {
+            mRecyclerView?.post {
+                mRecyclerView?.scrollToPosition(index)
+            }
         }
     }
 

@@ -30,6 +30,7 @@
     <dimen name="vs_40">40mm</dimen>
     <dimen name="vs_45">45mm</dimen>
     <dimen name="vs_50">50mm</dimen>
+    <dimen name="vs_55">55mm</dimen>
     <dimen name="vs_60">60mm</dimen>
     <dimen name="vs_100">100mm</dimen>
     <dimen name="vs_120">120mm</dimen>
