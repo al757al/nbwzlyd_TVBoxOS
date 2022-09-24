@@ -14,6 +14,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -776,6 +778,14 @@ public class VodController extends BaseController {
             hideBottom();
         }
         return true;
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    protected void destroy() {
+        super.destroy();
+        mHandlerCallback = null;
+        myHandle.removeCallbacksAndMessages(null);
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     @Override

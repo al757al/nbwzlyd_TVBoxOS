@@ -15,6 +15,10 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -39,7 +43,7 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  */
 public abstract class BaseVideoController extends FrameLayout
         implements IVideoController,
-        OrientationHelper.OnOrientationChangeListener {
+        OrientationHelper.OnOrientationChangeListener, LifecycleObserver {
 
     //播放器包装类，集合了MediaPlayerControl的api和IVideoController的api
     protected ControlWrapper mControlWrapper;
@@ -105,6 +109,9 @@ public abstract class BaseVideoController extends FrameLayout
         mHideAnim.setDuration(300);
 
         mActivity = PlayerUtils.scanForActivity(getContext());
+        if (mActivity instanceof LifecycleOwner) {
+            ((LifecycleOwner) mActivity).getLifecycle().addObserver(this);
+        }
     }
 
     /**
@@ -668,4 +675,9 @@ public abstract class BaseVideoController extends FrameLayout
     }
 
     //------------------------ end handle event change ------------------------//
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    protected void destroy() {
+        mActivity = null;
+    }
 }

@@ -42,4 +42,5 @@ dependencies {
     api "com.google.android.exoplayer:extension-rtmp:2.14.2"
     api "com.google.android.exoplayer:extension-okhttp:2.14.2"
     api 'xyz.doikki.android.dkplayer:dkplayer-ui:3.3.5'
+    implementation 'androidx.lifecycle:lifecycle-common:2.3.1'
 }
