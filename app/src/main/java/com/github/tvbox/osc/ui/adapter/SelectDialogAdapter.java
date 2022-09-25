@@ -1,9 +1,5 @@
 package com.github.tvbox.osc.ui.adapter;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import me.jessyan.autosize.utils.AutoSizeUtils;
 
 public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.SelectViewHolder> {
 
@@ -86,19 +80,19 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
         if (position == select) {
             textView.setText(SpanUtils.with(textView).
                     appendImage(ContextCompat.getDrawable(textView.getContext(), R.drawable.ic_select_fill)).append(" ").append(name).create());
+            holder.itemView.requestFocus();
         } else {
             textView.setText(name);
+            holder.itemView.clearFocus();
         }
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (position == select)
-                    return;
-                notifyItemChanged(select);
-                select = position;
-                notifyItemChanged(select);
-                dialogInterface.click(value, position);
-            }
+        holder.itemView.setFocusable(true);
+        holder.itemView.setOnClickListener(v -> {
+            if (position == select)
+                return;
+            notifyItemChanged(select);
+            select = position;
+            notifyItemChanged(select);
+            dialogInterface.click(value, position);
         });
     }
 }
