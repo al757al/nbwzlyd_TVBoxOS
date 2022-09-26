@@ -62,4 +62,11 @@ object KVStorage {
         return data
     }
 
+    @JvmStatic
+    fun deleteAll() {
+        mmkv.allKeys()?.forEach {
+            mmkv.remove(it)
+        }
+    }
+
 }

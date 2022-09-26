@@ -1,14 +1,20 @@
 package com.github.tvbox.osc.ui.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DiffUtil;
 
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.CleanUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.BuildConfig;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -18,6 +24,7 @@ import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.MoreSourceBean;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
+import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.AboutDialog;
@@ -70,6 +77,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvSearchView;
     private TextView tvShowPreviewText;
     private TextView tvFastSearchText;
+    private TextView mClearDataTextView;
 
     boolean isLastOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
 
@@ -84,13 +92,14 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     protected int getLayoutResID() {
-        return R.layout.fragment_model;
+        return R.layout.fragment_model_new;
     }
 
     @Override
     protected void init() {
         EventBus.getDefault().register(this);
         tvFastSearchText = findViewById(R.id.showFastSearchText);
+        mClearDataTextView = findViewById(R.id.clear_data);
         tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
         tvShowPreviewText = findViewById(R.id.showPreviewText);
         tvShowPreviewText.setText(Hawk.get(HawkConfig.SHOW_PREVIEW, true) ? "开启" : "关闭");
@@ -604,6 +613,32 @@ public class ModelSettingFragment extends BaseLazyFragment {
             isLastOpen = !isLastOpen;
             setTimeSwitch(textView, isLastOpen);
             KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isLastOpen);
+        });
+        mClearDataTextView.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("确定要清空缓存？");
+            builder.setMessage("缓存清除后，软件将变为初始安装状态");
+            builder.setNegativeButton("取消", (dialog, which) -> {
+
+            });
+            builder.setPositiveButton("确定", (dialog, which) -> {
+                CleanUtils.cleanExternalCache();
+                CleanUtils.cleanInternalCache();
+                CleanUtils.cleanInternalFiles();
+                CleanUtils.cleanInternalSp();
+                Hawk.deleteAll();
+                KVStorage.deleteAll();
+                ToastUtils.showShort("缓存清空完毕");
+                ApiConfig.release();
+                Intent intent = new Intent(mActivity, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("useCache", true);
+                intent.putExtras(bundle);
+                ActivityUtils.startActivity(HomeActivity.class,bundle);
+
+            });
+            builder.create().show();
         });
     }
 
