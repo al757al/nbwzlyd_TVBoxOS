@@ -617,7 +617,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         mClearDataTextView.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("确定要清空缓存？");
-            builder.setMessage("缓存清除后，软件将变为初始安装状态");
+            builder.setMessage("清空缓存后，软件将变为初始安装状态");
             builder.setNegativeButton("取消", (dialog, which) -> {
 
             });
@@ -638,7 +638,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 ActivityUtils.startActivity(HomeActivity.class,bundle);
 
             });
-            builder.create().show();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+            alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).requestFocus();
         });
     }
 
