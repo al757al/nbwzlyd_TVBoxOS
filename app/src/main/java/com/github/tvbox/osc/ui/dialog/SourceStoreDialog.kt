@@ -238,7 +238,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 mRecyclerView?.scrollToPosition(index)
             }
         }
-        ItemTouchHelper(MyItemTouchHelper(localData,mAdapter)).attachToRecyclerView(mRecyclerView)
+        ItemTouchHelper(MyItemTouchHelper(mAdapter.data,mAdapter)).attachToRecyclerView(mRecyclerView)
 
     }
 
