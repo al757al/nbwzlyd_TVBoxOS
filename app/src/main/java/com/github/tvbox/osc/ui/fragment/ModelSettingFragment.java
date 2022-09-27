@@ -646,9 +646,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     private void setTimeSwitch(TextView textView, boolean isLastOpen) {
         if (isLastOpen) {
-            textView.setText("时间展示                        开");
+            textView.setText("时间展示            已打开 >");
         } else {
-            textView.setText("时间展示                        关");
+            textView.setText("时间展示            已关闭 >");
         }
     }
 
