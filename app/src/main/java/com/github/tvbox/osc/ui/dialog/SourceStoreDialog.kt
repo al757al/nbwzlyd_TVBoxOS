@@ -57,12 +57,14 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     override fun dismiss() {
         EventBus.getDefault().unregister(this)
+        //更新成最新的仓库排序
+        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, mAdapter.data)
         super.dismiss()
     }
 
     companion object {
         //https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt
-        private var DEFAULT_STORE_URL = "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt"
+        private var DEFAULT_STORE_URL = "ABC"
     }
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()

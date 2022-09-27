@@ -20,7 +20,7 @@ class MyItemTouchHelper(
 ) : ItemTouchHelper.Callback() {
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: ViewHolder): Int {
         val dragFlags =
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN or  ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         val swipeFlags = 0
         return makeMovementFlags(dragFlags, swipeFlags)
     }
