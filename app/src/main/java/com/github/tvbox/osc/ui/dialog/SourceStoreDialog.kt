@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.blankj.utilcode.util.SpanUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -21,6 +22,7 @@ import com.github.tvbox.osc.server.ControlManager
 import com.github.tvbox.osc.ui.activity.HomeActivity
 import com.github.tvbox.osc.ui.activity.SettingActivity
 import com.github.tvbox.osc.ui.dialog.util.AdapterDiffCallBack
+import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
@@ -60,7 +62,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     companion object {
         //https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt
-        private var DEFAULT_STORE_URL = "ABC"
+        private var DEFAULT_STORE_URL = "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt"
     }
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
@@ -236,6 +238,8 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 mRecyclerView?.scrollToPosition(index)
             }
         }
+        ItemTouchHelper(MyItemTouchHelper(localData,mAdapter)).attachToRecyclerView(mRecyclerView)
+
     }
 
 

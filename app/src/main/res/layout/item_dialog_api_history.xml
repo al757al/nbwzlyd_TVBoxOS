@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/tvName"
         android:layout_width="0dp"
-        android:layout_height="@dimen/vs_55"
+        android:layout_height="@dimen/vs_60"
         android:layout_gravity="center"
         android:layout_weight="1"
         android:background="@drawable/button_dialog_main"
@@ -27,7 +27,7 @@
     <ImageView
         android:id="@+id/tvDel"
         android:layout_width="@dimen/vs_50"
-        android:layout_height="@dimen/vs_55"
+        android:layout_height="@dimen/vs_60"
         android:layout_marginStart="@dimen/vs_5"
         android:layout_marginLeft="@dimen/vs_5"
         android:background="@drawable/button_dialog_main"

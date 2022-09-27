@@ -1,8 +1,6 @@
 package com.github.tvbox.osc.ui.dialog;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,7 +8,6 @@ import androidx.annotation.NonNull;
 import com.blankj.utilcode.util.SpanUtils;
 import com.github.tvbox.osc.BuildConfig;
 import com.github.tvbox.osc.R;
-import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,8 +19,8 @@ public class AboutDialog extends BaseDialog {
         TextView textView = findViewById(R.id.title1);
 
         SpanUtils.with(textView).append("版本号 V"+ BuildConfig.VERSION_NAME+"更新日志:")
-                .append("\n").append("1.调整首页历史等按钮的大小，适配TV更大气\n2.仓库推送顺序改为正向排序\n3.首页长按遥控器菜单键跳转设置页，短按切换首页源" +
-                        "\n4.修复覆盖安装点击设置页会崩溃的问题\n5.删除内置赞赏码和公众号，起了一个非常不好的头，抱歉\n5.支持反编译内置仓库，beta版本，自行研究不一定生效" +
-                        "\n7.支持首页换线路了，不用再跳转设置页了，撒花~").create();
+                .append("\n").append("1.设置页UI优化，感谢双喜大兄弟\n2.增加清除缓存功能，让你的app重获新生\n3.优化遥控器焦点，点开就能看到我上次选的哪个条目" +
+                        "\n4.进度条有颜色了，视频进度一看便知\n5.修复内存泄漏，占用内存少了\n5.优化了线路刷新逻辑，不会闪动了" +
+                        "\n7.支持远程推送多仓库链接了~ \n8.手机支持拖拽对仓库进行排序了(电视不支持)~").create();
     }
 }
