@@ -86,7 +86,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                     .show()
                 return@setOnClickListener
             }
-            saveCustomSourceBean(sourceUrl0, sourceName0)
+            handleRemotePush(RefreshEvent(RefreshEvent.TYPE_STORE_PUSH).apply {
+               this.obj = MoreSourceBean().apply {
+                   this.sourceName = sourceName0
+                   this.sourceUrl = sourceUrl0
+               }
+            })
 
         }
         mAdapter.setOnItemChildClickListener { adapter, view, position ->
@@ -109,6 +114,10 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     }
 
     private fun saveCustomSourceBean(sourceUrl0: String, sourceName0: String) {
+
+
+
+
         if (sourceUrl0.startsWith("http") || sourceUrl0.startsWith("https")) {
             val saveList =
                 KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
