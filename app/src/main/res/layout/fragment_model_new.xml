@@ -871,7 +871,7 @@
                 android:layout_weight="1.0"
                 android:background="@drawable/shape_setting_model_focus"
                 android:focusable="true"
-                android:text="清空缓存                                                                        >"
+                android:text="清空缓存                                                                      >"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="@dimen/vs_20"
                 android:textColor="@android:color/white"
