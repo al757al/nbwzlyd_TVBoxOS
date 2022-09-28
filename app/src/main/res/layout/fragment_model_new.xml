@@ -883,8 +883,6 @@
             android:id="@id/llAbout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/vs_60"
-            android:layout_marginStart="@dimen/vs_10"
-            android:layout_marginLeft="@dimen/vs_5"
             android:layout_weight="1.0"
             android:background="@drawable/shape_setting_model_focus"
             android:focusable="true"
@@ -912,7 +910,6 @@
                 android:layout_marginStart="@dimen/vs_10"
                 android:layout_marginLeft="@dimen/vs_10"
                 android:text="&gt;"
-
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/ts_24" />
         </LinearLayout>
