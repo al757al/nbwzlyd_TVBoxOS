@@ -114,10 +114,6 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     }
 
     private fun saveCustomSourceBean(sourceUrl0: String, sourceName0: String) {
-
-
-
-
         if (sourceUrl0.startsWith("http") || sourceUrl0.startsWith("https")) {
             val saveList =
                 KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
