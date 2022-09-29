@@ -27,6 +27,7 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
+import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.base.BaseLazyFragment;
 import com.github.tvbox.osc.bean.AbsSortXml;
@@ -58,6 +59,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -265,7 +267,7 @@ public class HomeActivity extends BaseActivity {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(HomeActivity.this, "jar加载失败", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(HomeActivity.this, "jar加载失败"+msg, Toast.LENGTH_SHORT).show();
                                 initData();
                             }
                         });
@@ -420,9 +422,18 @@ public class HomeActivity extends BaseActivity {
 
     private void exit() {
         if (isLoadingShow) {
-            return;
-        } else {//避免出异常导致无法退出app
             isLoadingShow = false;
+            ToastUtils.showShort("跳过loading~");
+            File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/csp.jar");
+            if (cache.exists()) {//修复由于强制关闭loading导致资源下载不完全，每次会加载jar失败的问题
+                cache.delete();
+            }
+            if (fragments.isEmpty()) {
+                fragments.add(UserFragment.newInstance(null));
+                pageAdapter.notifyDataSetChanged();
+            }
+            showSuccess();
+            return;
         }
         if (System.currentTimeMillis() - mExitTime < 2000) {
             //这一段借鉴来自 q群老哥 IDCardWeb
@@ -501,13 +512,6 @@ public class HomeActivity extends BaseActivity {
                     showSiteSwitch();
             }
 
-        }
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if (isLoadingShow) {
-                isLoadingShow=false;
-                ToastUtils.showShort("跳过loading~");
-                showSuccess();
-            }
         }
         return super.dispatchKeyEvent(event);
     }
