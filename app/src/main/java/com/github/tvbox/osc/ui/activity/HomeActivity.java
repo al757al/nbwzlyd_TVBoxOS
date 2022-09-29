@@ -504,6 +504,7 @@ public class HomeActivity extends BaseActivity {
         }
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
             if (isLoadingShow) {
+                isLoadingShow=false;
                 ToastUtils.showShort("跳过loading~");
                 showSuccess();
             }
