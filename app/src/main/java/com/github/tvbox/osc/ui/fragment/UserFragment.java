@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -18,12 +19,14 @@ import com.github.tvbox.osc.ui.activity.CollectActivity;
 import com.github.tvbox.osc.ui.activity.DetailActivity;
 import com.github.tvbox.osc.ui.activity.FastSearchActivity;
 import com.github.tvbox.osc.ui.activity.HistoryActivity;
+import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.activity.LivePlayActivity;
 import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
-import com.github.tvbox.osc.ui.dialog.SourceStoreDialog2;
+import com.github.tvbox.osc.ui.dialog.SourceStoreDialog;
+import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.google.gson.Gson;
@@ -112,7 +115,10 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvSetting.setOnClickListener(this);
         tvHistory.setOnClickListener(this);
         tvPush.setOnClickListener(this);
-        findViewById(R.id.changeStore).setOnClickListener(this);
+        TextView changeStore = findViewById(R.id.changeStore);
+        TextView changeLine = findViewById(R.id.changeLine);
+        changeStore.setOnClickListener(this);
+        changeLine.setOnClickListener(this);
         tvCollect.setOnClickListener(this);
         tvLive.setOnFocusChangeListener(focusChangeListener);
         tvSearch.setOnFocusChangeListener(focusChangeListener);
@@ -120,6 +126,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvHistory.setOnFocusChangeListener(focusChangeListener);
         tvPush.setOnFocusChangeListener(focusChangeListener);
         tvCollect.setOnFocusChangeListener(focusChangeListener);
+        changeLine.setOnFocusChangeListener(focusChangeListener);
+        changeStore.setOnFocusChangeListener(focusChangeListener);
         TvRecyclerView tvHotList = findViewById(R.id.tvHotList);
         homeHotVodAdapter = new HomeHotVodAdapter();
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -278,7 +286,13 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         } else if (v.getId() == R.id.tvFavorite) {
             jumpActivity(CollectActivity.class);
         } else if (v.getId() == R.id.changeStore) {
-            new SourceStoreDialog2(getActivity()).show();
+            new SourceStoreDialog(getActivity()).show();
+        }else if (v.getId() == R.id.changeLine){
+            new SourceLineDialogUtil(getContext()).getData(() -> {
+                ((HomeActivity)getActivity()).forceRestartHomeActivity();
+                ToastUtils.make().show("线路已切换，若加载数据失败可尝试切换首页数据源或者再次切换线路");
+                return null;
+            });
         }
     }
 

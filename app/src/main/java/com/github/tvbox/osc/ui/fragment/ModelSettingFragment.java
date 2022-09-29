@@ -1,15 +1,21 @@
 package com.github.tvbox.osc.ui.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DiffUtil;
 
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.CleanUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.github.tvbox.osc.BuildConfig;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.BaseActivity;
@@ -26,7 +32,7 @@ import com.github.tvbox.osc.ui.dialog.ApiDialog;
 import com.github.tvbox.osc.ui.dialog.BackupDialog;
 import com.github.tvbox.osc.ui.dialog.EpgDialog;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
-import com.github.tvbox.osc.ui.dialog.SourceStoreDialog2;
+import com.github.tvbox.osc.ui.dialog.SourceStoreDialog;
 import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
@@ -73,6 +79,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvSearchView;
     private TextView tvShowPreviewText;
     private TextView tvFastSearchText;
+    private TextView mClearDataTextView;
 
     boolean isLastOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
 
@@ -87,13 +94,14 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     protected int getLayoutResID() {
-        return R.layout.fragment_model;
+        return R.layout.fragment_model_new;
     }
 
     @Override
     protected void init() {
         EventBus.getDefault().register(this);
         tvFastSearchText = findViewById(R.id.showFastSearchText);
+        mClearDataTextView = findViewById(R.id.clear_data);
         tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
         tvShowPreviewText = findViewById(R.id.showPreviewText);
         tvShowPreviewText.setText(Hawk.get(HawkConfig.SHOW_PREVIEW, true) ? "开启" : "关闭");
@@ -172,6 +180,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 dialog.show();
             }
         });
+        TextView about  = findViewById(R.id.text_about);
+        about.setText("关于  V"+ BuildConfig.VERSION_NAME);
         findViewById(R.id.llWp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -631,7 +641,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
         });
         findViewById(R.id.default_more_store).setOnClickListener(v -> {
-            new SourceStoreDialog2(mActivity).show();
+            new SourceStoreDialog(mActivity).show();
 
         });
         TextView textView = findViewById(R.id.sys_time_switch);
@@ -641,13 +651,41 @@ public class ModelSettingFragment extends BaseLazyFragment {
             setTimeSwitch(textView, isLastOpen);
             KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isLastOpen);
         });
+        mClearDataTextView.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("确定要清空缓存？");
+            builder.setMessage("清空缓存后，软件将变为初始安装状态");
+            builder.setNegativeButton("取消", (dialog, which) -> {
+
+            });
+            builder.setPositiveButton("确定", (dialog, which) -> {
+                CleanUtils.cleanExternalCache();
+                CleanUtils.cleanInternalCache();
+                CleanUtils.cleanInternalFiles();
+                CleanUtils.cleanInternalSp();
+                Hawk.deleteAll();
+                KVStorage.deleteAll();
+                ToastUtils.showShort("缓存清空完毕");
+                ApiConfig.release();
+                Intent intent = new Intent(mActivity, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("useCache", true);
+                intent.putExtras(bundle);
+                ActivityUtils.startActivity(HomeActivity.class,bundle);
+
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+            alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).requestFocus();
+        });
     }
 
     private void setTimeSwitch(TextView textView, boolean isLastOpen) {
         if (isLastOpen) {
-            textView.setText("时间展示     开");
+            textView.setText("时间展示            已打开 >");
         } else {
-            textView.setText("时间展示     关");
+            textView.setText("时间展示            已关闭 >");
         }
     }
 

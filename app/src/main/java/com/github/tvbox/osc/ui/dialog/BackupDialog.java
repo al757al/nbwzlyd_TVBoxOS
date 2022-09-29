@@ -186,7 +186,7 @@ public class BackupDialog extends BaseDialog {
             }
         } catch (Throwable e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "备份失败!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "备份失败!请检查存储权限~", Toast.LENGTH_SHORT).show();
         }
     }
 }

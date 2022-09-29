@@ -15,7 +15,7 @@
         android:lineSpacingMultiplier="0"
         android:padding="@dimen/vs_20"
         android:singleLine="true"
-        android:text="添加多源"
+        android:text="添加多仓"
         android:textColor="@color/color_CC000000"
         android:textSize="@dimen/ts_26"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -62,6 +62,20 @@
         app:tv_layoutManager="V7LinearLayoutManager"
         app:tv_selectedItemIsCentered="true"
         app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
+
+    <ProgressBar
+        android:id="@+id/play_loading"
+        android:layout_width="@dimen/vs_50"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="@id/list"
+        app:layout_constraintRight_toRightOf="@id/list"
+        app:layout_constraintBottom_toBottomOf="@id/list"
+        app:layout_constraintTop_toTopOf="@id/list"
+        android:layout_height="@dimen/vs_50"
+        android:layout_gravity="center"
+        android:indeterminateBehavior="repeat"
+        android:indeterminateDrawable="@drawable/anim_loading"
+        android:indeterminateOnly="true" />
 
 
     <EditText
