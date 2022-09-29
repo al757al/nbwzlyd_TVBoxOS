@@ -55,6 +55,10 @@ public class SimpleSubtitleView extends TextView
 
     private SubtitleEngine mSubtitleEngine;
 
+    public boolean isInternal = false;
+
+    public boolean hasInternal = false;
+
     public SimpleSubtitleView(final Context context) {
         super(context);
         init();
@@ -88,11 +92,17 @@ public class SimpleSubtitleView extends TextView
             setText(EMPTY_TEXT);
             return;
         }
-        setText(Html.fromHtml(subtitle.content));
+        String text = subtitle.content;
+        text = text.replaceAll("(?:\\r\\n)", "<br />");
+        text = text.replaceAll("(?:\\r)", "<br />");
+        text = text.replaceAll("(?:\\n)", "<br />");
+        text = text.replaceAll("\\{[\\s\\S]*\\}", "");
+        setText(Html.fromHtml(text));
     }
 
     @Override
     public void setSubtitlePath(final String path) {
+        isInternal = false;
         mSubtitleEngine.setSubtitlePath(path);
     }
 

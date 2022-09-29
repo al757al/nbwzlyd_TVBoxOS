@@ -268,6 +268,8 @@ public class FastSearchActivity extends BaseActivity {
             mGridViewFilter.setVisibility(View.GONE);
             return;
         }
+        mGridView.setVisibility(View.GONE);
+        mGridViewFilter.setVisibility(View.VISIBLE);
         String key = spNames.get(spName);
         if(key.isEmpty()) return;
 
@@ -276,8 +278,6 @@ public class FastSearchActivity extends BaseActivity {
 
         List<Movie.Video> list = resultVods.get(key);
         searchAdapterFilter.setNewData(list);
-        mGridView.setVisibility(View.GONE);
-        mGridViewFilter.setVisibility(View.VISIBLE);
     }
 
     private void fenci(){
@@ -411,7 +411,6 @@ public class FastSearchActivity extends BaseActivity {
             this.spNames.put(bean.getName(), bean.getKey());
             allRunCount.incrementAndGet();
         }
-        updateSearchResultCount(0);
 
         for (String key : siteKey) {
             searchExecutorService.execute(new Runnable() {
@@ -422,14 +421,14 @@ public class FastSearchActivity extends BaseActivity {
                     }catch (Exception e){
 
                     }
-
-                    updateSearchResultCount(1);
+//                    updateSearchResultCount(1);
                 }
             });
         }
     }
     synchronized private void  updateSearchResultCount(int n){
-        finishedCount +=n;
+//        finishedCount +=n;
+        finishedCount = resultVods.size();
         if(finishedCount > spNames.size()) finishedCount = spNames.size();
 
     }
@@ -476,6 +475,7 @@ public class FastSearchActivity extends BaseActivity {
             }
 
             if (searchAdapter.getData().size() > 0) {
+                finishedCount +=1;
                 searchAdapter.addData(data);
             } else {
                 showSuccess();
