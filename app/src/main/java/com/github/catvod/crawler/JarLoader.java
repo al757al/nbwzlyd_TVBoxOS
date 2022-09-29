@@ -67,8 +67,17 @@ public class JarLoader {
                         break;
                     }
                     Thread.sleep(200);
-                } catch (Throwable th) {
-                    th.printStackTrace();
+                } catch (Exception e) {
+                    if (e instanceof ClassNotFoundException) {
+                        File cache = new File(jar);
+                        if (cache.exists()) {//修复由于强制关闭loading导致资源下载不完全，每次会加载jar失败的问题
+                            cache.delete();
+                            break;
+//                            ApiConfig.get().loadJar(false, ApiConfig.get().getSpider(),null);
+                        }
+                    } else {
+                        e.printStackTrace();
+                    }
                 }
                 count++;
             } while (count < 5);

@@ -50,6 +50,7 @@ import com.github.tvbox.osc.util.AppManager;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import com.lzy.okgo.OkGo;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
@@ -106,6 +107,7 @@ public class HomeActivity extends BaseActivity {
     boolean useCacheConfig = true;
 
     private boolean isLoadingShow = false;
+    private boolean isForceCloseLoading = false;
 
     private void initView() {
         this.topLayout = findViewById(R.id.topLayout);
@@ -190,6 +192,10 @@ public class HomeActivity extends BaseActivity {
             }
         });
         setLoadSir(this.contentLayout);
+        pageAdapter = new HomePageAdapter(getSupportFragmentManager(), fragments);
+        mViewPager.setPageTransformer(true, new DefaultTransformer());
+        mViewPager.setAdapter(pageAdapter);
+        mViewPager.setCurrentItem(currentSelected, false);
         //mHandler.postDelayed(mFindFocus, 500);
     }
 
@@ -252,6 +258,7 @@ public class HomeActivity extends BaseActivity {
                                 if (!useCacheConfig)
                                     Toast.makeText(HomeActivity.this, "自定义jar加载成功", Toast.LENGTH_SHORT).show();
                                 initData();
+                                isForceCloseLoading = false;
                             }
                         }, 50);
                     }
@@ -264,12 +271,13 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void error(String msg) {
                         jarInitOk = true;
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(HomeActivity.this, "jar加载失败"+msg, Toast.LENGTH_SHORT).show();
-                                initData();
+                        mHandler.post(() -> {
+                            if (isForceCloseLoading) {
+                                isForceCloseLoading = false;
+                                return;
                             }
+                            Toast.makeText(HomeActivity.this, "jar加载失败", Toast.LENGTH_SHORT).show();
+                            initData();
                         });
                     }
                 });
@@ -367,6 +375,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void initViewPager(AbsSortXml absXml) {
+        fragments.clear();
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
@@ -379,7 +388,7 @@ public class HomeActivity extends BaseActivity {
                     fragments.add(GridFragment.newInstance(data));
                 }
             }
-            pageAdapter = new HomePageAdapter(getSupportFragmentManager(), fragments);
+            pageAdapter.notifyDataSetChanged();
             try {
                 Field field = ViewPager.class.getDeclaredField("mScroller");
                 field.setAccessible(true);
@@ -388,9 +397,6 @@ public class HomeActivity extends BaseActivity {
                 scroller.setmDuration(300);
             } catch (Exception e) {
             }
-            mViewPager.setPageTransformer(true, new DefaultTransformer());
-            mViewPager.setAdapter(pageAdapter);
-            mViewPager.setCurrentItem(currentSelected, false);
         }
     }
 
@@ -423,12 +429,20 @@ public class HomeActivity extends BaseActivity {
     private void exit() {
         if (isLoadingShow) {
             isLoadingShow = false;
+            isForceCloseLoading = true;
             ToastUtils.showShort("跳过loading~");
-            File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/csp.jar");
-            if (cache.exists()) {//修复由于强制关闭loading导致资源下载不完全，每次会加载jar失败的问题
-                cache.delete();
-            }
+            //取消jar的加载
+            OkGo.getInstance().cancelTag("downLoadJar");
+            new Handler().postDelayed(() -> {
+                File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/csp.jar");
+                if (cache.exists()) {//修复由于强制关闭loading导致资源下载不完全，每次会加载jar失败的问题
+                    cache.delete();
+                }
+            }, 300);
             if (fragments.isEmpty()) {
+                List<MovieSort.SortData> list = new ArrayList<>();
+                list.add(new MovieSort.SortData("my0", "主页"));
+                sortAdapter.setNewData(list);
                 fragments.add(UserFragment.newInstance(null));
                 pageAdapter.notifyDataSetChanged();
             }

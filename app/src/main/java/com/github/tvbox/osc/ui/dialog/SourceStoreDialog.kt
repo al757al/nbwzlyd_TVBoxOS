@@ -3,10 +3,7 @@ package com.github.tvbox.osc.ui.dialog
 import android.app.Activity
 import android.graphics.Color
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -17,6 +14,8 @@ import com.chad.library.adapter.base.BaseViewHolder
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.bean.MoreSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
+import com.github.tvbox.osc.ext.letGone
+import com.github.tvbox.osc.ext.letVisible
 import com.github.tvbox.osc.ext.removeFirstIf
 import com.github.tvbox.osc.server.ControlManager
 import com.github.tvbox.osc.ui.activity.HomeActivity
@@ -46,6 +45,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private var mSourceNameEdit: EditText? = null
     private var mSourceUrlEdit: EditText? = null
     private var mQrCode: ImageView? = null
+    private var mLoading: ProgressBar? = null
     private val mAdapter: MoreSourceAdapter by lazy {
         MoreSourceAdapter()
     }
@@ -77,6 +77,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         mSourceUrlEdit = findViewById(R.id.input_source_url)
         mAddMoreBtn = findViewById(R.id.inputSubmit)
         mQrCode = findViewById(R.id.qrCode)
+        mLoading = findViewById(R.id.play_loading)
         mRecyclerView?.adapter = mAdapter
         mAddMoreBtn?.setOnClickListener {
             val sourceUrl0 = mSourceUrlEdit?.text.toString()
@@ -136,6 +137,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
 
     private fun getMutiSource() {
+        mLoading.letVisible()
         OkGo.get<String>(DEFAULT_STORE_URL)
             .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
             .cacheTime(3 * 24 * 60 * 60 * 1000).execute(object : StringCallback() {
@@ -150,6 +152,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
                 override fun onError(response: Response<String>?) {
                     super.onError(response)
+                    mLoading.letGone()
                     Toast.makeText(
                         context,
                         "多仓接口拉取失败" + response?.exception?.message + "将使用缓存",
@@ -162,6 +165,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     private fun serverString2Json(response: Response<String>?) {
         try {
+            mLoading.letGone()
             val jsonObj = JSONObject(response?.body() ?: return)
             var jsonArray: JSONArray? = null
             if (!jsonObj.has("storeHouse")) {
@@ -206,20 +210,17 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     private fun inflateCustomSource(result: MutableList<MoreSourceBean>) {
         val localData = KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
-        if (localData.isEmpty()) {//如果本地保存的是空的，就把新的结果放进去
+        if (localData.isEmpty() && result.isNotEmpty()) {//如果本地保存的是空的，就把新的结果放进去
             localData.addAll(result)
         } else {//否则进行匹配，只保存本地没有的
             val customMap = localData.associateBy { it.uniKey }
             val newResultMap = result.associateBy { it.uniKey }
-
             newResultMap.forEach {
                 if (customMap[it.key] == null) {
                     localData.add(it.value)
                 }
             }
         }
-        //更新最新的地址
-        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, localData)
         val lastSelectBean =
             KVStorage.getBean(
                 HawkConfig.CUSTOM_STORE_HOUSE_SELECTED,
@@ -239,6 +240,8 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         //为了适配diffUtil才这么写的
         mAdapter.data.clear()
         mAdapter.data.addAll(localData)
+        //更新最新的地址
+        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, localData)
         diffResult.dispatchUpdatesTo(mAdapter)
         if (index != -1) {
             mRecyclerView?.post {
