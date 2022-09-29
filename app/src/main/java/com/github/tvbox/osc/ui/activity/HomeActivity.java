@@ -433,12 +433,10 @@ public class HomeActivity extends BaseActivity {
             ToastUtils.showShort("跳过loading~");
             //取消jar的加载
             OkGo.getInstance().cancelTag("downLoadJar");
-            new Handler().postDelayed(() -> {
-                File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/csp.jar");
-                if (cache.exists()) {//修复由于强制关闭loading导致资源下载不完全，每次会加载jar失败的问题
-                    cache.delete();
-                }
-            }, 300);
+            File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/csp.jar");
+            if (cache.exists()) {//修复由于强制关闭loading导致资源下载不完全，每次会加载jar失败的问题
+                cache.delete();
+            }
             if (fragments.isEmpty()) {
                 List<MovieSort.SortData> list = new ArrayList<>();
                 list.add(new MovieSort.SortData("my0", "主页"));
