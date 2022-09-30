@@ -2,8 +2,6 @@ package com.github.tvbox.osc.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,21 +9,19 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.github.tvbox.osc.R;
-import com.github.tvbox.osc.ui.tv.widget.AudioWaveView;
 import com.github.tvbox.osc.ui.tv.widget.Epginfo;
 
-import java.util.Date;
 import java.util.List;
 
 public class MyEpgAdapter extends BaseAdapter {
 
     private List<Epginfo> data;
     private Context context;
-    public static float fontSize=20;
+    public static float fontSize = 20;
     private int defaultSelection = 0;
     private int defaultShiyiSelection = 0;
 
-    public MyEpgAdapter(List<Epginfo> data, Context context, int i ) {
+    public MyEpgAdapter(List<Epginfo> data, Context context, int i) {
         this.data = data;
         this.context = context;
         this.defaultSelection = i;
@@ -64,29 +60,23 @@ public class MyEpgAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        if(view ==null){
-            view =  LayoutInflater.from(context).inflate(R.layout.epglist_item,viewGroup,false);
+        if (view == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.epglist_item, viewGroup, false);
         }
-        TextView textview = (TextView)view.findViewById(R.id.tv_epg_name);
-        TextView timeview = (TextView)view.findViewById(R.id.tv_epg_time);
-        AudioWaveView wqddg_AudioWaveView = (AudioWaveView)view.findViewById(R.id.wqddg_AudioWaveView);
-        wqddg_AudioWaveView.setVisibility(View.GONE);
-        if(i < data.size()){
+        TextView textview = (TextView) view.findViewById(R.id.tv_epg_name);
+        TextView timeview = (TextView) view.findViewById(R.id.tv_epg_time);
+        if (i < data.size()) {
 
             textview.setText(data.get(i).title);
             timeview.setText(data.get(i).start + "--" + data.get(i).end);
-            textview.setTextColor(Color.WHITE) ;
-            timeview.setTextColor(Color.WHITE) ;
-            Log.e("roinlong", "getView: "+  i);
-               if(i == this.defaultSelection){
-                    wqddg_AudioWaveView.setVisibility(View.VISIBLE);
-                    textview.setTextColor(Color.rgb(0, 153, 255)) ;
-                    timeview.setTextColor(Color.rgb(0, 153, 255)) ;
-                    textview.setFreezesText(true);
-                    timeview.setFreezesText(true);
-                }else {
-                    wqddg_AudioWaveView.setVisibility(View.GONE);
-                }
+            textview.setTextColor(Color.WHITE);
+            timeview.setTextColor(Color.WHITE);
+            if (i == this.defaultSelection) {
+                textview.setTextColor(Color.rgb(0, 153, 255));
+                timeview.setTextColor(Color.rgb(0, 153, 255));
+                textview.setFreezesText(true);
+                timeview.setFreezesText(true);
+            }
 
         }
         return view;

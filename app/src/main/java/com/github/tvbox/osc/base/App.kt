@@ -7,7 +7,7 @@ import com.github.tvbox.osc.startup.PlayerTask
 import com.github.tvbox.osc.startup.ServerTask
 import com.github.tvbox.osc.startup.UITask
 import com.github.tvbox.osc.util.HawkConfig
-import com.github.tvbox.osc.util.LOG
+import com.github.tvbox.osc.util.js.JSEngine
 import com.orhanobut.hawk.Hawk
 import com.rousetime.android_startup.StartupManager
 import com.tencent.bugly.crashreport.CrashReport
@@ -22,7 +22,6 @@ class App : MultiDexApplication() {
         super.onCreate()
         instance = this
         initParams()
-        val time = System.currentTimeMillis()
         StartupManager.Builder()
             .addStartup(UITask())
             .addStartup(ServerTask())
@@ -30,7 +29,8 @@ class App : MultiDexApplication() {
             .addStartup(PlayerTask())
             .build(this)
             .start().await()
-        LOG.e("COSTEnd   " + (System.currentTimeMillis() - time))
+//        EpgNameFuzzyMatch.init()
+        JSEngine.getInstance().create()
 //        val time = System.currentTimeMillis()
 //        initParams()
 //        // OKGo
@@ -74,5 +74,10 @@ class App : MultiDexApplication() {
         @JvmStatic
         var instance: App? = null
             private set
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        JSEngine.getInstance().destroy()
     }
 }

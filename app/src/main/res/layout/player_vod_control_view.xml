@@ -57,22 +57,22 @@
         android:paddingTop="@dimen/vs_10"
         android:tag="vod_control_pause_time"
         android:text="00:00:00"
-        android:visibility="gone"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/ts_24" />
+        android:textSize="@dimen/ts_24"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/tv_top_r_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:tag="tv_top_container"
-        android:visibility="gone"
-        tools:visibility="visible"
         android:layout_gravity="right"
         android:layout_marginStart="@dimen/vs_20"
         android:layout_marginLeft="@dimen/vs_20"
         android:layout_marginTop="@dimen/vs_10"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:tag="tv_top_container"
+        android:visibility="gone"
+        tools:visibility="visible">
 
 
         <TextView
@@ -102,10 +102,10 @@
         android:paddingRight="@dimen/vs_20"
         android:paddingBottom="@dimen/vs_15"
         android:text="字幕将在这里显示"
-        android:visibility="invisible"
         android:textColor="#ffffff"
         android:textSize="16sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:id="@+id/bottom_container"
@@ -123,29 +123,29 @@
         tools:visibility="visible">
 
         <HorizontalScrollView
-            android:scrollbars="none"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/vs_10"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
                     android:layout_marginRight="@dimen/vs_5"
                     android:paddingRight="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="播放"
                     android:textColor="@color/color_FFFFFF"
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
                     android:id="@+id/play_next"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -153,13 +153,13 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="下一集"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
                     android:id="@+id/play_pre"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -167,38 +167,13 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="上一集"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
-            <TextView
-                android:id="@+id/play_retry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/vs_5"
-                android:layout_marginRight="@dimen/vs_5"
-                android:background="@drawable/button_dialog_main"
-                android:focusable="true"
-                android:padding="@dimen/vs_10"
-                android:text="重播"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/ts_24" />
-
-            <TextView
-                android:id="@+id/play_refresh"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/vs_5"
-                android:layout_marginRight="@dimen/vs_5"
-                android:background="@drawable/button_dialog_main"
-                android:focusable="true"
-                android:padding="@dimen/vs_10"
-                android:text="刷新"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/ts_24" />
                 <TextView
                     android:id="@+id/play_retry"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -212,7 +187,6 @@
 
                 <TextView
                     android:id="@+id/play_refresh"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -226,7 +200,6 @@
 
                 <TextView
                     android:id="@+id/play_scale"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -234,13 +207,13 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="16:9"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
                     android:id="@+id/play_speed"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -248,13 +221,13 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="x1.0"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
                     android:id="@+id/play_player"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -262,13 +235,13 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="系统播放器"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
                     android:id="@+id/play_ijk"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -276,24 +249,24 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="硬解码"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
                     android:layout_marginRight="@dimen/vs_5"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="片头片尾"
                     android:textColor="@color/color_FFFFFF"
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
                     android:id="@+id/play_time_start"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -301,13 +274,13 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="01:00"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
                     android:id="@+id/play_time_end"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -315,13 +288,13 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="01:00"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
                     android:id="@+id/play_time_step"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -329,6 +302,7 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="1S"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
@@ -336,7 +310,6 @@
                 <!--添加片头片尾重置按钮-->
                 <TextView
                     android:id="@+id/play_time_reset"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -344,13 +317,13 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="重置"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
                     android:id="@+id/zimu_select"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/vs_5"
@@ -358,6 +331,7 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
+                    android:singleLine="true"
                     android:text="字幕"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
@@ -371,10 +345,10 @@
                     android:background="@drawable/button_dialog_main"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
-                    android:visibility="gone"
                     android:text="音轨"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/ts_24"/>
+                    android:textSize="@dimen/ts_24"
+                    android:visibility="gone" />
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -481,10 +455,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:maxLines="2"
                 android:ellipsize="end"
-                android:paddingTop="@dimen/vs_20"
+                android:maxLines="2"
                 android:paddingLeft="@dimen/vs_20"
+                android:paddingTop="@dimen/vs_20"
                 android:text="http://"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/ts_24" />

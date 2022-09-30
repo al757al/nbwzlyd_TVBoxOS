@@ -58,4 +58,9 @@
     <dimen name="vs_480">480mm</dimen>
     <dimen name="vs_600">600mm</dimen>
     <dimen name="vs_720">720mm</dimen>
+    <dimen name="vs_960">960mm</dimen>
+    <dimen name="ts_100">100mm</dimen>
+    <dimen name="vs_70">70mm</dimen>
+    <dimen name="vs_640">640mm</dimen>
+    <dimen name="vs_80">80mm</dimen>
 </resources>
