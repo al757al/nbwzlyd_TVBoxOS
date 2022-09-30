@@ -141,45 +141,30 @@ public class SearchSubtitleDialog extends BaseDialog {
                 List<Subtitle> data = subtitleData.getSubtitleList();
                 loadingBar.setVisibility(View.GONE);
                 mGridView.setVisibility(View.VISIBLE);
-                if (data == null) {
-                    mGridView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(), "未查询到匹配字幕", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                if (data == null || data.isEmpty()) {
+                    mGridView.post(() -> Toast.makeText(getContext(), "未查询到匹配字幕", Toast.LENGTH_SHORT).show());
                     return;
                 }
-
-                if (data.size() > 0) {
-                    mGridView.requestFocus();
-                    if (subtitleData.getIsZip()) {
-                        if (subtitleData.getIsNew()) {
-                            searchAdapter.setNewData(data);
-                            zipSubtitles = data;
-                        } else {
-                            searchAdapter.addData(data);
-                            zipSubtitles.addAll(data);
-                        }
-                        page++;
-                        if (page > maxPage) {
-                            searchAdapter.loadMoreEnd();
-                            searchAdapter.setEnableLoadMore(false);
-                        } else {
-                            searchAdapter.loadMoreComplete();
-                            searchAdapter.setEnableLoadMore(true);
-                        }
-                    } else {
-                        searchAdapter.loadMoreComplete();
+                mGridView.requestFocus();
+                if (subtitleData.getIsZip()) {
+                    if (subtitleData.getIsNew()) {
                         searchAdapter.setNewData(data);
-                        searchAdapter.setEnableLoadMore(false);
+                        zipSubtitles = data;
+                    } else {
+                        searchAdapter.addData(data);
+                        zipSubtitles.addAll(data);
                     }
-                } else {
+                    page++;
                     if (page > maxPage) {
                         searchAdapter.loadMoreEnd();
+                        searchAdapter.setEnableLoadMore(false);
                     } else {
                         searchAdapter.loadMoreComplete();
+                        searchAdapter.setEnableLoadMore(true);
                     }
+                } else {
+                    searchAdapter.loadMoreComplete();
+                    searchAdapter.setNewData(data);
                     searchAdapter.setEnableLoadMore(false);
                 }
 
