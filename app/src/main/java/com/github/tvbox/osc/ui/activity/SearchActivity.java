@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -127,7 +126,7 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = Executors.newFixedThreadPool(5);
+            searchExecutorService = Executors.newFixedThreadPool(8);
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -462,6 +461,7 @@ public class SearchActivity extends BaseActivity {
             });
         }
     }
+
 
     private void searchData(AbsXml absXml) {
         if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
