@@ -398,6 +398,7 @@ public class LivePlayActivity extends BaseActivity {
             mVideoView.release();
             mVideoView = null;
         }
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     private void showChannelList() {
