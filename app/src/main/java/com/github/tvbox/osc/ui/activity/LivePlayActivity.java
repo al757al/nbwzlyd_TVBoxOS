@@ -62,6 +62,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import xyz.doikki.videoplayer.player.VideoView;
 
 /**
@@ -74,7 +75,7 @@ public class LivePlayActivity extends BaseActivity {
     private TextView tvChannelInfo;
     private TextView tvTime;
     private TextView tvNetSpeed;
-    private LinearLayout tvLeftChannelListLayout;
+    private View tvLeftChannelListLayout;
     private TvRecyclerView mChannelGroupView;
     private TvRecyclerView mLiveChannelView;
     private LiveChannelGroupAdapter liveChannelGroupAdapter;
@@ -431,8 +432,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (holder != null)
                     holder.itemView.requestFocus();
                 tvLeftChannelListLayout.setVisibility(View.VISIBLE);
-                ViewObj viewObj = new ViewObj(tvLeftChannelListLayout, (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams());
-                ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginLeft", new IntEvaluator(), -tvLeftChannelListLayout.getLayoutParams().width, 0);
+                ObjectAnimator animator = ObjectAnimator.ofFloat(tvLeftChannelListLayout, "translationX", -AutoSizeUtils.mm2px(mContext, 570), 0f);
                 animator.setDuration(200);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
