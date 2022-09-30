@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/vs_720"
+    android:layout_height="@dimen/vs_440"
+    android:layout_gravity="center"
+    android:background="@drawable/shape_dialog_bg_main"
+    android:paddingLeft="@dimen/vs_30">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="@dimen/ts_40"
+        android:lineSpacingMultiplier="0"
+        android:padding="@dimen/vs_20"
+        android:singleLine="true"
+        android:text="添加直播源"
+        android:textColor="@color/color_CC000000"
+        android:textSize="@dimen/ts_26"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/vs_10"
+        android:gravity="center"
+        android:text="手机扫码，远程推送"
+        android:textColor="@color/color_CC000000"
+        app:layout_constraintBottom_toTopOf="@id/qrCode"
+        app:layout_constraintLeft_toLeftOf="@id/qrCode"
+        app:layout_constraintRight_toRightOf="@id/qrCode" />
+
+
+    <ImageView
+        android:id="@+id/qrCode"
+        android:layout_width="@dimen/vs_280"
+        android:layout_height="@dimen/vs_280"
+        android:layout_marginRight="@dimen/vs_10"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="@id/list"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/list"
+        app:layout_constraintTop_toTopOf="@id/list" />
+
+    <com.owen.tvrecyclerview.widget.TvRecyclerView
+        android:id="@+id/list"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/vs_300"
+        android:layout_marginBottom="@dimen/vs_10"
+        android:orientation="vertical"
+        android:paddingRight="@dimen/vs_30"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@id/input_sourceName"
+        app:layout_constraintHeight_max="@dimen/vs_410"
+        app:layout_constraintLeft_toRightOf="@id/qrCode"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:tv_layoutManager="V7LinearLayoutManager"
+        app:tv_selectedItemIsCentered="true"
+        app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
+
+    <ProgressBar
+        android:id="@+id/play_loading"
+        android:layout_width="@dimen/vs_50"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="@id/list"
+        app:layout_constraintRight_toRightOf="@id/list"
+        app:layout_constraintBottom_toBottomOf="@id/list"
+        app:layout_constraintTop_toTopOf="@id/list"
+        android:layout_height="@dimen/vs_50"
+        android:layout_gravity="center"
+        android:indeterminateBehavior="repeat"
+        android:indeterminateDrawable="@drawable/anim_loading"
+        android:indeterminateOnly="true" />
+
+
+    <EditText
+        android:id="@+id/input_sourceName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_dialog_api_input"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:hint="直播源名字"
+        android:inputType="text"
+        android:maxLines="1"
+        android:paddingLeft="@dimen/vs_30"
+        android:paddingTop="@dimen/vs_10"
+        android:paddingBottom="@dimen/vs_10"
+        android:textColor="@color/color_CC000000"
+        android:textColorHint="@color/color_6C3D3D3D"
+        android:textSize="@dimen/ts_26"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/input_source_url" />
+
+    <EditText
+        android:id="@+id/input_source_url"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/vs_10"
+        android:background="@drawable/input_dialog_api_input"
+        android:gravity="center"
+        android:hint="直播源地址 明文"
+        android:inputType="text"
+        android:paddingLeft="@dimen/vs_2"
+        android:paddingTop="@dimen/vs_10"
+        android:paddingRight="@dimen/vs_2"
+        android:paddingBottom="@dimen/vs_10"
+        android:textColor="@color/color_CC000000"
+        android:textColorHint="@color/color_6C3D3D3D"
+        android:textSize="@dimen/ts_26"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/input_sourceName"
+        app:layout_constraintRight_toLeftOf="@id/inputSubmit" />
+
+    <TextView
+        android:id="@+id/inputSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/vs_5"
+        android:layout_marginRight="@dimen/vs_30"
+        android:layout_marginBottom="@dimen/vs_10"
+        android:background="@drawable/button_dialog_main"
+        android:focusable="true"
+        android:gravity="center"
+        android:padding="@dimen/vs_10"
+        android:text="确定"
+        android:textColor="@color/color_FFFFFF"
+        android:textSize="@dimen/ts_22"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/input_source_url"
+        app:layout_constraintRight_toRightOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

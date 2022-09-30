@@ -36,6 +36,7 @@ import com.github.tvbox.osc.ui.adapter.LiveSettingGroupAdapter;
 import com.github.tvbox.osc.ui.adapter.LiveSettingItemAdapter;
 import com.github.tvbox.osc.ui.adapter.MyEpgAdapter;
 import com.github.tvbox.osc.ui.dialog.LivePasswordDialog;
+import com.github.tvbox.osc.ui.dialog.LiveStoreDialog;
 import com.github.tvbox.osc.ui.tv.widget.ChannelListView;
 import com.github.tvbox.osc.ui.tv.widget.Epginfo;
 import com.github.tvbox.osc.ui.tv.widget.ViewObj;
@@ -865,6 +866,10 @@ public class LivePlayActivity extends BaseActivity {
             case 2:
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
                 break;
+                //切换直播url
+            case 5:
+                new LiveStoreDialog(this).show();
+                break;
         }
         int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
         if (scrollToPosition < 0) scrollToPosition = 0;
@@ -1060,7 +1065,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveSettingGroupList() {
-        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置"));
+        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置","直播地址"));
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
         ArrayList<String> sourceItems = new ArrayList<>();
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
@@ -1072,6 +1077,7 @@ public class LivePlayActivity extends BaseActivity {
         itemsArrayList.add(playerDecoderItems);
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
+        itemsArrayList.add(new ArrayList<>());
 
         liveSettingGroupList.clear();
         for (int i = 0; i < groupNames.size(); i++) {

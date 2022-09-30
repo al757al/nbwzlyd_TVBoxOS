@@ -11,6 +11,7 @@ import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.LiveChannelGroup;
 import com.github.tvbox.osc.bean.LiveChannelItem;
+import com.github.tvbox.osc.bean.LiveSourceBean;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.server.ControlManager;
@@ -288,12 +289,53 @@ public class ApiConfig {
             if (mDefaultParse == null)
                 setDefaultParse(parseBeanList.get(0));
         }
+        loadLiveSourceUrl(apiUrl, infoJson);
+        // 广告地址
+        for (JsonElement host : infoJson.getAsJsonArray("ads")) {
+            AdBlocker.addAdHost(host.getAsString());
+        }
+        // IJK解码配置
+        boolean foundOldSelect = false;
+        String ijkCodec = Hawk.get(HawkConfig.IJK_CODEC, "");
+        ijkCodes = new ArrayList<>();
+        for (JsonElement opt : infoJson.get("ijk").getAsJsonArray()) {
+            JsonObject obj = (JsonObject) opt;
+            String name = obj.get("group").getAsString();
+            LinkedHashMap<String, String> baseOpt = new LinkedHashMap<>();
+            for (JsonElement cfg : obj.get("options").getAsJsonArray()) {
+                JsonObject cObj = (JsonObject) cfg;
+                String key = cObj.get("category").getAsString() + "|" + cObj.get("name").getAsString();
+                String val = cObj.get("value").getAsString();
+                baseOpt.put(key, val);
+            }
+            IJKCode codec = new IJKCode();
+            codec.setName(name);
+            codec.setOption(baseOpt);
+            if (name.equals(ijkCodec) || TextUtils.isEmpty(ijkCodec)) {
+                codec.selected(true);
+                ijkCodec = name;
+                foundOldSelect = true;
+            } else {
+                codec.selected(false);
+            }
+            ijkCodes.add(codec);
+        }
+        if (!foundOldSelect && ijkCodes.size() > 0) {
+            ijkCodes.get(0).selected(true);
+        }
+    }
+
+    public void loadLiveSourceUrl(String apiUrl, JsonObject infoJson) {
         // 直播源
         liveChannelGroupList.clear();           //修复从后台切换重复加载频道列表
         try {
             //https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt
             boolean isCustomLiveUrl;
-            String liveSource = KVStorage.getString(HawkConfig.LIVE_SOURCE_URL_CURRENT, "");
+            LiveSourceBean liveSourceBean = KVStorage.getBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, LiveSourceBean.class);
+            String liveSource="";
+            if (liveSourceBean != null) {
+                liveSource = liveSourceBean.getSourceUrl();
+            }
             if (TextUtils.isEmpty(liveSource)) {//自定义直播地址是空，走线上
                 isCustomLiveUrl = false;
                 liveSource = infoJson.get("lives").getAsJsonArray().toString();
@@ -333,39 +375,6 @@ public class ApiConfig {
             }
         } catch (Throwable th) {
             th.printStackTrace();
-        }
-        // 广告地址
-        for (JsonElement host : infoJson.getAsJsonArray("ads")) {
-            AdBlocker.addAdHost(host.getAsString());
-        }
-        // IJK解码配置
-        boolean foundOldSelect = false;
-        String ijkCodec = Hawk.get(HawkConfig.IJK_CODEC, "");
-        ijkCodes = new ArrayList<>();
-        for (JsonElement opt : infoJson.get("ijk").getAsJsonArray()) {
-            JsonObject obj = (JsonObject) opt;
-            String name = obj.get("group").getAsString();
-            LinkedHashMap<String, String> baseOpt = new LinkedHashMap<>();
-            for (JsonElement cfg : obj.get("options").getAsJsonArray()) {
-                JsonObject cObj = (JsonObject) cfg;
-                String key = cObj.get("category").getAsString() + "|" + cObj.get("name").getAsString();
-                String val = cObj.get("value").getAsString();
-                baseOpt.put(key, val);
-            }
-            IJKCode codec = new IJKCode();
-            codec.setName(name);
-            codec.setOption(baseOpt);
-            if (name.equals(ijkCodec) || TextUtils.isEmpty(ijkCodec)) {
-                codec.selected(true);
-                ijkCodec = name;
-                foundOldSelect = true;
-            } else {
-                codec.selected(false);
-            }
-            ijkCodes.add(codec);
-        }
-        if (!foundOldSelect && ijkCodes.size() > 0) {
-            ijkCodes.get(0).selected(true);
         }
     }
 
