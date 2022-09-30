@@ -844,11 +844,15 @@ public class LivePlayActivity extends BaseActivity {
         });
     }
 
+
     private void selectSettingGroup(int position, boolean focus) {
         if (!isCurrentLiveChannelValid()) return;
         if (focus) {
             liveSettingGroupAdapter.setFocusedGroupIndex(position);
             liveSettingItemAdapter.setFocusedItemIndex(-1);
+        }
+        if (position == 5) {
+            new LiveStoreDialog(this).show();
         }
         if (position == liveSettingGroupAdapter.getSelectedGroupIndex() || position < -1)
             return;
@@ -865,10 +869,6 @@ public class LivePlayActivity extends BaseActivity {
                 break;
             case 2:
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
-                break;
-                //切换直播url
-            case 5:
-                new LiveStoreDialog(this).show();
                 break;
         }
         int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
