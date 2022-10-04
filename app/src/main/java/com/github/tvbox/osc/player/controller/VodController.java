@@ -16,9 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.OnLifecycleEvent;
+import androidx.recyclerview.widget.DiffUtil;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -54,6 +54,8 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 public class VodController extends BaseController {
 
     SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    boolean isLastOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
+
 
 
     SeekBar mSeekBar;
@@ -232,6 +234,14 @@ public class VodController extends BaseController {
         mZimuBtn = findViewById(R.id.zimu_select);
         mAudioTrackBtn = findViewById(R.id.audio_track_select);
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
+        TextView timeShow = findViewById(R.id.time_show);
+
+        timeShow.setText(isLastOpen?"屏显开":"屏显关");
+        timeShow.setOnClickListener(v -> {
+            isLastOpen = !isLastOpen;
+            timeShow.setText(isLastOpen?"屏显开":"屏显关");
+            KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isLastOpen);
+        });
 
         initSubtitleInfo();
 

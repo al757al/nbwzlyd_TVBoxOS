@@ -2,6 +2,7 @@ package com.github.tvbox.osc.base
 
 import android.text.TextUtils
 import androidx.multidex.MultiDexApplication
+import com.github.tvbox.osc.bean.VodInfo
 import com.github.tvbox.osc.startup.DatabaseTask
 import com.github.tvbox.osc.startup.PlayerTask
 import com.github.tvbox.osc.startup.ServerTask
@@ -79,5 +80,14 @@ class App : MultiDexApplication() {
     override fun onTerminate() {
         super.onTerminate()
         JSEngine.getInstance().destroy()
+    }
+
+    private var vodInfo: VodInfo? = null
+    fun setVodInfo(vodinfo: VodInfo?) {
+        vodInfo = vodinfo
+    }
+
+    fun getVodInfo(): VodInfo? {
+        return vodInfo
     }
 }
