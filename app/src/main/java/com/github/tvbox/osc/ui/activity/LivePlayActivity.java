@@ -1005,6 +1005,11 @@ public class LivePlayActivity extends BaseActivity {
             }
 
             @Override
+            public void onError(Response<String> response) {
+                super.onError(response);
+            }
+
+            @Override
             public void onSuccess(Response<String> response) {
                 JsonArray livesArray = new Gson().fromJson(response.body(), JsonArray.class);
                 ApiConfig.get().loadLives(livesArray);

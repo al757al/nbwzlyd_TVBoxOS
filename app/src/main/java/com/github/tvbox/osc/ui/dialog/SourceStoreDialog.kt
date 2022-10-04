@@ -34,6 +34,7 @@ import com.owen.tvrecyclerview.widget.TvRecyclerView
 import me.jessyan.autosize.utils.AutoSizeUtils
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -348,7 +349,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         )
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun handleRemotePush(refreshEvent: RefreshEvent) {
         when (refreshEvent.type) {
             RefreshEvent.TYPE_STORE_PUSH -> {
