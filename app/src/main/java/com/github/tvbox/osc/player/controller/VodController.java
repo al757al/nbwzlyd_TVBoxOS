@@ -54,7 +54,6 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 public class VodController extends BaseController {
 
     SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    boolean isLastOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
 
 
 
@@ -236,11 +235,19 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         TextView timeShow = findViewById(R.id.time_show);
 
-        timeShow.setText(isLastOpen?"屏显开":"屏显关");
+        boolean isTimeShowOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
+        if (isTimeShowOpen){
+            timeShow.setText("屏显开");
+            timeShow.setTag(1);
+        }else {
+            timeShow.setText("屏显关");
+            timeShow.setTag(2);
+        }
         timeShow.setOnClickListener(v -> {
-            isLastOpen = !isLastOpen;
-            timeShow.setText(isLastOpen?"屏显开":"屏显关");
-            KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isLastOpen);
+            boolean isTimeShow = (int) timeShow.getTag() == 1;
+            isTimeShow = !isTimeShow;
+            timeShow.setText(isTimeShow ? "屏显开" : "屏显关");
+            KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isTimeShow);
         });
 
         initSubtitleInfo();
