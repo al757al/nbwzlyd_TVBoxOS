@@ -63,6 +63,7 @@ public class ApiConfig {
 
     private JarLoader jarLoader = new JarLoader();
 
+    private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
 
     private ApiConfig() {
         sourceBeanList = new LinkedHashMap<>();
@@ -107,6 +108,7 @@ public class ApiConfig {
             apiFix = "http://" + apiFix;
         }
         OkGo.<String>get(apiFix)
+                .headers("User-Agent", userAgent)
                 .execute(new AbsCallback<String>() {
                     @Override
                     public void onSuccess(Response<String> response) {
@@ -180,7 +182,9 @@ public class ApiConfig {
             }
         }
 
-        OkGo.<File>get(jarUrl).tag("downLoadJar").execute(new AbsCallback<File>() {
+        OkGo.<File>get(jarUrl).tag("downLoadJar")
+                .headers("User-Agent", userAgent)
+                .execute(new AbsCallback<File>() {
 
             @Override
             public File convertResponse(okhttp3.Response response) throws Throwable {

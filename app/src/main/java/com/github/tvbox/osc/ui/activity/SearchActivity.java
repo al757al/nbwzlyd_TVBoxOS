@@ -34,6 +34,7 @@ import com.github.tvbox.osc.ui.tv.QRCodeGen;
 import com.github.tvbox.osc.ui.tv.widget.SearchKeyboard;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.SearchHelper;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -79,7 +80,7 @@ public class SearchActivity extends BaseActivity {
     private String searchTitle = "";
     private TextView tvSearchCheckboxBtn;
 
-    private HashMap<String, SourceBean> mCheckSourcees = null;
+    private HashMap<String, SourceBean> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
 
     @Override
@@ -255,7 +256,7 @@ public class SearchActivity extends BaseActivity {
                             searchAbleSource.add(sourceBean);
                         }
                     }
-                    mSearchCheckboxDialog = new SearchCheckboxDialog(SearchActivity.this, searchAbleSource, mCheckSourcees);
+                    mSearchCheckboxDialog = new SearchCheckboxDialog(SearchActivity.this, searchAbleSource, mCheckSources);
                 }
                 mSearchCheckboxDialog.show();
             }
@@ -328,6 +329,7 @@ public class SearchActivity extends BaseActivity {
 
     private void initData() {
         refreshQRCode();
+        initCheckedSourcesForSearch();
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
@@ -363,7 +365,6 @@ public class SearchActivity extends BaseActivity {
                     }
                 });
 
-        initCheckedSourcesForSearch();
     }
 
     private void refreshQRCode() {
@@ -393,16 +394,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initCheckedSourcesForSearch() {
-        mCheckSourcees = Hawk.get(HawkConfig.SOURCES_FOR_SEARCH, new HashMap<>());
-        if (mCheckSourcees == null || mCheckSourcees.size() <= 0) {
-            for (SourceBean bean : ApiConfig.get().getSourceBeanList()) {
-                if (!bean.isSearchable()) {
-                    continue;
-                }
-                mCheckSourcees.put(bean.getKey(), bean);
-            }
-            Hawk.put(HawkConfig.SOURCES_FOR_SEARCH, mCheckSourcees);
-        }
+        mCheckSources = SearchHelper.getSourcesForSearch();
     }
 
     private void search(String title) {
@@ -441,7 +433,7 @@ public class SearchActivity extends BaseActivity {
             if (!bean.isSearchable()) {
                 continue;
             }
-            if (mCheckSourcees != null && !mCheckSourcees.containsKey(bean.getKey())) {
+            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
                 continue;
             }
             siteKey.add(bean.getKey());
