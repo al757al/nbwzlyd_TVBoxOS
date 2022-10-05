@@ -2,7 +2,6 @@ package com.github.tvbox.osc.ui.fragment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -12,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.CleanUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.BuildConfig;
@@ -667,12 +665,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 ToastUtils.showShort("缓存清空完毕");
                 ApiConfig.release();
                 Intent intent = new Intent(mActivity, HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("useCache", true);
-                intent.putExtras(bundle);
-                ActivityUtils.startActivity(HomeActivity.class,bundle);
-
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             });
             AlertDialog alertDialog = builder.create();
             alertDialog.show();

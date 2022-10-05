@@ -89,10 +89,10 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 return@setOnClickListener
             }
             handleRemotePush(RefreshEvent(RefreshEvent.TYPE_STORE_PUSH).apply {
-               this.obj = MoreSourceBean().apply {
-                   this.sourceName = sourceName0
-                   this.sourceUrl = sourceUrl0
-               }
+                this.obj = MoreSourceBean().apply {
+                    this.sourceName = sourceName0
+                    this.sourceUrl = sourceUrl0
+                }
             })
 
         }
@@ -127,7 +127,6 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             mAdapter.addData(sourceBean)
             mRecyclerView?.scrollToPosition(0)
             saveList.add(sourceBean)
-            KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, saveList)
             mSourceUrlEdit?.setText("")
             mSourceNameEdit?.setText("")
         } else {
@@ -237,19 +236,20 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             }
         }
 
-        val diffResult = DiffUtil.calculateDiff(AdapterDiffCallBack(mAdapter.data, result), false)
+        val diffResult =
+            DiffUtil.calculateDiff(AdapterDiffCallBack(mAdapter.data, localData), false)
         //为了适配diffUtil才这么写的
         mAdapter.data.clear()
         mAdapter.data.addAll(localData)
-        //更新最新的地址
-        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, localData)
         diffResult.dispatchUpdatesTo(mAdapter)
         if (index != -1) {
             mRecyclerView?.post {
                 mRecyclerView?.scrollToPosition(index)
             }
         }
-        ItemTouchHelper(MyItemTouchHelper(mAdapter.data,mAdapter)).attachToRecyclerView(mRecyclerView)
+        ItemTouchHelper(MyItemTouchHelper(mAdapter.data, mAdapter)).attachToRecyclerView(
+            mRecyclerView
+        )
 
     }
 
@@ -261,7 +261,6 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         custom.removeFirstIf {
             it.sourceUrl == deleteData.sourceUrl
         }
-        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, custom)
         if (deleteData.isServer) {
             KVStorage.putBoolean(deleteData.sourceUrl, true)
         }

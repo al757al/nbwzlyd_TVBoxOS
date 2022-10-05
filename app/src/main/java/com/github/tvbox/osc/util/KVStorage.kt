@@ -8,27 +8,27 @@ object KVStorage {
 
     @JvmStatic
     fun getString(key: String, defaultValue: String): String? {
-        return MMKV.defaultMMKV().getString(key, defaultValue)
+        return mmkv.getString(key, defaultValue)
     }
 
     @JvmStatic
     fun putString(key: String, defaultValue: String) {
-        MMKV.defaultMMKV().putString(key, defaultValue)
+        mmkv.putString(key, defaultValue)
     }
 
     @JvmStatic
     fun putBoolean(key: String, defaultValue: Boolean) {
-        MMKV.defaultMMKV().putBoolean(key, defaultValue)
+        mmkv.putBoolean(key, defaultValue)
     }
 
     @JvmStatic
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
-        return MMKV.defaultMMKV().getBoolean(key, defaultValue)
+        return mmkv.getBoolean(key, defaultValue)
     }
 
     @JvmStatic
     fun getInt(key: String, defaultValue: Int): Int {
-        return MMKV.defaultMMKV().getInt(key, defaultValue)
+        return mmkv.getInt(key, defaultValue)
     }
 
     @JvmStatic
