@@ -153,18 +153,25 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 }
             }
         }
-        val lastSelectBean =
-            KVStorage.getBean(
-                HawkConfig.LIVE_SOURCE_URL_CURRENT,
-                LiveSourceBean::class.java
-            )
+        val useCustomLiveSource = KVStorage.getBoolean(HawkConfig.USE_CUSTOM_LIVE_URL, false)
         var index = 0
-        localData.forEach {
-            if (it.sourceUrl != lastSelectBean?.sourceUrl) {
+        if (useCustomLiveSource) {
+            val lastSelectBean =
+                KVStorage.getBean(
+                    HawkConfig.LIVE_SOURCE_URL_CURRENT,
+                    LiveSourceBean::class.java
+                )
+            localData.forEach {
+                if (it.sourceUrl != lastSelectBean?.sourceUrl) {
+                    it.isSelected = false
+                } else {
+                    it.isSelected = true
+                    index = result.indexOf(it)
+                }
+            }
+        } else {
+            localData.forEach {
                 it.isSelected = false
-            } else {
-                it.isSelected = true
-                index = result.indexOf(it)
             }
         }
         val data = LiveSourceBean().apply {
