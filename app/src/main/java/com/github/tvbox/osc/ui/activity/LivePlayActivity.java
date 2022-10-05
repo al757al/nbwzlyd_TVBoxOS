@@ -325,16 +325,22 @@ public class LivePlayActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideChannelListRun);
-            mHandler.post(mHideChannelListRun);
-        } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideSettingLayoutRun);
-            mHandler.post(mHideSettingLayoutRun);
-        } else {
-            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
-            mHandler.removeCallbacks(mUpdateNetSpeedRun);
+        List<LiveChannelGroup> channelGroupList = ApiConfig.get().getChannelGroupList();
+        if (channelGroupList.isEmpty()) {
+            mHandler.removeCallbacksAndMessages(null);
             super.onBackPressed();
+        } else {
+            if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.post(mHideChannelListRun);
+            } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideSettingLayoutRun);
+                mHandler.post(mHideSettingLayoutRun);
+            } else {
+                mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+                mHandler.removeCallbacks(mUpdateNetSpeedRun);
+                super.onBackPressed();
+            }
         }
     }
 
@@ -344,7 +350,7 @@ public class LivePlayActivity extends BaseActivity {
             //长按
             if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    new LiveStoreDialog(LivePlayActivity.this).show();
+                    showLiveSourceDialog();
                 }
             } else {
                 if (event.getAction() == KeyEvent.ACTION_UP)
@@ -862,7 +868,7 @@ public class LivePlayActivity extends BaseActivity {
             liveSettingItemAdapter.setFocusedItemIndex(-1);
         }
         if (position == 5) {
-            new LiveStoreDialog(this).show();
+            showLiveSourceDialog();
         }
         if (position == liveSettingGroupAdapter.getSelectedGroupIndex() || position < -1)
             return;
@@ -886,6 +892,10 @@ public class LivePlayActivity extends BaseActivity {
         mSettingItemView.scrollToPosition(scrollToPosition);
         mHandler.removeCallbacks(mHideSettingLayoutRun);
         mHandler.postDelayed(mHideSettingLayoutRun, 5000);
+    }
+
+    private void showLiveSourceDialog() {
+        new LiveStoreDialog(this).show();
     }
 
     private void initSettingItemView() {
@@ -991,7 +1001,8 @@ public class LivePlayActivity extends BaseActivity {
         List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
         if (list.isEmpty()) {
             Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
-            finish();
+            showLiveSourceDialog();
+
             return;
         }
 
@@ -1017,7 +1028,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onError(Response<String> response) {
                 ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("直播地址加载失败" + response.getException().getMessage());
-                new LiveStoreDialog(LivePlayActivity.this).show();
+                showLiveSourceDialog();
                 showSuccess();
                 super.onError(response);
             }
@@ -1029,7 +1040,7 @@ public class LivePlayActivity extends BaseActivity {
                 List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
                 if (list.isEmpty()) {
                     Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
-                    finish();
+                    showLiveSourceDialog();
                     return;
                 }
                 liveChannelGroupList.clear();

@@ -336,10 +336,11 @@ public class ApiConfig {
         try {
             //https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt
             boolean isCustomLiveUrl;
+            boolean useCustomLive = KVStorage.getBoolean(HawkConfig.USE_CUSTOM_LIVE_URL, false);
             LiveSourceBean liveSourceBean = KVStorage.getBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, LiveSourceBean.class);
             String liveSource = "";
-            if (liveSourceBean != null) {
-                liveSource ="proxy://do=live&type=txt&ext="+
+            if (liveSourceBean != null && useCustomLive) {
+                liveSource = "proxy://do=live&type=txt&ext=" +
                         Base64.encodeToString(liveSourceBean.getSourceUrl().getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
             }
             if (TextUtils.isEmpty(liveSource)) {//自定义直播地址是空，走线上

@@ -22,6 +22,7 @@ import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
+import com.github.tvbox.osc.util.urlhttp.JumpUtils
 import com.owen.tvrecyclerview.widget.TvRecyclerView
 import me.jessyan.autosize.utils.AutoSizeUtils
 import org.greenrobot.eventbus.EventBus
@@ -83,8 +84,14 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                     deleteItem(position)
                 }
                 R.id.tvName -> {//重启liveactivity
-
+                    val liveSourceBean = mAdapter.data[position]
+                    if (liveSourceBean.isOfficial) {
+                        KVStorage.putBoolean(HawkConfig.USE_CUSTOM_LIVE_URL, false)
+                        JumpUtils.forceRestartHomeActivity(context)
+                        return@setOnItemChildClickListener
+                    }
 //                    https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt
+                    KVStorage.putBoolean(HawkConfig.USE_CUSTOM_LIVE_URL, true)
                     selectNewLiveSource(mAdapter.data[position])
 
                 }
@@ -113,7 +120,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         if (sourceUrl0.startsWith("http") || sourceUrl0.startsWith("https")) {
             val saveList =
                 KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean::class.java)
-            if (saveList.contains(liveSourceBean)){
+            if (saveList.contains(liveSourceBean)) {
                 return
             }
             val sourceBean = LiveSourceBean().apply {
@@ -123,7 +130,6 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             mAdapter.addData(sourceBean)
             mRecyclerView?.scrollToPosition(0)
             saveList.add(sourceBean)
-            KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, saveList)
             mSourceUrlEdit?.setText("")
             mSourceNameEdit?.setText("")
         } else {
@@ -161,13 +167,20 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 index = result.indexOf(it)
             }
         }
-
-        val diffResult = DiffUtil.calculateDiff(AdapterDiffCallBack(mAdapter.data, result), false)
+        val data = LiveSourceBean().apply {
+            sourceName = "点击重启，恢复默认直播"
+            sourceUrl = ""
+            isOfficial = true
+        }
+        if (!localData.contains(data)) {
+            localData.add(0, data)
+        }
+        val diffResult =
+            DiffUtil.calculateDiff(AdapterDiffCallBack(mAdapter.data, localData), false)
         //为了适配diffUtil才这么写的
         mAdapter.data.clear()
         mAdapter.data.addAll(localData)
         //更新最新的地址
-        KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, localData)
         diffResult.dispatchUpdatesTo(mAdapter)
         if (index != -1) {
             mRecyclerView?.post {
@@ -204,13 +217,14 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         override fun createBaseViewHolder(view: View?): BaseViewHolder {
             val holder = super.createBaseViewHolder(view)
             holder.addOnClickListener(R.id.tvDel)
-            holder.setVisible(R.id.tvDel, true)
             holder.addOnClickListener(R.id.tvName)
             return holder
         }
 
         override fun convert(holder: BaseViewHolder, item: LiveSourceBean) {
             showDefault(item, holder)
+            holder.setVisible(R.id.tvDel, !item.isOfficial)
+
             if (item.isSelected) {
                 val text = holder.getView<TextView>(R.id.tvName).text
                 holder.setText(

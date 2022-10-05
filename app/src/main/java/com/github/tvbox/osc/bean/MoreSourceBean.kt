@@ -8,7 +8,5 @@ class MoreSourceBean : BaseItem() {
     var sourceUrl = ""
     var isServer = true
     var isSelected = false
-    override fun getUniKey(): String {
-        return (sourceUrl + sourceName).hashCode().toString()
-    }
+    override val uniKey: String get() = (sourceUrl + sourceName).hashCode().toString()
 }
