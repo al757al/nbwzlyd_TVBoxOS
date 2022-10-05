@@ -14,7 +14,6 @@ import com.chad.library.adapter.base.BaseViewHolder
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.api.ApiConfig
 import com.github.tvbox.osc.bean.LiveSourceBean
-import com.github.tvbox.osc.bean.MoreSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
 import com.github.tvbox.osc.ext.removeFirstIf
 import com.github.tvbox.osc.server.ControlManager
@@ -63,8 +62,6 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         mLoading = findViewById(R.id.play_loading)
         mRecyclerView?.adapter = mAdapter
         mAddMoreBtn?.setOnClickListener {
-            selectNewLiveSource()
-            return@setOnClickListener
             val sourceUrl0 = mSourceUrlEdit?.text.toString()
             val sourceName0 = mSourceNameEdit?.text.toString()
             if (sourceUrl0.isEmpty()) {
@@ -73,7 +70,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 return@setOnClickListener
             }
             handleRemotePush(RefreshEvent(RefreshEvent.TYPE_STORE_PUSH).apply {
-                this.obj = MoreSourceBean().apply {
+                this.obj = LiveSourceBean().apply {
                     this.sourceName = sourceName0
                     this.sourceUrl = sourceUrl0
                 }
@@ -88,7 +85,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 R.id.tvName -> {//重启liveactivity
 
 //                    https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt
-                    selectNewLiveSource()
+                    selectNewLiveSource(mAdapter.data[position])
 
                 }
             }
@@ -101,11 +98,10 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         inflateCustomSource(list)
     }
 
-    private fun selectNewLiveSource() {
+    private fun selectNewLiveSource(liveSourceBean: LiveSourceBean) {
         val newData = LiveSourceBean().apply {
-            this.sourceName = "测试频道"
-            this.sourceUrl =
-                "https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt"
+            this.sourceName = liveSourceBean.sourceName
+            this.sourceUrl = liveSourceBean.sourceUrl
         }
         KVStorage.putBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, newData)
         val list = KVStorage.getList(
@@ -113,11 +109,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             LiveSourceBean::class.java
         )
         if (list.isEmpty()) {
-            list.add(LiveSourceBean().apply {
-                this.sourceName = "测试频道"
-                this.sourceUrl =
-                    "https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt"
-            })
+            list.add(newData)
         } else {
             list.forEach {
                 if (it.uniKey != newData.uniKey) {
@@ -125,6 +117,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 }
             }
         }
+        this.dismiss()
         KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, list)
         ApiConfig.get().loadLiveSourceUrl(null, null)
         val intent = Intent(context, com.github.tvbox.osc.ui.activity.LivePlayActivity::class.java)
@@ -208,6 +201,11 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean::class.java)
         custom.removeFirstIf {
             it.sourceUrl == deleteData.sourceUrl
+        }
+        val currentBean =
+            KVStorage.getBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, LiveSourceBean::class.java)
+        if (deleteData.uniKey == currentBean?.uniKey) {
+            KVStorage.remove(HawkConfig.LIVE_SOURCE_URL_CURRENT)
         }
         KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, custom)
         mAdapter.remove(position)

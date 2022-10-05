@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -1006,6 +1007,9 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onError(Response<String> response) {
+                ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("直播地址加载失败"+response.getException().getMessage());
+                new LiveStoreDialog(LivePlayActivity.this).show();
+                showSuccess();
                 super.onError(response);
             }
 

@@ -81,7 +81,8 @@ public class ApiConfig {
         }
         return instance;
     }
-    public static void release(){
+
+    public static void release() {
         instance = null;
     }
 
@@ -104,7 +105,7 @@ public class ApiConfig {
         String apiFix = apiUrl;
         if (apiUrl.startsWith("clan://")) {
             apiFix = clanToAddress(apiUrl);
-        }else if(!apiUrl.startsWith("http")){
+        } else if (!apiUrl.startsWith("http")) {
             apiFix = "http://" + apiFix;
         }
         OkGo.<String>get(apiFix)
@@ -186,39 +187,39 @@ public class ApiConfig {
                 .headers("User-Agent", userAgent)
                 .execute(new AbsCallback<File>() {
 
-            @Override
-            public File convertResponse(okhttp3.Response response) throws Throwable {
-                File cacheDir = cache.getParentFile();
-                if (!cacheDir.exists())
-                    cacheDir.mkdirs();
-                if (cache.exists())
-                    cache.delete();
-                FileOutputStream fos = new FileOutputStream(cache);
-                fos.write(response.body().bytes());
-                fos.flush();
-                fos.close();
-                return cache;
-            }
+                    @Override
+                    public File convertResponse(okhttp3.Response response) throws Throwable {
+                        File cacheDir = cache.getParentFile();
+                        if (!cacheDir.exists())
+                            cacheDir.mkdirs();
+                        if (cache.exists())
+                            cache.delete();
+                        FileOutputStream fos = new FileOutputStream(cache);
+                        fos.write(response.body().bytes());
+                        fos.flush();
+                        fos.close();
+                        return cache;
+                    }
 
-            @Override
-            public void onSuccess(Response<File> response) {
-                if (response.body().exists()) {
-                    if (jarLoader.load(response.body().getAbsolutePath())) {
-                        callback.success();
-                    } else {
+                    @Override
+                    public void onSuccess(Response<File> response) {
+                        if (response.body().exists()) {
+                            if (jarLoader.load(response.body().getAbsolutePath())) {
+                                callback.success();
+                            } else {
+                                callback.error("");
+                            }
+                        } else {
+                            callback.error("");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<File> response) {
+                        super.onError(response);
                         callback.error("");
                     }
-                } else {
-                    callback.error("");
-                }
-            }
-
-            @Override
-            public void onError(Response<File> response) {
-                super.onError(response);
-                callback.error("");
-            }
-        });
+                });
     }
 
     private void parseJson(String apiUrl, File f) throws Throwable {
@@ -345,7 +346,7 @@ public class ApiConfig {
                 liveSource = infoJson.get("lives").getAsJsonArray().toString();
             } else {
                 isCustomLiveUrl = true;
-                liveSource = "proxy://do=live&type=txt&ext=" + liveSource;
+//                liveSource =liveSource;
             }
             int index = liveSource.indexOf("proxy://");
             if (index != -1) {

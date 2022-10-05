@@ -69,4 +69,8 @@ object KVStorage {
         }
     }
 
+    fun remove(key: String) {
+        mmkv.remove(key)
+    }
+
 }
