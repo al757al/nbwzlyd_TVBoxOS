@@ -262,7 +262,7 @@ public class LivePlayActivity extends BaseActivity {
             if (countDownTimer != null) {
                 countDownTimer.cancel();
             }
-            countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+            countDownTimer = new CountDownTimer(5000, 1000) {//底部epg隐藏时间设定
                 public void onTick(long j) {
                 }
 
