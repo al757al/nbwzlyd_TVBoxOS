@@ -123,7 +123,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             mAdapter.addData(sourceBean)
             mRecyclerView?.scrollToPosition(0)
             saveList.add(sourceBean)
-            KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, saveList)
+            KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, saveList)
             mSourceUrlEdit?.setText("")
             mSourceNameEdit?.setText("")
         } else {
