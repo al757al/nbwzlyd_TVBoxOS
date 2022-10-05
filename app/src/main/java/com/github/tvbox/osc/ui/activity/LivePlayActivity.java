@@ -340,18 +340,21 @@ public class LivePlayActivity extends BaseActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {//菜单键
+            //长按
+            if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    new LiveStoreDialog(LivePlayActivity.this).show();
+                }
+            } else {
+                if (event.getAction() == KeyEvent.ACTION_UP)
+                    showSettingGroup();
+            }
+        }
+
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             int keyCode = event.getKeyCode();
-            if (keyCode == KeyEvent.KEYCODE_MENU) {
-                if (event.isLongPress()) {
-                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                        new LiveStoreDialog(LivePlayActivity.this).show();
-                    }
-                } else {
-                    if (event.getAction() == KeyEvent.ACTION_DOWN)
-                        showSettingGroup();
-                }
-            } else if (!isListOrSettingLayoutVisible()) {
+            if (!isListOrSettingLayoutVisible()) {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_UP:
                         if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
@@ -378,7 +381,6 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                 }
             }
-        } else if (event.getAction() == KeyEvent.ACTION_UP) {
         }
         return super.dispatchKeyEvent(event);
     }
