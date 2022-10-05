@@ -339,14 +339,14 @@ public class ApiConfig {
             LiveSourceBean liveSourceBean = KVStorage.getBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, LiveSourceBean.class);
             String liveSource="";
             if (liveSourceBean != null) {
-                liveSource = liveSourceBean.getSourceUrl();
+                liveSource ="proxy://do=live&type=txt&ext="+
+                        Base64.encodeToString(liveSourceBean.getSourceUrl().getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
             }
             if (TextUtils.isEmpty(liveSource)) {//自定义直播地址是空，走线上
                 isCustomLiveUrl = false;
                 liveSource = infoJson.get("lives").getAsJsonArray().toString();
             } else {
                 isCustomLiveUrl = true;
-//                liveSource =liveSource;
             }
             int index = liveSource.indexOf("proxy://");
             if (index != -1) {
