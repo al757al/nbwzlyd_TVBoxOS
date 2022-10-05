@@ -336,7 +336,7 @@ public class ApiConfig {
         try {
             //https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt
             boolean isCustomLiveUrl;
-            LiveSourceBean liveSourceBean = KVStorage.getBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, null);
+            LiveSourceBean liveSourceBean = KVStorage.getBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, LiveSourceBean.class);
             String liveSource = "";
             if (liveSourceBean != null) {
                 liveSource ="proxy://do=live&type=txt&ext="+
