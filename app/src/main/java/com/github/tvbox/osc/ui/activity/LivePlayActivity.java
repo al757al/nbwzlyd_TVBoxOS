@@ -343,7 +343,14 @@ public class LivePlayActivity extends BaseActivity {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             int keyCode = event.getKeyCode();
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                showSettingGroup();
+                if (event.isLongPress()) {
+                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                        new LiveStoreDialog(LivePlayActivity.this).show();
+                    }
+                } else {
+                    if (event.getAction() == KeyEvent.ACTION_DOWN)
+                        showSettingGroup();
+                }
             } else if (!isListOrSettingLayoutVisible()) {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_UP:
@@ -1007,7 +1014,7 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onError(Response<String> response) {
-                ToastUtils.make().setGravity(Gravity.CENTER,0,0).show("直播地址加载失败"+response.getException().getMessage());
+                ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("直播地址加载失败" + response.getException().getMessage());
                 new LiveStoreDialog(LivePlayActivity.this).show();
                 showSuccess();
                 super.onError(response);
@@ -1074,7 +1081,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveSettingGroupList() {
-        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置","直播地址"));
+        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "直播地址"));
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
         ArrayList<String> sourceItems = new ArrayList<>();
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));

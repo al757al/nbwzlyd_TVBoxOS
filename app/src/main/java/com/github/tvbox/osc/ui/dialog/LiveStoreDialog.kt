@@ -99,36 +99,23 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     }
 
     private fun selectNewLiveSource(liveSourceBean: LiveSourceBean) {
-        val newData = LiveSourceBean().apply {
-            this.sourceName = liveSourceBean.sourceName
-            this.sourceUrl = liveSourceBean.sourceUrl
-        }
-        KVStorage.putBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, newData)
-        val list = KVStorage.getList(
-            HawkConfig.LIVE_SOURCE_URL_HISTORY,
-            LiveSourceBean::class.java
-        )
-        if (list.isEmpty()) {
-            list.add(newData)
-        } else {
-            list.forEach {
-                if (it.uniKey != newData.uniKey) {
-                    list.add(newData)
-                }
-            }
-        }
+        KVStorage.putBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean)
         this.dismiss()
-        KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, list)
         ApiConfig.get().loadLiveSourceUrl(null, null)
         val intent = Intent(context, com.github.tvbox.osc.ui.activity.LivePlayActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         ActivityUtils.startActivity(intent)
     }
 
-    private fun saveCustomSourceBean(sourceUrl0: String, sourceName0: String) {
+    private fun saveCustomSourceBean(liveSourceBean: LiveSourceBean) {
+        val sourceUrl0 = liveSourceBean.sourceUrl
+        val sourceName0 = liveSourceBean.sourceName
         if (sourceUrl0.startsWith("http") || sourceUrl0.startsWith("https")) {
             val saveList =
                 KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean::class.java)
+            if (saveList.contains(liveSourceBean)){
+                return
+            }
             val sourceBean = LiveSourceBean().apply {
                 this.sourceUrl = sourceUrl0
                 this.sourceName = sourceName0.ifEmpty { "自用直播源" + saveList.size }
@@ -270,7 +257,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         when (refreshEvent.type) {
             RefreshEvent.TYPE_STORE_PUSH -> {
                 val moreSourceBean = refreshEvent.obj as LiveSourceBean
-                saveCustomSourceBean(moreSourceBean.sourceUrl, moreSourceBean.sourceName)
+                saveCustomSourceBean(moreSourceBean)
             }
         }
 
