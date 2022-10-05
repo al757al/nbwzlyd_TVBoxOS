@@ -1,5 +1,6 @@
 package com.github.tvbox.osc.ui.dialog;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
@@ -41,15 +42,19 @@ public class SearchSubtitleDialog extends BaseDialog {
     private ProgressBar loadingBar;
     private SubtitleViewModel subtitleViewModel;
     private int page = 1;
-    private int maxPage = 3;
+    private int maxPage = 5;
     private String searchWord = "";
+
+    private List<Subtitle> zipSubtitles = new ArrayList<>();
+    private boolean isSearchPag = true;
 
 
     public SearchSubtitleDialog(@NonNull @NotNull Context context) {
-        super(context, R.style.CustomDialogStyleDim);
+        super(context);
         mContext = context;
-        setCanceledOnTouchOutside(false);
-        setCancelable(true);
+        if (context instanceof Activity) {
+            setOwnerActivity((Activity) context);
+        }
         setContentView(R.layout.dialog_search_subtitle);
         initView(context);
         initViewModel();
@@ -72,8 +77,9 @@ public class SearchSubtitleDialog extends BaseDialog {
                 //加载字幕
                 if (mSubtitleLoader != null) {
                     if (subtitle.getIsZip()) {
+                        isSearchPag = false;
                         loadingBar.setVisibility(View.VISIBLE);
-                        mGridView.setVisibility(View.INVISIBLE);
+                        mGridView.setVisibility(View.GONE);
                         subtitleViewModel.getSearchResultSubtitleUrls(subtitle);
                     } else {
                         loadSubtitle(subtitle);
@@ -97,18 +103,34 @@ public class SearchSubtitleDialog extends BaseDialog {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 String wd = subtitleSearchEt.getText().toString().trim();
-                searchAdapter.setNewData(new ArrayList<>());
-                if (!TextUtils.isEmpty(wd)) {
-                    loadingBar.setVisibility(View.VISIBLE);
-                    mGridView.setVisibility(View.INVISIBLE);
-                    searchWord = wd;
-                    subtitleViewModel.searchResult(wd, page);
-                } else {
-                    Toast.makeText(getContext(), "输入内容不能为空", Toast.LENGTH_SHORT).show();
-                }
+                search(wd);
             }
         });
         searchAdapter.setNewData(new ArrayList<>());
+    }
+
+    public void setSearchWord(String wd) {
+        wd = wd.replaceAll("(?:（|\\(|\\[|【|\\.mp4|\\.mkv|\\.avi|\\.MP4|\\.MKV|\\.AVI)", "");
+        wd = wd.replaceAll("(?:：|\\:|）|\\)|\\]|】|\\.)", " ");
+        int len = wd.length();
+        int finalLen = len >= 36 ? 36 : len;
+        wd = wd.substring(0, finalLen).trim();
+        subtitleSearchEt.setText(wd);
+        subtitleSearchEt.setSelection(wd.length());
+        subtitleSearchEt.requestFocus();
+    }
+
+    public void search(String wd) {
+        isSearchPag = true;
+        searchAdapter.setNewData(new ArrayList<>());
+        if (!TextUtils.isEmpty(wd)) {
+            loadingBar.setVisibility(View.VISIBLE);
+            mGridView.setVisibility(View.GONE);
+            searchWord = wd;
+            subtitleViewModel.searchResult(wd, page = 1);
+        } else {
+            Toast.makeText(getContext(), "输入内容不能为空", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initViewModel() {
@@ -116,36 +138,33 @@ public class SearchSubtitleDialog extends BaseDialog {
         subtitleViewModel.searchResult.observe((LifecycleOwner) mContext, new Observer<SubtitleData>() {
             @Override
             public void onChanged(SubtitleData subtitleData) {
+                List<Subtitle> data = subtitleData.getSubtitleList();
                 loadingBar.setVisibility(View.GONE);
                 mGridView.setVisibility(View.VISIBLE);
-                List<Subtitle> data = subtitleData.getSubtitleList();
-                if (data != null && data.size() > 0) {
-                    if (subtitleData.getIsZip()) {
-                        if (subtitleData.getIsNew()) {
-                            searchAdapter.setNewData(data);
-                        } else {
-                            searchAdapter.addData(data);
-                        }
-                        page++;
-                        if (page > maxPage) {
-                            searchAdapter.loadMoreEnd();
-                            searchAdapter.setEnableLoadMore(false);
-                        } else {
-                            searchAdapter.loadMoreComplete();
-                            searchAdapter.setEnableLoadMore(true);
-                        }
-                    } else {
-                        searchAdapter.loadMoreComplete();
+                if (data == null || data.isEmpty()) {
+                    mGridView.post(() -> Toast.makeText(getContext(), "未查询到匹配字幕", Toast.LENGTH_SHORT).show());
+                    return;
+                }
+                mGridView.requestFocus();
+                if (subtitleData.getIsZip()) {
+                    if (subtitleData.getIsNew()) {
                         searchAdapter.setNewData(data);
-                        searchAdapter.setEnableLoadMore(false);
-                        page = 1;
+                        zipSubtitles = data;
+                    } else {
+                        searchAdapter.addData(data);
+                        zipSubtitles.addAll(data);
                     }
-                } else {
+                    page++;
                     if (page > maxPage) {
                         searchAdapter.loadMoreEnd();
+                        searchAdapter.setEnableLoadMore(false);
                     } else {
                         searchAdapter.loadMoreComplete();
+                        searchAdapter.setEnableLoadMore(true);
                     }
+                } else {
+                    searchAdapter.loadMoreComplete();
+                    searchAdapter.setNewData(data);
                     searchAdapter.setEnableLoadMore(false);
                 }
 
@@ -163,6 +182,19 @@ public class SearchSubtitleDialog extends BaseDialog {
 
     public interface SubtitleLoader {
         void loadSubtitle(Subtitle subtitle);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!isSearchPag) {
+            isSearchPag = true;
+            loadingBar.setVisibility(View.GONE);
+            mGridView.setVisibility(View.VISIBLE);
+            searchAdapter.setNewData(zipSubtitles);
+            searchAdapter.setEnableLoadMore(page < maxPage);
+            return;
+        }
+        dismiss();
     }
 
 

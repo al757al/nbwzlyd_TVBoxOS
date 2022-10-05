@@ -32,7 +32,9 @@
         <entry key="app/src/main/res/layout/activity_detail.xml" value="0.12691960252935863" />
         <entry key="app/src/main/res/layout/activity_history.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_home_top_indicator.xml" value="0.25625" />
         <entry key="app/src/main/res/layout/activity_live_play.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_play.xml" value="0.25625" />
         <entry key="app/src/main/res/layout/activity_setting.xml" value="0.1" />
         <entry key="app/src/main/res/layout/box_vod_control_view.xml" value="0.1" />
         <entry key="app/src/main/res/layout/dialog_about.xml" value="0.10182291666666667" />
@@ -41,14 +43,16 @@
         <entry key="app/src/main/res/layout/dialog_select.xml" value="0.13504968383017163" />
         <entry key="app/src/main/res/layout/dialog_tip.xml" value="0.12579042457091238" />
         <entry key="app/src/main/res/layout/fragment_model.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_user.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/item_dialog_api_history.xml" value="0.1120144534778681" />
+        <entry key="app/src/main/res/layout/fragment_user.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/item_dialog_api_history.xml" value="0.335" />
         <entry key="app/src/main/res/layout/item_dialog_select.xml" value="0.165" />
         <entry key="app/src/main/res/layout/item_grid.xml" value="0.375" />
         <entry key="app/src/main/res/layout/item_home_sort.xml" value="0.13279132791327913" />
         <entry key="app/src/main/res/layout/item_setting_menu.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/live_source_dialog_select.xml" value="0.1" />
         <entry key="app/src/main/res/layout/loadsir_loading_layout.xml" value="0.1" />
         <entry key="app/src/main/res/layout/more_source_dialog_select.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/player_live_control_view.xml" value="0.25625" />
         <entry key="app/src/main/res/layout/player_vod_control_view.xml" value="0.2577255249023438" />
         <entry key="player/src/main/res/layout/ijk_demo_activity.xml" value="0.1" />
       </map>

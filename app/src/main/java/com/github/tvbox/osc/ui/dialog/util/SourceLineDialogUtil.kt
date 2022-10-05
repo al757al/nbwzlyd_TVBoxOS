@@ -1,14 +1,24 @@
 package com.github.tvbox.osc.ui.dialog.util
 
 import android.content.Context
+import android.os.Handler
 import android.text.TextUtils
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
+import com.blankj.utilcode.util.SpanUtils
+import com.blankj.utilcode.util.ToastUtils
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.BaseViewHolder
+import com.github.tvbox.osc.R
 import com.github.tvbox.osc.bean.MoreSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
 import com.github.tvbox.osc.ext.findFirst
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter
 import com.github.tvbox.osc.ui.dialog.SelectDialog
+import com.github.tvbox.osc.ui.dialog.SelectDialogNew
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
 import com.lzy.okgo.OkGo
@@ -22,10 +32,15 @@ import org.json.JSONObject
 
 class SourceLineDialogUtil(private val context: Context) {
 
-    private var DEFAULT_URL = "https://gitea.com/apkcore/apk_release/raw/branch/main/tv/update_yuan"
+    private var DEFAULT_URL = ""
     private val dialog by lazy {
-        SelectDialog<MoreSourceBean>(context)
+        SelectDialogNew<MoreSourceBean>(context)
     }
+    private val mSelectDialogAdapterInterface by lazy {
+        SelectDialogAdapterInterface()
+    }
+    private var select: (() -> Unit)? = null
+
 
     init {
         val defaultBean =
@@ -36,8 +51,12 @@ class SourceLineDialogUtil(private val context: Context) {
     }
 
     fun getData(onSelect: () -> Unit) {
+        if (TextUtils.isEmpty(DEFAULT_URL)) {
+            ToastUtils.showShort("请先选择一个仓库哦~")
+            return
+        }
         OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
-            .cacheTime(10 * 60 * 1000).execute(object : StringCallback() {
+            .cacheTime(10 * 60 * 60 * 1000).execute(object : StringCallback() {
                 override fun onSuccess(response: Response<String>?) {
                     inflateData(response, onSelect)
                 }
@@ -75,6 +94,11 @@ class SourceLineDialogUtil(private val context: Context) {
             val data = mutableListOf<MoreSourceBean>()
             for (i in 0 until length) {
                 val jsonObj = urls.getJSONObject(i)
+                val url = jsonObj.getString("url")
+                //屏蔽gitea的线路
+                if (url.contains("https://gitea.com/")) {
+                    continue
+                }
                 val moreSourceBean = MoreSourceBean().apply {
                     sourceUrl = jsonObj.getString("url")
                     sourceName = jsonObj.getString("name")
@@ -99,48 +123,43 @@ class SourceLineDialogUtil(private val context: Context) {
     }
 
     private fun showDialog(list: List<MoreSourceBean>, select: Int, onSelect: () -> Unit) {
-
         dialog.apply {
             setTip("选择线路")
-            setAdapter(object : SelectDialogAdapter.SelectDialogInterface<MoreSourceBean> {
-                override fun click(moreSourceBea: MoreSourceBean?, pos: Int) {
-                    //更新源
-                    Hawk.put(HawkConfig.API_URL, moreSourceBea?.sourceUrl)
-                    Hawk.put(HawkConfig.API_URL_BEAN, moreSourceBea)
-                    EventBus.getDefault().post(
-                        RefreshEvent(
-                            RefreshEvent.TYPE_API_URL_CHANGE,
-                            moreSourceBea?.sourceName?.ifEmpty { moreSourceBea.sourceUrl }
-                        )
-                    )
+            setAdapter(mSelectDialogAdapterInterface.apply {
+                setSelectCallBack {
                     dialog.dismiss()
                     onSelect.invoke()
                 }
+            }, AdapterDiffCallBack(dialog.oldItems, list.toMutableList()), list, select)
+        }
+        dialog.show()
+    }
 
-                override fun getDisplay(moreSourceBea: MoreSourceBean?): String {
-                    return if (moreSourceBea?.sourceName.isNullOrEmpty()) moreSourceBea?.sourceUrl
-                        ?: "" else moreSourceBea?.sourceName ?: ""
-                }
+    class SelectDialogAdapterInterface : SelectDialogAdapter.SelectDialogInterface<MoreSourceBean> {
 
-            }, object : DiffUtil.ItemCallback<MoreSourceBean>() {
-                override fun areItemsTheSame(
-                    oldItem: MoreSourceBean,
-                    newItem: MoreSourceBean
-                ): Boolean {
-                    return TextUtils.equals(oldItem.sourceUrl, newItem.sourceUrl)
-                }
-
-                override fun areContentsTheSame(
-                    oldItem: MoreSourceBean,
-                    newItem: MoreSourceBean
-                ): Boolean {
-                    return TextUtils.equals(oldItem.sourceUrl, newItem.sourceUrl)
-                }
-
-            }, list, select)
+        private var select: (() -> Unit)? = null
+        fun setSelectCallBack(select: () -> Unit) {
+            this.select = select
         }
 
-        dialog.show()
+        override fun click(moreSourceBea: MoreSourceBean?, pos: Int) {
+            //更新源
+            Hawk.put(HawkConfig.API_URL, moreSourceBea?.sourceUrl)
+            KVStorage.putBean(HawkConfig.API_URL_BEAN, moreSourceBea)
+            EventBus.getDefault().post(
+                RefreshEvent(
+                    RefreshEvent.TYPE_API_URL_CHANGE,
+                    moreSourceBea?.sourceName?.ifEmpty { moreSourceBea.sourceUrl }
+                )
+            )
+            select?.invoke()
+        }
+
+        override fun getDisplay(moreSourceBea: MoreSourceBean?): String {
+            return if (moreSourceBea?.sourceName.isNullOrEmpty()) moreSourceBea?.sourceUrl
+                ?: "" else moreSourceBea?.sourceName ?: ""
+        }
+
     }
 
 

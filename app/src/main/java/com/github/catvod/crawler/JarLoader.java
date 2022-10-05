@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.util.MD5;
+import com.github.tvbox.osc.util.js.SpiderJS;
 import com.lzy.okgo.OkGo;
 
 import org.json.JSONObject;
@@ -67,8 +68,17 @@ public class JarLoader {
                         break;
                     }
                     Thread.sleep(200);
-                } catch (Throwable th) {
-                    th.printStackTrace();
+                } catch (Exception e) {
+                    if (e instanceof ClassNotFoundException) {
+                        File cache = new File(jar);
+                        if (cache.exists()) {//修复由于强制关闭loading导致资源下载不完全，每次会加载jar失败的问题
+                            cache.delete();
+                            break;
+//                            ApiConfig.get().loadJar(false, ApiConfig.get().getSpider(),null);
+                        }
+                    } else {
+                        e.printStackTrace();
+                    }
                 }
                 count++;
             } while (count < 5);
@@ -119,6 +129,19 @@ public class JarLoader {
     }
 
     public Spider getSpider(String key, String cls, String ext, String jar) {
+        if (cls.toLowerCase().endsWith(".js") || cls.toLowerCase().contains(".js?")) {
+            if (spiders.containsKey(key))
+                return spiders.get(key);
+            try {
+                SpiderJS sp = new SpiderJS(key, cls, ext);
+                sp.init(App.getInstance(), ext);
+                spiders.put(key, sp);
+                return sp;
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+            return null;
+        }
         String clsKey = cls.replace("csp_", "");
         String jarUrl = "";
         String jarMd5 = "";

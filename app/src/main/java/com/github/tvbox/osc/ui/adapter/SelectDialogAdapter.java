@@ -6,10 +6,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.SpanUtils;
 import com.github.tvbox.osc.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,21 +34,6 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
         String getDisplay(T val);
     }
 
-
-    public static DiffUtil.ItemCallback<String> stringDiff = new DiffUtil.ItemCallback<String>() {
-
-        @Override
-        public boolean areItemsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
-            return oldItem.equals(newItem);
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
-            return oldItem.equals(newItem);
-        }
-    };
-
-
     private ArrayList<T> data = new ArrayList<>();
 
     private int select = 0;
@@ -65,6 +52,14 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
         notifyDataSetChanged();
     }
 
+    public void setSelect(int select){
+        this.select = select;
+    }
+
+    public ArrayList<T> getData() {
+        return data;
+    }
+
     @Override
     public int getItemCount() {
         return data.size();
@@ -80,19 +75,24 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
     public void onBindViewHolder(@NonNull @NotNull SelectDialogAdapter.SelectViewHolder holder, int position) {
         T value = data.get(position);
         String name = dialogInterface.getDisplay(value);
-        if (position == select)
-            name = "√ " + name;
-        ((TextView) holder.itemView.findViewById(R.id.tvName)).setText(name);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (position == select)
-                    return;
-                notifyItemChanged(select);
-                select = position;
-                notifyItemChanged(select);
-                dialogInterface.click(value, position);
-            }
+        TextView textView = holder.itemView.findViewById(R.id.tvName);
+
+        if (position == select) {
+            textView.setText(SpanUtils.with(textView).
+                    appendImage(ContextCompat.getDrawable(textView.getContext(), R.drawable.ic_select_fill)).append(" ").append(name).create());
+            holder.itemView.requestFocus();
+        } else {
+            textView.setText(name);
+            holder.itemView.clearFocus();
+        }
+        holder.itemView.setFocusable(true);
+        holder.itemView.setOnClickListener(v -> {
+            if (position == select)
+                return;
+            notifyItemChanged(select);
+            select = position;
+            notifyItemChanged(select);
+            dialogInterface.click(value, position);
         });
     }
 }

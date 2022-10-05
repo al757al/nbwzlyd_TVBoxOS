@@ -8,8 +8,10 @@ package com.github.tvbox.osc.util;
 public class HawkConfig {
     public static final String API_URL = "api_url";
     public static final String API_URL_BEAN = "api_url_bean";
+    public static final String EPG_URL = "epg_url";
     public static final String SHOW_PREVIEW = "show_preview";
     public static final String API_HISTORY = "api_history";
+    public static final String EPG_HISTORY = "epg_history";
     public static final String HOME_API = "home_api";
     public static final String CUSTOM_STORE_HOUSE = "custom_store_house";//自定义多源仓库地址
     public static final String CUSTOM_STORE_HOUSE_SELECTED = "custom_store_house_selected";//选中的仓库地址
@@ -31,7 +33,12 @@ public class HawkConfig {
     public static final String LIVE_CONNECT_TIMEOUT = "live_connect_timeout";
     public static final String LIVE_SHOW_NET_SPEED = "live_show_net_speed";
     public static final String LIVE_SHOW_TIME = "live_show_time";
+    public static final String LIVE_SOURCE_URL_CURRENT = "live_source_url_current";//当前自定义直播地址
+    public static final String LIVE_SOURCE_URL_HISTORY = "live_source_url_history";//当前自定义直播历史记录
     public static final String VIDEO_SHOW_TIME = "video_show_time";//看视频是否展示时间
     public static final String CACHE_DATA_KEY = "CACHE_DATA_KEY";//缓存的接口数据
     public static final String FAST_SEARCH_MODE = "fast_search_mode";
+    public static final String SUBTITLE_TEXT_SIZE = "subtitle_text_size";
+    public static final String SUBTITLE_TIME_DELAY = "subtitle_time_delay";
+    public static final String SOURCES_FOR_SEARCH = "sources_for_search";
 }

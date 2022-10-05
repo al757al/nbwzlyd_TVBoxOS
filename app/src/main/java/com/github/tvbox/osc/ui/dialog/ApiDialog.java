@@ -40,6 +40,7 @@ public class ApiDialog extends BaseDialog {
     private ImageView ivQRCode;
     private TextView tvAddress;
     private EditText inputApi;
+    private final int HISTORY_LIMIT = 20;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshEvent event) {
@@ -61,12 +62,12 @@ public class ApiDialog extends BaseDialog {
             @Override
             public void onClick(View v) {
                 String newApi = inputApi.getText().toString().trim();
-                if (!newApi.isEmpty()) {
+                if (!newApi.isEmpty() && (newApi.startsWith("http") || newApi.startsWith("clan"))) {
                     ArrayList<String> history = Hawk.get(HawkConfig.API_HISTORY, new ArrayList<String>());
                     if (!history.contains(newApi))
                         history.add(0, newApi);
-                    if (history.size() > 10)
-                        history.remove(10);
+                    if (history.size() > HISTORY_LIMIT)
+                        history.remove(HISTORY_LIMIT);
                     Hawk.put(HawkConfig.API_HISTORY, history);
                     listener.onchange(newApi);
                     dismiss();

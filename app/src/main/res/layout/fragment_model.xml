@@ -603,8 +603,6 @@
                     android:id="@+id/llScale"
                     android:layout_width="@dimen/vs_0"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/vs_5"
-                    android:layout_marginLeft="@dimen/vs_5"
                     android:layout_weight="1"
                     android:background="@drawable/shape_setting_model_focus"
                     android:focusable="true"
@@ -693,6 +691,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:layout_weight="1"
                 android:focusable="false"
+                android:layout_marginLeft="@dimen/vs_15"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -818,8 +817,6 @@
                 android:id="@+id/llAbout"
                 android:layout_width="@dimen/vs_0"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/vs_5"
-                android:layout_marginLeft="@dimen/vs_5"
                 android:layout_weight="1"
                 android:background="@drawable/shape_setting_model_focus"
                 android:focusable="true"
@@ -829,9 +826,10 @@
                 android:paddingRight="@dimen/vs_20">
 
                 <TextView
+                    android:id="@+id/text_about"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="赞赏一下"
+                    android:text="关于"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
@@ -852,7 +850,7 @@
 
 
             <LinearLayout
-                android:id="@+id/default_more_source"
+                android:id="@+id/default_more_store"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/vs_60"
                 android:layout_marginStart="@dimen/vs_5"

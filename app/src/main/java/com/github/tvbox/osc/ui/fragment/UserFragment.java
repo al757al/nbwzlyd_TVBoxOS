@@ -2,10 +2,8 @@ package com.github.tvbox.osc.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -21,14 +19,17 @@ import com.github.tvbox.osc.ui.activity.CollectActivity;
 import com.github.tvbox.osc.ui.activity.DetailActivity;
 import com.github.tvbox.osc.ui.activity.FastSearchActivity;
 import com.github.tvbox.osc.ui.activity.HistoryActivity;
+import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.activity.LivePlayActivity;
 import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
-import com.github.tvbox.osc.ui.dialog.SourceStoreDialog2;
+import com.github.tvbox.osc.ui.dialog.SourceStoreDialog;
+import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.UA;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -38,8 +39,8 @@ import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
-
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -115,7 +116,10 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvSetting.setOnClickListener(this);
         tvHistory.setOnClickListener(this);
         tvPush.setOnClickListener(this);
-        findViewById(R.id.changeStore).setOnClickListener(this);
+        TextView changeStore = findViewById(R.id.changeStore);
+        TextView changeLine = findViewById(R.id.changeLine);
+        changeStore.setOnClickListener(this);
+        changeLine.setOnClickListener(this);
         tvCollect.setOnClickListener(this);
         tvLive.setOnFocusChangeListener(focusChangeListener);
         tvSearch.setOnFocusChangeListener(focusChangeListener);
@@ -123,6 +127,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvHistory.setOnFocusChangeListener(focusChangeListener);
         tvPush.setOnFocusChangeListener(focusChangeListener);
         tvCollect.setOnFocusChangeListener(focusChangeListener);
+        changeLine.setOnFocusChangeListener(focusChangeListener);
+        changeStore.setOnFocusChangeListener(focusChangeListener);
         TvRecyclerView tvHotList = findViewById(R.id.tvHotList);
         homeHotVodAdapter = new HomeHotVodAdapter();
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -208,11 +214,17 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             if (requestDay.equals(today)) {
                 String json = Hawk.get("home_hot", "");
                 if (!json.isEmpty()) {
-                    adapter.setNewData(loadHots(json));
-                    return;
+                    ArrayList<Movie.Video> hotMovies = loadHots(json);
+                    if (hotMovies != null && hotMovies.size() > 0) {
+                        adapter.setNewData(hotMovies);
+                        return;
+                    }
                 }
             }
-            OkGo.<String>get("https://movie.douban.com/j/new_search_subjects?sort=U&range=0,10&tags=&playable=1&start=0&year_range=" + year + "," + year).execute(new AbsCallback<String>() {
+            String doubanUrl = "https://movie.douban.com/j/new_search_subjects?sort=U&range=0,10&tags=&playable=1&start=0&year_range=" + year + "," + year;
+            OkGo.<String>get(doubanUrl)
+                    .headers("User-Agent", UA.randomOne())
+                    .execute(new AbsCallback<String>() {
                 @Override
                 public void onSuccess(Response<String> response) {
                     String netJson = response.body();
@@ -281,8 +293,13 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         } else if (v.getId() == R.id.tvFavorite) {
             jumpActivity(CollectActivity.class);
         } else if (v.getId() == R.id.changeStore) {
-            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("敬请期待新功能~~~~");
-//            new SourceStoreDialog2(getActivity()).show();
+            new SourceStoreDialog(getActivity()).show();
+        }else if (v.getId() == R.id.changeLine){
+            new SourceLineDialogUtil(getContext()).getData(() -> {
+                ((HomeActivity)getActivity()).forceRestartHomeActivity();
+                ToastUtils.make().show("线路已切换，若加载数据失败可尝试切换首页数据源或者再次切换线路");
+                return null;
+            });
         }
     }
 

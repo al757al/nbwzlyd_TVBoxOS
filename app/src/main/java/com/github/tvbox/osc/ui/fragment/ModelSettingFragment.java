@@ -1,14 +1,21 @@
 package com.github.tvbox.osc.ui.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DiffUtil;
 
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.CleanUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.github.tvbox.osc.BuildConfig;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.BaseActivity;
@@ -17,13 +24,14 @@ import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.MoreSourceBean;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
+import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.AboutDialog;
 import com.github.tvbox.osc.ui.dialog.ApiDialog;
 import com.github.tvbox.osc.ui.dialog.BackupDialog;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
-import com.github.tvbox.osc.ui.dialog.SourceStoreDialog2;
+import com.github.tvbox.osc.ui.dialog.SourceStoreDialog;
 import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
@@ -62,6 +70,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvRender;
     private TextView tvScale;
     private TextView tvApi;
+    private TextView tvEpgApi;
     private TextView tvHomeApi;
     private TextView tvDns;
     private TextView tvHomeRec;
@@ -69,6 +78,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvSearchView;
     private TextView tvShowPreviewText;
     private TextView tvFastSearchText;
+    private TextView mClearDataTextView;
 
     boolean isLastOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
 
@@ -83,13 +93,14 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     protected int getLayoutResID() {
-        return R.layout.fragment_model;
+        return R.layout.fragment_model_new;
     }
 
     @Override
     protected void init() {
         EventBus.getDefault().register(this);
         tvFastSearchText = findViewById(R.id.showFastSearchText);
+        mClearDataTextView = findViewById(R.id.clear_data);
         tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
         tvShowPreviewText = findViewById(R.id.showPreviewText);
         tvShowPreviewText.setText(Hawk.get(HawkConfig.SHOW_PREVIEW, true) ? "开启" : "关闭");
@@ -100,6 +111,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvRender = findViewById(R.id.tvRenderType);
         tvScale = findViewById(R.id.tvScaleType);
         tvApi = findViewById(R.id.tvApi);
+//        tvEpgApi = findViewById(R.id.tvEpgApi);
         tvHomeApi = findViewById(R.id.tvHomeApi);
         tvDns = findViewById(R.id.tvDns);
         tvHomeRec = findViewById(R.id.tvHomeRec);
@@ -109,12 +121,13 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
         tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
         String apiUrl = Hawk.get(HawkConfig.API_URL, "");
-        MoreSourceBean moreSourceBean = Hawk.get(HawkConfig.API_URL_BEAN);
+        MoreSourceBean moreSourceBean = KVStorage.getBean(HawkConfig.API_URL_BEAN,MoreSourceBean.class);
         if (moreSourceBean == null) {
             tvApi.setText(apiUrl);
         } else if (TextUtils.equals(moreSourceBean.getSourceUrl(), apiUrl)) {
             tvApi.setText(moreSourceBean.getSourceName());
         }
+//        tvEpgApi.setText("EPG地址已隐藏");
         tvDns.setText(OkGoHelper.dnsHttpsList.get(Hawk.get(HawkConfig.DOH_URL, 0)));
         tvHomeRec.setText(getHomeRecName(Hawk.get(HawkConfig.HOME_REC, 0)));
         tvHistoryNum.setText(HistoryHelper.getHistoryNumName(Hawk.get(HawkConfig.HISTORY_NUM, 0)));
@@ -122,7 +135,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvHomeApi.setText(ApiConfig.get().getHomeSourceBean().getName());
         tvScale.setText(PlayerHelper.getScaleName(Hawk.get(HawkConfig.PLAY_SCALE, 0)));
         tvPlay.setText(PlayerHelper.getPlayerName(Hawk.get(HawkConfig.PLAY_TYPE, 0)));
-        tvRender.setText(PlayerHelper.getRenderName(Hawk.get(HawkConfig.PLAY_RENDER, 1)));
+        tvRender.setText(PlayerHelper.getRenderName(Hawk.get(HawkConfig.PLAY_RENDER, 2)));
         findViewById(R.id.llDebug).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,6 +179,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 dialog.show();
             }
         });
+        TextView about  = findViewById(R.id.text_about);
+        about.setText("关于  V"+ BuildConfig.VERSION_NAME);
         findViewById(R.id.llWp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,6 +308,32 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 dialog.show();
             }
         });
+
+//        findViewById(R.id.epgApi).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                FastClickCheckUtil.check(v);
+//                EpgDialog dialog = new EpgDialog(mActivity);
+//                EventBus.getDefault().register(dialog);
+//                dialog.setOnListener(new EpgDialog.OnListener() {
+//                    @Override
+//                    public void onchange(String api) {
+//                        Hawk.put(HawkConfig.EPG_URL, api);
+//                        tvEpgApi.setText(api);
+//                    }
+//                });
+//                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//                        ((BaseActivity) mActivity).hideSysBar();
+//                        EventBus.getDefault().unregister(dialog);
+//                    }
+//                });
+//                dialog.show();
+//            }
+//        });
+
+
         findViewById(R.id.llMediaCodec).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -380,24 +421,31 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
-                int defaultPos = Hawk.get(HawkConfig.PLAY_TYPE, 0);
-                ArrayList<Integer> players = new ArrayList<>();
-                players.add(0);
-                players.add(1);
-                players.add(2);
+                int playerType = Hawk.get(HawkConfig.PLAY_TYPE, 0);
+                int defaultPos = 0;
+                ArrayList<Integer> players = PlayerHelper.getExistPlayerTypes();
+                ArrayList<Integer> renders = new ArrayList<>();
+                for(int p = 0; p<players.size(); p++) {
+                    renders.add(p);
+                    if (players.get(p) == playerType) {
+                        defaultPos = p;
+                    }
+                }
                 SelectDialog<Integer> dialog = new SelectDialog<>(mActivity);
                 dialog.setTip("请选择默认播放器");
                 dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<Integer>() {
                     @Override
                     public void click(Integer value, int pos) {
-                        Hawk.put(HawkConfig.PLAY_TYPE, value);
-                        tvPlay.setText(PlayerHelper.getPlayerName(value));
+                        Integer thisPlayerType = players.get(pos);
+                        Hawk.put(HawkConfig.PLAY_TYPE, thisPlayerType);
+                        tvPlay.setText(PlayerHelper.getPlayerName(thisPlayerType));
                         PlayerHelper.init();
                     }
 
                     @Override
                     public String getDisplay(Integer val) {
-                        return PlayerHelper.getPlayerName(val);
+                        Integer playerType = players.get(val);
+                        return PlayerHelper.getPlayerName(playerType);
                     }
                 }, new DiffUtil.ItemCallback<Integer>() {
                     @Override
@@ -409,7 +457,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     public boolean areContentsTheSame(@NonNull @NotNull Integer oldItem, @NonNull @NotNull Integer newItem) {
                         return oldItem.intValue() == newItem.intValue();
                     }
-                }, players, defaultPos);
+                }, renders, defaultPos);
                 dialog.show();
             }
         });
@@ -417,7 +465,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
-                int defaultPos = Hawk.get(HawkConfig.PLAY_RENDER, 1);
+                int defaultPos = Hawk.get(HawkConfig.PLAY_RENDER, 2);
                 ArrayList<Integer> renders = new ArrayList<>();
                 renders.add(0);
                 renders.add(1);
@@ -591,8 +639,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     });
 
         });
-        findViewById(R.id.default_more_source).setOnClickListener(v -> {
-            new SourceStoreDialog2(mActivity).show();
+        findViewById(R.id.default_more_store).setOnClickListener(v -> {
+            new SourceStoreDialog(mActivity).show();
 
         });
         TextView textView = findViewById(R.id.sys_time_switch);
@@ -602,13 +650,41 @@ public class ModelSettingFragment extends BaseLazyFragment {
             setTimeSwitch(textView, isLastOpen);
             KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isLastOpen);
         });
+        mClearDataTextView.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("确定要清空缓存？");
+            builder.setMessage("清空缓存后，软件将变为初始安装状态");
+            builder.setNegativeButton("取消", (dialog, which) -> {
+
+            });
+            builder.setPositiveButton("确定", (dialog, which) -> {
+                CleanUtils.cleanExternalCache();
+                CleanUtils.cleanInternalCache();
+                CleanUtils.cleanInternalFiles();
+                CleanUtils.cleanInternalSp();
+                Hawk.deleteAll();
+                KVStorage.deleteAll();
+                ToastUtils.showShort("缓存清空完毕");
+                ApiConfig.release();
+                Intent intent = new Intent(mActivity, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("useCache", true);
+                intent.putExtras(bundle);
+                ActivityUtils.startActivity(HomeActivity.class,bundle);
+
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+            alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).requestFocus();
+        });
     }
 
     private void setTimeSwitch(TextView textView, boolean isLastOpen) {
         if (isLastOpen) {
-            textView.setText("时间展示     开");
+            textView.setText("时间展示            已打开 >");
         } else {
-            textView.setText("时间展示     关");
+            textView.setText("时间展示            已关闭 >");
         }
     }
 

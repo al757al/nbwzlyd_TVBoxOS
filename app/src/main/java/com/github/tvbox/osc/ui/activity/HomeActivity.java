@@ -8,11 +8,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.widget.LinearLayout;
@@ -25,14 +23,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.viewpager.widget.ViewPager;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
+import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.base.BaseLazyFragment;
 import com.github.tvbox.osc.bean.AbsSortXml;
-import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.bean.MovieSort;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
@@ -52,9 +50,9 @@ import com.github.tvbox.osc.util.AppManager;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import com.lzy.okgo.OkGo;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
-import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -62,6 +60,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -107,22 +106,8 @@ public class HomeActivity extends BaseActivity {
 
     boolean useCacheConfig = true;
 
-    @Override
-    protected void init() {
-        EventBus.getDefault().register(this);
-        initView();
-        initViewModel();
-        useCacheConfig = true;
-        Intent intent = getIntent();
-        if (intent != null && intent.getExtras() != null) {
-            Bundle bundle = intent.getExtras();
-            useCacheConfig = bundle.getBoolean("useCache", false);
-        }
-        // 初始化Web服务器
-        ControlManager.init(this);
-        ControlManager.get().startServer();
-        initData();
-    }
+    private boolean isLoadingShow = false;
+    private boolean isForceCloseLoading = false;
 
     private void initView() {
         this.topLayout = findViewById(R.id.topLayout);
@@ -190,7 +175,6 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         });
-
         this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
             public final boolean onInBorderKeyEvent(int direction, View view) {
                 if (direction != View.FOCUS_DOWN) {
@@ -208,8 +192,32 @@ public class HomeActivity extends BaseActivity {
             }
         });
         setLoadSir(this.contentLayout);
+        pageAdapter = new HomePageAdapter(getSupportFragmentManager(), fragments);
+        mViewPager.setPageTransformer(true, new DefaultTransformer());
+        mViewPager.setAdapter(pageAdapter);
+        mViewPager.setCurrentItem(currentSelected, false);
         //mHandler.postDelayed(mFindFocus, 500);
     }
+
+    @Override
+    protected void init() {
+        EventBus.getDefault().register(this);
+        initView();
+        initViewModel();
+        useCacheConfig = true;
+//        Intent intent = getIntent();
+//        if (intent != null && intent.getExtras() != null) {
+//            Bundle bundle = intent.getExtras();
+//            useCacheConfig = bundle.getBoolean("useCache", false);
+//        }
+        // 初始化Web服务器
+        ControlManager.init(this);
+        ControlManager.get().startServer();
+        initData();
+    }
+
+    private boolean dataInitOk = false;
+    private boolean jarInitOk = false;
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
@@ -217,6 +225,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onChanged(AbsSortXml absXml) {
                 showSuccess();
+                isLoadingShow = false;
                 if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
                     sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true));
                 } else {
@@ -227,19 +236,16 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    private boolean dataInitOk = false;
-    private boolean jarInitOk = false;
-
     private void initData() {
         SourceBean home = ApiConfig.get().getHomeSourceBean();
         if (home != null && home.getName() != null && !home.getName().isEmpty())
             tvName.setText(home.getName());
         if (dataInitOk && jarInitOk) {
-            showLoading();
             sourceViewModel.getSort(ApiConfig.get().getHomeSourceBean().getKey());
             return;
         }
         showLoading();
+        isLoadingShow = true;
         if (dataInitOk && !jarInitOk) {
             if (!ApiConfig.get().getSpider().isEmpty()) {
                 ApiConfig.get().loadJar(useCacheConfig, ApiConfig.get().getSpider(), new ApiConfig.LoadConfigCallback() {
@@ -252,6 +258,7 @@ public class HomeActivity extends BaseActivity {
                                 if (!useCacheConfig)
                                     Toast.makeText(HomeActivity.this, "自定义jar加载成功", Toast.LENGTH_SHORT).show();
                                 initData();
+                                isForceCloseLoading = false;
                             }
                         }, 50);
                     }
@@ -264,12 +271,13 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void error(String msg) {
                         jarInitOk = true;
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(HomeActivity.this, "jar加载失败", Toast.LENGTH_SHORT).show();
-                                initData();
+                        mHandler.post(() -> {
+                            if (isForceCloseLoading) {
+                                isForceCloseLoading = false;
+                                return;
                             }
+                            Toast.makeText(HomeActivity.this, "jar加载失败", Toast.LENGTH_SHORT).show();
+                            initData();
                         });
                     }
                 });
@@ -367,6 +375,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void initViewPager(AbsSortXml absXml) {
+        fragments.clear();
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
@@ -379,7 +388,7 @@ public class HomeActivity extends BaseActivity {
                     fragments.add(GridFragment.newInstance(data));
                 }
             }
-            pageAdapter = new HomePageAdapter(getSupportFragmentManager(), fragments);
+            pageAdapter.notifyDataSetChanged();
             try {
                 Field field = ViewPager.class.getDeclaredField("mScroller");
                 field.setAccessible(true);
@@ -388,9 +397,6 @@ public class HomeActivity extends BaseActivity {
                 scroller.setmDuration(300);
             } catch (Exception e) {
             }
-            mViewPager.setPageTransformer(true, new DefaultTransformer());
-            mViewPager.setAdapter(pageAdapter);
-            mViewPager.setCurrentItem(currentSelected, false);
         }
     }
 
@@ -421,6 +427,26 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void exit() {
+        if (isLoadingShow) {
+            isLoadingShow = false;
+            isForceCloseLoading = true;
+            ToastUtils.showShort("跳过loading~");
+            //取消jar的加载
+            OkGo.getInstance().cancelTag("downLoadJar");
+            File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/csp.jar");
+            if (cache.exists()) {//修复由于强制关闭loading导致资源下载不完全，每次会加载jar失败的问题
+                cache.delete();
+            }
+            if (fragments.isEmpty()) {
+                List<MovieSort.SortData> list = new ArrayList<>();
+                list.add(new MovieSort.SortData("my0", "主页"));
+                sortAdapter.setNewData(list);
+                fragments.add(UserFragment.newInstance(null));
+                pageAdapter.notifyDataSetChanged();
+            }
+            showSuccess();
+            return;
+        }
         if (System.currentTimeMillis() - mExitTime < 2000) {
             //这一段借鉴来自 q群老哥 IDCardWeb
             EventBus.getDefault().unregister(this);
@@ -485,6 +511,18 @@ public class HomeActivity extends BaseActivity {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
 
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
+
+        }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
+            //长按
+            if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    ActivityUtils.startActivity(new Intent(this, SettingActivity.class));
+                }
+            } else {
+                if (event.getAction() == KeyEvent.ACTION_UP)
+                    showSiteSwitch();
+            }
 
         }
         return super.dispatchKeyEvent(event);
@@ -583,6 +621,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+
     private void restartHomeActivity(String homeSourceKey) {
         if (homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, ""))) {
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
@@ -598,13 +637,13 @@ public class HomeActivity extends BaseActivity {
      * 强制重启首页，刷新数据
      */
     public void forceRestartHomeActivity() {
-//        ApiConfig.release();
-//        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        Bundle bundle = new Bundle();
-//        bundle.putBoolean("useCache", true);
-//        intent.putExtras(bundle);
-//        HomeActivity.this.startActivity(intent);
+        ApiConfig.release();
+        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("useCache", true);
+        intent.putExtras(bundle);
+        HomeActivity.this.startActivity(intent);
     }
 
 }

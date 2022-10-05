@@ -1,21 +1,17 @@
 package com.github.tvbox.osc.base
 
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.text.TextUtils
-import androidx.multidex.BuildConfig
 import androidx.multidex.MultiDexApplication
+import com.github.tvbox.osc.bean.VodInfo
 import com.github.tvbox.osc.startup.DatabaseTask
 import com.github.tvbox.osc.startup.PlayerTask
 import com.github.tvbox.osc.startup.ServerTask
 import com.github.tvbox.osc.startup.UITask
 import com.github.tvbox.osc.util.HawkConfig
-import com.github.tvbox.osc.util.LOG
+import com.github.tvbox.osc.util.js.JSEngine
 import com.orhanobut.hawk.Hawk
 import com.rousetime.android_startup.StartupManager
 import com.tencent.bugly.crashreport.CrashReport
-import leakcanary.LeakCanary
 
 /**
  * @author pj567
@@ -27,7 +23,6 @@ class App : MultiDexApplication() {
         super.onCreate()
         instance = this
         initParams()
-        val time = System.currentTimeMillis()
         StartupManager.Builder()
             .addStartup(UITask())
             .addStartup(ServerTask())
@@ -35,7 +30,8 @@ class App : MultiDexApplication() {
             .addStartup(PlayerTask())
             .build(this)
             .start().await()
-        LOG.e("COSTEnd   " + (System.currentTimeMillis() - time))
+//        EpgNameFuzzyMatch.init()
+        JSEngine.getInstance().create()
 //        val time = System.currentTimeMillis()
 //        initParams()
 //        // OKGo
@@ -67,10 +63,10 @@ class App : MultiDexApplication() {
         }
         val homeUrl = Hawk.get(HawkConfig.API_URL, "")
         if (TextUtils.isEmpty(homeUrl)) {
-            Hawk.put(
-                HawkConfig.API_URL,
-                "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/xiaopingguo/xiaopingguo.json"
-            )
+//            Hawk.put(
+//                HawkConfig.API_URL,
+//                "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/xiaopingguo/xiaopingguo.json"
+//            )
         }
         Hawk.put(HawkConfig.IJK_CODEC, "硬解码");
     }
@@ -79,5 +75,19 @@ class App : MultiDexApplication() {
         @JvmStatic
         var instance: App? = null
             private set
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        JSEngine.getInstance().destroy()
+    }
+
+    private var vodInfo: VodInfo? = null
+    fun setVodInfo(vodinfo: VodInfo?) {
+        vodInfo = vodinfo
+    }
+
+    fun getVodInfo(): VodInfo? {
+        return vodInfo
     }
 }
