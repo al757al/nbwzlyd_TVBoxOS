@@ -2,6 +2,7 @@ package com.github.tvbox.osc.player.controller;
 
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Handler;
@@ -56,7 +57,6 @@ public class VodController extends BaseController {
     SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
 
-
     SeekBar mSeekBar;
     TextView mCurrentTime;
     TextView mTotalTime;
@@ -66,10 +66,9 @@ public class VodController extends BaseController {
     ImageView mProgressIcon;
     LinearLayout mBottomRoot;
     LinearLayout mTopRoot1;
-    LinearLayout mTopRoot2;
     LinearLayout mParseRoot;
     TvRecyclerView mGridView;
-//    TextView mPlayTitle;
+    //    TextView mPlayTitle;
     TextView mPlayTitle1;
     TextView mNextBtn;
     TextView mPreBtn;
@@ -85,6 +84,9 @@ public class VodController extends BaseController {
     TextView mPlayPauseTime;
     TextView mPlayLoadNetSpeed;
     TextView mVideoSize;
+    private View backBtn;//返回键
+    private boolean isClickBackBtn;
+
     private boolean mIsFullScreen = false;
     public SimpleSubtitleView mSubtitleView;
     TextView mZimuBtn;
@@ -128,16 +130,20 @@ public class VodController extends BaseController {
                         mBottomRoot.setVisibility(VISIBLE);
                         mTopRoot1.setVisibility(VISIBLE);
                         showNowTime(true);
-                        mTopRoot2.setVisibility(VISIBLE);
+                        mPlayPauseTime.setVisibility(VISIBLE);
                         mPlayTitle1.setVisibility(View.VISIBLE);
+                        mNetSpeed.setVisibility(VISIBLE);
+                        backBtn.setVisibility(VISIBLE);
                         mBottomRoot.requestFocus();
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
                         mBottomRoot.setVisibility(GONE);
                         mTopRoot1.setVisibility(GONE);
+                        backBtn.setVisibility(INVISIBLE);
                         showNowTime(false);
-                        mTopRoot2.setVisibility(GONE);
+//                        mPlayPauseTime.setVisibility(GONE);
+                        mNetSpeed.setVisibility(INVISIBLE);
                         break;
                     }
                     case 1004: { // 设置速度
@@ -211,7 +217,16 @@ public class VodController extends BaseController {
         mProgressText = findViewById(R.id.tv_progress_text);
         mBottomRoot = findViewById(R.id.bottom_container);
         mTopRoot1 = findViewById(R.id.tv_top_l_container);
-        mTopRoot2 = findViewById(R.id.tv_top_r_container);
+        backBtn = findViewById(R.id.tv_back);
+        backBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getContext() instanceof Activity) {
+                    isClickBackBtn = true;
+                    ((Activity) getContext()).onBackPressed();
+                }
+            }
+        });
         mParseRoot = findViewById(R.id.parse_root);
         mGridView = findViewById(R.id.mGridView);
         mPlayerRetry = findViewById(R.id.play_retry);
@@ -236,10 +251,10 @@ public class VodController extends BaseController {
         TextView timeShow = findViewById(R.id.time_show);
 
         boolean isTimeShowOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
-        if (isTimeShowOpen){
+        if (isTimeShowOpen) {
             timeShow.setText("屏显开");
             timeShow.setTag(1);
-        }else {
+        } else {
             timeShow.setText("屏显关");
             timeShow.setTag(2);
         }
@@ -415,7 +430,7 @@ public class VodController extends BaseController {
                     ArrayList<Integer> exsitPlayerTypes = PlayerHelper.getExistPlayerTypes();
                     int playerTypeIdx = 0;
                     int playerTypeSize = exsitPlayerTypes.size();
-                    for(int i = 0; i<playerTypeSize; i++) {
+                    for (int i = 0; i < playerTypeSize; i++) {
                         if (playerType == exsitPlayerTypes.get(i)) {
                             if (i == playerTypeSize - 1) {
                                 playerTypeIdx = 0;
@@ -448,7 +463,7 @@ public class VodController extends BaseController {
                     int defaultPos = 0;
                     ArrayList<Integer> players = PlayerHelper.getExistPlayerTypes();
                     ArrayList<Integer> renders = new ArrayList<>();
-                    for(int p = 0; p<players.size(); p++) {
+                    for (int p = 0; p < players.size(); p++) {
                         renders.add(p);
                         if (players.get(p) == playerType) {
                             defaultPos = p;
@@ -857,8 +872,9 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PAUSED:
                 mTopRoot1.setVisibility(GONE);
-                mTopRoot2.setVisibility(GONE);
+//                mPlayPauseTime.setVisibility(GONE);
                 mPlayTitle1.setVisibility(VISIBLE);
+                mNetSpeed.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_ERROR:
                 listener.errReplay();
@@ -960,6 +976,13 @@ public class VodController extends BaseController {
 
     @Override
     public boolean onBackPressed() {
+        if (isClickBackBtn) {
+            isClickBackBtn = false;
+            if (isBottomVisible()) {
+                hideBottom();
+            }
+            return false;
+        }
         if (super.onBackPressed()) {
             return true;
         }
