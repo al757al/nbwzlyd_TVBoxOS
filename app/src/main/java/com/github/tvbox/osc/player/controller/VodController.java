@@ -245,6 +245,11 @@ public class VodController extends BaseController {
         }
         timeShow.setOnClickListener(v -> {
             boolean isTimeShow = (int) timeShow.getTag() == 1;
+            if (isTimeShow) {
+                timeShow.setTag(2);
+            } else {
+                timeShow.setTag(1);
+            }
             isTimeShow = !isTimeShow;
             timeShow.setText(isTimeShow ? "屏显开" : "屏显关");
             KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isTimeShow);
