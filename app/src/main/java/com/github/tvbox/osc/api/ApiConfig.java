@@ -27,6 +27,7 @@ import com.google.gson.JsonObject;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
+import com.lzy.okgo.request.GetRequest;
 import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONObject;
@@ -108,8 +109,11 @@ public class ApiConfig {
         } else if (!apiUrl.startsWith("http")) {
             apiFix = "http://" + apiFix;
         }
-        OkGo.<String>get(apiFix)
-                .headers("User-Agent", userAgent)
+        GetRequest<String> stringGetRequest = OkGo.<String>get(apiFix);
+        if (!apiFix.contains("刚刚")) {
+            stringGetRequest.headers("User-Agent", userAgent);
+        }
+        stringGetRequest
                 .execute(new AbsCallback<String>() {
                     @Override
                     public void onSuccess(Response<String> response) {
@@ -182,20 +186,27 @@ public class ApiConfig {
                 return;
             }
         }
+        String apiUrl = Hawk.get(HawkConfig.API_URL, "");
+        //修复每日神器jar加载失败问题
+        //https://神器每日推送.tk/pz.json
+        if (apiUrl.contains("神器每日推送")) {
+            jarUrl = "https://神器每日推送.tk" + jarUrl;
+        }
+        GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar");
+        if (!jarUrl.contains("刚刚")) {
+            request.headers("User-Agent", userAgent);
+        }
+        request.execute(new AbsCallback<File>() {
 
-        OkGo.<File>get(jarUrl).tag("downLoadJar")
-                .headers("User-Agent", userAgent)
-                .execute(new AbsCallback<File>() {
-
-                    @Override
-                    public File convertResponse(okhttp3.Response response) throws Throwable {
-                        File cacheDir = cache.getParentFile();
-                        if (!cacheDir.exists())
-                            cacheDir.mkdirs();
-                        if (cache.exists())
-                            cache.delete();
-                        FileOutputStream fos = new FileOutputStream(cache);
-                        fos.write(response.body().bytes());
+            @Override
+            public File convertResponse(okhttp3.Response response) throws Throwable {
+                File cacheDir = cache.getParentFile();
+                if (!cacheDir.exists())
+                    cacheDir.mkdirs();
+                if (cache.exists())
+                    cache.delete();
+                FileOutputStream fos = new FileOutputStream(cache);
+                fos.write(response.body().bytes());
                         fos.flush();
                         fos.close();
                         return cache;
@@ -362,6 +373,16 @@ public class ApiConfig {
                 String extUrl = Uri.parse(realUrl).getQueryParameter("ext");
                 if (extUrl != null && !extUrl.isEmpty()) {
                     String extUrlFix = "";
+//                    //神器每日推送bugfix
+//                    String api = Hawk.get(HawkConfig.API_URL,"");
+//                    if (api.contains("神器每日推送")) {
+//                        String fixExtUrl = Base64.encodeToString(("https://神器每日推送.tk" + extUrl).getBytes("UTF-8"), Base64.DEFAULT);
+//                        realUrl = realUrl.replace(extUrl,fixExtUrl);
+//                        LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
+//                        liveChannelGroup.setGroupName(realUrl);
+//                        liveChannelGroupList.add(liveChannelGroup);
+//                        return;
+//                    }
                     if (extUrl.startsWith("http") || realUrl.startsWith("https")) {
                         extUrlFix = extUrl;
                     } else {
