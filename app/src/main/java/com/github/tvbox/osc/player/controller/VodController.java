@@ -69,7 +69,7 @@ public class VodController extends BaseController {
     LinearLayout mTopRoot2;
     LinearLayout mParseRoot;
     TvRecyclerView mGridView;
-    TextView mPlayTitle;
+//    TextView mPlayTitle;
     TextView mPlayTitle1;
     TextView mNextBtn;
     TextView mPreBtn;
@@ -129,7 +129,7 @@ public class VodController extends BaseController {
                         mTopRoot1.setVisibility(VISIBLE);
                         showNowTime(true);
                         mTopRoot2.setVisibility(VISIBLE);
-                        mPlayTitle.setVisibility(GONE);
+                        mPlayTitle1.setVisibility(View.VISIBLE);
                         mBottomRoot.requestFocus();
                         break;
                     }
@@ -203,7 +203,7 @@ public class VodController extends BaseController {
         super.initView();
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
-        mPlayTitle = findViewById(R.id.tv_info_name);
+//        mPlayTitle = findViewById(R.id.tv_info_name);
         mPlayTitle1 = findViewById(R.id.tv_info_name1);
         mSeekBar = findViewById(R.id.seekBar);
         mProgressRoot = findViewById(R.id.tv_progress_container);
@@ -722,12 +722,12 @@ public class VodController extends BaseController {
     }
 
     public void setTitle(String playTitleInfo) {
-        mPlayTitle.setText(playTitleInfo);
+//        mPlayTitle.setText(playTitleInfo);
         mPlayTitle1.setText(playTitleInfo);
     }
 
     public void setUrlTitle(String playTitleInfo) {
-        mPlayTitle.setText(playTitleInfo);
+        mPlayTitle1.setText(playTitleInfo);
     }
 
     public void resetSpeed() {
@@ -858,7 +858,7 @@ public class VodController extends BaseController {
             case VideoView.STATE_PAUSED:
                 mTopRoot1.setVisibility(GONE);
                 mTopRoot2.setVisibility(GONE);
-                mPlayTitle.setVisibility(VISIBLE);
+                mPlayTitle1.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_ERROR:
                 listener.errReplay();

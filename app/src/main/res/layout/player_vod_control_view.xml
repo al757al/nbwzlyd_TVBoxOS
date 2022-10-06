@@ -11,7 +11,6 @@
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/vs_20"
         android:layout_marginLeft="@dimen/vs_20"
-        android:layout_marginTop="@dimen/vs_10"
         android:orientation="vertical"
         android:tag="tv_top_container"
         android:visibility="gone"
@@ -22,10 +21,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:width="680dp"
             android:ellipsize="end"
             android:paddingLeft="@dimen/vs_20"
-            android:paddingTop="@dimen/vs_20"
+            android:paddingTop="@dimen/vs_10"
             android:singleLine="true"
             android:text="http://"
             android:textColor="@android:color/white"
@@ -59,6 +57,7 @@
         android:text="00:00:00"
         android:textColor="@android:color/white"
         android:textSize="@dimen/ts_24"
+        tools:visibility="visible"
         android:visibility="gone" />
 
     <LinearLayout
@@ -465,29 +464,6 @@
         android:tag="vod_control_pause"
         android:visibility="gone"
         tools:visibility="visible">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginStart="@dimen/vs_20"
-            android:layout_marginLeft="@dimen/vs_20"
-            android:layout_marginTop="@dimen/vs_10"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_info_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:paddingLeft="@dimen/vs_20"
-                android:paddingTop="@dimen/vs_20"
-                android:text="http://"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/ts_24" />
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="@dimen/vs_280"
