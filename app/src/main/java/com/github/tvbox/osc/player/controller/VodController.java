@@ -10,6 +10,7 @@ import android.os.Message;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -86,6 +87,7 @@ public class VodController extends BaseController {
     TextView mVideoSize;
     private View backBtn;//返回键
     private boolean isClickBackBtn;
+    private HorizontalScrollView mHorizontalScrollView;
 
     private boolean mIsFullScreen = false;
     public SimpleSubtitleView mSubtitleView;
@@ -128,11 +130,17 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
+                        mHorizontalScrollView.scrollTo(0, 0);
                         mTopRoot1.setVisibility(VISIBLE);
                         showNowTime(true);
                         mPlayPauseTime.setVisibility(VISIBLE);
                         mPlayTitle1.setVisibility(View.VISIBLE);
                         mNetSpeed.setVisibility(VISIBLE);
+                        new Handler().postDelayed(() -> {
+                            mNextBtn.setFocusable(true);
+                            mNextBtn.setFocusableInTouchMode(true);
+                            mNextBtn.requestFocus();
+                        }, 20);
                         backBtn.setVisibility(VISIBLE);
                         mBottomRoot.requestFocus();
                         break;
@@ -210,6 +218,7 @@ public class VodController extends BaseController {
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
 //        mPlayTitle = findViewById(R.id.tv_info_name);
+        mHorizontalScrollView = findViewById(R.id.horizontalScrollView);
         mPlayTitle1 = findViewById(R.id.tv_info_name1);
         mSeekBar = findViewById(R.id.seekBar);
         mProgressRoot = findViewById(R.id.tv_progress_container);
