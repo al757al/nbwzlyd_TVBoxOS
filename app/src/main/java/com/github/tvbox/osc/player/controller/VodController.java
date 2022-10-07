@@ -137,12 +137,9 @@ public class VodController extends BaseController {
                         mPlayTitle1.setVisibility(View.VISIBLE);
                         mNetSpeed.setVisibility(VISIBLE);
                         new Handler().postDelayed(() -> {
-                            mNextBtn.setFocusable(true);
-                            mNextBtn.setFocusableInTouchMode(true);
-                            mNextBtn.requestFocus();
+                            mBottomRoot.requestFocus();
                         }, 20);
                         backBtn.setVisibility(VISIBLE);
-                        mBottomRoot.requestFocus();
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
