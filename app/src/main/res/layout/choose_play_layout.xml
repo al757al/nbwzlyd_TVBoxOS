@@ -12,13 +12,11 @@
         android:layout_marginTop="@dimen/vs_10"
         android:layout_marginRight="@dimen/vs_50"
         android:layout_marginBottom="@dimen/vs_30"
-        android:background="@drawable/shape_user_focus"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:focusable="true"
         android:focusedByDefault="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:tv_horizontalSpacingWithMargins="@dimen/vs_10"
         app:tv_selectedItemIsCentered="true"
         app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
