@@ -14,7 +14,7 @@
             android:id="@+id/tvLeftChannnelListLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:translationX="-570mm"
+            android:layout_marginLeft="-570mm"
             android:background="@drawable/bg_channel_list"
             android:baselineAligned="false">
 

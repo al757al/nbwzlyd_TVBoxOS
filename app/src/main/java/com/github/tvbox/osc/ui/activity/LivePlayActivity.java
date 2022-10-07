@@ -8,6 +8,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -438,6 +440,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
+    private Runnable mHideChannelListRun = () -> hideChanelList();
     private Runnable mFocusCurrentChannelAndShowChannelList = new Runnable() {
         @Override
         public void run() {
@@ -450,7 +453,9 @@ public class LivePlayActivity extends BaseActivity {
                 if (holder != null)
                     holder.itemView.requestFocus();
                 tvLeftChannelListLayout.setVisibility(View.VISIBLE);
-                ObjectAnimator animator = ObjectAnimator.ofFloat(tvLeftChannelListLayout, "translationX", -AutoSizeUtils.mm2px(mContext, 570), 0f);
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
+                ViewObj viewObj = new ViewObj(tvLeftChannelListLayout, params);
+                ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginLeft", new IntEvaluator(), -AutoSizeUtils.mm2px(mContext, 570), 0);
                 animator.setDuration(200);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
@@ -464,26 +469,7 @@ public class LivePlayActivity extends BaseActivity {
             }
         }
     };
-
-    private Runnable mHideChannelListRun = new Runnable() {
-        @Override
-        public void run() {
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
-            if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-                ViewObj viewObj = new ViewObj(tvLeftChannelListLayout, params);
-                ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginLeft", new IntEvaluator(), 0, -tvLeftChannelListLayout.getLayoutParams().width);
-                animator.setDuration(200);
-                animator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
-                    }
-                });
-                animator.start();
-            }
-        }
-    };
+    private Runnable mHideSettingLayoutRun = () -> hideSettingLayout();
 
     private void showChannelInfo() {
         tvChannelInfo.setText(String.format(Locale.getDefault(), "%d %s %s(%d/%d)", currentLiveChannelItem.getChannelNum(),
@@ -611,33 +597,64 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
 
-    private Runnable mHideSettingLayoutRun = new Runnable() {
-        @Override
-        public void run() {
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
-            if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-                ViewObj viewObj = new ViewObj(tvRightSettingLayout, params);
-                ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginRight", new IntEvaluator(), 0, -tvRightSettingLayout.getLayoutParams().width);
-                animator.setDuration(200);
-                animator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        tvRightSettingLayout.setVisibility(View.INVISIBLE);
-                        liveSettingGroupAdapter.setSelectedGroupIndex(-1);
-                    }
-                });
-                animator.start();
-            }
+    private void hideChanelList() {
+        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
+            ViewObj viewObj = new ViewObj(tvLeftChannelListLayout, params);
+            ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginLeft", new IntEvaluator(), 0, -AutoSizeUtils.mm2px(mContext, 570));
+            animator.setDuration(200);
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
+                }
+            });
+            animator.start();
         }
-    };
+    }
+
+    private void hideSettingLayout() {
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
+        if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+            ViewObj viewObj = new ViewObj(tvRightSettingLayout, params);
+            ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginRight", new IntEvaluator(), 0, -tvRightSettingLayout.getLayoutParams().width);
+            animator.setDuration(200);
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    tvRightSettingLayout.setVisibility(View.INVISIBLE);
+                    liveSettingGroupAdapter.setSelectedGroupIndex(-1);
+                }
+            });
+            animator.start();
+        }
+    }
 
     private void initVideoView() {
         LiveController controller = new LiveController(this);
         controller.setListener(new LiveController.LiveControlListener() {
             @Override
-            public boolean singleTap() {
-                showChannelList();
+            public boolean singleTap(MotionEvent e) {
+                if (e.getX() > ScreenUtils.getScreenWidth() / 2f) {
+                    if (isChanelListVisible()) {
+                        hideChanelList();
+                    } else if (isSettingLayoutVisible()) {
+                        hideSettingLayout();
+                    } else {
+                        showSettingGroup();
+                    }
+                } else {
+                    if (isChanelListVisible()) {
+                        hideChanelList();
+                    } else if (isSettingLayoutVisible()) {
+                        hideSettingLayout();
+                    } else {
+                        showChannelList();
+                    }
+
+                }
                 return true;
             }
 
@@ -870,6 +887,10 @@ public class LivePlayActivity extends BaseActivity {
         if (position == 5) {
             showLiveSourceDialog();
         }
+        if (position == 6) {
+            onBackPressed();
+            finish();
+        }
         if (position == liveSettingGroupAdapter.getSelectedGroupIndex() || position < -1)
             return;
 
@@ -1090,11 +1111,19 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private boolean isListOrSettingLayoutVisible() {
-        return tvLeftChannelListLayout.getVisibility() == View.VISIBLE || tvRightSettingLayout.getVisibility() == View.VISIBLE;
+        return isSettingLayoutVisible() || isChanelListVisible();
+    }
+
+    private boolean isChanelListVisible() {
+        return tvLeftChannelListLayout.getVisibility() == View.VISIBLE;
+    }
+
+    private boolean isSettingLayoutVisible() {
+        return tvRightSettingLayout.getVisibility() == View.VISIBLE;
     }
 
     private void initLiveSettingGroupList() {
-        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "直播地址"));
+        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "直播地址", "退出直播"));
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
         ArrayList<String> sourceItems = new ArrayList<>();
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
@@ -1106,6 +1135,7 @@ public class LivePlayActivity extends BaseActivity {
         itemsArrayList.add(playerDecoderItems);
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
+        itemsArrayList.add(new ArrayList<>());
         itemsArrayList.add(new ArrayList<>());
 
         liveSettingGroupList.clear();

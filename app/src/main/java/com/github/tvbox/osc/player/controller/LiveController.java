@@ -32,14 +32,11 @@ public class LiveController extends BaseController {
         mLoading = findViewById(R.id.loading);
     }
 
-    public interface LiveControlListener {
-        boolean singleTap();
-
-        void longPress();
-
-        void playStateChanged(int playState);
-
-        void changeSource(int direction);
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        if (listener.singleTap(e))
+            return true;
+        return super.onSingleTapConfirmed(e);
     }
 
     private LiveController.LiveControlListener listener = null;
@@ -48,11 +45,14 @@ public class LiveController extends BaseController {
         this.listener = listener;
     }
 
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        if (listener.singleTap())
-            return true;
-        return super.onSingleTapConfirmed(e);
+    public interface LiveControlListener {
+        boolean singleTap(MotionEvent e);
+
+        void longPress();
+
+        void playStateChanged(int playState);
+
+        void changeSource(int direction);
     }
 
     @Override
