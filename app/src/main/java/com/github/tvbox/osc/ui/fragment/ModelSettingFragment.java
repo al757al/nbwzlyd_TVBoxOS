@@ -40,6 +40,7 @@ import com.github.tvbox.osc.util.OkGoHelper;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
+import com.lzy.okgo.db.CacheManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
@@ -660,6 +661,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 CleanUtils.cleanInternalCache();
                 CleanUtils.cleanInternalFiles();
                 CleanUtils.cleanInternalSp();
+                CacheManager.getInstance().clear();//清空接口缓存
                 Hawk.deleteAll();
                 KVStorage.deleteAll();
                 ToastUtils.showShort("缓存清空完毕");
