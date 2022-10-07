@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.github.tvbox.osc.subtitle.widget.SimpleSubtitleView;
 import com.github.tvbox.osc.ui.adapter.ParseAdapter;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
+import com.github.tvbox.osc.ui.view.ChoosePlayPopUp;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.KVStorage;
@@ -239,6 +241,13 @@ public class VodController extends BaseController {
         mPlayrefresh = findViewById(R.id.play_refresh);
         mNextBtn = findViewById(R.id.play_next);
         mPreBtn = findViewById(R.id.play_pre);
+        TextView choosePlay = findViewById(R.id.choose_play);
+        choosePlay.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choosePlay(v);
+            }
+        });
         mPlayerScaleBtn = findViewById(R.id.play_scale);
         mPlayerSpeedBtn = findViewById(R.id.play_speed);
         mPlayerBtn = findViewById(R.id.play_player);
@@ -682,6 +691,12 @@ public class VodController extends BaseController {
             }
         });
         initLandscapePortraitBtnInfo();
+    }
+
+    private void choosePlay(View view) {
+        ChoosePlayPopUp playPopUp = new ChoosePlayPopUp(mActivity);
+        playPopUp.setPopupGravity(Gravity.TOP).showPopupWindow(view);
+
     }
 
     void initLandscapePortraitBtnInfo() {
