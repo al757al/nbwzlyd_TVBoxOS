@@ -61,6 +61,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.PlayerHelper;
+import com.github.tvbox.osc.util.VideoParseRuler;
 import com.github.tvbox.osc.util.XWalkUtils;
 import com.github.tvbox.osc.util.thunder.Thunder;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
@@ -110,6 +111,8 @@ public class PlayActivity extends BaseActivity {
     private SourceViewModel sourceViewModel;
     private Handler mHandler;
 
+    private long videoDuration = -1;
+
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_play;
@@ -146,6 +149,7 @@ public class PlayActivity extends BaseActivity {
         ProgressManager progressManager = new ProgressManager() {
             @Override
             public void saveProgress(String url, long progress) {
+                if (videoDuration ==0) return;
                 CacheManager.save(MD5.string2MD5(url), progress);
             }
 
@@ -222,9 +226,29 @@ public class PlayActivity extends BaseActivity {
             @Override
             public void prepared() {
                 initSubtitleView();
+                initVideoDurationSomeThing();
             }
         });
         mVideoView.setVideoController(mController);
+    }
+
+    void initVideoDurationSomeThing() {
+        videoDuration = mVideoView.getMediaPlayer().getDuration();
+        if (videoDuration ==0) {
+            mController.mPlayerSpeedBtn.setVisibility(View.GONE);
+            mController.mPlayerTimeStartEndText.setVisibility(View.GONE);
+            mController.mPlayerTimeStartBtn.setVisibility(View.GONE);
+            mController.mPlayerTimeSkipBtn.setVisibility(View.GONE);
+            mController.mPlayerTimeStepBtn.setVisibility(View.GONE);
+            mController.mPlayerTimeResetBtn.setVisibility(View.GONE);
+        }else {
+            mController.mPlayerSpeedBtn.setVisibility(View.VISIBLE);
+            mController.mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
+            mController.mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
+            mController.mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
+            mController.mPlayerTimeStepBtn.setVisibility(View.VISIBLE);
+            mController.mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     //设置字幕
@@ -1232,7 +1256,7 @@ public class PlayActivity extends BaseActivity {
             if (sp != null && sp.manualVideoCheck())
                 return sp.isVideoFormat(url);
         }
-        return DefaultConfig.isVideoFormat(url);
+        return VideoParseRuler.checkIsVideoForParse(webUrl, url);
     }
 
     class MyWebView extends WebView {
@@ -1359,7 +1383,6 @@ public class PlayActivity extends BaseActivity {
         }
 
         WebResourceResponse checkIsVideo(String url, HashMap<String, String> headers) {
-            LOG.i("shouldInterceptRequest url:" + url);
             if (url.endsWith("/favicon.ico")) {
                 if (url.startsWith("http://127.0.0.1")) {
                     return new WebResourceResponse("image/x-icon", "UTF-8", null);
@@ -1408,15 +1431,11 @@ public class PlayActivity extends BaseActivity {
         @Override
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            String url = "";
-            try {
-                url = request.getUrl().toString();
-            } catch (Throwable th) {
-
-            }
+            String url = request.getUrl().toString();
+            LOG.i("shouldInterceptRequest url:" + url);
             HashMap<String, String> webHeaders = new HashMap<>();
-            try {
-                Map<String, String> hds = request.getRequestHeaders();
+            Map<String, String> hds = request.getRequestHeaders();
+            if (hds != null && hds.keySet().size() > 0) {
                 for (String k : hds.keySet()) {
                     if (k.equalsIgnoreCase("user-agent")
                             || k.equalsIgnoreCase("referer")
@@ -1424,8 +1443,6 @@ public class PlayActivity extends BaseActivity {
                         webHeaders.put(k, hds.get(k));
                     }
                 }
-            } catch (Throwable th) {
-
             }
             WebResourceResponse response = checkIsVideo(url, webHeaders);
             return response;
@@ -1551,8 +1568,8 @@ public class PlayActivity extends BaseActivity {
             if (!ad ) {
                 if (checkVideoFormat(url)) {
                     HashMap<String, String> webHeaders = new HashMap<>();
-                    try {
-                        Map<String, String> hds = request.getRequestHeaders();
+                    Map<String, String> hds = request.getRequestHeaders();
+                    if (hds != null && hds.keySet().size() > 0) {
                         for (String k : hds.keySet()) {
                             if (k.equalsIgnoreCase("user-agent")
                                     || k.equalsIgnoreCase("referer")
@@ -1560,8 +1577,6 @@ public class PlayActivity extends BaseActivity {
                                 webHeaders.put(k, hds.get(k));
                             }
                         }
-                    } catch (Throwable th) {
-
                     }
                     loadFoundVideoUrls.add(url);
                     loadFoundVideoUrlsHeader.put(url, webHeaders);
