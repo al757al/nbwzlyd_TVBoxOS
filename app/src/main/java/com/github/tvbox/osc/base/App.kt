@@ -68,7 +68,9 @@ class App : MultiDexApplication() {
 //                "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/xiaopingguo/xiaopingguo.json"
 //            )
         }
-        Hawk.put(HawkConfig.IJK_CODEC, "硬解码");
+        if (Hawk.get<String>(HawkConfig.IJK_CODEC).isNullOrEmpty()) {
+            Hawk.put(HawkConfig.IJK_CODEC, "硬解码")
+        }
     }
 
     companion object {
