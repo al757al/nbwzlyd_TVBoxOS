@@ -232,7 +232,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 it.isSelected = false
             } else {
                 it.isSelected = true
-                index = result.indexOf(it)
+                index = localData.indexOf(it)
             }
         }
 
@@ -244,6 +244,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         diffResult.dispatchUpdatesTo(mAdapter)
         if (index != -1) {
             mRecyclerView?.post {
+                mRecyclerView?.selectedPosition = index
                 mRecyclerView?.scrollToPosition(index)
             }
         }

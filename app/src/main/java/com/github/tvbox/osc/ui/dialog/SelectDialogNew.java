@@ -48,8 +48,10 @@ public class SelectDialogNew<T> extends BaseDialog {
         adapter.getData().clear();
         adapter.getData().addAll(data);
         diffResult.dispatchUpdatesTo(adapter);
-        tvRecyclerView.setSelectedPosition(select);
-        tvRecyclerView.post(() -> tvRecyclerView.scrollToPosition(select));
+        tvRecyclerView.post(() -> {
+            tvRecyclerView.setSelectedPosition(select);
+            tvRecyclerView.scrollToPosition(select);
+        });
     }
 
     public List<T> getOldItems(){
