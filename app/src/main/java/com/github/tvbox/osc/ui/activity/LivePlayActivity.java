@@ -1261,6 +1261,9 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private boolean isNeedInputPassword(int groupIndex) {
+        if (liveChannelGroupList.isEmpty()) {
+            return false;
+        }
         return !liveChannelGroupList.get(groupIndex).getGroupPassword().isEmpty()
                 && !isPasswordConfirmed(groupIndex);
     }
