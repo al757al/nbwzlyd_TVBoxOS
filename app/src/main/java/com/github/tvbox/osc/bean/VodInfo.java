@@ -52,6 +52,8 @@ public class VodInfo implements Serializable {
     public String playerCfg = "";
     public boolean reverseSort = false;
 
+    public String downLoadUrl ="";//视频的下载链接，有些视频链接需要拼接后才是最终的链接
+
     @Override
     public String toString() {
         return "VodInfo{" +

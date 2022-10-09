@@ -9,7 +9,6 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -602,6 +601,10 @@ public class PlayFragment extends BaseLazyFragment {
                         String playUrl = info.optString("playUrl", "");
                         String flag = info.optString("flag");
                         String url = info.getString("url");
+                        VodInfo vodInfo = App.getInstance().getVodInfo();
+                        if (vodInfo!=null){
+                            vodInfo.downLoadUrl = url;
+                        }
                         HashMap<String, String> headers = null;
                         webUserAgent = null;
                         webHeaderMap = null;

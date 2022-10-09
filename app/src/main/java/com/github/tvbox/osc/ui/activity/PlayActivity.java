@@ -608,6 +608,10 @@ public class PlayActivity extends BaseActivity {
                         String playUrl = info.optString("playUrl", "");
                         String flag = info.optString("flag");
                         String url = info.getString("url");
+                        VodInfo vodInfo = App.getInstance().getVodInfo();
+                        if (vodInfo != null) {
+                            vodInfo.downLoadUrl = url;
+                        }
                         HashMap<String, String> headers = null;
                         webUserAgent = null;
                         webHeaderMap = null;

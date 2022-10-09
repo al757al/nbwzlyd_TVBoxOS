@@ -23,6 +23,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.recyclerview.widget.DiffUtil;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -287,6 +288,14 @@ public class VodController extends BaseController {
             isTimeShow = !isTimeShow;
             timeShow.setText(isTimeShow ? "屏显开" : "屏显关");
             KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isTimeShow);
+        });
+
+        findViewById(R.id.idm_download).setOnClickListener(v -> {
+            ToastUtils.make().setGravity(Gravity.CENTER,0,0).show(
+                    "感谢支持，功能还未开放，敬请期待下个版本"
+            );
+//            FastClickCheckUtil.check(v);
+//            new IDMDownLoadUtil().startIDMDownLoad(getContext());
         });
 
         initSubtitleInfo();

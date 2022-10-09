@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +25,7 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -45,7 +47,6 @@ import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.SearchHelper;
-import com.github.tvbox.osc.util.TVInstance;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -164,6 +165,10 @@ public class DetailActivity extends BaseActivity {
         tvPlay = findViewById(R.id.tvPlay);
         tvSort = findViewById(R.id.tvSort);
         tvCollect = findViewById(R.id.tvCollect);
+        TextView downLoadBtn = findViewById(R.id.idm_download);
+        downLoadBtn.setOnClickListener(v -> ToastUtils.make().setGravity(Gravity.CENTER,0,0).show(
+                "感谢支持，功能还未开放，敬请期待下个版本"
+        ));
         tvQuickSearch = findViewById(R.id.tvQuickSearch);
         mEmptyPlayList = findViewById(R.id.mEmptyPlaylist);
         mGridView = findViewById(R.id.mGridView);
@@ -679,7 +684,6 @@ public class DetailActivity extends BaseActivity {
                     vodInfo = new VodInfo();
                     vodInfo.setVideo(mVideo);
                     vodInfo.sourceKey = mVideo.sourceKey;
-                    TVInstance.INSTANCE.setVodInfo(vodInfo);
                     tvName.setText(mVideo.name);
                     setTextShow(tvSite, "来源：", ApiConfig.get().getSource(mVideo.sourceKey).getName());
                     setTextShow(tvYear, "年份：", mVideo.year == 0 ? "" : String.valueOf(mVideo.year));
@@ -814,6 +818,7 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        App.getInstance().setVodInfo(null);
         try {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
@@ -825,7 +830,6 @@ public class DetailActivity extends BaseActivity {
         OkGo.getInstance().cancelTag("fenci");
         OkGo.getInstance().cancelTag("detail");
         OkGo.getInstance().cancelTag("quick_search");
-        TVInstance.INSTANCE.setVodInfo(null);
         EventBus.getDefault().unregister(this);
     }
 
