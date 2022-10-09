@@ -186,7 +186,7 @@
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/vs_10"
         android:background="@drawable/shape_user_focus"
-        android:drawableTop="@drawable/icon_setting"
+        android:drawableTop="@drawable/icon_setting_small"
         android:drawablePadding="@dimen/vs_5"
         android:focusable="true"
         android:gravity="center"

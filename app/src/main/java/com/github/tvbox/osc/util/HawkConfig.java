@@ -33,7 +33,6 @@ public class HawkConfig {
     public static final String LIVE_CONNECT_TIMEOUT = "live_connect_timeout";
     public static final String LIVE_SHOW_NET_SPEED = "live_show_net_speed";
     public static final String LIVE_SHOW_TIME = "live_show_time";
-    public static final String USE_CUSTOM_LIVE_URL = "USE_CUSTOM_LIVE_URL";//是否使用自定义直播
     public static final String LIVE_SOURCE_URL_CURRENT = "live_source_url_current";//当前自定义直播地址
     public static final String LIVE_SOURCE_URL_HISTORY = "live_source_url_history";//当前自定义直播历史记录
     public static final String VIDEO_SHOW_TIME = "video_show_time";//看视频是否展示时间

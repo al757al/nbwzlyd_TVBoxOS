@@ -13,16 +13,17 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.api.ApiConfig
+import com.github.tvbox.osc.base.App
 import com.github.tvbox.osc.bean.LiveSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
 import com.github.tvbox.osc.ext.removeFirstIf
 import com.github.tvbox.osc.server.ControlManager
+import com.github.tvbox.osc.ui.activity.LivePlayActivity
 import com.github.tvbox.osc.ui.dialog.util.AdapterDiffCallBack
 import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
-import com.github.tvbox.osc.util.urlhttp.JumpUtils
 import com.owen.tvrecyclerview.widget.TvRecyclerView
 import me.jessyan.autosize.utils.AutoSizeUtils
 import org.greenrobot.eventbus.EventBus
@@ -84,14 +85,6 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                     deleteItem(position)
                 }
                 R.id.tvName -> {//重启liveactivity
-                    val liveSourceBean = mAdapter.data[position]
-                    if (liveSourceBean.isOfficial) {
-                        KVStorage.putBoolean(HawkConfig.USE_CUSTOM_LIVE_URL, false)
-                        JumpUtils.forceRestartHomeActivity(context)
-                        return@setOnItemChildClickListener
-                    }
-//                    https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt
-                    KVStorage.putBoolean(HawkConfig.USE_CUSTOM_LIVE_URL, true)
                     selectNewLiveSource(mAdapter.data[position])
 
                 }
@@ -109,7 +102,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         KVStorage.putBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean)
         this.dismiss()
         ApiConfig.get().loadLiveSourceUrl(null, null)
-        val intent = Intent(context, com.github.tvbox.osc.ui.activity.LivePlayActivity::class.java)
+        val intent = Intent(App.instance, LivePlayActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         ActivityUtils.startActivity(intent)
     }
@@ -153,34 +146,19 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 }
             }
         }
-        val useCustomLiveSource = KVStorage.getBoolean(HawkConfig.USE_CUSTOM_LIVE_URL, false)
+        val lastSelectBean =
+            KVStorage.getBean(
+                HawkConfig.LIVE_SOURCE_URL_CURRENT,
+                LiveSourceBean::class.java
+            )
         var index = 0
-        if (useCustomLiveSource) {
-            val lastSelectBean =
-                KVStorage.getBean(
-                    HawkConfig.LIVE_SOURCE_URL_CURRENT,
-                    LiveSourceBean::class.java
-                )
-            localData.forEach {
-                if (it.sourceUrl != lastSelectBean?.sourceUrl) {
-                    it.isSelected = false
-                } else {
-                    it.isSelected = true
-                    index = result.indexOf(it)
-                }
-            }
-        } else {
-            localData.forEach {
+        localData.forEach {
+            if (it.sourceUrl != lastSelectBean?.sourceUrl) {
                 it.isSelected = false
+            } else {
+                it.isSelected = true
+                index = result.indexOf(it)
             }
-        }
-        val data = LiveSourceBean().apply {
-            sourceName = "点击重启，恢复默认直播"
-            sourceUrl = ""
-            isOfficial = true
-        }
-        if (!localData.contains(data)) {
-            localData.add(0, data)
         }
         val diffResult =
             DiffUtil.calculateDiff(AdapterDiffCallBack(mAdapter.data, localData), false)

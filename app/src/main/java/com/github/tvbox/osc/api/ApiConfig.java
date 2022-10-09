@@ -20,7 +20,6 @@ import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.MD5;
-import com.github.tvbox.osc.util.VideoParseRuler;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -348,10 +347,9 @@ public class ApiConfig {
         try {
             //https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt
             boolean isCustomLiveUrl;
-            boolean useCustomLive = KVStorage.getBoolean(HawkConfig.USE_CUSTOM_LIVE_URL, false);
             LiveSourceBean liveSourceBean = KVStorage.getBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, LiveSourceBean.class);
             String liveSource = "";
-            if (liveSourceBean != null && useCustomLive) {
+            if (liveSourceBean != null && !TextUtils.isEmpty(liveSourceBean.getSourceUrl())) {
                 liveSource = "proxy://do=live&type=txt&ext=" +
                         Base64.encodeToString(liveSourceBean.getSourceUrl().getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
             }
@@ -374,25 +372,25 @@ public class ApiConfig {
                 String extUrl = Uri.parse(realUrl).getQueryParameter("ext");
                 if (extUrl != null && !extUrl.isEmpty()) {
                     String extUrlFix = "";
-//                    //神器每日推送bugfix
-//                    String api = Hawk.get(HawkConfig.API_URL,"");
-//                    if (api.contains("神器每日推送")) {
-//                        String fixExtUrl = Base64.encodeToString(("https://神器每日推送.tk" + extUrl).getBytes("UTF-8"), Base64.DEFAULT);
-//                        realUrl = realUrl.replace(extUrl,fixExtUrl);
-//                        LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
-//                        liveChannelGroup.setGroupName(realUrl);
-//                        liveChannelGroupList.add(liveChannelGroup);
-//                        return;
-//                    }
                     if (extUrl.startsWith("http") || realUrl.startsWith("https")) {
                         extUrlFix = extUrl;
                     } else {
                         extUrlFix = new String(Base64.decode(extUrl, Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
                     }
+
                     if (extUrlFix.startsWith("clan://")) {
                         extUrlFix = clanContentFix(clanToAddress(apiUrl), extUrlFix);
                         extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
                         realUrl = realUrl.replace(extUrl, extUrlFix);
+                    }
+                    if (liveSourceBean == null && (extUrlFix.startsWith("http") || extUrlFix.startsWith("https"))) {
+                        liveSourceBean = new LiveSourceBean();
+                        liveSourceBean.setSourceName("自带直播");
+                        liveSourceBean.setSourceUrl(extUrlFix);
+                        ArrayList<LiveSourceBean> list = new ArrayList<>();
+                        list.add(liveSourceBean);
+                        KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, list);
+                        KVStorage.putBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean);
                     }
                 }
                 LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
