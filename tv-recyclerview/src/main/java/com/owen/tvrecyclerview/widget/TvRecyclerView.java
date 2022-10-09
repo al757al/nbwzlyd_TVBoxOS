@@ -847,6 +847,12 @@ public class TvRecyclerView extends RecyclerView implements View.OnClickListener
     
     private void scrollToPosition(int position, boolean isRequestFocus, boolean isSmooth, int offset) {
         mSelectedPosition = position;
+        if (position == -1) {
+            return;
+        }
+        if (getLayoutManager() != null && position > getLayoutManager().getItemCount()) {
+            position = getLayoutManager().getItemCount() - 1;
+        }
         TvSmoothScroller smoothScroller = new TvSmoothScroller(getContext(), isRequestFocus, isSmooth, offset);
         smoothScroller.setTargetPosition(position);
         getLayoutManager().startSmoothScroll(smoothScroller);
