@@ -700,6 +700,9 @@ public class TvRecyclerView extends RecyclerView implements View.OnClickListener
      */
     public int getFirstVisibleAndFocusablePosition() {
         int position = getFirstVisiblePosition();
+        if (getLayoutManager() ==null){
+            return NO_POSITION;
+        }
         for(; position < getChildCount(); position ++) {
             View item = getLayoutManager().findViewByPosition(position);
             if(null != item && item.isFocusable()) {
