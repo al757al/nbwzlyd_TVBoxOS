@@ -24,6 +24,7 @@ import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
+import com.orhanobut.hawk.Hawk
 import com.owen.tvrecyclerview.widget.TvRecyclerView
 import me.jessyan.autosize.utils.AutoSizeUtils
 import org.greenrobot.eventbus.EventBus
@@ -101,7 +102,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private fun selectNewLiveSource(liveSourceBean: LiveSourceBean) {
         KVStorage.putBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean)
         this.dismiss()
-        ApiConfig.get().loadLiveSourceUrl(null, null)
+        ApiConfig.get().loadLiveSourceUrl(Hawk.get(HawkConfig.API_URL,""), null)
         val intent = Intent(App.instance, LivePlayActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         ActivityUtils.startActivity(intent)
@@ -209,7 +210,6 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         override fun convert(holder: BaseViewHolder, item: LiveSourceBean) {
             showDefault(item, holder)
             holder.setVisible(R.id.tvDel, !item.isOfficial)
-
             if (item.isSelected) {
                 val text = holder.getView<TextView>(R.id.tvName).text
                 holder.setText(

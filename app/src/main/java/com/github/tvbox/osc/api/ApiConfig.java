@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,14 +60,11 @@ public class ApiConfig {
     private List<IJKCode> ijkCodes;
     private String spider = null;
     public String wallpaper = "";
-
     private SourceBean emptyHome = new SourceBean();
 
     private JarLoader jarLoader = new JarLoader();
 
     private String userAgent = "okhttp/3.15";
-
-    private String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
 
     private ApiConfig() {
         sourceBeanList = new LinkedHashMap<>();
@@ -345,28 +343,36 @@ public class ApiConfig {
         // 直播源
         liveChannelGroupList.clear();           //修复从后台切换重复加载频道列表
         try {
-            //https://agit.ai/yan11xx/TVBOX/raw/branch/master/live/tv.txt
-            boolean isCustomLiveUrl;
+            boolean isWebUrl;//是否是网络直播地址
             LiveSourceBean liveSourceBean = KVStorage.getBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, LiveSourceBean.class);
-            String liveSource = "";
-            if (liveSourceBean != null && !TextUtils.isEmpty(liveSourceBean.getSourceUrl())) {
-                liveSource = "proxy://do=live&type=txt&ext=" +
-                        Base64.encodeToString(liveSourceBean.getSourceUrl().getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
-            }
-            if (TextUtils.isEmpty(liveSource)) {//自定义直播地址是空，走线上
-                isCustomLiveUrl = false;
-                liveSource = infoJson.get("lives").getAsJsonArray().toString();
+            String liveSource;
+            if (liveSourceBean != null) {
+                if (liveSourceBean.isOfficial()) {//如果是官方源
+                    if (!TextUtils.equals(liveSourceBean.getExtraKey(), apiUrl)) {//如果不是同一个线路下的直播源,以接口下发的为准
+                        liveSource = infoJson.get("lives").getAsJsonArray().toString();
+                        isWebUrl = true;
+                    } else {//如果是同一个线路下的直播源
+                        liveSource = "proxy://do=live&type=txt&ext=" +
+                                Base64.encodeToString(liveSourceBean.getSourceUrl().getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                        isWebUrl = false;
+                    }
+                } else {
+                    liveSource = "proxy://do=live&type=txt&ext=" +
+                            Base64.encodeToString(liveSourceBean.getSourceUrl().getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                    isWebUrl = false;
+                }
             } else {
-                isCustomLiveUrl = true;
+                liveSource = infoJson.get("lives").getAsJsonArray().toString();
+                isWebUrl = true;
             }
             int index = liveSource.indexOf("proxy://");
             if (index != -1) {
                 String realUrl;
-                if (isCustomLiveUrl) {
-                    realUrl = DefaultConfig.checkReplaceProxy(liveSource);
-                } else {
+                if (isWebUrl) {
                     int endIndex = liveSource.lastIndexOf("\"");
                     realUrl = DefaultConfig.checkReplaceProxy(liveSource.substring(index, endIndex));
+                } else {
+                    realUrl = DefaultConfig.checkReplaceProxy(liveSource);
                 }
                 //clan
                 String extUrl = Uri.parse(realUrl).getQueryParameter("ext");
@@ -383,12 +389,21 @@ public class ApiConfig {
                         extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
                         realUrl = realUrl.replace(extUrl, extUrlFix);
                     }
-                    if (liveSourceBean == null && (extUrlFix.startsWith("http") || extUrlFix.startsWith("https"))) {
+                    if (isWebUrl) {
                         liveSourceBean = new LiveSourceBean();
                         liveSourceBean.setSourceName("自带直播");
                         liveSourceBean.setSourceUrl(extUrlFix);
-                        ArrayList<LiveSourceBean> list = new ArrayList<>();
-                        list.add(liveSourceBean);
+                        liveSourceBean.setOfficial(true);
+                        liveSourceBean.setExtraKey(apiUrl);
+                        ArrayList<LiveSourceBean> list = (ArrayList<LiveSourceBean>) KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean.class);
+                        Iterator<LiveSourceBean> iterator = list.iterator();
+                        while (iterator.hasNext()) {
+                            if (iterator.next().isOfficial()) {
+                                iterator.remove();
+                                break;
+                            }
+                        }
+                        list.add(0,liveSourceBean);
                         KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, list);
                         KVStorage.putBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean);
                     }

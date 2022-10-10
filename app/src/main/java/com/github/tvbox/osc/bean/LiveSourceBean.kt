@@ -13,6 +13,7 @@ class LiveSourceBean : BaseItem() {
     var sourceUrl = ""
     var isSelected = false
     var isOfficial = false
+    var extraKey = ""
     override val uniKey: String
         get() = (sourceUrl + sourceName).hashCode().toString()
 
