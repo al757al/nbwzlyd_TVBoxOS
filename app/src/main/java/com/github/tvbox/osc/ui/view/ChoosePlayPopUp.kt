@@ -13,6 +13,7 @@ import com.github.tvbox.osc.bean.VodInfo
 import com.github.tvbox.osc.bean.VodInfo.VodSeries
 import com.github.tvbox.osc.cache.RoomDataManger
 import com.github.tvbox.osc.event.RefreshEvent
+import com.github.tvbox.osc.ui.activity.PlayActivity
 import com.github.tvbox.osc.ui.activity.PlayEvent
 import com.github.tvbox.osc.ui.adapter.SeriesAdapter
 import com.github.tvbox.osc.util.FastClickCheckUtil
@@ -47,6 +48,9 @@ class ChoosePlayPopUp(context: Context?) : BasePopupWindow(context) {
         seriesAdapter?.onItemClickListener =
             BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
                 FastClickCheckUtil.check(view)
+                if (context is PlayActivity) {//解决打开多个PlayActivity的问题
+                    context.finish()
+                }
                 if ((list.size) > 0) {
                     for (j in list.indices) {
                         seriesAdapter!!.data[j].selected = false
