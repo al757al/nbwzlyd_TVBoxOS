@@ -110,6 +110,11 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvSetting = findViewById(R.id.tvSetting);
         tvCollect = findViewById(R.id.tvFavorite);
         tvHistory = findViewById(R.id.tvHistory);
+        tvHistory.postDelayed(() -> {
+            tvHistory.setFocusableInTouchMode(true);
+            tvHistory.setFocusable(true);
+            tvHistory.requestFocus();
+        }, 30);
         tvPush = findViewById(R.id.tvPush);
         tvLive.setOnClickListener(this);
         tvSearch.setOnClickListener(this);
