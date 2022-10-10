@@ -23,7 +23,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -36,6 +35,7 @@ import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.view.ChoosePlayPopUp;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.IDMDownLoadUtil;
 import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.ScreenUtils;
@@ -291,11 +291,8 @@ public class VodController extends BaseController {
         });
 
         findViewById(R.id.idm_download).setOnClickListener(v -> {
-            ToastUtils.make().setGravity(Gravity.CENTER,0,0).show(
-                    "感谢支持，功能还未开放，敬请期待下个版本"
-            );
-//            FastClickCheckUtil.check(v);
-//            new IDMDownLoadUtil().startIDMDownLoad(getContext());
+            FastClickCheckUtil.check(v);
+            new IDMDownLoadUtil().startIDMDownLoad(getContext());
         });
 
         initSubtitleInfo();
