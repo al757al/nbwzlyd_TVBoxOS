@@ -27,7 +27,7 @@ class IDMDownLoadUtil {
         if (vodInfo?.seriesMap?.isEmpty() == true || vodInfo?.seriesMap?.get(vodInfo.playFlag)
                 .isNullOrEmpty()
         ) {
-            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("下载地址获取失败~请视频正常加载后下载")
+            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("下载地址获取失败~请视频正常加载(或者开启窗口预览模式)后下载")
             return
         }
         val vodSeries = vodInfo?.seriesMap?.get(vodInfo.playFlag)?.get(vodInfo.playIndex)
