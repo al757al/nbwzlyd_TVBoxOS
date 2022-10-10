@@ -1277,6 +1277,9 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private ArrayList<LiveChannelItem> getLiveChannels(int groupIndex) {
+        if (liveChannelGroupList.isEmpty()){
+            return new ArrayList<>();
+        }
         if (!isNeedInputPassword(groupIndex)) {
             return liveChannelGroupList.get(groupIndex).getLiveChannels();
         } else {
