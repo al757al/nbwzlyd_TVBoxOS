@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/vs_10"
         android:gravity="center"
-        android:text="手机扫码，远程推送（暂不支持）"
+        android:text="手机扫码，远程推送"
         android:textColor="@color/color_CC000000"
         app:layout_constraintBottom_toTopOf="@id/qrCode"
         app:layout_constraintLeft_toLeftOf="@id/qrCode"
