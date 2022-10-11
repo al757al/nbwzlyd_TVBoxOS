@@ -285,11 +285,13 @@ public class SourceViewModel extends ViewModel {
                     });
         }else if (type == 4) {
             String ext="";
+            if (sortData == null) {
+                ToastUtils.showShort("sortData空");
+                return;
+            }
             if (sortData.filterSelect != null && sortData.filterSelect.size() > 0) {
                 try {
-                    LOG.i(new JSONObject(sortData.filterSelect).toString());
                     ext = Base64.encodeToString(new JSONObject(sortData.filterSelect).toString().getBytes("UTF-8"), Base64.DEFAULT |  Base64.NO_WRAP);
-                    LOG.i(ext);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
