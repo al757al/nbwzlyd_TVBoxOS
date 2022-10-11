@@ -52,6 +52,9 @@ public class ControlManager {
     }
 
     public String getAddress(boolean local) {
+        if (mServer == null) {
+            startServer();
+        }
         return local ? mServer.getLoadAddress() : mServer.getServerAddress();
     }
 
