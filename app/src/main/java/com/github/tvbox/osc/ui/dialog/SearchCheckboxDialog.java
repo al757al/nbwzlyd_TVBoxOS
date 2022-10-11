@@ -98,7 +98,7 @@ public class SearchCheckboxDialog extends BaseDialog{
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
-                if (mCheckSourcees.size() <= 0) {
+                if (mCheckSourcees == null||mCheckSourcees.size() <= 0) {
                     return;
                 }
                 for(SourceBean sourceBean : mSourceList) {
