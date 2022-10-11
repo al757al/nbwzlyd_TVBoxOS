@@ -66,8 +66,8 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         mLoading = findViewById(R.id.play_loading)
         mRecyclerView?.adapter = mAdapter
         mAddMoreBtn?.setOnClickListener {
-            val sourceUrl0 = mSourceUrlEdit?.text.toString()
-            val sourceName0 = mSourceNameEdit?.text.toString()
+            val sourceUrl0 = mSourceUrlEdit?.text.toString().trim()
+            val sourceName0 = mSourceNameEdit?.text.toString().trim()
             if (sourceUrl0.isEmpty()) {
                 Toast.makeText(this@LiveStoreDialog.context, "请输入直播源地址！", Toast.LENGTH_LONG)
                     .show()
@@ -110,8 +110,8 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     }
 
     private fun saveCustomSourceBean(liveSourceBean: LiveSourceBean) {
-        val sourceUrl0 = liveSourceBean.sourceUrl
-        val sourceName0 = liveSourceBean.sourceName
+        val sourceUrl0 = liveSourceBean.sourceUrl.trim()
+        val sourceName0 = liveSourceBean.sourceName.trim()
         if (sourceUrl0.startsWith("http") || sourceUrl0.startsWith("https")) {
             val saveList =
                 KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean::class.java)
