@@ -128,7 +128,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             mSourceUrlEdit?.setText("")
             mSourceNameEdit?.setText("")
         } else {
-            Toast.makeText(this@LiveStoreDialog.context, "请输入直播源地址！", Toast.LENGTH_LONG)
+            Toast.makeText(this@LiveStoreDialog.context, "直播源只支持http或者https！", Toast.LENGTH_LONG)
                 .show()
         }
     }
