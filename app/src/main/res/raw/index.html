@@ -48,7 +48,7 @@
                                                         id="search_key_word"
                                                         placeholder="请输入搜索的关键字..."
                                                         type="text"
-                                                        value="" />
+                                                        value=""/>
                                                 <button
                                                         class="weui-cell__control weui-btn weui-btn_default weui-vcode-btn"
                                                         onclick="search(); return false;">
@@ -81,20 +81,42 @@
                                 <div class="weui-cells__group weui-cells__group_form">
                                     <div class="weui-cells">
                                         <div class="weui-cell weui-cell_active weui-cell_vcode weui-cell_wrap">
-                                            <div class="weui-cell__bd weui-flex">
+
+                                            <div
+                                                    class="weui-cell__bd weui-flex"
+                                                    id="weui-flex">
                                                 <input
                                                         class="weui-input weui-cell__control weui-cell__control_flex"
                                                         id="push_url"
                                                         placeholder="请输入需要推送播放的地址..."
                                                         type="text"
-                                                        value="" />
+                                                        value=""/>
                                                 <button
                                                         class="weui-cell__control weui-btn weui-btn_default weui-vcode-btn"
                                                         onclick="push(); return false;">
                                                     推送
                                                 </button>
+                                                <h2 id="title0">直播源推送</h2>
+                                                <input
+                                                        class="weui-input weui-cell__control weui-cell__control_flex"
+                                                        id="live_name"
+                                                        placeholder="直播源名字..."
+                                                        type="text"
+                                                        value=""/>
+                                                <input
+                                                        class="weui-input weui-cell__control weui-cell__control_flex"
+                                                        id="live_address"
+                                                        placeholder="直播源地址明文..."
+                                                        type="text"
+                                                        value=""/>
                                             </div>
-                                        </div>
+                                            </div>
+
+                                        <button
+                                                id="live_push"
+                                                onclick="livePush(); return false;">
+                                            推送
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -124,7 +146,7 @@
                                                         id="diy_api_url"
                                                         placeholder="请输入自定义配置接口地址..."
                                                         type="text"
-                                                        value="" />
+                                                        value=""/>
                                                 <button
                                                         class="weui-cell__control weui-btn weui-btn_default weui-vcode-btn"
                                                         onclick="api(); return false;">
@@ -147,7 +169,7 @@
                                     multiple
                                     onchange="uploadTip()"
                                     style="display:none;"
-                                    type="file" />
+                                    type="file"/>
                             <div
                                     class="weui-form__control-area"
                                     style="text-align: center;margin-bottom: 10px !important;">
@@ -203,13 +225,13 @@
                                                         id="diy_store_name"
                                                         placeholder="输入仓库名称"
                                                         type="text"
-                                                        value="" />
+                                                        value=""/>
                                                 <input
                                                         class="weui-input0 weui-cell__control weui-cell__control_flex"
                                                         id="diy_store_url"
                                                         placeholder="输入仓库地址"
                                                         type="text"
-                                                        value="" />
+                                                        value=""/>
                                                 <button
                                                         class="weui-cell__control weui-btn weui-btn_default weui-vcode-btn"
                                                         onclick="pushStore(); return false;">
@@ -369,7 +391,7 @@
                                                 id="fileUrl1"
                                                 readonly
                                                 type="text"
-                                                value="" />
+                                                value=""/>
 
                                     </div>
                                 </div>
@@ -392,7 +414,7 @@
                                                 id="fileUrl2"
                                                 readonly
                                                 type="text"
-                                                value="" />
+                                                value=""/>
 
                                     </div>
                                 </div>
@@ -468,7 +490,7 @@
                             id="newFolderContent"
                             placeholder="请输入文件夹名称..."
                             type="text"
-                            value="" />
+                            value=""/>
                 </div>
                 <div class="weui-dialog__ft">
                     <a

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.github.tvbox.osc.base.App;
+import com.github.tvbox.osc.bean.LiveSourceBean;
 import com.github.tvbox.osc.bean.MoreSourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.receiver.SearchReceiver;
@@ -98,6 +99,14 @@ public class ControlManager {
                     moreSourceBean.setSourceName(name);
                     moreSourceBean.setSourceUrl(url);
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_STORE_PUSH, moreSourceBean));
+                }
+
+                @Override
+                public void onLiveSourceReceive(String name, String url) {
+                    LiveSourceBean liveSourceBean = new LiveSourceBean();
+                    liveSourceBean.setSourceName(name);
+                    liveSourceBean.setSourceUrl(url);
+                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_LIVE_SOURCE_PUSH, liveSourceBean));
                 }
             });
             try {

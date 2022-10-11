@@ -224,7 +224,7 @@ public class LivePlayActivity extends BaseActivity {
             }
         }
 
-        OkGo.<String>get(epgStringAddress + "?ch=" + channelName)
+        OkGo.<String>get(epgStringAddress + "?ch=" + channelName).tag("epgAddress")
                 .params("date", timeFormat.format(date))
                 .execute(new StringCallback() {
                     @Override
@@ -417,6 +417,7 @@ public class LivePlayActivity extends BaseActivity {
             mVideoView.release();
             mVideoView = null;
         }
+        OkGo.getInstance().cancelTag("epgAddress");
         mHandler.removeCallbacksAndMessages(null);
     }
 

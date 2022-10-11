@@ -43,7 +43,7 @@ body {
     text-align: center;
 }
 
-#diy_store_name, #diy_store_url {
+#diy_store_name, #diy_store_url{
     padding: 12px 10px;
     height: 38px;
     border-width: 0;
@@ -56,6 +56,18 @@ body {
     vertical-align: middle;
 }
 
-#tuiguang0,#tuiguang1 {
+#tuiguang0, #tuiguang1 {
     width: 50%;
+}
+#title0 {
+    width: 100%;
+    text-align: center;
+    display: block;
+}
+#live_push{
+    background-color: #10aeff;
+    padding: 10px;
+    width: 100%;
+    border-radius: 6px;
+    color: white;
 }

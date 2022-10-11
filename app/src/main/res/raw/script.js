@@ -14,6 +14,10 @@ function pushStore() {
     doAction('pushStore', { pushStore_name: $('#diy_store_name').val(), pushStore_url: $('#diy_store_url').val()});
 }
 
+function livePush(){
+    doAction('livePush', { live_name: $('#live_name').val(), live_address: $('#live_address').val()});
+}
+
 
 function doAction(action, kv) {
     kv['do'] = action;
@@ -268,14 +272,14 @@ $(function () {
 
 });
 
-window.onload=function (){
-    const url = window.location.href;
-    let imageUrl = url.split("raw")[0] + "raw/tuiguang.jpg"
-    let tag0 = document.getElementById("tuiguang0")
-    let tag1 = document.getElementById("tuiguang1")
-    tag0.src = imageUrl
-    tag1.src = imageUrl
-}
+// window.onload=function (){
+//     const url = window.location.href;
+//     let imageUrl = url.split("raw")[0] + "raw/tuiguang.jpg"
+//     let tag0 = document.getElementById("tuiguang0")
+//     let tag1 = document.getElementById("tuiguang1")
+//     tag0.src = imageUrl
+//     tag1.src = imageUrl
+// }
 // const url = window.location.href;
 // if (url.indexOf('push.html') > 0)
 //     showPanel(2);
