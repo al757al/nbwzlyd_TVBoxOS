@@ -31,7 +31,6 @@ class App : MultiDexApplication() {
             .build(this)
             .start().await()
 //        EpgNameFuzzyMatch.init()
-        JSEngine.getInstance().create()
 //        val time = System.currentTimeMillis()
 //        initParams()
 //        // OKGo

@@ -165,6 +165,8 @@ public class ApiConfig {
                         if (apiUrl.startsWith("clan")) {
                             result = clanContentFix(clanToAddress(apiUrl), result);
                         }
+                        //假相對路徑
+                        result = fixContentPath(apiUrl,result);
                         return result;
                     }
                 });
@@ -185,12 +187,6 @@ public class ApiConfig {
                 }
                 return;
             }
-        }
-        String apiUrl = Hawk.get(HawkConfig.API_URL, "");
-        //修复每日神器jar加载失败问题
-        //https://神器每日推送.tk/pz.json
-        if (apiUrl.contains("神器每日推送")) {
-            jarUrl = "https://神器每日推送.tk" + jarUrl;
         }
         GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar");
         request.headers("User-Agent", userAgent);
@@ -576,4 +572,17 @@ public class ApiConfig {
         String fix = lanLink.substring(0, lanLink.indexOf("/file/") + 6);
         return content.replace("clan://", fix);
     }
+
+    private  String fixContentPath(String url, String content) {
+        if (content.contains("\"./")) {
+            if(!url.startsWith("http") && !url.startsWith("clan://")){
+                url = "http://" + url;
+            }
+            if(url.startsWith("clan://"))url=clanToAddress(url);
+            content = content.replace("./", url.substring(0,url.lastIndexOf("/") + 1));
+        }
+        return content;
+    }
+
+
 }

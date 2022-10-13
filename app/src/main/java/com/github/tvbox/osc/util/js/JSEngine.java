@@ -40,7 +40,7 @@ public class JSEngine {
         return instance;
     }
 
-    public class JSThread {
+    public static class JSThread {
         private QuickJSContext jsContext;
         private Handler handler;
         private Thread thread;
