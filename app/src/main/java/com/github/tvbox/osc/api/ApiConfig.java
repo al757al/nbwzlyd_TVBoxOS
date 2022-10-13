@@ -379,7 +379,7 @@ public class ApiConfig {
                 String extUrl = Uri.parse(realUrl).getQueryParameter("ext");
                 if (extUrl != null && !extUrl.isEmpty()) {
                     String extUrlFix = "";
-                    if (extUrl.startsWith("http") || realUrl.startsWith("https")) {
+                    if (extUrl.startsWith("http") || extUrl.startsWith("https")) {
                         extUrlFix = extUrl;
                     } else {
                         extUrlFix = new String(Base64.decode(extUrl, Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
@@ -387,6 +387,11 @@ public class ApiConfig {
 
                     if (extUrlFix.startsWith("clan://")) {
                         extUrlFix = clanContentFix(clanToAddress(apiUrl), extUrlFix);
+                        extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                        realUrl = realUrl.replace(extUrl, extUrlFix);
+                    }
+                    //修复直播明文加载错误
+                    if (extUrlFix.startsWith("http") || extUrlFix.startsWith("https")) {
                         extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
                         realUrl = realUrl.replace(extUrl, extUrlFix);
                     }
