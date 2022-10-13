@@ -278,7 +278,7 @@ public class HomeActivity extends BaseActivity {
                                 isForceCloseLoading = false;
                                 return;
                             }
-                            Toast.makeText(HomeActivity.this, "jar加载失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HomeActivity.this, "jar加载失败"+msg, Toast.LENGTH_SHORT).show();
                             initData();
                         });
                     }
