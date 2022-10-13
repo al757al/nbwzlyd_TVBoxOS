@@ -63,10 +63,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         super.dismiss()
     }
 
-    companion object {
-        //https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/duocangku2.txt
-        private var DEFAULT_STORE_URL = "ABC"
-    }
+    private var DEFAULT_STORE_URL = "ABC"
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
 
