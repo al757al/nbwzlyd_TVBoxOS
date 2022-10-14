@@ -356,13 +356,11 @@ public class ApiConfig {
                         liveSource = infoJson.get("lives").getAsJsonArray().toString();
                         isWebUrl = true;
                     } else {//如果是同一个线路下的直播源
-                        liveSource = "proxy://do=live&type=txt&ext=" +
-                                Base64.encodeToString(liveSourceBean.getSourceUrl().getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                        liveSource = "proxy://do=live&type=txt&ext=" + liveSourceBean.getSourceUrl();
                         isWebUrl = false;
                     }
                 } else {
-                    liveSource = "proxy://do=live&type=txt&ext=" +
-                            Base64.encodeToString(liveSourceBean.getSourceUrl().getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                    liveSource = "proxy://do=live&type=txt&ext=" + liveSourceBean.getSourceUrl();
                     isWebUrl = false;
                 }
             } else {
