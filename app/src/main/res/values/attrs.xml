@@ -48,4 +48,10 @@
         <attr name="endColor" />
         <attr name="topDelta" />
     </declare-styleable>
+
+    <declare-styleable name="SettingItem">
+        <attr name="main_title" format="string" />
+        <attr name="sub_title" format="string" />
+    </declare-styleable>
+
 </resources>

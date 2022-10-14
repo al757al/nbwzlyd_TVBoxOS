@@ -3,7 +3,9 @@ apply plugin: 'kotlin-android'
 apply from: 'and_res_guard.gradle'
 android {
     compileSdkVersion 30
-
+    viewBinding {
+        enabled = true
+    }
     defaultConfig {
         applicationId 'com.mygithub0.tvbox0.osd_1'
         minSdkVersion 16
