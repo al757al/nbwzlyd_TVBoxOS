@@ -49,7 +49,7 @@
         <attr name="topDelta" />
     </declare-styleable>
 
-    <declare-styleable name="SettingItem">
+    <declare-styleable name="SettingItemView">
         <attr name="main_title" format="string" />
         <attr name="sub_title" format="string" />
     </declare-styleable>
