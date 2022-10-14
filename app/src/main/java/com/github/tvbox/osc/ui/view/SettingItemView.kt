@@ -25,9 +25,9 @@ class SettingItemView @JvmOverloads constructor(
         binding = SettingItemBinding.inflate(LayoutInflater.from(getContext()), this,true)
 
         val typedArray: TypedArray =
-            context.obtainStyledAttributes(attrs, R.styleable.SettingItem)
-        val mainTitle = typedArray.getString(R.styleable.SettingItem_main_title)
-        val subTitle = typedArray.getString(R.styleable.SettingItem_sub_title)
+            context.obtainStyledAttributes(attrs, R.styleable.SettingItemView)
+        val mainTitle = typedArray.getString(R.styleable.SettingItemView_main_title)
+        val subTitle = typedArray.getString(R.styleable.SettingItemView_sub_title)
         typedArray.recycle()
         binding?.mainTitle?.text = mainTitle
         binding?.subTitle?.text = subTitle
