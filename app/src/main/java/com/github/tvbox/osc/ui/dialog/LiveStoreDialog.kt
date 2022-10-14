@@ -2,6 +2,7 @@ package com.github.tvbox.osc.ui.dialog
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Base64
 import android.view.View
 import android.widget.*
 import androidx.core.content.ContextCompat
@@ -73,8 +74,9 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                     .show()
                 return@setOnClickListener
             }
-            handleRemotePush(RefreshEvent(RefreshEvent.TYPE_STORE_PUSH).apply {
+            handleRemotePush(RefreshEvent(RefreshEvent.TYPE_LIVE_SOURCE_PUSH).apply {
                 this.obj = LiveSourceBean().apply {
+
                     this.sourceName = sourceName0
                     this.sourceUrl = sourceUrl0
                 }
@@ -103,7 +105,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private fun selectNewLiveSource(liveSourceBean: LiveSourceBean) {
         KVStorage.putBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean)
         this.dismiss()
-        ApiConfig.get().loadLiveSourceUrl(Hawk.get(HawkConfig.API_URL,""), null)
+        ApiConfig.get().loadLiveSourceUrl(Hawk.get(HawkConfig.API_URL, ""), null)
         val intent = Intent(App.instance, LivePlayActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         ActivityUtils.startActivity(intent)
@@ -112,25 +114,21 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private fun saveCustomSourceBean(liveSourceBean: LiveSourceBean) {
         val sourceUrl0 = liveSourceBean.sourceUrl.trim()
         val sourceName0 = liveSourceBean.sourceName.trim()
-        if (sourceUrl0.startsWith("http") || sourceUrl0.startsWith("https")) {
-            val saveList =
-                KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean::class.java)
-            if (saveList.contains(liveSourceBean)) {
-                return
-            }
-            val sourceBean = LiveSourceBean().apply {
-                this.sourceUrl = sourceUrl0
-                this.sourceName = sourceName0.ifEmpty { "自用直播源" + saveList.size }
-            }
-            mAdapter.addData(sourceBean)
-            mRecyclerView?.scrollToPosition(0)
-            saveList.add(sourceBean)
-            mSourceUrlEdit?.setText("")
-            mSourceNameEdit?.setText("")
-        } else {
-            Toast.makeText(this@LiveStoreDialog.context, "直播源只支持http或者https！", Toast.LENGTH_LONG)
-                .show()
+        val saveList =
+            KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean::class.java)
+        if (saveList.contains(liveSourceBean)) {
+            return
         }
+        val sourceBean = LiveSourceBean().apply {
+            this.sourceUrl = sourceUrl0
+            this.sourceName = sourceName0.ifEmpty { "自用直播源" + saveList.size }
+        }
+        mAdapter.addData(sourceBean)
+        mRecyclerView?.scrollToPosition(0)
+        saveList.add(sourceBean)
+        mSourceUrlEdit?.setText("")
+        mSourceNameEdit?.setText("")
+
     }
 
 
@@ -210,7 +208,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
         override fun convert(holder: BaseViewHolder, item: LiveSourceBean) {
             showDefault(item, holder)
-            holder.setVisible(R.id.tvDel, !item.isOfficial)
+            holder.setVisible(R.id.tvDel, item.canDelete)
             if (item.isSelected) {
                 val text = holder.getView<TextView>(R.id.tvName).text
                 holder.setText(
@@ -257,8 +255,23 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         when (refreshEvent.type) {
             RefreshEvent.TYPE_LIVE_SOURCE_PUSH -> {
                 val moreSourceBean = refreshEvent.obj as LiveSourceBean
-                saveCustomSourceBean(moreSourceBean)
+                val sourceUrl = moreSourceBean.sourceUrl;
+                if (sourceUrl.startsWith("http") || sourceUrl.startsWith("https")) {
+                    moreSourceBean.sourceUrl = Base64.encodeToString(
+                        moreSourceBean.sourceUrl.toByteArray(charset("UTF-8")),
+                        Base64.DEFAULT or Base64.URL_SAFE or Base64.NO_WRAP
+                    )
+                    saveCustomSourceBean(moreSourceBean)
+                } else {
+                    Toast.makeText(
+                        this@LiveStoreDialog.context,
+                        "直播源只支持http或者https！",
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                }
             }
+
         }
 
     }

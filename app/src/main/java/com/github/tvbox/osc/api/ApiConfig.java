@@ -7,6 +7,7 @@ import android.util.Base64;
 
 import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.Spider;
+import com.github.catvod.crawler.SpiderNull;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.LiveChannelGroup;
@@ -29,6 +30,7 @@ import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.GetRequest;
 import com.orhanobut.hawk.Hawk;
+import com.undcover.freedom.pyramid.PythonLoader;
 
 import org.json.JSONObject;
 
@@ -239,6 +241,7 @@ public class ApiConfig {
     }
 
     private void parseJson(String apiUrl, String jsonStr) {
+        PythonLoader.getInstance().setConfig(jsonStr);
         JsonObject infoJson = new Gson().fromJson(jsonStr, JsonObject.class);
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
@@ -353,13 +356,11 @@ public class ApiConfig {
                         liveSource = infoJson.get("lives").getAsJsonArray().toString();
                         isWebUrl = true;
                     } else {//如果是同一个线路下的直播源
-                        liveSource = "proxy://do=live&type=txt&ext=" +
-                                Base64.encodeToString(liveSourceBean.getSourceUrl().getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                        liveSource = "proxy://do=live&type=txt&ext=" + liveSourceBean.getSourceUrl();
                         isWebUrl = false;
                     }
                 } else {
-                    liveSource = "proxy://do=live&type=txt&ext=" +
-                            Base64.encodeToString(liveSourceBean.getSourceUrl().getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                    liveSource = "proxy://do=live&type=txt&ext=" + liveSourceBean.getSourceUrl();
                     isWebUrl = false;
                 }
             } else {
@@ -474,10 +475,33 @@ public class ApiConfig {
     }
 
     public Spider getCSP(SourceBean sourceBean) {
+        //pyramid-add-start
+        if (sourceBean.getApi().startsWith("py_")) {
+            try {
+                return PythonLoader.getInstance().getSpider(sourceBean.getKey(), sourceBean.getExt());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new SpiderNull();
+            }
+        }
         return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
     }
 
     public Object[] proxyLocal(Map param) {
+        //pyramid-add-start
+        try {
+            String doStr = param.get("do").toString();
+            if(param.containsKey("api")){
+                if(doStr.equals("ck"))
+                    return PythonLoader.getInstance().proxyLocal("","",param);
+                SourceBean sourceBean = ApiConfig.get().getSource(doStr);
+                return PythonLoader.getInstance().proxyLocal(sourceBean.getKey(),sourceBean.getExt(),param);
+            }else{
+                if(doStr.equals("live")) return PythonLoader.getInstance().proxyLocal("","",param);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return jarLoader.proxyInvoke(param);
     }
 
