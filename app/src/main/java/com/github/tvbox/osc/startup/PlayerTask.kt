@@ -20,7 +20,7 @@ class PlayerTask : AndroidStartup<String>() {
 
     }
 
-    override fun waitOnMainThread() = true
+    override fun waitOnMainThread() = false
     override fun createExecutor(): Executor {
         return ExecutorManager.instance.cpuExecutor
     }
