@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 /**
  * @author pj567
@@ -241,7 +242,7 @@ public class ApiConfig {
     }
 
     private void parseJson(String apiUrl, String jsonStr) {
-        PythonLoader.getInstance().setConfig(jsonStr);
+        Executors.newSingleThreadExecutor().execute(() -> PythonLoader.getInstance().setConfig(jsonStr));
         JsonObject infoJson = new Gson().fromJson(jsonStr, JsonObject.class);
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");

@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.IntEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -50,6 +51,9 @@ import com.github.tvbox.osc.util.AppManager;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.lzy.okgo.OkGo;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
@@ -138,6 +142,7 @@ public class HomeActivity extends BaseActivity {
                             }
                             textView.invalidate();
                         }
+
                         public int p = position;
                     }, 10);
                 }
@@ -238,6 +243,7 @@ public class HomeActivity extends BaseActivity {
 
     private void initData() {
         SourceBean home = ApiConfig.get().getHomeSourceBean();
+        requestStoragePermission();
         if (home != null && home.getName() != null && !home.getName().isEmpty())
             tvName.setText(home.getName());
         if (dataInitOk && jarInitOk) {
@@ -276,7 +282,7 @@ public class HomeActivity extends BaseActivity {
                                 isForceCloseLoading = false;
                                 return;
                             }
-                            Toast.makeText(HomeActivity.this, "jar加载失败"+msg, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HomeActivity.this, "jar加载失败" + msg, Toast.LENGTH_SHORT).show();
                             initData();
                         });
                     }
@@ -633,13 +639,42 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    public void requestStoragePermission() {
+        if (!XXPermissions.isGranted(this, Permission.Group.STORAGE)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("为了支持py，请开启本地存储权限");
+            builder.setPositiveButton("确定", (dialog, which) -> XXPermissions.with(HomeActivity.this)
+                    .permission(Permission.Group.STORAGE)
+                    .request(new OnPermissionCallback() {
+                        @Override
+                        public void onGranted(List<String> permissions, boolean all) {
+                            if (all) {
+                                ToastUtils.showShort("已获得存储权限");
+                            }
+                        }
+
+                        @Override
+                        public void onDenied(List<String> permissions, boolean never) {
+                            if (never) {
+                                ToastUtils.showShort("获取存储权限失败,请在系统设置中开启");
+                                XXPermissions.startPermissionActivity(HomeActivity.this, permissions);
+                            } else {
+                                ToastUtils.showShort("获取存储权限失败");
+                            }
+                        }
+                    }));
+            builder.setNegativeButton("取消", null);
+            builder.create().show();
+        }
+    }
+
     /**
      * 强制重启首页，刷新数据
      */
     public void forceRestartHomeActivity() {
         ApiConfig.release();
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putBoolean("useCache", true);
         intent.putExtras(bundle);
