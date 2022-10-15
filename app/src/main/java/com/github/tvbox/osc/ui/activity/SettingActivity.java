@@ -4,17 +4,14 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.FrameMetrics;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.viewpager.widget.ViewPager;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -69,17 +66,17 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        getWindow().addOnFrameMetricsAvailableListener(new Window.OnFrameMetricsAvailableListener() {
-            @Override
-            public void onFrameMetricsAvailable(Window window, FrameMetrics frameMetrics, int dropCountSinceLastInvocation) {
-                long layoutMeasureDurationNs =
-                        frameMetrics.getMetric(FrameMetrics.LAYOUT_MEASURE_DURATION);
-                long DRAWDurationNs =
-                        frameMetrics.getMetric(FrameMetrics.DRAW_DURATION);
-
-                LogUtils.d("gaozhongkui", "测量耗时：" + layoutMeasureDurationNs/10000 + "  绘制耗时：" + DRAWDurationNs/10000);
-            }
-        }, new Handler());
+//        getWindow().addOnFrameMetricsAvailableListener(new Window.OnFrameMetricsAvailableListener() {
+//            @Override
+//            public void onFrameMetricsAvailable(Window window, FrameMetrics frameMetrics, int dropCountSinceLastInvocation) {
+//                long layoutMeasureDurationNs =
+//                        frameMetrics.getMetric(FrameMetrics.LAYOUT_MEASURE_DURATION);
+//                long DRAWDurationNs =
+//                        frameMetrics.getMetric(FrameMetrics.DRAW_DURATION);
+//
+//                LogUtils.d("gaozhongkui", "测量耗时：" + layoutMeasureDurationNs/10000 + "  绘制耗时：" + DRAWDurationNs/10000);
+//            }
+//        }, new Handler());
     }
 
     private void initView() {
