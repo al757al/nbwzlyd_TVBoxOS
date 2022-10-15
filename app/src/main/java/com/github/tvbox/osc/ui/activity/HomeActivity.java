@@ -138,8 +138,6 @@ public class HomeActivity extends BaseActivity {
                             }
                             textView.invalidate();
                         }
-
-                        public View v = view;
                         public int p = position;
                     }, 10);
                 }

@@ -22,5 +22,5 @@ class DatabaseTask : AndroidStartup<String>() {
         return ExecutorManager.instance.cpuExecutor
     }
 
-    override fun waitOnMainThread() = true
+    override fun waitOnMainThread() = false
 }
