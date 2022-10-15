@@ -255,7 +255,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         when (refreshEvent.type) {
             RefreshEvent.TYPE_LIVE_SOURCE_PUSH -> {
                 val moreSourceBean = refreshEvent.obj as LiveSourceBean
-                val sourceUrl = moreSourceBean.sourceUrl;
+                val sourceUrl = moreSourceBean.sourceUrl.trim();
                 if (sourceUrl.startsWith("http") || sourceUrl.startsWith("https")) {
                     moreSourceBean.sourceUrl = Base64.encodeToString(
                         moreSourceBean.sourceUrl.toByteArray(charset("UTF-8")),
