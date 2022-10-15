@@ -44,6 +44,9 @@
         <entry key="app/src/main/res/layout/dialog_select.xml" value="0.13504968383017163" />
         <entry key="app/src/main/res/layout/dialog_tip.xml" value="0.12579042457091238" />
         <entry key="app/src/main/res/layout/fragment_model.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_model_new.xml" value="0.38088235294117645" />
+        <entry key="app/src/main/res/layout/fragment_model_new2.xml" value="0.5495880126953123" />
+        <entry key="app/src/main/res/layout/fragment_model_new3.xml" value="0.43359375" />
         <entry key="app/src/main/res/layout/fragment_user.xml" value="0.165" />
         <entry key="app/src/main/res/layout/item_dialog_api_history.xml" value="0.335" />
         <entry key="app/src/main/res/layout/item_dialog_select.xml" value="0.165" />
@@ -53,9 +56,11 @@
         <entry key="app/src/main/res/layout/item_setting_menu.xml" value="0.1" />
         <entry key="app/src/main/res/layout/live_source_dialog_select.xml" value="0.1" />
         <entry key="app/src/main/res/layout/loadsir_loading_layout.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/modle_setting_3.xml" value="0.38" />
         <entry key="app/src/main/res/layout/more_source_dialog_select.xml" value="0.25" />
         <entry key="app/src/main/res/layout/player_live_control_view.xml" value="0.25625" />
         <entry key="app/src/main/res/layout/player_vod_control_view.xml" value="0.2577255249023438" />
+        <entry key="app/src/main/res/layout/setting_item.xml" value="0.45" />
         <entry key="player/src/main/res/layout/ijk_demo_activity.xml" value="0.1" />
       </map>
     </option>
