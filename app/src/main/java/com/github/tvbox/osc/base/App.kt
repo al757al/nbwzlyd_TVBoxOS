@@ -3,10 +3,7 @@ package com.github.tvbox.osc.base
 import android.text.TextUtils
 import androidx.multidex.MultiDexApplication
 import com.github.tvbox.osc.bean.VodInfo
-import com.github.tvbox.osc.startup.DatabaseTask
-import com.github.tvbox.osc.startup.PlayerTask
-import com.github.tvbox.osc.startup.ServerTask
-import com.github.tvbox.osc.startup.UITask
+import com.github.tvbox.osc.startup.*
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.js.JSEngine
 import com.orhanobut.hawk.Hawk
@@ -27,6 +24,7 @@ class App : MultiDexApplication() {
             .addStartup(ServerTask())
             .addStartup(DatabaseTask())
             .addStartup(PlayerTask())
+            .addStartup(PyTask())
             .build(this)
             .start().await()
     }
