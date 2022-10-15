@@ -183,7 +183,7 @@ public class ApiConfig {
                 if (jarLoader.load(cache.getAbsolutePath())) {
                     callback.success();
                 } else {
-                    callback.error("");
+                    callback.error("jar 缓存加载失败");
                 }
                 return;
             }
@@ -212,10 +212,10 @@ public class ApiConfig {
                             if (jarLoader.load(response.body().getAbsolutePath())) {
                                 callback.success();
                             } else {
-                                callback.error("");
+                                callback.error("jar内部解析失败");
                             }
                         } else {
-                            callback.error("");
+                            callback.error("jar不存在");
                         }
                     }
 
