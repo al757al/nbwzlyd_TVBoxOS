@@ -205,6 +205,15 @@ public class HomeActivity extends BaseActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        dataInitOk = false;
+        jarInitOk = false;
+        initViewModel();
+        initData();
+    }
+
+    @Override
     protected void init() {
         EventBus.getDefault().register(this);
         initView();
@@ -679,7 +688,6 @@ public class HomeActivity extends BaseActivity {
     public void forceRestartHomeActivity() {
         ApiConfig.release();
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putBoolean("useCache", true);
         intent.putExtras(bundle);
