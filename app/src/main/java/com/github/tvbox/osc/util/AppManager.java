@@ -2,6 +2,8 @@ package com.github.tvbox.osc.util;
 
 import android.app.Activity;
 
+import com.github.tvbox.osc.ui.activity.HomeActivity;
+
 import java.util.Stack;
 
 /**
@@ -100,7 +102,7 @@ public class AppManager {
             for (int i = 0, size = activityStack.size(); i < size; i++) {
                 Activity activity = activityStack.get(i);
                 if (null != activityStack.get(i)) {
-                    if (!activity.isFinishing()) {
+                    if (!activity.isFinishing() && !(activity instanceof HomeActivity)) {
                         activity.finish();
                     }
                 }

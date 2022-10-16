@@ -18,7 +18,6 @@ class JumpUtils {
             val bundle = Bundle()
             intent.putExtras(bundle)
             context.startActivity(intent)
-
         }
     }
 

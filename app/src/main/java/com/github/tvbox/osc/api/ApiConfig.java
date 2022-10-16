@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.crawler.SpiderNull;
@@ -45,6 +47,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -241,8 +244,10 @@ public class ApiConfig {
         parseJson(apiUrl, sb.toString());
     }
 
+    ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     private void parseJson(String apiUrl, String jsonStr) {
-        Executors.newSingleThreadExecutor().execute(() -> PythonLoader.getInstance().setConfig(jsonStr));
+        executorService.execute(() -> PythonLoader.getInstance().setConfig(jsonStr));
         JsonObject infoJson = new Gson().fromJson(jsonStr, JsonObject.class);
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
@@ -537,6 +542,12 @@ public class ApiConfig {
     public void setSourceBean(SourceBean sourceBean) {
         this.mHomeSource = sourceBean;
         Hawk.put(HawkConfig.HOME_API, sourceBean.getKey());
+        LogUtils.d("derek110","app-->"+App.getInstance().hashCode());
+        if (sourceBean.getKey().startsWith("py_") && !App.getInstance().getPyLoadSuccess()) {
+            PythonLoader.getInstance().setApplication(App.getInstance());
+            App.getInstance().setPyLoadSuccess(true);
+            ToastUtils.showShort("第一次加载py会有点慢，等等~");
+        }
     }
 
     public void setDefaultParse(ParseBean parseBean) {

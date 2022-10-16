@@ -2,7 +2,6 @@ package com.github.tvbox.osc.ui.activity;
 
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.viewpager.widget.ViewPager;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -22,6 +22,7 @@ import com.github.tvbox.osc.ui.adapter.SettingPageAdapter;
 import com.github.tvbox.osc.ui.fragment.ModelSettingFragment;
 import com.github.tvbox.osc.util.AppManager;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.urlhttp.JumpUtils;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
@@ -203,13 +204,8 @@ public class SettingActivity extends BaseActivity {
                 homeRec != Hawk.get(HawkConfig.HOME_REC, 0) ||
                 dnsOpt != Hawk.get(HawkConfig.DOH_URL, 0)) {
             AppManager.getInstance().finishAllActivity();
-            if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("useCache", true);
-                jumpActivity(HomeActivity.class, bundle);
-            } else {
-                jumpActivity(HomeActivity.class);
-            }
+            JumpUtils.forceRestartHomeActivity(this);
+            ToastUtils.showShort("正在更新首页");
         } else {
             super.onBackPressed();
         }
