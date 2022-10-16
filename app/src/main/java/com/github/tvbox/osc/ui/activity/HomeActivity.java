@@ -44,7 +44,6 @@ import com.github.tvbox.osc.ui.fragment.GridFragment;
 import com.github.tvbox.osc.ui.fragment.UserFragment;
 import com.github.tvbox.osc.ui.tv.widget.DefaultTransformer;
 import com.github.tvbox.osc.ui.tv.widget.FixedSpeedScroller;
-import com.github.tvbox.osc.ui.tv.widget.NoScrollViewPager;
 import com.github.tvbox.osc.ui.tv.widget.ViewObj;
 import com.github.tvbox.osc.util.AppManager;
 import com.github.tvbox.osc.util.DefaultConfig;
@@ -79,7 +78,7 @@ public class HomeActivity extends BaseActivity {
     private TextView tvDate;
     private TextView tvName;
     private TvRecyclerView mGridView;
-    private NoScrollViewPager mViewPager;
+    private ViewPager mViewPager;
     private SourceViewModel sourceViewModel;
     private SortAdapter sortAdapter;
     private HomePageAdapter pageAdapter;
@@ -269,8 +268,7 @@ public class HomeActivity extends BaseActivity {
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (!useCacheConfig)
-                                    Toast.makeText(HomeActivity.this, "自定义jar加载成功", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(HomeActivity.this, "自定义jar加载成功", Toast.LENGTH_SHORT).show();
                                 initData();
                                 isForceCloseLoading = false;
                             }
@@ -389,7 +387,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void initViewPager(AbsSortXml absXml) {
-        fragments.clear();
+        fragments = new ArrayList<>();
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
@@ -402,7 +400,7 @@ public class HomeActivity extends BaseActivity {
                     fragments.add(GridFragment.newInstance(data));
                 }
             }
-            pageAdapter.notifyDataSetChanged();
+            pageAdapter.setFragments(fragments);
             try {
                 Field field = ViewPager.class.getDeclaredField("mScroller");
                 field.setAccessible(true);
@@ -645,7 +643,9 @@ public class HomeActivity extends BaseActivity {
             HomeActivity.this.startActivity(intent);
         }
     }
+
     TipDialog tipDialog = null;
+
     public void requestStoragePermission() {
         if (!XXPermissions.isGranted(this, Permission.Group.STORAGE)) {
             if (tipDialog == null) {
