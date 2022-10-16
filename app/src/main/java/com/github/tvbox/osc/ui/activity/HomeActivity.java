@@ -5,7 +5,6 @@ import android.animation.AnimatorSet;
 import android.animation.IntEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -227,6 +226,7 @@ public class HomeActivity extends BaseActivity {
         // 初始化Web服务器
         ControlManager.init(this);
         ControlManager.get().startServer();
+        requestStoragePermission();
         initData();
     }
 
@@ -252,7 +252,6 @@ public class HomeActivity extends BaseActivity {
 
     private void initData() {
         SourceBean home = ApiConfig.get().getHomeSourceBean();
-        requestStoragePermission();
         if (home != null && home.getName() != null && !home.getName().isEmpty())
             tvName.setText(home.getName());
         if (dataInitOk && jarInitOk) {
@@ -640,45 +639,54 @@ public class HomeActivity extends BaseActivity {
     private void restartHomeActivity(String homeSourceKey) {
         if (homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, ""))) {
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             Bundle bundle = new Bundle();
             bundle.putBoolean("useCache", true);
             intent.putExtras(bundle);
             HomeActivity.this.startActivity(intent);
         }
     }
-
-    AlertDialog dialog0 = null;
+    TipDialog tipDialog = null;
     public void requestStoragePermission() {
         if (!XXPermissions.isGranted(this, Permission.Group.STORAGE)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("为了支持py，请开启本地存储权限");
-            builder.setPositiveButton("确定", (dialog, which) -> {
-                dialog.dismiss();
-                XXPermissions.with(HomeActivity.this)
-                        .permission(Permission.Group.STORAGE)
-                        .request(new OnPermissionCallback() {
-                            @Override
-                            public void onGranted(List<String> permissions, boolean all) {
-                                if (all) {
-                                    ToastUtils.showShort("已获得存储权限");
-                                }
-                            }
+            if (tipDialog == null) {
+                tipDialog = new TipDialog(this, "为了支持py，请开启本地存储权限", "取消", "确定", new TipDialog.OnListener() {
+                    @Override
+                    public void left() {
+                        tipDialog.dismiss();
+                    }
 
-                            @Override
-                            public void onDenied(List<String> permissions, boolean never) {
-                                if (never) {
-                                    ToastUtils.showShort("获取存储权限失败,请在系统设置中开启");
-                                    XXPermissions.startPermissionActivity(HomeActivity.this, permissions);
-                                } else {
-                                    ToastUtils.showShort("获取存储权限失败");
-                                }
-                            }
-                        });
-            });
-            builder.setNegativeButton("取消", null);
-            dialog0 = builder.create();
-            dialog0.show();
+                    @Override
+                    public void right() {
+                        tipDialog.dismiss();
+                        XXPermissions.with(HomeActivity.this)
+                                .permission(Permission.Group.STORAGE)
+                                .request(new OnPermissionCallback() {
+                                    @Override
+                                    public void onGranted(List<String> permissions, boolean all) {
+                                        if (all) {
+                                            ToastUtils.showShort("已获得存储权限");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onDenied(List<String> permissions, boolean never) {
+                                        if (never) {
+                                            ToastUtils.showShort("获取存储权限失败,请在系统设置中开启");
+                                            XXPermissions.startPermissionActivity(HomeActivity.this, permissions);
+                                        } else {
+                                            ToastUtils.showShort("获取存储权限失败");
+                                        }
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void cancel() {
+                        tipDialog.dismiss();
+                    }
+                });
+                tipDialog.show();
+            }
         }
     }
 
