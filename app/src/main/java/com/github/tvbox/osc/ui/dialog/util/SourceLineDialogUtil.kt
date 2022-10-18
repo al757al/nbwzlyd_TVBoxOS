@@ -1,23 +1,13 @@
 package com.github.tvbox.osc.ui.dialog.util
 
 import android.content.Context
-import android.os.Handler
 import android.text.TextUtils
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
-import com.blankj.utilcode.util.SpanUtils
 import com.blankj.utilcode.util.ToastUtils
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.BaseViewHolder
-import com.github.tvbox.osc.R
 import com.github.tvbox.osc.bean.MoreSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
 import com.github.tvbox.osc.ext.findFirst
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter
-import com.github.tvbox.osc.ui.dialog.SelectDialog
 import com.github.tvbox.osc.ui.dialog.SelectDialogNew
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
@@ -110,7 +100,7 @@ class SourceLineDialogUtil(private val context: Context) {
             val findData = data.findFirst {
                 it.sourceUrl == selectUrl
             }
-            var select = 0
+            var select = -1
             findData?.let {
                 select = data.indexOf(findData)
             }
