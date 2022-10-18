@@ -90,6 +90,7 @@ public class HomeActivity extends BaseActivity {
     public View sortFocusView = null;
     private Handler mHandler = new Handler();
     private long mExitTime = 0;
+    View lastView = null;
     SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss", Locale.CHINA);
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
@@ -118,6 +119,35 @@ public class HomeActivity extends BaseActivity {
         this.contentLayout = findViewById(R.id.contentLayout);
         this.mGridView = findViewById(R.id.mGridView);
         this.mViewPager = findViewById(R.id.mViewPager);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (mGridView.getLayoutManager() == null || mGridView.getLayoutManager().findViewByPosition(position) == null) {
+                    return;
+                }
+                View curView = mGridView.getLayoutManager().findViewByPosition(position);
+                mGridView.onFocusChange(curView, true);
+                curView.requestFocus();
+                if (lastView != null) {
+                    lastView.clearFocus();
+                    lastView.setSelected(false);
+                    lastView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start();
+                    TextView textView = lastView.findViewById(R.id.tvTitle);
+                    textView.getPaint().setFakeBoldText(false);
+                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
+                    lastView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                }
+                lastView = curView;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
         this.sortAdapter = new SortAdapter();
         this.mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));

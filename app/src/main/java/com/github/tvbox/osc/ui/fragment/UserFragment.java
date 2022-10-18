@@ -29,7 +29,6 @@ import com.github.tvbox.osc.ui.dialog.SourceStoreDialog;
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.ScreenUtils;
 import com.github.tvbox.osc.util.UA;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -194,14 +193,6 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvHotList.setAdapter(homeHotVodAdapter);
 
         initHomeHotVod(homeHotVodAdapter);
-
-        if (ScreenUtils.isTv(getContext())) {
-            tvHistory.postDelayed(() -> {
-                tvHistory.setFocusableInTouchMode(true);
-                tvHistory.setFocusable(true);
-                tvHistory.requestFocus();
-            }, 30);
-        }
     }
 
     private void initHomeHotVod(HomeHotVodAdapter adapter) {

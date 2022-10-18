@@ -987,6 +987,9 @@ public class TvRecyclerView extends RecyclerView implements View.OnClickListener
     public void setOnItemListener(OnItemListener onItemListener) {
         mOnItemListener = onItemListener;
     }
+    public OnItemListener getmOnItemListener(){
+        return mOnItemListener;
+    }
 
     public void setOnInBorderKeyEventListener(OnInBorderKeyEventListener onInBorderKeyEventListener) {
         mOnInBorderKeyEventListener = onInBorderKeyEventListener;
