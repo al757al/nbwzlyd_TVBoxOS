@@ -2,7 +2,6 @@ package com.github.tvbox.osc.base
 
 import android.text.TextUtils
 import androidx.multidex.MultiDexApplication
-import com.blankj.utilcode.util.LogUtils
 import com.github.tvbox.osc.bean.VodInfo
 import com.github.tvbox.osc.startup.*
 import com.github.tvbox.osc.util.HawkConfig
@@ -59,11 +58,9 @@ class App : MultiDexApplication() {
 
     fun setPyLoadSuccess(success: Boolean) {
         pyLoadSuccess = success
-        LogUtils.d("derek110", "setPyLoadSuccess-->" + instance.hashCode() + "  s" + success)
     }
 
     fun getPyLoadSuccess(): Boolean {
-        LogUtils.d("derek110", "" + instance.hashCode() + "  s  " + pyLoadSuccess)
         return pyLoadSuccess
     }
 
