@@ -5,8 +5,11 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.Spider;
+import com.github.catvod.crawler.SpiderNull;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.LiveChannelGroup;
@@ -29,6 +32,7 @@ import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.GetRequest;
 import com.orhanobut.hawk.Hawk;
+import com.undcover.freedom.pyramid.PythonLoader;
 
 import org.json.JSONObject;
 
@@ -43,6 +47,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author pj567
@@ -238,8 +244,10 @@ public class ApiConfig {
         parseJson(apiUrl, sb.toString());
     }
 
+    ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     private void parseJson(String apiUrl, String jsonStr) {
-//        PythonLoader.getInstance().setConfig(jsonStr);
+        executorService.execute(() -> PythonLoader.getInstance().setConfig(jsonStr));
         JsonObject infoJson = new Gson().fromJson(jsonStr, JsonObject.class);
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
@@ -474,32 +482,32 @@ public class ApiConfig {
 
     public Spider getCSP(SourceBean sourceBean) {
         //pyramid-add-start
-//        if (sourceBean.getApi().startsWith("py_")) {
-//            try {
-//                return PythonLoader.getInstance().getSpider(sourceBean.getKey(), sourceBean.getExt());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                return new SpiderNull();
-//            }
-//        }
+        if (sourceBean.getApi().startsWith("py_")) {
+            try {
+                return PythonLoader.getInstance().getSpider(sourceBean.getKey(), sourceBean.getExt());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new SpiderNull();
+            }
+        }
         return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
     }
 
     public Object[] proxyLocal(Map param) {
         //pyramid-add-start
-//        try {
-//            String doStr = param.get("do").toString();
-//            if(param.containsKey("api")){
-//                if(doStr.equals("ck"))
-//                    return PythonLoader.getInstance().proxyLocal("","",param);
-//                SourceBean sourceBean = ApiConfig.get().getSource(doStr);
-//                return PythonLoader.getInstance().proxyLocal(sourceBean.getKey(),sourceBean.getExt(),param);
-//            }else{
-//                if(doStr.equals("live")) return PythonLoader.getInstance().proxyLocal("","",param);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            String doStr = param.get("do").toString();
+            if(param.containsKey("api")){
+                if(doStr.equals("ck"))
+                    return PythonLoader.getInstance().proxyLocal("","",param);
+                SourceBean sourceBean = ApiConfig.get().getSource(doStr);
+                return PythonLoader.getInstance().proxyLocal(sourceBean.getKey(),sourceBean.getExt(),param);
+            }else{
+                if(doStr.equals("live")) return PythonLoader.getInstance().proxyLocal("","",param);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return jarLoader.proxyInvoke(param);
     }
 
@@ -534,6 +542,12 @@ public class ApiConfig {
     public void setSourceBean(SourceBean sourceBean) {
         this.mHomeSource = sourceBean;
         Hawk.put(HawkConfig.HOME_API, sourceBean.getKey());
+        LogUtils.d("derek110","app-->"+App.getInstance().hashCode());
+        if (sourceBean.getKey().startsWith("py_") && !App.getInstance().getPyLoadSuccess()) {
+            PythonLoader.getInstance().setApplication(App.getInstance());
+            App.getInstance().setPyLoadSuccess(true);
+            ToastUtils.showShort("第一次加载py会有点慢，等等~");
+        }
     }
 
     public void setDefaultParse(ParseBean parseBean) {

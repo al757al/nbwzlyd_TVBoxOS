@@ -38,6 +38,7 @@ import com.github.tvbox.osc.util.HistoryHelper;
 import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.OkGoHelper;
 import com.github.tvbox.osc.util.PlayerHelper;
+import com.github.tvbox.osc.util.urlhttp.JumpUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.db.CacheManager;
@@ -120,7 +121,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
         tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
         String apiUrl = Hawk.get(HawkConfig.API_URL, "");
-        MoreSourceBean moreSourceBean = KVStorage.getBean(HawkConfig.API_URL_BEAN,MoreSourceBean.class);
+        MoreSourceBean moreSourceBean = KVStorage.getBean(HawkConfig.API_URL_BEAN, MoreSourceBean.class);
         if (moreSourceBean == null) {
             tvApi.setText(apiUrl);
         } else if (TextUtils.equals(moreSourceBean.getSourceUrl(), apiUrl)) {
@@ -178,8 +179,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 dialog.show();
             }
         });
-        TextView about  = findViewById(R.id.text_about);
-        about.setText("关于  V"+ BuildConfig.VERSION_NAME);
+        TextView about = findViewById(R.id.text_about);
+        about.setText("关于  V" + BuildConfig.VERSION_NAME);
         findViewById(R.id.llWp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,9 +228,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                             ApiConfig.get().setSourceBean(value);
                             tvHomeApi.setText(ApiConfig.get().getHomeSourceBean().getName());
                             dialog.dismiss();
-                            if (getActivity() != null) {
-                                getActivity().onBackPressed();
-                            }
+                            JumpUtils.forceRestartHomeActivity(getActivity());
                         }
 
                         @Override
@@ -424,7 +423,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 int defaultPos = 0;
                 ArrayList<Integer> players = PlayerHelper.getExistPlayerTypes();
                 ArrayList<Integer> renders = new ArrayList<>();
-                for(int p = 0; p<players.size(); p++) {
+                for (int p = 0; p < players.size(); p++) {
                     renders.add(p);
                     if (players.get(p) == playerType) {
                         defaultPos = p;
@@ -668,7 +667,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 ToastUtils.showShort("重置App完毕");
                 ApiConfig.release();
                 Intent intent = new Intent(mActivity, HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             });
             AlertDialog alertDialog = builder.create();
@@ -688,7 +687,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 ToastUtils.showShort("接口缓存清理完毕");
                 ApiConfig.release();
                 Intent intent = new Intent(mActivity, HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             });
             builder.create().show();

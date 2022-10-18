@@ -44,12 +44,14 @@ import com.github.tvbox.osc.ui.fragment.GridFragment;
 import com.github.tvbox.osc.ui.fragment.UserFragment;
 import com.github.tvbox.osc.ui.tv.widget.DefaultTransformer;
 import com.github.tvbox.osc.ui.tv.widget.FixedSpeedScroller;
-import com.github.tvbox.osc.ui.tv.widget.NoScrollViewPager;
 import com.github.tvbox.osc.ui.tv.widget.ViewObj;
 import com.github.tvbox.osc.util.AppManager;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.lzy.okgo.OkGo;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
@@ -76,7 +78,7 @@ public class HomeActivity extends BaseActivity {
     private TextView tvDate;
     private TextView tvName;
     private TvRecyclerView mGridView;
-    private NoScrollViewPager mViewPager;
+    private ViewPager mViewPager;
     private SourceViewModel sourceViewModel;
     private SortAdapter sortAdapter;
     private HomePageAdapter pageAdapter;
@@ -139,7 +141,6 @@ public class HomeActivity extends BaseActivity {
                             textView.invalidate();
                         }
 
-                        public View v = view;
                         public int p = position;
                     }, 10);
                 }
@@ -202,6 +203,15 @@ public class HomeActivity extends BaseActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        dataInitOk = false;
+        jarInitOk = false;
+        initViewModel();
+        initData();
+    }
+
+    @Override
     protected void init() {
         EventBus.getDefault().register(this);
         initView();
@@ -215,6 +225,7 @@ public class HomeActivity extends BaseActivity {
         // 初始化Web服务器
         ControlManager.init(this);
         ControlManager.get().startServer();
+        requestStoragePermission();
         initData();
     }
 
@@ -257,8 +268,7 @@ public class HomeActivity extends BaseActivity {
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (!useCacheConfig)
-                                    Toast.makeText(HomeActivity.this, "自定义jar加载成功", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(HomeActivity.this, "自定义jar加载成功", Toast.LENGTH_SHORT).show();
                                 initData();
                                 isForceCloseLoading = false;
                             }
@@ -278,7 +288,7 @@ public class HomeActivity extends BaseActivity {
                                 isForceCloseLoading = false;
                                 return;
                             }
-                            Toast.makeText(HomeActivity.this, "jar加载失败"+msg, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HomeActivity.this, "jar加载失败" + msg, Toast.LENGTH_SHORT).show();
                             initData();
                         });
                     }
@@ -377,7 +387,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void initViewPager(AbsSortXml absXml) {
-        fragments.clear();
+        fragments = new ArrayList<>();
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
@@ -390,7 +400,7 @@ public class HomeActivity extends BaseActivity {
                     fragments.add(GridFragment.newInstance(data));
                 }
             }
-            pageAdapter.notifyDataSetChanged();
+            pageAdapter.setFragments(fragments);
             try {
                 Field field = ViewPager.class.getDeclaredField("mScroller");
                 field.setAccessible(true);
@@ -627,11 +637,56 @@ public class HomeActivity extends BaseActivity {
     private void restartHomeActivity(String homeSourceKey) {
         if (homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, ""))) {
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             Bundle bundle = new Bundle();
             bundle.putBoolean("useCache", true);
             intent.putExtras(bundle);
             HomeActivity.this.startActivity(intent);
+        }
+    }
+
+    TipDialog tipDialog = null;
+
+    public void requestStoragePermission() {
+        if (!XXPermissions.isGranted(this, Permission.Group.STORAGE)) {
+            if (tipDialog == null) {
+                tipDialog = new TipDialog(this, "为了支持py，请开启本地存储权限", "取消", "确定", new TipDialog.OnListener() {
+                    @Override
+                    public void left() {
+                        tipDialog.dismiss();
+                    }
+
+                    @Override
+                    public void right() {
+                        tipDialog.dismiss();
+                        XXPermissions.with(HomeActivity.this)
+                                .permission(Permission.Group.STORAGE)
+                                .request(new OnPermissionCallback() {
+                                    @Override
+                                    public void onGranted(List<String> permissions, boolean all) {
+                                        if (all) {
+                                            ToastUtils.showShort("已获得存储权限");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onDenied(List<String> permissions, boolean never) {
+                                        if (never) {
+                                            ToastUtils.showShort("获取存储权限失败,请在系统设置中开启");
+                                            XXPermissions.startPermissionActivity(HomeActivity.this, permissions);
+                                        } else {
+                                            ToastUtils.showShort("获取存储权限失败");
+                                        }
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void cancel() {
+                        tipDialog.dismiss();
+                    }
+                });
+                tipDialog.show();
+            }
         }
     }
 
@@ -641,7 +696,6 @@ public class HomeActivity extends BaseActivity {
     public void forceRestartHomeActivity() {
         ApiConfig.release();
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         Bundle bundle = new Bundle();
         bundle.putBoolean("useCache", true);
         intent.putExtras(bundle);

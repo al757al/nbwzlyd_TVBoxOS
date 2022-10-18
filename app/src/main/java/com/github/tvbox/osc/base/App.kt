@@ -2,6 +2,7 @@ package com.github.tvbox.osc.base
 
 import android.text.TextUtils
 import androidx.multidex.MultiDexApplication
+import com.blankj.utilcode.util.LogUtils
 import com.github.tvbox.osc.bean.VodInfo
 import com.github.tvbox.osc.startup.DatabaseTask
 import com.github.tvbox.osc.startup.PlayerTask
@@ -11,7 +12,6 @@ import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.js.JSEngine
 import com.orhanobut.hawk.Hawk
 import com.rousetime.android_startup.StartupManager
-import com.tencent.bugly.crashreport.CrashReport
 
 /**
  * @author pj567
@@ -28,44 +28,19 @@ class App : MultiDexApplication() {
             .addStartup(ServerTask())
             .addStartup(DatabaseTask())
             .addStartup(PlayerTask())
+//            .addStartup(PyTask())
             .build(this)
             .start().await()
-//        EpgNameFuzzyMatch.init()
-//        val time = System.currentTimeMillis()
-//        initParams()
-//        // OKGo
-//        OkGoHelper.init()
-//        // 初始化Web服务器
-//        ControlManager.init(this)
-//        //初始化数据库
-//        AppDataManager.init()
-//        MMKV.initialize(this)
-//        LOG.e("COST-1   " + (System.currentTimeMillis() - time))
-//        LoadSir.beginBuilder()
-//            .addCallback(EmptyCallback())
-//            .addCallback(LoadingCallback())
-//            .commit()
-//        AutoSizeConfig.getInstance().setCustomFragment(true).unitsManager
-//            .setSupportDP(false)
-//            .setSupportSP(false).supportSubunits = Subunits.MM
-//        LOG.e("COST0   " + (System.currentTimeMillis() - time))
-//        PlayerHelper.init()
-//        LOG.e("COSTEnd   " + (System.currentTimeMillis() - time))
     }
 
     private fun initParams() {
         // Hawk
-        CrashReport.initCrashReport(this, "cb38e2920c", false);
         Hawk.init(this).build()
         if (!Hawk.contains(HawkConfig.PLAY_TYPE)) {
             Hawk.put(HawkConfig.PLAY_TYPE, 1)
         }
         val homeUrl = Hawk.get(HawkConfig.API_URL, "")
         if (TextUtils.isEmpty(homeUrl)) {
-//            Hawk.put(
-//                HawkConfig.API_URL,
-//                "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/xiaopingguo/xiaopingguo.json"
-//            )
         }
         if (Hawk.get<String>(HawkConfig.IJK_CODEC).isNullOrEmpty()) {
             Hawk.put(HawkConfig.IJK_CODEC, "硬解码")
@@ -81,6 +56,18 @@ class App : MultiDexApplication() {
     override fun onTerminate() {
         super.onTerminate()
         JSEngine.getInstance().destroy()
+    }
+
+    private var pyLoadSuccess = false
+
+    fun setPyLoadSuccess(success: Boolean) {
+        pyLoadSuccess = success
+        LogUtils.d("derek110", "setPyLoadSuccess-->" + instance.hashCode() + "  s" + success)
+    }
+
+    fun getPyLoadSuccess(): Boolean {
+        LogUtils.d("derek110", "" + instance.hashCode() + "  s  " + pyLoadSuccess)
+        return pyLoadSuccess
     }
 
     private var vodInfo: VodInfo? = null
