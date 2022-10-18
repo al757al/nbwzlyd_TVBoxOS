@@ -130,7 +130,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         changeLine.setOnFocusChangeListener(focusChangeListener);
         changeStore.setOnFocusChangeListener(focusChangeListener);
         TvRecyclerView tvHotList = findViewById(R.id.tvHotList);
-        homeHotVodAdapter = new HomeHotVodAdapter();
+        tvHotList.setHasFixedSize(true);
+        tvHotList.setLayoutManager(new V7GridLayoutManager(this.mContext, 6));        homeHotVodAdapter = new HomeHotVodAdapter();
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
