@@ -1,6 +1,8 @@
 package com.github.tvbox.osc.ui.view
 
 import android.content.Context
+import android.graphics.Color
+import android.view.View
 import android.view.animation.Animation
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.event.ServerEvent
@@ -16,6 +18,7 @@ import org.greenrobot.eventbus.EventBus
 import razerdp.basepopup.BasePopupWindow
 import razerdp.util.animation.AnimationHelper
 import razerdp.util.animation.TranslationConfig
+
 
 /**
  * <pre>
@@ -41,10 +44,17 @@ class SearchHistoryPopUp(context: Context) : BasePopupWindow(context) {
             isFocusableInTouchMode = true
             requestFocus()
         }
+        setBackgroundColor(Color.TRANSPARENT)
         historyAdapter?.setOnItemClickListener { adapter, view, position ->
             EventBus.getDefault().post(ServerEvent(SERVER_SEARCH,historyAdapter?.getItem(position)))
             dismiss()
         }
+    }
+
+    override fun onWindowFocusChanged(popupDecorViewProxy: View?, hasWindowFocus: Boolean) {
+        super.onWindowFocusChanged(popupDecorViewProxy, hasWindowFocus)
+        mGridView?.isFocusable = true
+        mGridView?.requestFocus()
     }
 
 
