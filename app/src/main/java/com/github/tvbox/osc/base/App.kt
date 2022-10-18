@@ -37,6 +37,10 @@ class App : MultiDexApplication() {
         }
         val homeUrl = Hawk.get(HawkConfig.API_URL, "")
         if (TextUtils.isEmpty(homeUrl)) {
+//            Hawk.put(
+//                HawkConfig.API_URL,
+//                "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/TV_qipai.txt"
+//            )
         }
         if (Hawk.get<String>(HawkConfig.IJK_CODEC).isNullOrEmpty()) {
             Hawk.put(HawkConfig.IJK_CODEC, "硬解码")

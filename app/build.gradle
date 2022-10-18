@@ -7,6 +7,7 @@ android {
         enabled = true
     }
     defaultConfig {
+        //applicationId 'com.mygithub0.tvbox0.osd_1111'
         applicationId 'com.mygithub0.tvbox0.osd_1'
         minSdkVersion 16
         targetSdkVersion 26
