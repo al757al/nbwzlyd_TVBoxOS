@@ -1,7 +1,5 @@
 package com.github.tvbox.osc.ui.adapter;
 
-import android.view.View;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.github.tvbox.osc.R;
@@ -22,14 +20,6 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        if (position == 0) {
-            View view = holder.itemView;
-            view.postDelayed(() -> {
-                view.setFocusableInTouchMode(true);
-                view.setFocusable(true);
-                view.requestFocus();
-            }, 30);
-        }
     }
 
     @Override
