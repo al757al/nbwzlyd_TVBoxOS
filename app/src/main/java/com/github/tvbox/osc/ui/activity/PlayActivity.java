@@ -1493,7 +1493,8 @@ public class PlayActivity extends BaseActivity {
                 for (String k : hds.keySet()) {
                     if (k.equalsIgnoreCase("user-agent")
                             || k.equalsIgnoreCase("referer")
-                            || k.equalsIgnoreCase("origin")) {
+                            || k.equalsIgnoreCase("origin")
+                            || k.equalsIgnoreCase("cookie")) {
                         webHeaders.put(k, hds.get(k));
                     }
                 }
@@ -1628,7 +1629,8 @@ public class PlayActivity extends BaseActivity {
                         for (String k : hds.keySet()) {
                             if (k.equalsIgnoreCase("user-agent")
                                     || k.equalsIgnoreCase("referer")
-                                    || k.equalsIgnoreCase("origin")) {
+                                    || k.equalsIgnoreCase("origin")
+                                    || k.equalsIgnoreCase("cookie")) {
                                 webHeaders.put(k, hds.get(k));
                             }
                         }

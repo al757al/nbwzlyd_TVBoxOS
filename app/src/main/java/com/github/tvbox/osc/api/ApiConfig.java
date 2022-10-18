@@ -15,6 +15,7 @@ import com.github.tvbox.osc.bean.LiveSourceBean;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.server.ControlManager;
+import com.github.tvbox.osc.util.AES;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -66,6 +67,8 @@ public class ApiConfig {
 
     private String userAgent = "okhttp/3.15";
 
+    private String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+
     private ApiConfig() {
         sourceBeanList = new LinkedHashMap<>();
         liveChannelGroupList = new ArrayList<>();
@@ -87,6 +90,32 @@ public class ApiConfig {
         instance = null;
     }
 
+    public static String FindResult(String json, String configKey) {
+        String content = json;
+        try {
+            if (AES.isJson(content)) return content;
+            if(content.contains("**")){
+                String[] data = json.split("\\*\\*");
+                content = new String(Base64.decode(data[1], Base64.DEFAULT));
+            }
+            if (content.startsWith("2423")) {
+                String data = content.substring(content.indexOf("2324") + 4, content.length() - 26);
+                content = new String(AES.toBytes(content)).toLowerCase();
+                String key = AES.rightPadding(content.substring(content.indexOf("$#") + 2, content.indexOf("#$")), "0", 16);
+                String iv = AES.rightPadding(content.substring(content.length() - 13), "0", 16);
+                json = AES.CBC(data, key, iv);
+            }else if (configKey !=null && !AES.isJson(content)) {
+                json = AES.ECB(content, configKey);
+            }
+            else{
+                json = content;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
         String apiUrl = Hawk.get(HawkConfig.API_URL, "");
         if (apiUrl.isEmpty()) {
@@ -103,23 +132,35 @@ public class ApiConfig {
                 th.printStackTrace();
             }
         }
-        String apiFix = apiUrl;
-        if (apiUrl.startsWith("clan://")) {
-            apiFix = clanToAddress(apiUrl);
+        String TempKey = null, configUrl = "", pk = ";pk;";
+        if (apiUrl.contains(pk)) {
+            String[] a = apiUrl.split(pk);
+            TempKey = a[1];
+            if (apiUrl.startsWith("clan")){
+                configUrl = clanToAddress(a[0]);
+            }else if (apiUrl.startsWith("http")){
+                configUrl = a[0];
+            }else {
+                configUrl = "http://" + a[0];
+            }
+        } else if (apiUrl.startsWith("clan")) {
+            configUrl = clanToAddress(apiUrl);
         } else if (!apiUrl.startsWith("http")) {
-            apiFix = "http://" + apiFix;
+            configUrl = "http://" + configUrl;
+        } else {
+            configUrl = apiUrl;
         }
-        GetRequest<String> stringGetRequest = OkGo.<String>get(apiFix);
-        if (!apiFix.contains("刚刚")) {
-            stringGetRequest.headers("User-Agent", userAgent);
-        }
-        stringGetRequest
+        String configKey = TempKey;
+        OkGo.<String>get(configUrl)
+                .headers("User-Agent", userAgent)
+                .headers("Accept", requestAccept)
                 .execute(new AbsCallback<String>() {
                     @Override
                     public void onSuccess(Response<String> response) {
                         try {
                             String json = response.body();
-                            parseJson(apiUrl, response.body());
+                            json = FindResult(json, configKey);
+                            parseJson(apiUrl, json);
                             try {
                                 File cacheDir = cache.getParentFile();
                                 if (!cacheDir.exists())
@@ -282,7 +323,7 @@ public class ApiConfig {
         // 需要使用vip解析的flag
         vipParseFlags = DefaultConfig.safeJsonStringList(infoJson, "flags");
         // 解析地址
-        parseBeanList = new ArrayList<>();
+        parseBeanList.clear();
         for (JsonElement opt : infoJson.get("parses").getAsJsonArray()) {
             JsonObject obj = (JsonObject) opt;
             ParseBean pb = new ParseBean();
@@ -573,7 +614,7 @@ public class ApiConfig {
         return content.replace("clan://", fix);
     }
 
-    private  String fixContentPath(String url, String content) {
+    String fixContentPath(String url, String content) {
         if (content.contains("\"./")) {
             if(!url.startsWith("http") && !url.startsWith("clan://")){
                 url = "http://" + url;
