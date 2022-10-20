@@ -364,7 +364,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 val moreSourceBean = refreshEvent.obj as MoreSourceBean
                 if ("多仓" == moreSourceBean.sourceName) {
                     DEFAULT_STORE_URL = moreSourceBean.sourceUrl
-                    ToastUtils.showLong("多仓仅能保存一个多仓地址，地址已更新")
+                    ToastUtils.showLong("多仓仅能保存一个多仓http/https地址，地址已更新")
                     KVStorage.putString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
                     getMutiSource()
                 } else {
