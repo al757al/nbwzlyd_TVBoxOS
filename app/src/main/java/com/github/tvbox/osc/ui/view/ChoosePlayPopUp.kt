@@ -68,6 +68,7 @@ class ChoosePlayPopUp(context: Context?) : BasePopupWindow(context) {
                     EventBus.getDefault().post(PlayEvent().apply {
                         this.vodInfo = vodInfo
                     })
+                    this.dismiss()
                 }
             }
         setBackgroundColor(Color.TRANSPARENT)
