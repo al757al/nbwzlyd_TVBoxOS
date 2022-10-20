@@ -388,7 +388,8 @@ public class HomeActivity extends BaseActivity {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            initData();
+//                                            initData();
+                                            onBackPressed();
                                             dialog.hide();
                                         }
                                     });
