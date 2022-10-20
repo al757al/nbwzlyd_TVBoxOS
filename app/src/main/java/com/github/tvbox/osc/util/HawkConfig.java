@@ -36,7 +36,7 @@ public class HawkConfig {
     public static final String LIVE_SOURCE_URL_CURRENT = "live_source_url_current";//当前自定义直播地址
     public static final String LIVE_SOURCE_URL_HISTORY = "live_source_url_history";//当前自定义直播历史记录
     public static final String VIDEO_SHOW_TIME = "video_show_time";//看视频是否展示时间
-    public static final String CACHE_DATA_KEY = "CACHE_DATA_KEY";//缓存的接口数据
+    public static final String STORE_HOUSE_URL = "STORE_HOUSE_URL";//多仓接口
     public static final String FAST_SEARCH_MODE = "fast_search_mode";
     public static final String SEARCH_HISTORY = "SEARCH_HISTORY";
     public static final String SUBTITLE_TEXT_SIZE = "subtitle_text_size";

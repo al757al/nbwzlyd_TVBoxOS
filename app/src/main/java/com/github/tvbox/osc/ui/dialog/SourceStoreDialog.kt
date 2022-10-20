@@ -71,6 +71,8 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     init {
         setContentView(R.layout.more_source_dialog_select)
+        DEFAULT_STORE_URL = KVStorage.getString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
+            ?:""
         mRecyclerView = findViewById(R.id.list)
         mAddMoreBtn = findViewById(R.id.inputSubmit)
         mSourceNameEdit = findViewById(R.id.input_sourceName)
@@ -138,8 +140,8 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private fun getMutiSource() {
         mLoading.letVisible()
         val req = OkGo.get<String>(DEFAULT_STORE_URL)
-            .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
-        if (DEFAULT_STORE_URL.startsWith("https://gitcode")){
+            .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
+        if (DEFAULT_STORE_URL.startsWith("https://gitcode")) {
             req.headers(
                 "User-Agent",
                 UA.randomOne()
@@ -147,26 +149,26 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         }
 
         req.cacheTime(3 * 24 * 60 * 60 * 1000).execute(object : StringCallback() {
-                override fun onSuccess(response: Response<String>?) {
-                    serverString2Json(response)
-                }
+            override fun onSuccess(response: Response<String>?) {
+                serverString2Json(response)
+            }
 
-                override fun onCacheSuccess(response: Response<String>?) {
-                    super.onCacheSuccess(response)
-                    serverString2Json(response)
-                }
+            override fun onCacheSuccess(response: Response<String>?) {
+                super.onCacheSuccess(response)
+                serverString2Json(response)
+            }
 
-                override fun onError(response: Response<String>?) {
-                    super.onError(response)
-                    mLoading.letGone()
-                    Toast.makeText(
-                        context,
-                        "多仓接口拉取失败" + response?.exception?.message + "将使用缓存",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+            override fun onError(response: Response<String>?) {
+                super.onError(response)
+                mLoading.letGone()
+                Toast.makeText(
+                    context,
+                    "多仓接口拉取失败" + response?.exception?.message + "将使用缓存",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
 
-            })
+        })
     }
 
     private fun serverString2Json(response: Response<String>?) {
@@ -362,6 +364,8 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 val moreSourceBean = refreshEvent.obj as MoreSourceBean
                 if ("多仓" == moreSourceBean.sourceName) {
                     DEFAULT_STORE_URL = moreSourceBean.sourceUrl
+                    ToastUtils.showLong("多仓仅能保存一个多仓地址，地址已更新")
+                    KVStorage.putString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
                     getMutiSource()
                 } else {
                     saveCustomSourceBean(moreSourceBean.sourceUrl, moreSourceBean.sourceName)
