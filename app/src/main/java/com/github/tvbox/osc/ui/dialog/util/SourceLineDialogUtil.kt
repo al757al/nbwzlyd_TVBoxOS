@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.widget.Toast
 import com.blankj.utilcode.util.ToastUtils
+import com.github.tvbox.osc.api.ApiConfig
 import com.github.tvbox.osc.bean.MoreSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
 import com.github.tvbox.osc.ext.findFirst
@@ -11,6 +12,7 @@ import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter
 import com.github.tvbox.osc.ui.dialog.SelectDialogNew
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
+import com.github.tvbox.osc.util.UA
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.cache.CacheMode
 import com.lzy.okgo.callback.StringCallback
@@ -45,27 +47,35 @@ class SourceLineDialogUtil(private val context: Context) {
             ToastUtils.showShort("请先选择一个仓库哦~")
             return
         }
-        OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
-            .cacheTime(10 * 60 * 60 * 1000).execute(object : StringCallback() {
-                override fun onSuccess(response: Response<String>?) {
-                    inflateData(response, onSelect)
-                }
 
-                override fun onCacheSuccess(response: Response<String>?) {
-                    super.onCacheSuccess(response)
-                    inflateData(response, onSelect)
-                }
 
-                override fun onError(response: Response<String>?) {
-                    super.onError(response)
-                    Toast.makeText(
-                        context,
-                        "接口请求失败${response?.exception?.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+        val req = OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST);
+        if (DEFAULT_URL.startsWith("https://gitcode")) {
+            req.headers(
+                "User-Agent",
+                UA.randomOne()
+            ).headers("Accept", ApiConfig.requestAccept)
+        }
+        req.cacheTime(10 * 60 * 60 * 1000).execute(object : StringCallback() {
+            override fun onSuccess(response: Response<String>?) {
+                inflateData(response, onSelect)
+            }
 
-            })
+            override fun onCacheSuccess(response: Response<String>?) {
+                super.onCacheSuccess(response)
+                inflateData(response, onSelect)
+            }
+
+            override fun onError(response: Response<String>?) {
+                super.onError(response)
+                Toast.makeText(
+                    context,
+                    "接口请求失败${response?.exception?.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+        })
     }
 
     private fun inflateData(

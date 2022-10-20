@@ -12,6 +12,7 @@ import com.blankj.utilcode.util.ToastUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.github.tvbox.osc.R
+import com.github.tvbox.osc.api.ApiConfig
 import com.github.tvbox.osc.bean.MoreSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
 import com.github.tvbox.osc.ext.letGone
@@ -26,6 +27,7 @@ import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
+import com.github.tvbox.osc.util.UA
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.cache.CacheMode
 import com.lzy.okgo.callback.StringCallback
@@ -63,7 +65,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         super.dismiss()
     }
 
-    private var DEFAULT_STORE_URL = "ABC"
+    private var DEFAULT_STORE_URL = "https://gitcode.net/wzlyd1/00/-/raw/master/000.txt"
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
 
@@ -135,9 +137,16 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     private fun getMutiSource() {
         mLoading.letVisible()
-        OkGo.get<String>(DEFAULT_STORE_URL)
+        val req = OkGo.get<String>(DEFAULT_STORE_URL)
             .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
-            .cacheTime(3 * 24 * 60 * 60 * 1000).execute(object : StringCallback() {
+        if (DEFAULT_STORE_URL.startsWith("https://gitcode")){
+            req.headers(
+                "User-Agent",
+                UA.randomOne()
+            ).headers("Accept", ApiConfig.requestAccept);
+        }
+
+        req.cacheTime(3 * 24 * 60 * 60 * 1000).execute(object : StringCallback() {
                 override fun onSuccess(response: Response<String>?) {
                     serverString2Json(response)
                 }
