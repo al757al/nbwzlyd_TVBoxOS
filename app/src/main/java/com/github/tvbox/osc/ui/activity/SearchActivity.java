@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,15 +25,15 @@ import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.event.ServerEvent;
-import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.ui.adapter.PinyinAdapter;
 import com.github.tvbox.osc.ui.adapter.SearchAdapter;
 import com.github.tvbox.osc.ui.dialog.RemoteDialog;
 import com.github.tvbox.osc.ui.dialog.SearchCheckboxDialog;
-import com.github.tvbox.osc.ui.tv.QRCodeGen;
 import com.github.tvbox.osc.ui.tv.widget.SearchKeyboard;
+import com.github.tvbox.osc.ui.view.SearchHistoryPopUp;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.SearchHelper;
 import com.github.tvbox.osc.util.js.JSEngine;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
@@ -74,8 +74,6 @@ public class SearchActivity extends BaseActivity {
     private TextView tvSearch;
     private TextView tvClear;
     private SearchKeyboard keyboard;
-    private TextView tvAddress;
-    private ImageView ivQRCode;
     private SearchAdapter searchAdapter;
     private PinyinAdapter wordAdapter;
     private String searchTitle = "";
@@ -83,6 +81,7 @@ public class SearchActivity extends BaseActivity {
 
     private HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
+    private TextView mSearchHistoryTextView;
 
     @Override
     protected int getLayoutResID() {
@@ -145,11 +144,16 @@ public class SearchActivity extends BaseActivity {
         tvSearch = findViewById(R.id.tvSearch);
         tvSearchCheckboxBtn = findViewById(R.id.tvSearchCheckboxBtn);
         tvClear = findViewById(R.id.tvClear);
-        tvAddress = findViewById(R.id.tvAddress);
-        ivQRCode = findViewById(R.id.ivQRCode);
         mGridView = findViewById(R.id.mGridView);
         keyboard = findViewById(R.id.keyBoardRoot);
         mGridViewWord = findViewById(R.id.mGridViewWord);
+        mSearchHistoryTextView = findViewById(R.id.tvSearchHistory);
+        mSearchHistoryTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showHistoryPopUp();
+            }
+        });
         mGridViewWord.setHasFixedSize(true);
         mGridViewWord.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         wordAdapter = new PinyinAdapter();
@@ -265,6 +269,12 @@ public class SearchActivity extends BaseActivity {
         });
     }
 
+    private void showHistoryPopUp() {
+        new SearchHistoryPopUp(this).
+                setPopupGravity(Gravity.START).
+                showPopupWindow();
+    }
+
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
     }
@@ -330,7 +340,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initData() {
-        refreshQRCode();
+//        refreshQRCode();
         initCheckedSourcesForSearch();
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("title")) {
@@ -369,11 +379,11 @@ public class SearchActivity extends BaseActivity {
 
     }
 
-    private void refreshQRCode() {
-        String address = ControlManager.get().getAddress(false);
-        tvAddress.setText(String.format("远程搜索使用手机/电脑扫描下面二维码或者直接浏览器访问地址\n%s", address));
-        ivQRCode.setImageBitmap(QRCodeGen.generateBitmap(address, 300, 300));
-    }
+//    private void refreshQRCode() {
+//        String address = ControlManager.get().getAddress(false);
+//        tvAddress.setText(String.format("远程搜索使用手机/电脑扫描下面二维码或者直接浏览器访问地址\n%s", address));
+//        ivQRCode.setImageBitmap(QRCodeGen.generateBitmap(address, 300, 300));
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void server(ServerEvent event) {
@@ -405,6 +415,14 @@ public class SearchActivity extends BaseActivity {
         this.searchTitle = title;
         mGridView.setVisibility(View.INVISIBLE);
         searchAdapter.setNewData(new ArrayList<>());
+        List<String> list = KVStorage.getList(HawkConfig.SEARCH_HISTORY, String.class);
+        if (list.size()>20){
+            list.remove(list.size()-1);
+        }
+        if (!list.contains(title)) {
+            list.add(0, title);
+        }
+        KVStorage.putList(HawkConfig.SEARCH_HISTORY,list);
         searchResult();
     }
 

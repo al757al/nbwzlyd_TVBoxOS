@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.crawler.SpiderNull;
@@ -581,11 +582,11 @@ public class ApiConfig {
     public void setSourceBean(SourceBean sourceBean) {
         this.mHomeSource = sourceBean;
         Hawk.put(HawkConfig.HOME_API, sourceBean.getKey());
-//        if (sourceBean.getKey().startsWith("py_") && !App.getInstance().getPyLoadSuccess()) {
-//            PythonLoader.getInstance().setApplication(App.getInstance());
-//            App.getInstance().setPyLoadSuccess(true);
-//            ToastUtils.showShort("第一次加载py会有点慢，等等~");
-//        }
+        if (sourceBean.getKey().startsWith("py_") && !App.getInstance().getPyLoadSuccess()) {
+            PythonLoader.getInstance().setApplication(App.getInstance());
+            App.getInstance().setPyLoadSuccess(true);
+            ToastUtils.showShort("第一次加载py会有点慢，等等~");
+        }
     }
 
     public void setDefaultParse(ParseBean parseBean) {

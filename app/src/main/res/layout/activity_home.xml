@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/vs_50"
         android:layout_marginTop="@dimen/vs_10"
-        android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/vs_50"

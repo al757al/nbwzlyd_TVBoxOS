@@ -130,7 +130,6 @@ public class HomeActivity extends BaseActivity {
                     return;
                 }
                 View curView = mGridView.getLayoutManager().findViewByPosition(position);
-                mGridView.onFocusChange(curView, true);
                 curView.requestFocus();
                 if (lastView != null) {
                     lastView.clearFocus();

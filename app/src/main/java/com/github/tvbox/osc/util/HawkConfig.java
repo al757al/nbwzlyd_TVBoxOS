@@ -38,6 +38,7 @@ public class HawkConfig {
     public static final String VIDEO_SHOW_TIME = "video_show_time";//看视频是否展示时间
     public static final String CACHE_DATA_KEY = "CACHE_DATA_KEY";//缓存的接口数据
     public static final String FAST_SEARCH_MODE = "fast_search_mode";
+    public static final String SEARCH_HISTORY = "SEARCH_HISTORY";
     public static final String SUBTITLE_TEXT_SIZE = "subtitle_text_size";
     public static final String SUBTITLE_TIME_DELAY = "subtitle_time_delay";
     public static final String SOURCES_FOR_SEARCH = "sources_for_search";
