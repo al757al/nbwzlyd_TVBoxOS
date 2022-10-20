@@ -24,6 +24,8 @@ import org.json.JSONObject
 
 class SourceLineDialogUtil(private val context: Context) {
 
+    //vip 线路 https://agit.ai/guot54/ygbh/raw/branch/master/PRO.json
+
     private var DEFAULT_URL = ""
     private val dialog by lazy {
         SelectDialogNew<MoreSourceBean>(context)
