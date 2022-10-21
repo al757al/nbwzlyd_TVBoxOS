@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/vs_30">
+
+    <TextView
+        android:id="@+id/title1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/vs_5"
+        android:layout_marginRight="@dimen/vs_5"
+        android:focusable="false"
+        android:padding="@dimen/vs_10"
+        android:singleLine="true"
+        android:text="播放"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ts_28"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/play_scale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vs_10"
+        android:layout_marginEnd="@dimen/vs_5"
+        android:layout_marginRight="@dimen/vs_5"
+        android:background="@drawable/button_dialog_main"
+        android:focusable="true"
+        android:padding="@dimen/vs_10"
+        android:singleLine="true"
+        android:text="16:9"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ts_24"
+        app:layout_constraintLeft_toLeftOf="@id/title1"
+        app:layout_constraintTop_toBottomOf="@id/title1" />
+
+    <TextView
+        android:id="@+id/play_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/vs_10"
+        android:layout_marginEnd="@dimen/vs_5"
+        android:layout_marginRight="@dimen/vs_5"
+        android:background="@drawable/button_dialog_main"
+        android:focusable="true"
+        android:padding="@dimen/vs_10"
+        android:singleLine="true"
+        android:text="x1.0"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ts_24"
+        app:layout_constraintLeft_toRightOf="@id/play_scale"
+        app:layout_constraintTop_toTopOf="@id/play_scale" />
+
+    <TextView
+        android:id="@+id/audio_track_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/vs_10"
+        android:layout_marginEnd="@dimen/vs_5"
+        android:layout_marginRight="@dimen/vs_5"
+        android:background="@drawable/button_dialog_main"
+        android:focusable="true"
+        android:padding="@dimen/vs_10"
+        android:text="音轨"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ts_24"
+        app:layout_constraintBottom_toBottomOf="@id/play_speed"
+        app:layout_constraintLeft_toRightOf="@id/play_speed"
+        app:layout_constraintTop_toTopOf="@id/play_speed" />
+
+    <TextView
+        android:id="@+id/landscape_portrait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/vs_10"
+        android:layout_marginEnd="@dimen/vs_5"
+        android:layout_marginRight="@dimen/vs_5"
+        android:background="@drawable/button_dialog_main"
+        android:focusable="true"
+        android:padding="@dimen/vs_10"
+        android:text="横竖屏"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ts_24"
+        app:layout_constraintLeft_toRightOf="@id/audio_track_select"
+        app:layout_constraintTop_toTopOf="@id/audio_track_select" />
+
+    <TextView
+        android:id="@+id/title2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vs_15"
+        android:layout_marginEnd="@dimen/vs_5"
+        android:layout_marginRight="@dimen/vs_5"
+        android:focusable="false"
+        android:padding="@dimen/vs_10"
+        android:singleLine="true"
+        android:text="其他"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ts_28"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/play_speed" />
+
+    <TextView
+        android:id="@+id/idm_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/vs_5"
+        android:layout_marginRight="@dimen/vs_5"
+        android:background="@drawable/button_dialog_main"
+        android:focusable="true"
+        android:padding="@dimen/vs_10"
+        android:text="IDM下载"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ts_24"
+        app:layout_constraintLeft_toLeftOf="@id/title2"
+        app:layout_constraintTop_toBottomOf="@+id/title2" />
+
+    <TextView
+        android:id="@+id/time_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/vs_10"
+        android:layout_marginEnd="@dimen/vs_5"
+        android:layout_marginRight="@dimen/vs_5"
+        android:background="@drawable/button_dialog_main"
+        android:focusable="true"
+        android:padding="@dimen/vs_10"
+        android:text="屏显"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ts_24"
+        app:layout_constraintLeft_toRightOf="@id/idm_download"
+        app:layout_constraintTop_toTopOf="@id/idm_download" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
