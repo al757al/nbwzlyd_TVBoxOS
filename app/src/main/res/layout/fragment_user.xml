@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:clipToPadding="false"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/vs_30"
     android:paddingTop="@dimen/vs_10">
 
-    <LinearLayout
+    <include
+        layout="@layout/activity_home_top_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.owen.tvrecyclerview.widget.TvRecyclerView
+        android:id="@+id/tvHotList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <include
-            layout="@layout/activity_home_top_indicator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <com.owen.tvrecyclerview.widget.TvRecyclerView
-            android:id="@+id/tvHotList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:paddingLeft="@dimen/vs_10"
-            android:paddingTop="@dimen/vs_10"
-            android:paddingBottom="@dimen/vs_10"
-            app:tv_horizontalSpacingWithMargins="@dimen/vs_10"
-            app:tv_selectedItemIsCentered="true"
-            app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
-    </LinearLayout>
-
-
-</androidx.core.widget.NestedScrollView>
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingLeft="@dimen/vs_10"
+        android:paddingTop="@dimen/vs_10"
+        android:paddingBottom="@dimen/vs_10"
+        app:tv_horizontalSpacingWithMargins="@dimen/vs_10"
+        app:tv_selectedItemIsCentered="true"
+        app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
+</LinearLayout>
