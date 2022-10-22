@@ -184,7 +184,9 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 ToastUtils.showShort(text)
             } else {
                 jsonArray = jsonObj.getJSONArray("storeHouse")
-                KVStorage.putString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
+                if (!response.isFromCache) {
+                    KVStorage.putString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
+                }
             }
             for (i in 0 until (jsonArray?.length() ?: 0)) {
                 val childJsonObj = jsonArray?.getJSONObject(i)
