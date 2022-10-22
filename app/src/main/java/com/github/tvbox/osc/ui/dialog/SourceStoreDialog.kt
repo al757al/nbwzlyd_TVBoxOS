@@ -182,13 +182,9 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                         .setBold()
                         .setForegroundColor(Color.RED).append("文章").create()
                 ToastUtils.showShort(text)
-                KVStorage.remove(HawkConfig.STORE_HOUSE_URL)
             } else {
                 jsonArray = jsonObj.getJSONArray("storeHouse")
-                if (!response.isFromCache){
-                    ToastUtils.showShort("接口异常，缓存地址被移除")
-                    KVStorage.putString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
-                }
+                KVStorage.putString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
             }
             for (i in 0 until (jsonArray?.length() ?: 0)) {
                 val childJsonObj = jsonArray?.getJSONObject(i)
@@ -218,7 +214,6 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
         } catch (e: Exception) {
             Toast.makeText(context, "JSON解析失败${e.message}", Toast.LENGTH_LONG).show()
-            KVStorage.remove(HawkConfig.STORE_HOUSE_URL)
         }
     }
 
@@ -370,8 +365,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 val moreSourceBean = refreshEvent.obj as MoreSourceBean
                 if ("多仓" == moreSourceBean.sourceName) {
                     DEFAULT_STORE_URL = moreSourceBean.sourceUrl
-                    ToastUtils.showLong("多仓仅能保存一个多仓http/https地址，地址已更新")
-                    KVStorage.putString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
+                    ToastUtils.showLong("多仓仅能保存一个多仓http/https地址，只有符合多仓规则接口才会被保存")
                     getMutiSource()
                 } else {
                     saveCustomSourceBean(moreSourceBean.sourceUrl, moreSourceBean.sourceName)

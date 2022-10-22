@@ -9,7 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/vs_300"
         android:layout_gravity="center">
 
         <TextView
@@ -17,14 +17,16 @@
             android:layout_width="@dimen/vs_600"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/vs_20"
-            android:lineSpacingExtra="@dimen/ts_30"
             android:text="更新日志"
             android:textColor="@color/color_CC000000"
             android:textSize="@dimen/ts_20"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@id/text2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/text2"
             android:layout_width="@dimen/vs_600"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/vs_20"
