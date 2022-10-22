@@ -42,7 +42,7 @@
         <entry key="app/src/main/res/layout/box_vod_control_view.xml" value="0.1" />
         <entry key="app/src/main/res/layout/choose_play_layout.xml" value="0.1875" />
         <entry key="app/src/main/res/layout/dialog_about.xml" value="0.10182291666666667" />
-        <entry key="app/src/main/res/layout/dialog_api.xml" value="0.13504968383017163" />
+        <entry key="app/src/main/res/layout/dialog_api.xml" value="0.335" />
         <entry key="app/src/main/res/layout/dialog_api_history.xml" value="0.12059620596205962" />
         <entry key="app/src/main/res/layout/dialog_live_password.xml" value="0.1" />
         <entry key="app/src/main/res/layout/dialog_select.xml" value="0.13504968383017163" />
