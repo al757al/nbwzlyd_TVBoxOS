@@ -20,7 +20,7 @@
     <com.owen.tvrecyclerview.widget.TvRecyclerView
         android:id="@+id/mGridView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:clipChildren="false"
         android:paddingTop="@dimen/vs_10"
         android:clipToPadding="false"
@@ -32,4 +32,19 @@
         app:tv_selectedItemIsCentered="true"
         app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
 
+
+    <TextView
+        android:id="@+id/clear_history_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="清空历史"
+        android:padding="@dimen/vs_10"
+        android:focusable="true"
+        android:textColor="@color/color_FFFFFF"
+        android:textSize="@dimen/ts_30"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/vs_20"
+        android:background="@drawable/shape_source_series_focus"
+        android:layout_gravity="center" />
 </LinearLayout>

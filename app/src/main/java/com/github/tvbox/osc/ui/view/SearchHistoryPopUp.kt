@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
+import android.widget.TextView
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.event.ServerEvent
 import com.github.tvbox.osc.event.ServerEvent.SERVER_SEARCH
@@ -33,6 +34,7 @@ import razerdp.util.animation.TranslationConfig
 class SearchHistoryPopUp(context: Context) : BasePopupWindow(context) {
     private var historyAdapter: SearchHistoryAdapter? = null
     private var mGridView: TvRecyclerView? = null
+    private var mClearHistory: TextView? = null
 
     init {
         setContentView(R.layout.search_history_layout)
@@ -48,8 +50,15 @@ class SearchHistoryPopUp(context: Context) : BasePopupWindow(context) {
         }
         setBackgroundColor(Color.TRANSPARENT)
         historyAdapter?.setOnItemClickListener { adapter, view, position ->
-            EventBus.getDefault().post(ServerEvent(SERVER_SEARCH,historyAdapter?.getItem(position)))
+            EventBus.getDefault()
+                .post(ServerEvent(SERVER_SEARCH, historyAdapter?.getItem(position)))
             dismiss()
+        }
+        mClearHistory = contentView?.findViewById(R.id.clear_history_data)
+        mClearHistory?.setOnClickListener {
+            KVStorage.remove(HawkConfig.SEARCH_HISTORY)
+            historyAdapter?.data?.clear()
+            historyAdapter?.notifyDataSetChanged()
         }
     }
 
