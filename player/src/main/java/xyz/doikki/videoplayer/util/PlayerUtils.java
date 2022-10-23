@@ -273,6 +273,10 @@ public final class PlayerUtils {
         }
     }
 
+    public static int getCurrentPlayPositionTime(int timeMs) {
+        return timeMs / 1000;
+    }
+
     /**
      * 获取集合的快照
      */
