@@ -1,8 +1,10 @@
 package com.github.tvbox.osc.ui.view
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.Animation
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.event.ServerEvent
@@ -71,8 +73,12 @@ class SearchHistoryPopUp(context: Context) : BasePopupWindow(context) {
     override fun showPopupWindow() {
         super.showPopupWindow()
         popupWindow.isFocusable = true
+        (context as? Activity)?.window?.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
         historyAdapter?.setNewData(KVStorage.getList(HawkConfig.SEARCH_HISTORY, String::class.java))
     }
 
-
+    override fun onDismiss() {
+        (context as? Activity)?.window?.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+        super.onDismiss()
+    }
 }

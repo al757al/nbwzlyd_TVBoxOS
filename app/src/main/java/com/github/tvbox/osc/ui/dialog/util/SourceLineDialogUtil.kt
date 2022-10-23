@@ -50,8 +50,7 @@ class SourceLineDialogUtil(private val context: Context) {
             return
         }
 
-
-        val req = OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST);
+        val req = OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
         if (DEFAULT_URL.startsWith("https://gitcode")) {
             req.headers(
                 "User-Agent",
