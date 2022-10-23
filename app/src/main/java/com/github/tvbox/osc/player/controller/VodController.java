@@ -23,6 +23,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.recyclerview.widget.DiffUtil;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -632,25 +633,26 @@ public class VodController extends BaseController {
                 }
             }
         });
-//        mPlayerTimeStartBtn.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                myHandle.removeCallbacks(myRunnable);
-//                myHandle.postDelayed(myRunnable, myHandleSeconds);
-//                try {
-//                    mPlayerConfig.put("st", currentPlayTime);
-//                    updatePlayerCfgView();
-//                    listener.updatePlayerCfg();
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+        mPlayerTimeStartBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
+                try {
+                    mPlayerConfig.put("st", currentPlayTime);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         // takagen99: Add long press to reset counter
         mPlayerTimeStartBtn.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 try {
+                    ToastUtils.showShort("已重置开始时间");
                     mPlayerConfig.put("st", 0);
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
@@ -666,12 +668,27 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
-                    mPlayerConfig.put("st", currentPlayTime);
+                    mPlayerConfig.put("et", currentPlayTime);
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        mPlayerTimeSkipBtn.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                try {
+                    ToastUtils.showShort("已重置结束时间");
+                    mPlayerConfig.put("et", 0);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return true;
             }
         });
 //        mPlayerTimeStepBtn.setOnClickListener(new OnClickListener() {
