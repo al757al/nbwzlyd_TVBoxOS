@@ -1,7 +1,6 @@
 package com.github.tvbox.osc.ui.adapter
 
 import android.text.TextUtils
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -24,7 +23,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils
 class HistoryAdapter : BaseQuickAdapter<VodInfo, BaseViewHolder>(R.layout.item_grid, ArrayList()) {
     override fun convert(helper: BaseViewHolder, item: VodInfo) {
         val tvYear = helper.getView<TextView>(R.id.tvYear)
-        Log.d("derek110", "convert: $item")
         tvYear.text = ApiConfig.get().getSource(item.sourceKey).name
         tvYear.letVisible()
         helper.setVisible(R.id.tvLang, false)

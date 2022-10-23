@@ -808,6 +808,36 @@ public class DetailActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event != null && playFragment != null && fullWindows) {
+            if (playFragment.onKeyDown(keyCode, event)) {
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (event != null && playFragment != null && fullWindows) {
+            if (playFragment.onKeyUp(keyCode, event)) {
+                return true;
+            }
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (event != null && playFragment != null && fullWindows) {
+            if (playFragment.onKeyLongPress(keyCode, event)) {
+                return true;
+            }
+        }
+        return super.onKeyLongPress(keyCode, event);
+    }
+
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (showPreview && !fullWindows) {
             Rect editTextRect = new Rect();

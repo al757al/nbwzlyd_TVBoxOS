@@ -74,6 +74,7 @@ public class VodController extends BaseController {
     TvRecyclerView mGridView;
     //    TextView mPlayTitle;
     TextView mPlayTitle1;
+    TextView mTvSpeedPlay;
     TextView mNextBtn;
     TextView mPreBtn;
     TextView mPlayerScaleBtn;
@@ -199,6 +200,54 @@ public class VodController extends BaseController {
         }
     }
 
+    private boolean isFastSpeed;//是否在倍速播放
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+        super.onLongPress(e);
+        //半屏宽度
+        int halfScreen = PlayerUtils.getScreenWidth(getContext(), true) / 2;
+        if (e.getX() > halfScreen) {//长按3倍速
+            if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                fastSpeedPlay();
+            }
+        }
+    }
+
+    private void fastSpeedPlay() {
+        if (!mIsStartProgress) {
+            return;
+        }
+        isFastSpeed = true;
+        mControlWrapper.setSpeed(3.0f);
+        mTvSpeedPlay.setText("当前3倍速播放中 " + mCurrentTime.getText() + "/" + mTotalTime.getText());
+        if (mTvSpeedPlay.getVisibility() != View.VISIBLE) {
+            mTvSpeedPlay.setVisibility(VISIBLE);
+        }
+    }
+
+    private void stopFastSpeedPlay() {
+        isFastSpeed = false;
+        mControlWrapper.setSpeed(1.0f);
+        if (mTvSpeedPlay.getVisibility() == View.VISIBLE) {
+            mTvSpeedPlay.setVisibility(INVISIBLE);
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (!mGestureDetector.onTouchEvent(event)) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    stopFastSpeedPlay();
+                    break;
+            }
+        }
+        return super.onTouchEvent(event);
+    }
+
     public void setIsFullScreen(boolean isFullScreen) {
         mIsFullScreen = isFullScreen;
         if (mPlayPauseTime == null) {
@@ -222,6 +271,7 @@ public class VodController extends BaseController {
 //        mPlayTitle = findViewById(R.id.tv_info_name);
         mHorizontalScrollView = findViewById(R.id.horizontalScrollView);
         mPlayTitle1 = findViewById(R.id.tv_info_name1);
+        mTvSpeedPlay = findViewById(R.id.tv_speed_play);
         mSeekBar = findViewById(R.id.seekBar);
         mProgressRoot = findViewById(R.id.tv_progress_container);
         mProgressIcon = findViewById(R.id.tv_progress_icon);
@@ -831,6 +881,9 @@ public class VodController extends BaseController {
         }
         mCurrentTime.setText(PlayerUtils.stringForTime(position));
         mTotalTime.setText(PlayerUtils.stringForTime(duration));
+        if (isFastSpeed) {
+            mTvSpeedPlay.setText("当前3倍速播放中 " + mCurrentTime.getText() + "/" + mTotalTime.getText());
+        }
         if (duration > 0) {
             mSeekBar.setEnabled(true);
             int pos = (int) (position * 1.0 / duration * mSeekBar.getMax());
@@ -941,6 +994,52 @@ public class VodController extends BaseController {
         mHandler.sendEmptyMessage(1003);
     }
 
+    private boolean shortPress = false;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                event.startTracking();
+                if (event.getRepeatCount() == 0) {
+                    shortPress = true;
+                }
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            shortPress = false;
+            fastSpeedPlay();
+            return true;
+        }
+        return super.onKeyLongPress(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            if (shortPress) {
+                if (!isBottomVisible()) {
+                    showBottom();
+                    myHandle.postDelayed(myRunnable, myHandleSeconds);
+                    return true;
+                }
+            } else {
+                if (isFastSpeed) {
+                    stopFastSpeedPlay();
+                }
+            }
+            shortPress = false;
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
     @Override
     public boolean onKeyEvent(KeyEvent event) {
         myHandle.removeCallbacks(myRunnable);
@@ -965,8 +1064,7 @@ public class VodController extends BaseController {
                     togglePlay();
                     return true;
                 }
-//            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
-            } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_MENU) {
+            } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_MENU) {
                 if (!isBottomVisible()) {
                     showBottom();
                     myHandle.postDelayed(myRunnable, myHandleSeconds);

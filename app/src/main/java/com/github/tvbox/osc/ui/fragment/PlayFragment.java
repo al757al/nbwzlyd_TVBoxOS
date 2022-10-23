@@ -1291,14 +1291,26 @@ public class PlayFragment extends BaseLazyFragment {
                     return false;
                 }
                 Spider sp = ApiConfig.get().getCSP(sourceBean);
-                if (sp != null && sp.manualVideoCheck()){
+                if (sp != null && sp.manualVideoCheck()) {
                     return sp.isVideoFormat(url);
                 }
             }
             return VideoParseRuler.checkIsVideoForParse(webUrl, url);
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return mController.onKeyUp(keyCode, event);
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return mController.onKeyDown(keyCode, event);
+    }
+
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        return mController.onKeyLongPress(keyCode, event);
     }
 
     class MyWebView extends WebView {

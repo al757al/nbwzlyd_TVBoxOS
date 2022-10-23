@@ -28,7 +28,7 @@ import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 public abstract class BaseController extends BaseVideoController implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
-    private GestureDetector mGestureDetector;
+    protected GestureDetector mGestureDetector;
     private AudioManager mAudioManager;
     private boolean mIsGestureEnabled = true;
     private int mStreamVolume;
@@ -202,6 +202,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     public boolean onTouch(View v, MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
     }
+
 
     /**
      * 手指按下的瞬间

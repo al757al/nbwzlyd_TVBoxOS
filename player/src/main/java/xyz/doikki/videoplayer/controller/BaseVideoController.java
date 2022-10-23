@@ -73,7 +73,7 @@ public abstract class BaseVideoController extends FrameLayout
     private int mCutoutHeight;
 
     //是否开始刷新进度
-    private boolean mIsStartProgress;
+    protected boolean mIsStartProgress;
 
     //保存了所有的控制组件
     protected LinkedHashMap<IControlComponent, Boolean> mControlComponents = new LinkedHashMap<>();
