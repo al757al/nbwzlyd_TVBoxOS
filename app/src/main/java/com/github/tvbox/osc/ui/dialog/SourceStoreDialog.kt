@@ -139,6 +139,10 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     private fun getMutiSource() {
         mLoading.letVisible()
+
+        if (DEFAULT_STORE_URL.startsWith("clan://")){
+            DEFAULT_STORE_URL = ApiConfig.clanToAddress(DEFAULT_STORE_URL)
+        }
         val req = OkGo.get<String>(DEFAULT_STORE_URL)
             .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
         if (DEFAULT_STORE_URL.startsWith("https://gitcode")) {
@@ -367,7 +371,6 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 val moreSourceBean = refreshEvent.obj as MoreSourceBean
                 if ("多仓" == moreSourceBean.sourceName) {
                     DEFAULT_STORE_URL = moreSourceBean.sourceUrl
-                    ToastUtils.showLong("多仓仅能保存一个多仓http/https地址，只有符合多仓规则接口才会被保存")
                     getMutiSource()
                 } else {
                     saveCustomSourceBean(moreSourceBean.sourceUrl, moreSourceBean.sourceName)

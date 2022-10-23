@@ -49,6 +49,9 @@ class SourceLineDialogUtil(private val context: Context) {
             ToastUtils.showShort("请先选择一个仓库哦~")
             return
         }
+        if (DEFAULT_URL.startsWith("clan://")){
+            DEFAULT_URL = ApiConfig.clanToAddress(DEFAULT_URL)
+        }
 
         val req = OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
         if (DEFAULT_URL.startsWith("https://gitcode")) {
