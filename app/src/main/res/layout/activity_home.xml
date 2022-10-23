@@ -66,7 +66,7 @@
             android:paddingRight="@dimen/vs_50"
             app:tv_selectedItemIsCentered="true" />
 
-        <androidx.viewpager.widget.ViewPager
+        <com.github.tvbox.osc.ui.view.TvViewPager
             android:id="@+id/mViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
