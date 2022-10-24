@@ -105,6 +105,18 @@ class SourceLineDialogUtil(private val context: Context) {
                 }
                 data.add(moreSourceBean)
             }
+            val history = Hawk.get(HawkConfig.API_HISTORY, java.util.ArrayList<String>())
+            if (history.isNotEmpty()) {
+                history.forEachIndexed { index, s ->
+                    val configBean = MoreSourceBean().apply {
+                        this.sourceUrl = s
+                        this.sourceName = "配置地址${index}"
+                    }
+                    if (!data.contains(configBean)) {
+                        data.add(configBean)
+                    }
+                }
+            }
             val selectUrl = Hawk.get(HawkConfig.API_URL, "")
             val findData = data.findFirst {
                 it.sourceUrl == selectUrl
