@@ -105,18 +105,18 @@ class SourceLineDialogUtil(private val context: Context) {
                 }
                 data.add(moreSourceBean)
             }
-            val history = Hawk.get(HawkConfig.API_HISTORY, java.util.ArrayList<String>())
-            if (history.isNotEmpty()) {
-                history.forEachIndexed { index, s ->
-                    val configBean = MoreSourceBean().apply {
-                        this.sourceUrl = s
-                        this.sourceName = "自定义配置地址${index + 1}"
-                    }
-                    if (!data.contains(configBean)) {
-                        data.add(configBean)
-                    }
-                }
-            }
+//            val history = Hawk.get(HawkConfig.API_HISTORY, java.util.ArrayList<String>())
+//            if (history.isNotEmpty()) {
+//                history.forEachIndexed { index, s ->
+//                    val configBean = MoreSourceBean().apply {
+//                        this.sourceUrl = s
+//                        this.sourceName = "自定义配置地址${index + 1}"
+//                    }
+//                    if (!data.contains(configBean)) {
+//                        data.add(configBean)
+//                    }
+//                }
+//            }
             val selectUrl = Hawk.get(HawkConfig.API_URL, "")
             val findData = data.findFirst {
                 it.sourceUrl == selectUrl
@@ -157,12 +157,12 @@ class SourceLineDialogUtil(private val context: Context) {
             //更新源
             Hawk.put(HawkConfig.API_URL, moreSourceBea?.sourceUrl)
             KVStorage.putBean(HawkConfig.API_URL_BEAN, moreSourceBea)
-            val history = Hawk.get(HawkConfig.API_HISTORY, ArrayList<String>())
-            if (!history.contains(moreSourceBea?.sourceUrl)) {
-                history.add(0, moreSourceBea?.sourceUrl.toString())
-            }
-            if (history.size > 20) history.removeAt(20)
-            Hawk.put(HawkConfig.API_HISTORY, history)
+//            val history = Hawk.get(HawkConfig.API_HISTORY, ArrayList<String>())
+//            if (!history.contains(moreSourceBea?.sourceUrl)) {
+//                history.add(0, moreSourceBea?.sourceUrl.toString())
+//            }
+//            if (history.size > 20) history.removeAt(20)
+//            Hawk.put(HawkConfig.API_HISTORY, history)
             EventBus.getDefault().post(
                 RefreshEvent(
                     RefreshEvent.TYPE_API_URL_CHANGE,
