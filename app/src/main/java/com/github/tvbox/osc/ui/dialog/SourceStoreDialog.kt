@@ -194,6 +194,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                     )
                 } else if (jsonObj.has("sites")) {//可能是线路
                     Hawk.put(HawkConfig.API_URL, moreSourceBean?.sourceUrl)
+                    val history = Hawk.get(HawkConfig.API_HISTORY, ArrayList<String>())
+                    if (!history.contains(moreSourceBean?.sourceUrl)) {
+                        history.add(0, moreSourceBean?.sourceUrl.toString())
+                    }
+                    if (history.size > 20) history.removeAt(20)
+                    Hawk.put(HawkConfig.API_HISTORY, history)
                     ToastUtils.showShort("你推送的可能是线路，系统已经帮你保存并重启首页")
                     JumpUtils.forceRestartHomeActivity(context)
                     this.dismiss()
