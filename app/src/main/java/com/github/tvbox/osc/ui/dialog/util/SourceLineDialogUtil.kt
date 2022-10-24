@@ -128,7 +128,7 @@ class SourceLineDialogUtil(private val context: Context) {
             showDialog(data, select, onSelect = onSelect)
         } catch (e: Exception) {
             if (!isCache) {
-                Toast.makeText(context, "Json解析失败，有可能仓库被删了", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Json解析失败" + e.message, Toast.LENGTH_LONG).show()
             }
         }
     }
