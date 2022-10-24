@@ -110,7 +110,7 @@ class SourceLineDialogUtil(private val context: Context) {
                 history.forEachIndexed { index, s ->
                     val configBean = MoreSourceBean().apply {
                         this.sourceUrl = s
-                        this.sourceName = "配置地址${index}"
+                        this.sourceName = "自定义配置地址${index + 1}"
                     }
                     if (!data.contains(configBean)) {
                         data.add(configBean)
