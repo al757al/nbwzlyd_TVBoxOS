@@ -28,10 +28,12 @@ import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
 import com.github.tvbox.osc.util.UA
+import com.github.tvbox.osc.util.urlhttp.JumpUtils
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.cache.CacheMode
 import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.Response
+import com.orhanobut.hawk.Hawk
 import com.owen.tvrecyclerview.widget.TvRecyclerView
 import me.jessyan.autosize.utils.AutoSizeUtils
 import org.greenrobot.eventbus.EventBus
@@ -190,7 +192,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                         moreSourceBean?.sourceUrl ?: "",
                         moreSourceBean?.sourceName ?: ""
                     )
-                } else {
+                } else if (jsonObj.has("sites")) {//可能是线路
+                    Hawk.put(HawkConfig.API_URL, moreSourceBean?.sourceUrl)
+                    ToastUtils.showShort("你推送的可能是线路，系统已经帮你保存并重启首页")
+                    JumpUtils.forceRestartHomeActivity(context)
+                    this.dismiss()
+                } else {//无法识别了
                     val text =
                         SpanUtils().append("你的仓库格式不对\n请参考公众号").append(" <仓库定义规则> ")
                             .setBold()
@@ -214,11 +221,11 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                         this.sourceUrl = childJsonObj?.optString("sourceUrl") ?: ""
                         this.isServer = true
                     }
-                    DEFAULT_DATA[sourceUrl ?: ""] = moreSourceBeanNew
+                    DEFAULT_DATA[moreSourceBeanNew.sourceUrl] = moreSourceBeanNew
                 } else {
                     sourceBean.sourceName = sourceName ?: ""
                     sourceBean.sourceUrl = sourceUrl ?: ""
-                    DEFAULT_DATA[sourceUrl ?: ""] = sourceBean
+                    DEFAULT_DATA[sourceBean.sourceUrl] = sourceBean
                 }
             }
             val result = DEFAULT_DATA.filter {
@@ -234,13 +241,13 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         }
     }
 
-    private fun inflateCustomSource(result: MutableList<MoreSourceBean>) {
+    private fun inflateCustomSource(serverResult: MutableList<MoreSourceBean>) {
         val localData = KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
-        if (localData.isEmpty() && result.isNotEmpty()) {//如果本地保存的是空的，就把新的结果放进去
-            localData.addAll(result)
+        if (localData.isEmpty() && serverResult.isNotEmpty()) {//如果本地保存的是空的，就把新的结果放进去
+            localData.addAll(serverResult)
         } else {//否则进行匹配，只保存本地没有的
             val customMap = localData.associateBy { it.uniKey }
-            val newResultMap = result.associateBy { it.uniKey }
+            val newResultMap = serverResult.associateBy { it.uniKey }
             newResultMap.forEach {
                 if (customMap[it.key] == null) {
                     localData.add(it.value)
