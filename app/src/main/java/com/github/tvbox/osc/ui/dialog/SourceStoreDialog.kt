@@ -200,7 +200,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                     }
                     if (history.size > 20) history.removeAt(20)
                     Hawk.put(HawkConfig.API_HISTORY, history)
-                    ToastUtils.showShort("你推送的可能是线路，系统已经帮你保存并重启首页")
+                    ToastUtils.showShort("系统识别到你推送的可能是线路，已经帮你保存并重启首页")
                     JumpUtils.forceRestartHomeActivity(context)
                     this.dismiss()
                 } else {//无法识别了
