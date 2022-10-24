@@ -98,11 +98,6 @@ class SourceLineDialogUtil(private val context: Context) {
             val data = mutableListOf<MoreSourceBean>()
             for (i in 0 until length) {
                 val jsonObj = urls.getJSONObject(i)
-                val url = jsonObj.getString("url")
-                //屏蔽gitea的线路
-                if (url.contains("https://gitea.com/")) {
-                    continue
-                }
                 val moreSourceBean = MoreSourceBean().apply {
                     sourceUrl = jsonObj.getString("url")
                     sourceName = jsonObj.getString("name")

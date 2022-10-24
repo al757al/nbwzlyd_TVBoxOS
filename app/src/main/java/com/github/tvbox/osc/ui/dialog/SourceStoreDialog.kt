@@ -72,7 +72,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     init {
         setContentView(R.layout.more_source_dialog_select)
         DEFAULT_STORE_URL = KVStorage.getString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
-            ?:""
+            ?: ""
         mRecyclerView = findViewById(R.id.list)
         mAddMoreBtn = findViewById(R.id.inputSubmit)
         mSourceNameEdit = findViewById(R.id.input_sourceName)
@@ -116,31 +116,35 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         }
     }
 
-    private fun saveCustomSourceBean(sourceUrl0: String, sourceName0: String) {
-        if (sourceUrl0.startsWith("http") || sourceUrl0.startsWith("https")) {
-            val saveList =
-                KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
-            val sourceBean = MoreSourceBean().apply {
-                this.sourceUrl = sourceUrl0
-                this.sourceName = sourceName0.ifEmpty { "自用仓库" + saveList.size }
-                this.isServer = false
-            }
+    private fun saveCustomSourceBean(sourceUrl0: String?, sourceName0: String?) {
+        if (!checkUrlIsValid(sourceUrl0)) {
+            return
+        }
+        var lineSource = sourceUrl0
+        if (lineSource?.startsWith("clan://") == true) {
+            lineSource = ApiConfig.clanToAddress(lineSource)
+        }
+        val saveList =
+            KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
+        val sourceBean = MoreSourceBean().apply {
+            this.sourceUrl = lineSource.toString()
+            this.sourceName = sourceName0?.ifEmpty { "自用仓库" + saveList.size }.toString()
+            this.isServer = false
+        }
+        if (!saveList.contains(sourceBean)) {
             mAdapter.addData(sourceBean)
             mRecyclerView?.scrollToPosition(0)
             saveList.add(sourceBean)
-            mSourceUrlEdit?.setText("")
-            mSourceNameEdit?.setText("")
-        } else {
-            Toast.makeText(this@SourceStoreDialog.context, "请输入仓库地址！", Toast.LENGTH_LONG)
-                .show()
+            KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, saveList)
         }
+        mSourceUrlEdit?.setText("")
+        mSourceNameEdit?.setText("")
     }
 
 
-    private fun getMutiSource() {
+    private fun getMutiSource(moreSourceBean: MoreSourceBean? = null) {
         mLoading.letVisible()
-
-        if (DEFAULT_STORE_URL.startsWith("clan://")){
+        if (DEFAULT_STORE_URL.startsWith("clan://")) {
             DEFAULT_STORE_URL = ApiConfig.clanToAddress(DEFAULT_STORE_URL)
         }
         val req = OkGo.get<String>(DEFAULT_STORE_URL)
@@ -154,12 +158,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
         req.cacheTime(3 * 60 * 60 * 1000).execute(object : StringCallback() {
             override fun onSuccess(response: Response<String>?) {
-                serverString2Json(response)
+                serverString2Json(moreSourceBean, response)
             }
 
             override fun onCacheSuccess(response: Response<String>?) {
                 super.onCacheSuccess(response)
-                serverString2Json(response)
+                serverString2Json(moreSourceBean, response)
             }
 
             override fun onError(response: Response<String>?) {
@@ -167,7 +171,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 mLoading.letGone()
                 Toast.makeText(
                     context,
-                    "多仓接口拉取失败" + response?.exception?.message + "将使用缓存",
+                    "接口拉取失败" + response?.exception?.message + "将使用缓存",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -175,17 +179,24 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         })
     }
 
-    private fun serverString2Json(response: Response<String>?) {
+    private fun serverString2Json(moreSourceBean: MoreSourceBean?, response: Response<String>?) {
         try {
             mLoading.letGone()
             val jsonObj = JSONObject(response?.body() ?: return)
             var jsonArray: JSONArray? = null
             if (!jsonObj.has("storeHouse")) {
-                val text =
-                    SpanUtils().append("你的仓库格式不对\n请参考公众号").append(" <仓库定义规则> ")
-                        .setBold()
-                        .setForegroundColor(Color.RED).append("文章").create()
-                ToastUtils.showShort(text)
+                if (jsonObj.has("urls")) {//可能是单仓库
+                    saveCustomSourceBean(
+                        moreSourceBean?.sourceUrl ?: "",
+                        moreSourceBean?.sourceName ?: ""
+                    )
+                } else {
+                    val text =
+                        SpanUtils().append("你的仓库格式不对\n请参考公众号").append(" <仓库定义规则> ")
+                            .setBold()
+                            .setForegroundColor(Color.RED).append("文章").create()
+                    ToastUtils.showShort(text)
+                }
             } else {
                 jsonArray = jsonObj.getJSONArray("storeHouse")
                 if (!response.isFromCache) {
@@ -198,12 +209,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 val sourceUrl = childJsonObj?.optString("sourceUrl")
                 val sourceBean = DEFAULT_DATA[sourceUrl]
                 if (sourceBean == null) {
-                    val moreSourceBean = MoreSourceBean().apply {
+                    val moreSourceBeanNew = MoreSourceBean().apply {
                         this.sourceName = childJsonObj?.optString("sourceName") ?: ""
                         this.sourceUrl = childJsonObj?.optString("sourceUrl") ?: ""
                         this.isServer = true
                     }
-                    DEFAULT_DATA[sourceUrl ?: ""] = moreSourceBean
+                    DEFAULT_DATA[sourceUrl ?: ""] = moreSourceBeanNew
                 } else {
                     sourceBean.sourceName = sourceName ?: ""
                     sourceBean.sourceUrl = sourceUrl ?: ""
@@ -369,15 +380,16 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         when (refreshEvent.type) {
             RefreshEvent.TYPE_STORE_PUSH -> {
                 val moreSourceBean = refreshEvent.obj as MoreSourceBean
-                if ("多仓" == moreSourceBean.sourceName) {
-                    DEFAULT_STORE_URL = moreSourceBean.sourceUrl
-                    getMutiSource()
-                } else {
-                    saveCustomSourceBean(moreSourceBean.sourceUrl, moreSourceBean.sourceName)
-                }
+                DEFAULT_STORE_URL = moreSourceBean.sourceUrl
+                getMutiSource(moreSourceBean)
             }
         }
 
+    }
+
+    private fun checkUrlIsValid(url: String?): Boolean {
+        return !url.isNullOrEmpty() && (url.startsWith("clan://")
+                || url.startsWith("https://") || url.startsWith("http://"))
     }
 
 }
