@@ -338,6 +338,7 @@ public class SourceViewModel extends ViewModel {
     }
 
     //    homeVideoContent
+    private boolean isHomeRecCache;
     void getHomeRecList(SourceBean sourceBean, ArrayList<String> ids, HomeRecCallback callback) {
         int type = sourceBean.getType();
         if (type == 3) {
@@ -381,7 +382,8 @@ public class SourceViewModel extends ViewModel {
             };
             spThreadPool.execute(waitResponse);
         } else if (type == 0 || type == 1) {
-            OkGo.<String>get(sourceBean.getApi())
+            isHomeRecCache = false;
+            OkGo.<String>get(sourceBean.getApi()).cacheTime(3 * 24 * 60 * 60 * 1000).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
                     .tag("detail")
                     .params("ac", sourceBean.getType() == 0 ? "videolist" : "detail")
                     .params("ids", TextUtils.join(",", ids))
@@ -397,7 +399,29 @@ public class SourceViewModel extends ViewModel {
                         }
 
                         @Override
+                        public void onCacheSuccess(Response<String> response) {
+                            super.onCacheSuccess(response);
+                            AbsXml absXml;
+                            if (sourceBean.getType() == 0) {
+                                String xml = response.body();
+                                absXml = xml(null, xml, sourceBean.getKey());
+                            } else {
+                                String json = response.body();
+                                absXml = json(null, json, sourceBean.getKey());
+                            }
+                            if (absXml != null && absXml.movie != null && absXml.movie.videoList != null) {
+                                isHomeRecCache = true;
+                                callback.done(absXml.movie.videoList);
+                            } else {
+                                callback.done(null);
+                            }
+                        }
+
+                        @Override
                         public void onSuccess(Response<String> response) {
+                            if (isHomeRecCache) {
+                                return;
+                            }
                             AbsXml absXml;
                             if (sourceBean.getType() == 0) {
                                 String xml = response.body();
