@@ -228,6 +228,14 @@ public class HomeActivity extends BaseActivity {
         mViewPager.setPageTransformer(true, new DefaultTransformer());
         mViewPager.setAdapter(pageAdapter);
         mViewPager.setCurrentItem(currentSelected, false);
+        try {
+            Field field = ViewPager.class.getDeclaredField("mScroller");
+            field.setAccessible(true);
+            FixedSpeedScroller scroller = new FixedSpeedScroller(mContext, new AccelerateInterpolator());
+            field.set(mViewPager, scroller);
+            scroller.setmDuration(300);
+        } catch (Exception e) {
+        }
         //mHandler.postDelayed(mFindFocus, 500);
     }
 
@@ -429,14 +437,6 @@ public class HomeActivity extends BaseActivity {
                 }
             }
             pageAdapter.setFragments(fragments);
-            try {
-                Field field = ViewPager.class.getDeclaredField("mScroller");
-                field.setAccessible(true);
-                FixedSpeedScroller scroller = new FixedSpeedScroller(mContext, new AccelerateInterpolator());
-                field.set(mViewPager, scroller);
-                scroller.setmDuration(300);
-            } catch (Exception e) {
-            }
         }
     }
 
