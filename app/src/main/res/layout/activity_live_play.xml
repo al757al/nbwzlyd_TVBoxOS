@@ -186,8 +186,19 @@
 
             </FrameLayout>
 
+				<TextView
+					android:id="@+id/txtNoEpg"
+					android:layout_width="@dimen/vs_360"
+					android:layout_height="match_parent"
+					android:layout_gravity="center"
+					android:layout_marginTop="50px"
+					android:gravity="center"
+					android:paddingLeft="5dp"
+					android:text="暂无节目信息…"
+					android:textColor="@color/color_FF0057"
+					android:visibility="gone" />
+			</LinearLayout>
 
-        </LinearLayout>
     </xyz.doikki.videoplayer.player.VideoView>
     <!--添加EPG显示，更改样式 by 龍-->
 
