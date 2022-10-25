@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/live_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -8,15 +9,100 @@
     <xyz.doikki.videoplayer.player.VideoView
         android:id="@+id/mVideoView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/backcontroller"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/vs_200"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="0dp"
+        android:layout_weight="1"
+        android:gravity="bottom|center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:visibility="invisible">
+
+        <ImageView
+            android:id="@+id/iv_play"
+            android:layout_width="120sp"
+            android:layout_height="120sp"
+            android:background="@drawable/dkplayer_ic_action_pause"
+            android:visibility="gone" />
 
         <LinearLayout
-            android:id="@+id/tvLeftChannnelListLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/vs_70"
+            android:layout_marginRight="@dimen/vs_70"
+            android:layout_marginBottom="@dimen/vs_60"
+            android:background="@drawable/bg_progress_bar_out"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp">
+
+            <ImageView
+                android:id="@+id/iv_playpause"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/dkplayer_ic_action_pause" />
+
+            <TextView
+                android:id="@+id/tv_currentpos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="5dp"
+                android:text="00:00:00"
+                android:textColor="#fff" />
+
+            <SeekBar
+                android:id="@+id/pb_progressbar"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:max="100"
+                android:maxHeight="3dp"
+                android:minHeight="3dp"
+                android:padding="6dp"
+                android:paddingStart="5dp"
+                android:paddingLeft="5dp"
+                android:paddingEnd="5dip"
+                android:paddingRight="5dip"
+                android:progress="30"
+                android:progressDrawable="@drawable/seekbar_style"
+                android:thumb="@drawable/transparent"
+                android:thumbOffset="0dp" />
+
+            <TextView
+                android:id="@+id/tv_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="00:00:00"
+                android:textColor="#fff" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tvLeftChannnelListLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="0dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ll_typeSelect"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="-570mm"
             android:background="@drawable/bg_channel_list"
-            android:baselineAligned="false">
+            android:orientation="horizontal">
 
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:id="@+id/mGroupGridView"
@@ -38,12 +124,13 @@
                 android:focusable="true"
                 android:onClick="divLoadEpgLeft"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <TextView
                     android:id="@+id/tv_arrow0"
                     android:layout_width="20dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
                     android:onClick="divLoadEpgLeft"
                     android:paddingBottom="5dp"
@@ -67,7 +154,7 @@
                 <TextView
                     android:id="@+id/tv_arrow3"
                     android:layout_width="20dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
                     android:onClick="divLoadEpgLeft"
                     android:paddingTop="5dp"
@@ -79,7 +166,7 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <View
+            <Space
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_margin="1dp"
@@ -96,110 +183,104 @@
                 android:padding="5dp"
                 android:scrollbars="none" />
 
-            <View
+            <Space
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
                 android:background="#FF333333" />
 
-
-            <FrameLayout
-                android:id="@+id/divEPG"
+            <LinearLayout
+                android:id="@+id/divLoadEpg"
+                style="@style/epg_window_btn"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <com.github.tvbox.osc.ui.tv.widget.ChannelListView
-                    android:id="@+id/lv_epg"
-                    android:layout_width="@dimen/vs_340"
-                    android:layout_height="match_parent"
-                    android:divider="@null"
-                    android:fadeScrollbars="false"
-                    android:listSelector="@drawable/item_bg_selector_right"
-                    android:padding="3dp"
-                    android:scrollbars="none"
-                    android:visibility="gone" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:onClick="divLoadEpgRight"
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/txtNoEpg"
-                    android:layout_width="@dimen/vs_360"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="50px"
-                    android:gravity="center"
-                    android:paddingLeft="5dp"
-                    android:text="暂无节目信息…"
-                    android:textColor="@color/color_FF0057"
-                    android:visibility="gone" />
-
-
-                <LinearLayout
-                    android:id="@+id/divLoadEpg"
-                    style="@style/epg_window_btn"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_arrow"
+                    android:layout_width="20dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
                     android:onClick="divLoadEpgRight"
-                    android:orientation="vertical">
+                    android:paddingBottom="5dp"
+                    android:shadowColor="#CC000000"
+                    android:shadowDx="5.0"
+                    android:shadowRadius="5.0"
+                    android:text="节 目"
+                    android:textColor="@color/color_FFFFFF"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tv_arrow"
-                        android:layout_width="20dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:onClick="divLoadEpgRight"
-                        android:paddingBottom="5dp"
-                        android:shadowColor="#CC000000"
-                        android:shadowDx="5.0"
-                        android:shadowRadius="5.0"
-                        android:text="节 目"
-                        android:textColor="@color/color_FFFFFF"
-                        android:textStyle="bold" />
+                <ImageView
+                    android:id="@+id/iv_arrow"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="1dp"
+                    android:gravity="center|left"
+                    android:onClick="divLoadEpgRight"
+                    android:paddingTop="5dp"
+                    android:src="@drawable/scrollview" />
 
-                    <ImageView
-                        android:id="@+id/iv_arrow"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="1dp"
-                        android:gravity="center|left"
-                        android:onClick="divLoadEpgRight"
-                        android:paddingTop="5dp"
-                        android:src="@drawable/scrollview" />
-
-                    <TextView
-                        android:id="@+id/tv_arrow2"
-                        android:layout_width="20dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:onClick="divLoadEpgRight"
-                        android:paddingTop="5dp"
-                        android:shadowColor="#CC000000"
-                        android:shadowDx="5.0"
-                        android:shadowRadius="5.0"
-                        android:text="信 息"
-                        android:textColor="@color/color_FFFFFF"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_arrow2"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:onClick="divLoadEpgRight"
+                    android:paddingTop="5dp"
+                    android:shadowColor="#CC000000"
+                    android:shadowDx="5.0"
+                    android:shadowRadius="5.0"
+                    android:text="信 息"
+                    android:textColor="@color/color_FFFFFF"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
 
-            </FrameLayout>
+            <com.owen.tvrecyclerview.widget.TvRecyclerView
+                android:id="@+id/mEpgDateGridView"
+                android:layout_width="@dimen/vs_100"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:listSelector="@drawable/item_bg_selector_right"
+                android:paddingLeft="5mm"
+                android:paddingTop="10mm"
+                android:paddingRight="5mm"
+                android:paddingBottom="10mm"
+                android:visibility="visible"
+                app:tv_selectedItemIsCentered="true"
+                app:tv_verticalSpacingWithMargins="10mm"
+                tools:visibility="visible" />
 
-				<TextView
-					android:id="@+id/txtNoEpg"
-					android:layout_width="@dimen/vs_360"
-					android:layout_height="match_parent"
-					android:layout_gravity="center"
-					android:layout_marginTop="50px"
-					android:gravity="center"
-					android:paddingLeft="5dp"
-					android:text="暂无节目信息…"
-					android:textColor="@color/color_FF0057"
-					android:visibility="gone" />
-			</LinearLayout>
+            <com.owen.tvrecyclerview.widget.TvRecyclerView
+                android:id="@+id/lv_epg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|center_vertical"
+                android:listSelector="@drawable/item_bg_selector_right"
+                android:padding="@dimen/vs_15"
+                android:scrollbars="vertical"
+                android:visibility="visible"
+                app:tv_selectedItemIsCentered="true"
+                app:tv_verticalSpacingWithMargins="10mm"
+                tools:visibility="visible" />
 
-    </xyz.doikki.videoplayer.player.VideoView>
+            <TextView
+                android:id="@+id/txtNoEpg"
+                android:layout_width="@dimen/vs_360"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:text="暂无节目信息…"
+                android:textColor="@color/color_FF0057"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+    </LinearLayout>
     <!--添加EPG显示，更改样式 by 龍-->
 
     <LinearLayout
@@ -226,7 +307,7 @@
             app:tv_selectedItemIsCentered="true"
             app:tv_verticalSpacingWithMargins="10mm" />
 
-        <View
+        <Space
             android:layout_width="1mm"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
@@ -245,22 +326,6 @@
             app:tv_selectedItemIsCentered="true"
             app:tv_verticalSpacingWithMargins="10mm" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tvChannel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginTop="30mm"
-        android:layout_marginRight="60mm"
-        android:background="@drawable/shape_live_channel_num"
-        android:gravity="center"
-        android:paddingTop="5mm"
-        android:paddingBottom="5mm"
-        android:textColor="@android:color/white"
-        android:textSize="36mm"
-        android:textStyle="bold"
-        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tvTime"
@@ -293,7 +358,7 @@
     <RelativeLayout
         android:id="@+id/ll_epg"
         android:layout_width="@dimen/vs_960"
-        android:layout_height="@dimen/vs_200"
+        android:layout_height="@dimen/vs_140"
         android:layout_gravity="bottom|center"
         android:gravity="center_vertical"
         android:paddingBottom="5dp">
@@ -306,60 +371,73 @@
             android:layout_alignParentBottom="true"
             android:background="@drawable/shape_user_focus" />
 
-        <TextView
-            android:id="@+id/tv_channel_bottom_number"
-            android:layout_width="@dimen/vs_200"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/view_line"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="center"
-            android:layout_marginLeft="20mm"
-            android:layout_marginTop="5mm"
-            android:layout_marginBottom="-14dp"
-            android:ellipsize="marquee"
-            android:gravity="center"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:shadowColor="#CC000000"
-            android:shadowDx="5.0"
-            android:shadowRadius="5.0"
-            android:singleLine="true"
-            android:text="10"
-            android:textColor="@color/color_FFFFFF"
-            android:textSize="@dimen/ts_100"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:id="@+id/channelinfo"
+            android:layout_width="@dimen/vs_240"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="@dimen/vs_5"
+            android:layout_marginLeft="@dimen/vs_5"
+            android:layout_marginEnd="@dimen/vs_5"
+            android:layout_marginRight="@dimen/vs_5"
+            android:orientation="vertical">
 
-        <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
-            android:id="@+id/tv_channel_bar_name"
-            android:layout_width="@dimen/vs_200"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/tv_channel_bottom_number"
-            android:layout_alignLeft="@+id/tv_channel_bottom_number"
-            android:layout_alignEnd="@+id/tv_channel_bottom_number"
-            android:layout_alignRight="@+id/tv_channel_bottom_number"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="center"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginBottom="10dp"
-            android:ellipsize="marquee"
-            android:gravity="center"
-            android:paddingTop="5dp"
-            android:singleLine="true"
-            android:text="CCTV 高清"
-            android:textColor="@color/color_FFFFFF"
-            android:textSize="@dimen/ts_34" />
+            <TextView
+                android:id="@+id/tv_channel_bottom_number"
+                android:layout_width="@dimen/vs_200"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/view_line"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20mm"
+                android:layout_marginTop="5mm"
+                android:layout_marginBottom="-14dp"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:shadowColor="#CC000000"
+                android:shadowDx="5.0"
+                android:shadowRadius="5.0"
+                android:singleLine="true"
+                android:text="10"
+                android:textColor="@color/color_FFFFFF"
+                android:textSize="@dimen/ts_100"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
+                android:id="@+id/tv_channel_bar_name"
+                android:layout_width="@dimen/vs_200"
+                android:layout_height="match_parent"
+                android:layout_alignStart="@+id/tv_channel_bottom_number"
+                android:layout_alignLeft="@+id/tv_channel_bottom_number"
+                android:layout_alignEnd="@+id/tv_channel_bottom_number"
+                android:layout_alignRight="@+id/tv_channel_bottom_number"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center|bottom"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:paddingTop="@dimen/vs_20"
+                android:singleLine="true"
+                android:text="CCTV 高清"
+                android:textColor="@color/color_FFFFFF"
+                android:textSize="@dimen/ts_34" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_current_program"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/view_bg"
-            android:layout_marginLeft="@dimen/vs_40"
-            android:layout_marginTop="@dimen/vs_50"
-            android:layout_toRightOf="@+id/tv_channel_bottom_number"
+            android:layout_marginLeft="@dimen/vs_0"
+            android:layout_marginTop="@dimen/vs_40"
+            android:layout_toRightOf="@+id/channelinfo"
             android:gravity="center"
             android:text=""
             android:textColor="@color/color_FFFFFF"
@@ -379,7 +457,7 @@
 
         <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
             android:id="@+id/tv_current_program_name"
-            android:layout_width="@dimen/vs_400"
+            android:layout_width="@dimen/vs_360"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/tv_current_program"
             android:layout_alignParentEnd="true"
@@ -432,7 +510,7 @@
 
         <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
             android:id="@+id/tv_next_program_name"
-            android:layout_width="@dimen/vs_400"
+            android:layout_width="@dimen/vs_360"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/tv_next_program"
             android:layout_alignEnd="@+id/tv_current_program_name"
@@ -463,15 +541,4 @@
             android:textColor="@color/color_FFFFFF"
             android:textSize="@dimen/ts_26" />
     </RelativeLayout>
-
-    <!--时间显示-->
-
-    <TextView
-        android:id="@+id/tv_showTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|top"
-        android:layout_margin="20dp"
-        android:paddingTop="8dp" />
-
 </FrameLayout>
