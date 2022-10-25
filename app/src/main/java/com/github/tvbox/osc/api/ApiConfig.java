@@ -23,6 +23,7 @@ import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.MD5;
+import com.github.tvbox.osc.util.UA;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -156,9 +157,13 @@ public class ApiConfig {
             configUrl = apiUrl;
         }
         String configKey = TempKey;
-        OkGo.<String>get(configUrl)
-                .headers("User-Agent", userAgent)
-                .headers("Accept", requestAccept)
+        GetRequest<String> stringGetRequest = OkGo.get(configUrl);
+        if (configUrl.startsWith("https://gitea")) {
+            stringGetRequest.headers("User-Agent", UA.random());
+        } else {
+            stringGetRequest.headers("User-Agent", userAgent);
+        }
+        stringGetRequest
                 .execute(new AbsCallback<String>() {
                     @Override
                     public void onSuccess(Response<String> response) {
