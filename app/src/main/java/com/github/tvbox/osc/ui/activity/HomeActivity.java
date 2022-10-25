@@ -107,7 +107,7 @@ public class HomeActivity extends BaseActivity {
         return R.layout.activity_home;
     }
 
-    boolean useCacheConfig = true;
+    boolean useCacheConfig = false;
 
     private boolean isLoadingShow = false;
     private boolean isForceCloseLoading = false;
@@ -245,12 +245,11 @@ public class HomeActivity extends BaseActivity {
         EventBus.getDefault().register(this);
         initView();
         initViewModel();
-        useCacheConfig = true;
-//        Intent intent = getIntent();
-//        if (intent != null && intent.getExtras() != null) {
-//            Bundle bundle = intent.getExtras();
-//            useCacheConfig = bundle.getBoolean("useCache", false);
-//        }
+        Intent intent = getIntent();
+        if (intent != null && intent.getExtras() != null) {
+            Bundle bundle = intent.getExtras();
+            useCacheConfig = bundle.getBoolean("useCache", false);
+        }
         // 初始化Web服务器
         ControlManager.init(this);
         ControlManager.get().startServer();
