@@ -107,7 +107,7 @@ public class HomeActivity extends BaseActivity {
         return R.layout.activity_home;
     }
 
-    boolean useCacheConfig = true;
+    boolean useCacheConfig = false;
 
     private boolean isLoadingShow = false;
     private boolean isForceCloseLoading = false;
@@ -228,6 +228,14 @@ public class HomeActivity extends BaseActivity {
         mViewPager.setPageTransformer(true, new DefaultTransformer());
         mViewPager.setAdapter(pageAdapter);
         mViewPager.setCurrentItem(currentSelected, false);
+        try {
+            Field field = ViewPager.class.getDeclaredField("mScroller");
+            field.setAccessible(true);
+            FixedSpeedScroller scroller = new FixedSpeedScroller(mContext, new AccelerateInterpolator());
+            field.set(mViewPager, scroller);
+            scroller.setmDuration(300);
+        } catch (Exception e) {
+        }
         //mHandler.postDelayed(mFindFocus, 500);
     }
 
@@ -236,7 +244,7 @@ public class HomeActivity extends BaseActivity {
         super.onNewIntent(intent);
         dataInitOk = false;
         jarInitOk = false;
-        initViewModel();
+//        initViewModel();
         initData();
     }
 
@@ -245,12 +253,11 @@ public class HomeActivity extends BaseActivity {
         EventBus.getDefault().register(this);
         initView();
         initViewModel();
-        useCacheConfig = true;
-//        Intent intent = getIntent();
-//        if (intent != null && intent.getExtras() != null) {
-//            Bundle bundle = intent.getExtras();
-//            useCacheConfig = bundle.getBoolean("useCache", false);
-//        }
+        Intent intent = getIntent();
+        if (intent != null && intent.getExtras() != null) {
+            Bundle bundle = intent.getExtras();
+            useCacheConfig = bundle.getBoolean("useCache", false);
+        }
         // 初始化Web服务器
         ControlManager.init(this);
         ControlManager.get().startServer();
@@ -430,14 +437,6 @@ public class HomeActivity extends BaseActivity {
                 }
             }
             pageAdapter.setFragments(fragments);
-            try {
-                Field field = ViewPager.class.getDeclaredField("mScroller");
-                field.setAccessible(true);
-                FixedSpeedScroller scroller = new FixedSpeedScroller(mContext, new AccelerateInterpolator());
-                field.set(mViewPager, scroller);
-                scroller.setmDuration(300);
-            } catch (Exception e) {
-            }
         }
     }
 

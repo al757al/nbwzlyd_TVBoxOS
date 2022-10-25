@@ -23,11 +23,13 @@ import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.MD5;
+import com.github.tvbox.osc.util.UA;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.GetRequest;
@@ -156,9 +158,13 @@ public class ApiConfig {
             configUrl = apiUrl;
         }
         String configKey = TempKey;
-        OkGo.<String>get(configUrl)
-                .headers("User-Agent", userAgent)
-                .headers("Accept", requestAccept)
+        GetRequest<String> stringGetRequest = OkGo.get(configUrl);
+        if (configUrl.startsWith("https://gitea")) {
+            stringGetRequest.headers("User-Agent", UA.random());
+        } else {
+            stringGetRequest.headers("User-Agent", userAgent);
+        }
+        stringGetRequest
                 .execute(new AbsCallback<String>() {
                     @Override
                     public void onSuccess(Response<String> response) {
@@ -212,11 +218,13 @@ public class ApiConfig {
                             result = clanContentFix(clanToAddress(apiUrl), result);
                         }
                         //假相對路徑
-                        result = fixContentPath(apiUrl,result);
+                        result = fixContentPath(apiUrl, result);
                         return result;
                     }
                 });
     }
+
+    private boolean isCacheReady;
 
 
     public void loadJar(boolean useCache, String spider, LoadConfigCallback callback) {
@@ -234,8 +242,14 @@ public class ApiConfig {
                 return;
             }
         }
-        GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar");
-        request.headers("User-Agent", userAgent);
+        GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar")
+                .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST).cacheTime(10 * 60 * 60 * 1000);
+        isCacheReady = false;
+        if (jarUrl.startsWith("https://gitea")) {
+            request.headers("User-Agent", UA.randomOne());
+        } else {
+            request.headers("User-Agent", userAgent);
+        }
         request.execute(new AbsCallback<File>() {
 
             @Override
@@ -254,6 +268,9 @@ public class ApiConfig {
 
                     @Override
                     public void onSuccess(Response<File> response) {
+                        if (isCacheReady) {
+                            return;
+                        }
                         if (response.body().exists()) {
                             if (jarLoader.load(response.body().getAbsolutePath())) {
                                 callback.success();
@@ -265,12 +282,27 @@ public class ApiConfig {
                         }
                     }
 
-                    @Override
-                    public void onError(Response<File> response) {
-                        super.onError(response);
-                        callback.error(response.getException().getMessage());
+            @Override
+            public void onCacheSuccess(Response<File> response) {
+                super.onCacheSuccess(response);
+                if (response.body().exists()) {
+                    if (jarLoader.load(response.body().getAbsolutePath())) {
+                        isCacheReady = true;
+                        callback.success();
+                    } else {
+                        callback.error("jar内部解析失败");
                     }
-                });
+                } else {
+                    callback.error("jar不存在");
+                }
+            }
+
+            @Override
+            public void onError(Response<File> response) {
+                super.onError(response);
+                callback.error(response.getException().getMessage());
+            }
+        });
     }
 
     private void parseJson(String apiUrl, File f) throws Throwable {
