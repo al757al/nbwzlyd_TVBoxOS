@@ -392,16 +392,14 @@ public class LivePlayActivity extends BaseActivity {
         String channelName = channel_Name.getChannelName();
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        String[] epgInfo = EpgUtil.getEpgInfo(channelName);
-        String epgTagName = channelName;
-//        updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]);
-        if (epgInfo != null && !epgInfo[1].isEmpty()) {
-            epgTagName = epgInfo[1];
-        }
-        String finalChannelName = channelName;
+////        updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]);
+//        if (epgInfo != null && !epgInfo[1].isEmpty()) {
+//            epgTagName = epgInfo[1];
+//        }
+//        String finalChannelName = channelName;
         epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
         //epgListAdapter.updateData(date, new ArrayList<>());
-        UrlHttpUtil.get(epgStringAddress + "?ch=" + URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date), new CallBackUtil.CallBackString() {
+        UrlHttpUtil.get(epgStringAddress + "?ch=" + URLEncoder.encode(channelName) + "&date=" + timeFormat.format(date), new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
                 showEpg(date, new ArrayList());
                 showBottomEpg();
@@ -423,7 +421,6 @@ public class LivePlayActivity extends BaseActivity {
                     }
 
                 } catch (JSONException jSONException) {
-                    jSONException.printStackTrace();
                 }
                 showEpg(date, arrayList);
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
@@ -542,7 +539,7 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());
-        epgListAdapter.notifyDataSetChanged();
+        epgListAdapter.notifyItemChanged(epgListAdapter.getSelectedIndex());
 
 
     }
