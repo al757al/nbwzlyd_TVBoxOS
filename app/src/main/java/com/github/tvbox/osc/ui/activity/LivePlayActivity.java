@@ -47,7 +47,6 @@ import com.github.tvbox.osc.ui.adapter.MyEpgAdapter;
 import com.github.tvbox.osc.ui.dialog.LivePasswordDialog;
 import com.github.tvbox.osc.ui.dialog.LiveStoreDialog;
 import com.github.tvbox.osc.ui.tv.widget.ViewObj;
-import com.github.tvbox.osc.util.EpgUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
@@ -191,56 +190,29 @@ public class LivePlayActivity extends BaseActivity {
         tvNetSpeed = findViewById(R.id.tvNetSpeed);
 
         //EPG  findViewById  by 龍
-        tip_chname = (TextView) findViewById(R.id.tv_channel_bar_name);//底部名称
-        tv_channelnum = (TextView) findViewById(R.id.tv_channel_bottom_number); //底部数字
-        tip_epg1 = (TextView) findViewById(R.id.tv_current_program_time);//底部EPG当前节目信息
-        tip_epg2 = (TextView) findViewById(R.id.tv_next_program_time);//底部EPG当下个节目信息
-        tv_srcinfo = (TextView) findViewById(R.id.tv_source);//线路状态
-        tv_curepg_left = (TextView) findViewById(R.id.tv_current_program);//当前节目
-        tv_nextepg_left = (TextView) findViewById(R.id.tv_next_program);//下一节目
-        ll_epg = (RelativeLayout) findViewById(R.id.ll_epg);
-//        tv_right_top_tipnetspeed = (TextView)findViewById(R.id.tv_right_top_tipnetspeed);
-//        tv_right_top_channel_name = (TextView)findViewById(R.id.tv_right_top_channel_name);
-//        tv_right_top_epg_name = (TextView)findViewById(R.id.tv_right_top_epg_name);
-//        tv_right_top_type = (TextView)findViewById(R.id.tv_right_top_type);
-//        iv_circle_bg = (ImageView) findViewById(R.id.iv_circle_bg);
-//        iv_back_bg = (ImageView) findViewById(R.id.iv_back_bg);
-//        tv_tiploading= (View) findViewById(R.id.ll_right_top_loading);
-//        tv_shownum = (TextView) findViewById(R.id.tv_shownum);
-//        txtNoEpg = (TextView) findViewById(R.id.txtNoEpg);
-//        ll_right_top_loading = findViewById(R.id.ll_right_top_loading);
-//        ll_right_top_huikan = findViewById(R.id.ll_right_top_huikan);
-        divLoadEpg = (View) findViewById(R.id.divLoadEpg);
-        divLoadEpgleft = (View) findViewById(R.id.divLoadEpgleft);
-//        lv_epg = (TvRecyclerView) findViewById(R.id.lv_epg);
-//        //右上角图片旋转
-//        objectAnimator = ObjectAnimator.ofFloat(iv_circle_bg,"rotation", 360.0f);
-//        objectAnimator.setDuration(5000);
-//        objectAnimator.setRepeatCount(-1);
-//        objectAnimator.start();
-
+        tip_chname = findViewById(R.id.tv_channel_bar_name);//底部名称
+        tv_channelnum = findViewById(R.id.tv_channel_bottom_number); //底部数字
+        tip_epg1 = findViewById(R.id.tv_current_program_time);//底部EPG当前节目信息
+        tip_epg2 = findViewById(R.id.tv_next_program_time);//底部EPG当下个节目信息
+        tv_srcinfo = findViewById(R.id.tv_source);//线路状态
+        tv_curepg_left = findViewById(R.id.tv_current_program);//当前节目
+        tv_nextepg_left = findViewById(R.id.tv_next_program);//下一节目
+        ll_epg = findViewById(R.id.ll_epg);
+        divLoadEpg = findViewById(R.id.divLoadEpg);
+        divLoadEpgleft = findViewById(R.id.divLoadEpgleft);
         //laodao 7day replay
         mEpgDateGridView = findViewById(R.id.mEpgDateGridView);
         Hawk.put(HawkConfig.NOW_DATE, formatDate.format(new Date()));
         day = formatDate.format(new Date());
         nowday = new Date();
 
-        mRightEpgList = (TvRecyclerView) findViewById(R.id.lv_epg);
-        //EPG频道名称
-//        imgLiveIcon = findViewById(R.id.img_live_icon);
-//        liveIconNullBg = findViewById(R.id.live_icon_null_bg);
-//        liveIconNullText = findViewById(R.id.live_icon_null_text);
-//        imgLiveIcon.setVisibility(View.INVISIBLE);
-//        liveIconNullText.setVisibility(View.INVISIBLE);
-//        liveIconNullBg.setVisibility(View.INVISIBLE);
-
-        sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-        tv_currentpos = (TextView) findViewById(R.id.tv_currentpos);
-        backcontroller = (View) findViewById(R.id.backcontroller);
-        tv_duration = (TextView) findViewById(R.id.tv_duration);
+        mRightEpgList = findViewById(R.id.lv_epg);
+        sBar = findViewById(R.id.pb_progressbar);
+        tv_currentpos = findViewById(R.id.tv_currentpos);
+        backcontroller = findViewById(R.id.backcontroller);
+        tv_duration = findViewById(R.id.tv_duration);
         iv_playpause = findViewById(R.id.iv_playpause);
         iv_play = findViewById(R.id.iv_play);
-
 
         if (show) {
             backcontroller.setVisibility(View.VISIBLE);
@@ -436,26 +408,27 @@ public class LivePlayActivity extends BaseActivity {
         if (isSHIYI)
             return;
         if (channel_Name.getChannelName() != null) {
-            findViewById(R.id.ll_epg).setVisibility(View.VISIBLE);
-            ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
-            ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
-            ((TextView) findViewById(R.id.tv_current_program_time)).setText("暂无信息");
+            ll_epg.setVisibility(View.VISIBLE);
+
+            tip_chname.setText(channel_Name.getChannelName());
+            tv_channelnum.setText("" + channel_Name.getChannelNum());
+            tip_epg1.setText("暂无信息");
             ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
-            ((TextView) findViewById(R.id.tv_next_program_time)).setText("开源测试软件,请勿商用以及播放违法内容");
+            tip_epg2.setText("开源测试软件,请勿商用以及播放违法内容");
             ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
             String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
             if (hsEpg.containsKey(savedEpgKey)) {
-                String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
+//                String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
 //                updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]);
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
                 if (arrayList != null && arrayList.size() > 0) {
                     int size = arrayList.size() - 1;
                     while (size >= 0) {
                         if (new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
-                            ((TextView) findViewById(R.id.tv_current_program_time)).setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
                             ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
                             if (size != arrayList.size() - 1) {
-                                ((TextView) findViewById(R.id.tv_next_program_time)).setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size)).end);
                                 ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
                             }
                             break;
@@ -482,54 +455,18 @@ public class LivePlayActivity extends BaseActivity {
                 }
 
                 public void onFinish() {
-                    findViewById(R.id.ll_epg).setVisibility(View.GONE);
+                    ll_epg.setVisibility(View.GONE);
                 }
             };
             countDownTimer.start();
             if (channel_Name == null || channel_Name.getSourceNum() <= 0) {
-                ((TextView) findViewById(R.id.tv_source)).setText("1/1");
+                tv_srcinfo.setText("1/1");
             } else {
-                ((TextView) findViewById(R.id.tv_source)).setText("[线路" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
+                tv_srcinfo.setText("[线路" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
             }
-//            tv_right_top_channel_name.setText(channel_Name.getChannelName());
-//            tv_right_top_epg_name.setText(channel_Name.getChannelName());
-//            ll_right_top_loading.setVisibility(View.VISIBLE);
-//
-//            if (countDownTimerRightTop != null) {
-//                countDownTimerRightTop.cancel();
-//            }
-//            countDownTimerRightTop = new CountDownTimer(5000, 1000) {
-//
-//                public void onTick(long j) {
-//                }
-//
-//                public void onFinish() {
-//                    ll_right_top_loading.setVisibility(View.GONE);
-//                }
-//            };
-
             mHandler.post(mUpdateNetSpeedRun);
-//            tv_right_top_tipnetspeed.setVisibility(View.VISIBLE);
         }
-//        countDownTimerRightTop.start();
     }
-
-//    private void updateChannelIcon(String channelName, String logoUrl) {
-//        if (StringUtils.isEmpty(logoUrl)) {
-//            liveIconNullBg.setVisibility(View.VISIBLE);
-//            liveIconNullText.setVisibility(View.VISIBLE);
-//            imgLiveIcon.setVisibility(View.INVISIBLE);
-//            liveIconNullText.setText("" + channel_Name.getChannelNum());
-//        } else {
-//            imgLiveIcon.setVisibility(View.VISIBLE);
-//            LOG.i("live icon: " + logoUrl);
-//            Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);
-//            liveIconNullBg.setVisibility(View.INVISIBLE);
-//            liveIconNullText.setVisibility(View.INVISIBLE);
-//        }
-//    }
-
-
     //频道列表
     public void divLoadEpgRight(View view) {
 
@@ -1048,7 +985,6 @@ public class LivePlayActivity extends BaseActivity {
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
-                    sBar = (SeekBar) findViewById(R.id.pb_progressbar);
                     sBar.setMax(shiyi_time_c * 1000);
                     sBar.setProgress((int) mVideoView.getCurrentPosition());
                     // long dd = mVideoView.getDuration();
