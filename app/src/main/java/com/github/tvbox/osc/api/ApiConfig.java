@@ -29,6 +29,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.GetRequest;
@@ -239,8 +240,13 @@ public class ApiConfig {
                 return;
             }
         }
-        GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar");
-        request.headers("User-Agent", userAgent);
+        GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar")
+                .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST).cacheTime(10 * 60 * 60 * 1000);
+        if (jarUrl.startsWith("https://gitea")) {
+            request.headers("User-Agent", UA.randomOne());
+        } else {
+            request.headers("User-Agent", userAgent);
+        }
         request.execute(new AbsCallback<File>() {
 
             @Override
@@ -270,12 +276,26 @@ public class ApiConfig {
                         }
                     }
 
-                    @Override
-                    public void onError(Response<File> response) {
-                        super.onError(response);
-                        callback.error(response.getException().getMessage());
+            @Override
+            public void onCacheSuccess(Response<File> response) {
+                super.onCacheSuccess(response);
+                if (response.body().exists()) {
+                    if (jarLoader.load(response.body().getAbsolutePath())) {
+                        callback.success();
+                    } else {
+                        callback.error("jar内部解析失败");
                     }
-                });
+                } else {
+                    callback.error("jar不存在");
+                }
+            }
+
+            @Override
+            public void onError(Response<File> response) {
+                super.onError(response);
+                callback.error(response.getException().getMessage());
+            }
+        });
     }
 
     private void parseJson(String apiUrl, File f) throws Throwable {
