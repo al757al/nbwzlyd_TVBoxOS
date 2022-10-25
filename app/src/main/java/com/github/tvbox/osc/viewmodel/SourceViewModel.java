@@ -29,6 +29,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
@@ -103,28 +104,7 @@ public class SourceViewModel extends ViewModel {
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     } finally {
-                        if (sortJson != null) {
-                            AbsSortXml sortXml = sortJson(sortResult, sortJson);
-                            if (sortXml != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
-                                AbsXml absXml = json(null, sortJson, sourceBean.getKey());
-                                if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
-                                    sortXml.videoList = absXml.movie.videoList;
-                                    sortResult.postValue(sortXml);
-                                } else {
-                                    getHomeRecList(sourceBean, null, new HomeRecCallback() {
-                                        @Override
-                                        public void done(List<Movie.Video> videos) {
-                                            sortXml.videoList = videos;
-                                            sortResult.postValue(sortXml);
-                                        }
-                                    });
-                                }
-                            } else {
-                                sortResult.postValue(sortXml);
-                            }
-                        } else {
-                            sortResult.postValue(null);
-                        }
+                        onClassTabInit(sortJson, sourceBean);
                         try {
                             executor.shutdown();
                         } catch (Throwable th) {
@@ -135,7 +115,7 @@ public class SourceViewModel extends ViewModel {
             };
             spThreadPool.execute(waitResponse);
         } else if (type == 0 || type == 1) {
-            OkGo.<String>get(sourceBean.getApi())
+            OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3 * 24 * 60 * 60 * 1000)
                     .tag(sourceBean.getKey() + "_sort")
                     .execute(new AbsCallback<String>() {
                         @Override
@@ -148,31 +128,14 @@ public class SourceViewModel extends ViewModel {
                         }
 
                         @Override
+                        public void onCacheSuccess(Response<String> response) {
+                            super.onCacheSuccess(response);
+                            onClassTabInit2(response, type, sourceBean);
+                        }
+
+                        @Override
                         public void onSuccess(Response<String> response) {
-                            AbsSortXml sortXml = null;
-                            if (type == 0) {
-                                String xml = response.body();
-                                sortXml = sortXml(sortResult, xml);
-                            } else if (type == 1) {
-                                String json = response.body();
-                                sortXml = sortJson(sortResult, json);
-                            }
-                            if (sortXml != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1 && sortXml.list != null && sortXml.list.videoList != null && sortXml.list.videoList.size() > 0) {
-                                ArrayList<String> ids = new ArrayList<>();
-                                for (Movie.Video vod : sortXml.list.videoList) {
-                                    ids.add(vod.id);
-                                }
-                                AbsSortXml finalSortXml = sortXml;
-                                getHomeRecList(sourceBean, ids, new HomeRecCallback() {
-                                    @Override
-                                    public void done(List<Movie.Video> videos) {
-                                        finalSortXml.videoList = videos;
-                                        sortResult.postValue(finalSortXml);
-                                    }
-                                });
-                            } else {
-                                sortResult.postValue(sortXml);
-                            }
+                            onClassTabInit2(response, type, sourceBean);
                         }
 
                         @Override
@@ -182,7 +145,7 @@ public class SourceViewModel extends ViewModel {
                         }
                     });
         } else if (type == 4) {
-            OkGo.<String>get(sourceBean.getApi())
+            OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3 * 24 * 60 * 60 * 1000)
                     .tag(sourceBean.getKey() + "_sort")
                     .params("filter", "true")
                     .execute(new AbsCallback<String>() {
@@ -196,31 +159,16 @@ public class SourceViewModel extends ViewModel {
                         }
 
                         @Override
+                        public void onCacheSuccess(Response<String> response) {
+                            super.onCacheSuccess(response);
+                            String sortJson = response.body();
+                            onClassTabInit(sortJson, sourceBean);
+                        }
+
+                        @Override
                         public void onSuccess(Response<String> response) {
                             String sortJson = response.body();
-                            LOG.i(sortJson);
-                            if (sortJson != null) {
-                                AbsSortXml sortXml = sortJson(sortResult, sortJson);
-                                if (sortXml != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
-                                    AbsXml absXml = json(null, sortJson, sourceBean.getKey());
-                                    if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
-                                        sortXml.videoList = absXml.movie.videoList;
-                                        sortResult.postValue(sortXml);
-                                    } else {
-                                        getHomeRecList(sourceBean, null, new HomeRecCallback() {
-                                            @Override
-                                            public void done(List<Movie.Video> videos) {
-                                                sortXml.videoList = videos;
-                                                sortResult.postValue(sortXml);
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    sortResult.postValue(sortXml);
-                                }
-                            } else {
-                                sortResult.postValue(null);
-                            }
+                            onClassTabInit(sortJson, sourceBean);
                         }
 
                         @Override
@@ -229,6 +177,59 @@ public class SourceViewModel extends ViewModel {
                             sortResult.postValue(null);
                         }
                     });
+        } else {
+            sortResult.postValue(null);
+        }
+    }
+
+    private void onClassTabInit2(Response<String> response, int type, SourceBean sourceBean) {
+        AbsSortXml sortXml = null;
+        if (type == 0) {
+            String xml = response.body();
+            sortXml = sortXml(sortResult, xml);
+        } else if (type == 1) {
+            String json = response.body();
+            sortXml = sortJson(sortResult, json);
+        }
+        if (sortXml != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1 && sortXml.list != null && sortXml.list.videoList != null && sortXml.list.videoList.size() > 0) {
+            ArrayList<String> ids = new ArrayList<>();
+            for (Movie.Video vod : sortXml.list.videoList) {
+                ids.add(vod.id);
+            }
+            AbsSortXml finalSortXml = sortXml;
+            getHomeRecList(sourceBean, ids, new HomeRecCallback() {
+                @Override
+                public void done(List<Movie.Video> videos) {
+                    finalSortXml.videoList = videos;
+                    sortResult.postValue(finalSortXml);
+                }
+            });
+        } else {
+            sortResult.postValue(sortXml);
+        }
+    }
+
+    //首页分类tab加载成功
+    private void onClassTabInit(String sortJson, SourceBean sourceBean) {
+        if (sortJson != null) {
+            AbsSortXml sortXml = sortJson(sortResult, sortJson);
+            if (sortXml != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
+                AbsXml absXml = json(null, sortJson, sourceBean.getKey());
+                if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
+                    sortXml.videoList = absXml.movie.videoList;
+                    sortResult.postValue(sortXml);
+                } else {
+                    getHomeRecList(sourceBean, null, new HomeRecCallback() {
+                        @Override
+                        public void done(List<Movie.Video> videos) {
+                            sortXml.videoList = videos;
+                            sortResult.postValue(sortXml);
+                        }
+                    });
+                }
+            } else {
+                sortResult.postValue(sortXml);
+            }
         } else {
             sortResult.postValue(null);
         }

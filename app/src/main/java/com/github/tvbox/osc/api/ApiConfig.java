@@ -218,11 +218,13 @@ public class ApiConfig {
                             result = clanContentFix(clanToAddress(apiUrl), result);
                         }
                         //假相對路徑
-                        result = fixContentPath(apiUrl,result);
+                        result = fixContentPath(apiUrl, result);
                         return result;
                     }
                 });
     }
+
+    private boolean isCacheReady;
 
 
     public void loadJar(boolean useCache, String spider, LoadConfigCallback callback) {
@@ -242,6 +244,7 @@ public class ApiConfig {
         }
         GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar")
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST).cacheTime(10 * 60 * 60 * 1000);
+        isCacheReady = false;
         if (jarUrl.startsWith("https://gitea")) {
             request.headers("User-Agent", UA.randomOne());
         } else {
@@ -265,6 +268,9 @@ public class ApiConfig {
 
                     @Override
                     public void onSuccess(Response<File> response) {
+                        if (isCacheReady) {
+                            return;
+                        }
                         if (response.body().exists()) {
                             if (jarLoader.load(response.body().getAbsolutePath())) {
                                 callback.success();
@@ -281,6 +287,7 @@ public class ApiConfig {
                 super.onCacheSuccess(response);
                 if (response.body().exists()) {
                     if (jarLoader.load(response.body().getAbsolutePath())) {
+                        isCacheReady = true;
                         callback.success();
                     } else {
                         callback.error("jar内部解析失败");
