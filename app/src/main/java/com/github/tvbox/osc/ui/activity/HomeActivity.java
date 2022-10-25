@@ -244,7 +244,7 @@ public class HomeActivity extends BaseActivity {
         super.onNewIntent(intent);
         dataInitOk = false;
         jarInitOk = false;
-        initViewModel();
+//        initViewModel();
         initData();
     }
 
