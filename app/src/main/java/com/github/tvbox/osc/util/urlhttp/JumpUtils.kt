@@ -15,6 +15,7 @@ class JumpUtils {
         fun forceRestartHomeActivity(context: Context) {
             ApiConfig.release()
             val intent = Intent(context, HomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             val bundle = Bundle()
             intent.putExtras(bundle)
             context.startActivity(intent)

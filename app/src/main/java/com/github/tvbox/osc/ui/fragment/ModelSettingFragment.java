@@ -667,7 +667,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 ToastUtils.showShort("重置App完毕");
                 ApiConfig.release();
                 Intent intent = new Intent(mActivity, HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             });
             AlertDialog alertDialog = builder.create();
@@ -687,6 +687,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 ToastUtils.showShort("接口缓存清理完毕");
                 ApiConfig.release();
                 Intent intent = new Intent(mActivity, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             });
             builder.create().show();

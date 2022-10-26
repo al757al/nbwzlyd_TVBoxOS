@@ -31,6 +31,7 @@
         <entry key="app/src/main/res/drawable/shape_thumb_year.xml" value="0.2165" />
         <entry key="app/src/main/res/drawable/shape_user_focus.xml" value="0.2165" />
         <entry key="app/src/main/res/layout-land/player_vod_control_view.xml" value="0.43385416666666665" />
+        <entry key="app/src/main/res/layout/activity_collect.xml" value="0.23984375" />
         <entry key="app/src/main/res/layout/activity_detail.xml" value="0.12691960252935863" />
         <entry key="app/src/main/res/layout/activity_history.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.1" />
@@ -39,6 +40,7 @@
         <entry key="app/src/main/res/layout/activity_play.xml" value="0.25625" />
         <entry key="app/src/main/res/layout/activity_search.xml" value="0.2640625" />
         <entry key="app/src/main/res/layout/activity_setting.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_splash.xml" value="0.10859375" />
         <entry key="app/src/main/res/layout/box_vod_control_view.xml" value="0.1" />
         <entry key="app/src/main/res/layout/choose_play_layout.xml" value="0.1875" />
         <entry key="app/src/main/res/layout/dialog_about.xml" value="0.375" />

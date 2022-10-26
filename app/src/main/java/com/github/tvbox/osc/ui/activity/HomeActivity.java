@@ -665,6 +665,7 @@ public class HomeActivity extends BaseActivity {
     private void restartHomeActivity(String homeSourceKey) {
         if (homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, ""))) {
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Bundle bundle = new Bundle();
             bundle.putBoolean("useCache", true);
             intent.putExtras(bundle);
@@ -725,6 +726,7 @@ public class HomeActivity extends BaseActivity {
         ApiConfig.release();
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
         Bundle bundle = new Bundle();
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         bundle.putBoolean("useCache", true);
         intent.putExtras(bundle);
         HomeActivity.this.startActivity(intent);

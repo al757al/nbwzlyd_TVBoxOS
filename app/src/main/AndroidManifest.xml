@@ -33,7 +33,7 @@
         <activity
             android:name=".ui.activity.HomeActivity"
             android:screenOrientation="sensorLandscape"
-            android:launchMode="singleTask">
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,6 +41,17 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--        <activity-->
+        <!--            android:name=".ui.activity.SplashActivity"-->
+        <!--            android:screenOrientation="sensorLandscape"-->
+        <!--            android:launchMode="singleTask">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="android.intent.action.MAIN" />-->
+        <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+        <!--                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />-->
+        <!--            </intent-filter>-->
+        <!--        </activity>-->
 
         <activity
             android:name=".ui.activity.LivePlayActivity"
