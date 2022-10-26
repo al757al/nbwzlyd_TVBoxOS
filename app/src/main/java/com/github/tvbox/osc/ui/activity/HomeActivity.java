@@ -242,6 +242,10 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if ("android.intent.action.MAIN".equals(intent.getAction())
+                || intent.hasCategory("android.intent.category.LAUNCHER")) {//后台切前台，无需重新加载
+            return;
+        }
         dataInitOk = false;
         jarInitOk = false;
 //        initViewModel();

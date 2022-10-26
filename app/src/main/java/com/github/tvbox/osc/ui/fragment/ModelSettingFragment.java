@@ -685,10 +685,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             builder.setPositiveButton("确定", (dialog, which) -> {
                 CacheManager.getInstance().clear();//清空接口缓存
                 ToastUtils.showShort("接口缓存清理完毕");
-                ApiConfig.release();
-                Intent intent = new Intent(mActivity, HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                JumpUtils.forceRestartHomeActivity(mActivity);
             });
             builder.create().show();
 
