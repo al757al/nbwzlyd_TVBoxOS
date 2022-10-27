@@ -60,7 +60,7 @@ class SourceLineDialogUtil(private val context: Context) {
                 UA.randomOne()
             ).headers("Accept", ApiConfig.requestAccept)
         }
-        req.cacheTime(10 * 60 * 60 * 1000).execute(object : StringCallback() {
+        req.cacheTime(10L * 60L * 60L * 1000).execute(object : StringCallback() {
             override fun onSuccess(response: Response<String>?) {
                 inflateData(response, onSelect)
             }

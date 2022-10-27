@@ -123,7 +123,9 @@ public class ApiConfig {
         return json;
     }
 
+    private boolean isConfigLoadCache;
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
+        isConfigLoadCache = false;
         String apiUrl = Hawk.get(HawkConfig.API_URL, "");
         if (apiUrl.isEmpty()) {
             callback.error("-1");
@@ -164,32 +166,21 @@ public class ApiConfig {
         } else {
             stringGetRequest.headers("User-Agent", userAgent);
         }
-        stringGetRequest
+        stringGetRequest.cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3L * 24L * 60L * 60L * 1000L)
                 .execute(new AbsCallback<String>() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        try {
-                            String json = response.body();
-                            json = FindResult(json, configKey);
-                            parseJson(apiUrl, json);
-                            try {
-                                File cacheDir = cache.getParentFile();
-                                if (!cacheDir.exists())
-                                    cacheDir.mkdirs();
-                                if (cache.exists())
-                                    cache.delete();
-                                FileOutputStream fos = new FileOutputStream(cache);
-                                fos.write(json.getBytes("UTF-8"));
-                                fos.flush();
-                                fos.close();
-                            } catch (Throwable th) {
-                                th.printStackTrace();
-                            }
-                            callback.success();
-                        } catch (Throwable th) {
-                            th.printStackTrace();
-                            callback.error("解析配置失败");
+                        if (isConfigLoadCache) {
+                            return;
                         }
+                        configLoad(response, configKey, apiUrl, cache, callback);
+                    }
+
+                    @Override
+                    public void onCacheSuccess(Response<String> response) {
+                        super.onCacheSuccess(response);
+                        isConfigLoadCache = true;
+                        configLoad(response, configKey, apiUrl, cache, callback);
                     }
 
                     @Override
@@ -224,6 +215,31 @@ public class ApiConfig {
                 });
     }
 
+    private void configLoad(Response<String> response, String configKey, String apiUrl, File cache, LoadConfigCallback callback) {
+        try {
+            String json = response.body();
+            json = FindResult(json, configKey);
+            parseJson(apiUrl, json);
+            try {
+                File cacheDir = cache.getParentFile();
+                if (!cacheDir.exists())
+                    cacheDir.mkdirs();
+                if (cache.exists())
+                    cache.delete();
+                FileOutputStream fos = new FileOutputStream(cache);
+                fos.write(json.getBytes("UTF-8"));
+                fos.flush();
+                fos.close();
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+            callback.success();
+        } catch (Throwable th) {
+            th.printStackTrace();
+            callback.error("解析配置失败");
+        }
+    }
+
     private boolean isCacheReady;
 
 
@@ -243,7 +259,7 @@ public class ApiConfig {
             }
         }
         GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar")
-                .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST).cacheTime(10 * 60 * 60 * 1000);
+                .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST).cacheTime(10L * 60L * 60L * 1000);
         isCacheReady = false;
         if (jarUrl.startsWith("https://gitea")) {
             request.headers("User-Agent", UA.randomOne());

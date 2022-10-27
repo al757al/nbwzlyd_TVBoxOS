@@ -67,7 +67,7 @@ public class JarLoader {
                         }
                         break;
                     }
-                    Thread.sleep(200);
+//                    Thread.sleep(200);
                 } catch (Exception e) {
                     ToastUtils.showShort(e.getMessage());
                     if (e instanceof ClassNotFoundException) {
@@ -75,7 +75,6 @@ public class JarLoader {
                         if (cache.exists()) {//修复由于强制关闭loading导致资源下载不完全，每次会加载jar失败的问题
                             cache.delete();
                             break;
-//                            ApiConfig.get().loadJar(false, ApiConfig.get().getSpider(),null);
                         }
                     } else {
                         e.printStackTrace();

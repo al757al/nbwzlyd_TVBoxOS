@@ -115,7 +115,7 @@ public class SourceViewModel extends ViewModel {
             };
             spThreadPool.execute(waitResponse);
         } else if (type == 0 || type == 1) {
-            OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3 * 24 * 60 * 60 * 1000)
+            OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3L * 24L * 60L * 60L * 1000L)
                     .tag(sourceBean.getKey() + "_sort")
                     .execute(new AbsCallback<String>() {
                         @Override
@@ -145,7 +145,7 @@ public class SourceViewModel extends ViewModel {
                         }
                     });
         } else if (type == 4) {
-            OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3 * 24 * 60 * 60 * 1000)
+            OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3L * 24L * 60L * 60L * 1000L)
                     .tag(sourceBean.getKey() + "_sort")
                     .params("filter", "true")
                     .execute(new AbsCallback<String>() {
@@ -383,7 +383,7 @@ public class SourceViewModel extends ViewModel {
             spThreadPool.execute(waitResponse);
         } else if (type == 0 || type == 1) {
             isHomeRecCache = false;
-            OkGo.<String>get(sourceBean.getApi()).cacheTime(3 * 24 * 60 * 60 * 1000).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
+            OkGo.<String>get(sourceBean.getApi()).cacheTime(3L * 24L * 60L * 60L * 1000L).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
                     .tag("detail")
                     .params("ac", sourceBean.getType() == 0 ? "videolist" : "detail")
                     .params("ids", TextUtils.join(",", ids))

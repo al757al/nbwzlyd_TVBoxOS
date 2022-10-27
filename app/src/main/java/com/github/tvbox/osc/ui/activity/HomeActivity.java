@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,6 +102,7 @@ public class HomeActivity extends BaseActivity {
             mHandler.postDelayed(this, 1000);
         }
     };
+    public static long startTime;
 
     @Override
     protected int getLayoutResID() {
@@ -113,6 +115,7 @@ public class HomeActivity extends BaseActivity {
     private boolean isForceCloseLoading = false;
 
     private void initView() {
+        startTime = System.currentTimeMillis();
         this.topLayout = findViewById(R.id.topLayout);
         this.tvDate = findViewById(R.id.tvDate);
         this.tvName = findViewById(R.id.tvName);
@@ -263,8 +266,11 @@ public class HomeActivity extends BaseActivity {
             useCacheConfig = bundle.getBoolean("useCache", false);
         }
         // 初始化Web服务器
-        ControlManager.init(this);
-        ControlManager.get().startServer();
+        Looper.myQueue().addIdleHandler(() -> {
+            ControlManager.init(HomeActivity.this);
+            ControlManager.get().startServer();
+            return false;
+        });
         requestStoragePermission();
         initData();
     }

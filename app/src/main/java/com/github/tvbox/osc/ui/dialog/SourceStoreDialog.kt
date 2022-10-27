@@ -158,7 +158,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             ).headers("Accept", ApiConfig.requestAccept);
         }
 
-        req.cacheTime(3 * 60 * 60 * 1000).execute(object : StringCallback() {
+        req.cacheTime(10L * 60L * 60L * 1000).execute(object : StringCallback() {
             override fun onSuccess(response: Response<String>?) {
                 serverString2Json(moreSourceBean, response)
             }
