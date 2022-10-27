@@ -26,6 +26,6 @@ class ServerTask : AndroidStartup<String>() {
     }
 
     override fun dependencies(): List<Class<out Startup<*>>> {
-        return listOf(DatabaseTask::class.java)
+        return listOf(HawkTask::class.java, DatabaseTask::class.java)
     }
 }

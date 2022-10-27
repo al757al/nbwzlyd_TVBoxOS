@@ -1,12 +1,8 @@
 package com.github.tvbox.osc.base
 
 import androidx.multidex.MultiDexApplication
-import com.blankj.utilcode.util.LogUtils
 import com.github.tvbox.osc.bean.VodInfo
-import com.github.tvbox.osc.startup.DatabaseTask
-import com.github.tvbox.osc.startup.PlayerTask
-import com.github.tvbox.osc.startup.ServerTask
-import com.github.tvbox.osc.startup.UITask
+import com.github.tvbox.osc.startup.*
 import com.github.tvbox.osc.util.js.JSEngine
 import com.rousetime.android_startup.StartupManager
 
@@ -19,15 +15,14 @@ class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        val startTime = System.currentTimeMillis()
         StartupManager.Builder()
             .addStartup(UITask())
-            .addStartup(ServerTask())
+            .addStartup(HawkTask())
             .addStartup(DatabaseTask())
+            .addStartup(ServerTask())
             .addStartup(PlayerTask())
             .build(this)
             .start().await()
-        LogUtils.dTag("derek119", "time-->" + (System.currentTimeMillis() - startTime))
     }
 
 
