@@ -67,7 +67,8 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         super.dismiss()
     }
 
-    private var DEFAULT_STORE_URL = "https://gitcode.net/wzlyd1/00/-/raw/master/000.txt"
+//    private var DEFAULT_STORE_URL = "https://gitcode.net/wzlyd1/00/-/raw/master/000.txt"
+private var DEFAULT_STORE_URL = "ABC"
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
 
