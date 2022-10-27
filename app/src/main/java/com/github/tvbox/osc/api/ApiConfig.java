@@ -210,7 +210,7 @@ public class ApiConfig {
                     public String convertResponse(okhttp3.Response response) throws Throwable {
                         String responseStr = "";
                         if (response.body() != null) {
-                            responseStr = response.body().toString();
+                            responseStr = response.body().string();
                         }
                         return fixRelativePath(responseStr, apiUrl);
                     }
