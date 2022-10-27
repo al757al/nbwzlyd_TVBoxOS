@@ -24,6 +24,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.UA;
+import com.github.tvbox.osc.util.VideoParseRuler;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -402,6 +403,35 @@ public class ApiConfig {
                 setDefaultParse(parseBeanList.get(0));
         }
         loadLiveSourceUrl(apiUrl, infoJson);
+        //video parse rule for host
+        if (infoJson.has("rules")) {
+            for(JsonElement oneHostRule : infoJson.getAsJsonArray("rules")) {
+                JsonObject obj = (JsonObject) oneHostRule;
+                String host = obj.get("host").getAsString();
+                if (obj.has("rule")) {
+                    JsonArray ruleJsonArr = obj.getAsJsonArray("rule");
+                    ArrayList<String> rule = new ArrayList<>();
+                    for(JsonElement one : ruleJsonArr) {
+                        String oneRule = one.getAsString();
+                        rule.add(oneRule);
+                    }
+                    if (rule.size() > 0) {
+                        VideoParseRuler.addHostRule(host, rule);
+                    }
+                }
+                if (obj.has("filter")) {
+                    JsonArray filterJsonArr = obj.getAsJsonArray("filter");
+                    ArrayList<String> filter = new ArrayList<>();
+                    for(JsonElement one : filterJsonArr) {
+                        String oneFilter = one.getAsString();
+                        filter.add(oneFilter);
+                    }
+                    if (filter.size() > 0) {
+                        VideoParseRuler.addHostFilter(host, filter);
+                    }
+                }
+            }
+        }
         // 广告地址
         for (JsonElement host : infoJson.getAsJsonArray("ads")) {
             AdBlocker.addAdHost(host.getAsString());
