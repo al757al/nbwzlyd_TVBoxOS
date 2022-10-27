@@ -1,5 +1,7 @@
 package com.github.tvbox.osc.util;
 
+import android.content.Context;
+
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.util.SSL.SSLSocketFactoryCompat;
 import com.lzy.okgo.OkGo;
@@ -115,12 +117,15 @@ public class OkGoHelper {
         return noRedirectClient;
     }
 
-    public static void init() {
+    public static void init(Context context) {
         initDnsOverHttps();
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkGo");
 
+        if (!Hawk.isBuilt()) {
+            Hawk.init(context);
+        }
         if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
             loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
             loggingInterceptor.setColorLevel(Level.INFO);

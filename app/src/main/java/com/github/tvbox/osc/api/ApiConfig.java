@@ -126,6 +126,9 @@ public class ApiConfig {
     private boolean isConfigLoadCache;
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
         isConfigLoadCache = false;
+        if (!Hawk.isBuilt()) {
+            Hawk.init(activity);
+        }
         String apiUrl = Hawk.get(HawkConfig.API_URL, "");
         if (apiUrl.isEmpty()) {
             callback.error("-1");
