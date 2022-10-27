@@ -1,15 +1,9 @@
 package com.github.tvbox.osc.base
 
-import android.text.TextUtils
 import androidx.multidex.MultiDexApplication
 import com.github.tvbox.osc.bean.VodInfo
-import com.github.tvbox.osc.startup.DatabaseTask
-import com.github.tvbox.osc.startup.PlayerTask
-import com.github.tvbox.osc.startup.ServerTask
-import com.github.tvbox.osc.startup.UITask
-import com.github.tvbox.osc.util.HawkConfig
+import com.github.tvbox.osc.startup.*
 import com.github.tvbox.osc.util.js.JSEngine
-import com.orhanobut.hawk.Hawk
 import com.rousetime.android_startup.StartupManager
 
 /**
@@ -21,34 +15,16 @@ class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        initParams()
         StartupManager.Builder()
             .addStartup(UITask())
-            .addStartup(ServerTask())
+            .addStartup(HawkTask())
             .addStartup(DatabaseTask())
+            .addStartup(ServerTask())
             .addStartup(PlayerTask())
-//            .addStartup(PyTask())
             .build(this)
             .start().await()
     }
 
-    private fun initParams() {
-        // Hawk
-        Hawk.init(this).build()
-        if (!Hawk.contains(HawkConfig.PLAY_TYPE)) {
-            Hawk.put(HawkConfig.PLAY_TYPE, 1)
-        }
-        val homeUrl = Hawk.get(HawkConfig.API_URL, "")
-        if (TextUtils.isEmpty(homeUrl)) {
-            Hawk.put(
-                HawkConfig.API_URL,
-                "https://agit.ai/nbwzlyd/xiaopingguo/raw/branch/master/yujun.txt"
-            )
-        }
-        if (Hawk.get<String>(HawkConfig.IJK_CODEC).isNullOrEmpty()) {
-            Hawk.put(HawkConfig.IJK_CODEC, "硬解码")
-        }
-    }
 
     companion object {
         @JvmStatic

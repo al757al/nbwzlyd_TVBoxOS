@@ -76,6 +76,7 @@ public class SourceViewModel extends ViewModel {
     public ExecutorService spThreadPool = Executors.newSingleThreadExecutor();
 
     // homeContent
+    private boolean isHomeTabCacheInit = false;
     public void getSort(String sourceKey) {
         if (sourceKey == null) {
             sortResult.postValue(null);
@@ -115,7 +116,8 @@ public class SourceViewModel extends ViewModel {
             };
             spThreadPool.execute(waitResponse);
         } else if (type == 0 || type == 1) {
-            OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3 * 24 * 60 * 60 * 1000)
+            isHomeTabCacheInit = false;
+            OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3L * 24L * 60L * 60L * 1000L)
                     .tag(sourceBean.getKey() + "_sort")
                     .execute(new AbsCallback<String>() {
                         @Override
@@ -130,11 +132,15 @@ public class SourceViewModel extends ViewModel {
                         @Override
                         public void onCacheSuccess(Response<String> response) {
                             super.onCacheSuccess(response);
+                            isHomeTabCacheInit = true;
                             onClassTabInit2(response, type, sourceBean);
                         }
 
                         @Override
                         public void onSuccess(Response<String> response) {
+                            if (isHomeTabCacheInit) {
+                                return;
+                            }
                             onClassTabInit2(response, type, sourceBean);
                         }
 
@@ -145,7 +151,8 @@ public class SourceViewModel extends ViewModel {
                         }
                     });
         } else if (type == 4) {
-            OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3 * 24 * 60 * 60 * 1000)
+            isHomeTabCacheInit = false;
+            OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3L * 24L * 60L * 60L * 1000L)
                     .tag(sourceBean.getKey() + "_sort")
                     .params("filter", "true")
                     .execute(new AbsCallback<String>() {
@@ -161,12 +168,16 @@ public class SourceViewModel extends ViewModel {
                         @Override
                         public void onCacheSuccess(Response<String> response) {
                             super.onCacheSuccess(response);
+                            isHomeTabCacheInit = true;
                             String sortJson = response.body();
                             onClassTabInit(sortJson, sourceBean);
                         }
 
                         @Override
                         public void onSuccess(Response<String> response) {
+                            if (isHomeTabCacheInit) {
+                                return;
+                            }
                             String sortJson = response.body();
                             onClassTabInit(sortJson, sourceBean);
                         }
@@ -338,6 +349,7 @@ public class SourceViewModel extends ViewModel {
     }
 
     //    homeVideoContent
+    private boolean isHomeRecCache;
     void getHomeRecList(SourceBean sourceBean, ArrayList<String> ids, HomeRecCallback callback) {
         int type = sourceBean.getType();
         if (type == 3) {
@@ -381,7 +393,8 @@ public class SourceViewModel extends ViewModel {
             };
             spThreadPool.execute(waitResponse);
         } else if (type == 0 || type == 1) {
-            OkGo.<String>get(sourceBean.getApi())
+            isHomeRecCache = false;
+            OkGo.<String>get(sourceBean.getApi()).cacheTime(3L * 24L * 60L * 60L * 1000L).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
                     .tag("detail")
                     .params("ac", sourceBean.getType() == 0 ? "videolist" : "detail")
                     .params("ids", TextUtils.join(",", ids))
@@ -397,7 +410,29 @@ public class SourceViewModel extends ViewModel {
                         }
 
                         @Override
+                        public void onCacheSuccess(Response<String> response) {
+                            super.onCacheSuccess(response);
+                            AbsXml absXml;
+                            if (sourceBean.getType() == 0) {
+                                String xml = response.body();
+                                absXml = xml(null, xml, sourceBean.getKey());
+                            } else {
+                                String json = response.body();
+                                absXml = json(null, json, sourceBean.getKey());
+                            }
+                            if (absXml != null && absXml.movie != null && absXml.movie.videoList != null) {
+                                isHomeRecCache = true;
+                                callback.done(absXml.movie.videoList);
+                            } else {
+                                callback.done(null);
+                            }
+                        }
+
+                        @Override
                         public void onSuccess(Response<String> response) {
+                            if (isHomeRecCache) {
+                                return;
+                            }
                             AbsXml absXml;
                             if (sourceBean.getType() == 0) {
                                 String xml = response.body();

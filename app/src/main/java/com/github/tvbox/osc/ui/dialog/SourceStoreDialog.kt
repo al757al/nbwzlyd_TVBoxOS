@@ -67,7 +67,8 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         super.dismiss()
     }
 
-    private var DEFAULT_STORE_URL = "https://gitcode.net/wzlyd1/00/-/raw/master/000.txt"
+//    private var DEFAULT_STORE_URL = "https://gitcode.net/wzlyd1/00/-/raw/master/000.txt"
+private var DEFAULT_STORE_URL = "ABC"
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
 
@@ -158,7 +159,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             ).headers("Accept", ApiConfig.requestAccept);
         }
 
-        req.cacheTime(3 * 60 * 60 * 1000).execute(object : StringCallback() {
+        req.cacheTime(10L * 60L * 60L * 1000).execute(object : StringCallback() {
             override fun onSuccess(response: Response<String>?) {
                 serverString2Json(moreSourceBean, response)
             }
