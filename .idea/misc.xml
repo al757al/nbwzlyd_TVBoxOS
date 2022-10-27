@@ -61,6 +61,7 @@
         <entry key="app/src/main/res/layout/item_search_history.xml" value="0.356" />
         <entry key="app/src/main/res/layout/item_series.xml" value="0.1875" />
         <entry key="app/src/main/res/layout/item_setting_menu.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_user_hot_vod.xml" value="0.215625" />
         <entry key="app/src/main/res/layout/live_source_dialog_select.xml" value="0.1" />
         <entry key="app/src/main/res/layout/loadsir_loading_layout.xml" value="0.1" />
         <entry key="app/src/main/res/layout/modle_setting_3.xml" value="0.38" />
