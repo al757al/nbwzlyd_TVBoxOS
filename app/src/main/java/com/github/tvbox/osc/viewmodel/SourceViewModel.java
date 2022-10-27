@@ -76,6 +76,7 @@ public class SourceViewModel extends ViewModel {
     public ExecutorService spThreadPool = Executors.newSingleThreadExecutor();
 
     // homeContent
+    private boolean isHomeTabCacheInit = false;
     public void getSort(String sourceKey) {
         if (sourceKey == null) {
             sortResult.postValue(null);
@@ -115,6 +116,7 @@ public class SourceViewModel extends ViewModel {
             };
             spThreadPool.execute(waitResponse);
         } else if (type == 0 || type == 1) {
+            isHomeTabCacheInit = false;
             OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3L * 24L * 60L * 60L * 1000L)
                     .tag(sourceBean.getKey() + "_sort")
                     .execute(new AbsCallback<String>() {
@@ -130,11 +132,15 @@ public class SourceViewModel extends ViewModel {
                         @Override
                         public void onCacheSuccess(Response<String> response) {
                             super.onCacheSuccess(response);
+                            isHomeTabCacheInit = true;
                             onClassTabInit2(response, type, sourceBean);
                         }
 
                         @Override
                         public void onSuccess(Response<String> response) {
+                            if (isHomeTabCacheInit) {
+                                return;
+                            }
                             onClassTabInit2(response, type, sourceBean);
                         }
 
@@ -145,6 +151,7 @@ public class SourceViewModel extends ViewModel {
                         }
                     });
         } else if (type == 4) {
+            isHomeTabCacheInit = false;
             OkGo.<String>get(sourceBean.getApi()).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3L * 24L * 60L * 60L * 1000L)
                     .tag(sourceBean.getKey() + "_sort")
                     .params("filter", "true")
@@ -161,12 +168,16 @@ public class SourceViewModel extends ViewModel {
                         @Override
                         public void onCacheSuccess(Response<String> response) {
                             super.onCacheSuccess(response);
+                            isHomeTabCacheInit = true;
                             String sortJson = response.body();
                             onClassTabInit(sortJson, sourceBean);
                         }
 
                         @Override
                         public void onSuccess(Response<String> response) {
+                            if (isHomeTabCacheInit) {
+                                return;
+                            }
                             String sortJson = response.body();
                             onClassTabInit(sortJson, sourceBean);
                         }
