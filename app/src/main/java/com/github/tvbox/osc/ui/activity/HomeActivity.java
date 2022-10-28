@@ -271,6 +271,15 @@ public class HomeActivity extends BaseActivity {
             ControlManager.get().startServer();
             return false;
         });
+        //解决偶现的OkGo没有初始化问题
+        if (!Hawk.isBuilt()) {
+            Hawk.init(this).build();
+        }
+        try {
+            OkGo.getInstance().getContext();
+        } catch (Exception e) {
+            OkGo.getInstance().init(App.getInstance());
+        }
         requestStoragePermission();
         initData();
     }

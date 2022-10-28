@@ -14,8 +14,8 @@ class ServerTask : AndroidStartup<String>() {
 
     override fun create(context: Context): String? {
         // OKGo
-        OkGoHelper.init(context)
         OkGo.getInstance().init(App.instance)
+        OkGoHelper.init(context)
         return ServerTask::class.simpleName
 
     }

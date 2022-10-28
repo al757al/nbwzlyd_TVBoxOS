@@ -31,6 +31,8 @@ import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 public class OkGoHelper {
     public static final long DEFAULT_MILLISECONDS = 10 * 1000;      //默认的超时时间
 
+    public static boolean isInit = false;
+
     static void initExoOkHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
@@ -118,14 +120,14 @@ public class OkGoHelper {
     }
 
     public static void init(Context context) {
+        isInit = true;
+//        if (!Hawk.isBuilt()) {
+//            Hawk.init(context).build();
+//        }
         initDnsOverHttps();
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkGo");
-
-        if (!Hawk.isBuilt()) {
-            Hawk.init(context);
-        }
         if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
             loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
             loggingInterceptor.setColorLevel(Level.INFO);
