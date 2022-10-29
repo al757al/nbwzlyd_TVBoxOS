@@ -14,7 +14,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -898,10 +897,10 @@ public class DetailActivity extends BaseActivity {
         if (playFragment.mController != null) {
             playFragment.mController.setIsFullScreen(fullWindows);
         }
-        if (fullWindows) {
-            playFragment.initDefaultBright(this, 0.43f);
-        } else {
-            playFragment.initDefaultBright(this, WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE);
-        }
+//        if (fullWindows) {
+//            playFragment.initDefaultBright(this, 0.43f);
+//        } else {
+//            playFragment.initDefaultBright(this, WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE);
+//        }
     }
 }

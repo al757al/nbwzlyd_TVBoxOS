@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.ConsoleMessage;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
@@ -128,14 +127,14 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
 
-    public void initDefaultBright(Context context, float brightLevel) {
-        if (context instanceof Activity) {
-            Activity activity = (Activity) context;
-            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
-            lp.screenBrightness = brightLevel;
-            activity.getWindow().setAttributes(lp);
-        }
-    }
+//    public void initDefaultBright(Context context, float brightLevel) {
+//        if (context instanceof Activity) {
+//            Activity activity = (Activity) context;
+//            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+//            lp.screenBrightness = brightLevel;
+//            activity.getWindow().setAttributes(lp);
+//        }
+//    }
 
     private void initView() {
         mHandler = new Handler(msg -> {

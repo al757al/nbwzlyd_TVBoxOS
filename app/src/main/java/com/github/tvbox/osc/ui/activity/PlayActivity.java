@@ -15,7 +15,6 @@ import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.ConsoleMessage;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
@@ -126,15 +125,15 @@ public class PlayActivity extends BaseActivity {
         initView();
         initViewModel();
         initData();
-        initDefaultBright();
+//        initDefaultBright();
 
     }
 
-    public void initDefaultBright() {
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.screenBrightness = 0.43f;
-        getWindow().setAttributes(lp);
-    }
+//    public void initDefaultBright() {
+//        WindowManager.LayoutParams lp = getWindow().getAttributes();
+//        lp.screenBrightness = 0.43f;
+//        getWindow().setAttributes(lp);
+//    }
 
     private void initView() {
         mHandler = new Handler(new Handler.Callback() {
