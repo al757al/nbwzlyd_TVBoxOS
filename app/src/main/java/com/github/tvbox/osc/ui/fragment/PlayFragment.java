@@ -130,6 +130,16 @@ public class PlayFragment extends BaseLazyFragment {
         initData();
     }
 
+
+//    public void initDefaultBright(Context context, float brightLevel) {
+//        if (context instanceof Activity) {
+//            Activity activity = (Activity) context;
+//            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+//            lp.screenBrightness = brightLevel;
+//            activity.getWindow().setAttributes(lp);
+//        }
+//    }
+
     private void initView() {
         mHandler = new Handler(msg -> {
             switch (msg.what) {

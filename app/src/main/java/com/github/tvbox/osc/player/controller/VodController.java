@@ -207,11 +207,9 @@ public class VodController extends BaseController {
     public void onLongPress(MotionEvent e) {
         super.onLongPress(e);
         //半屏宽度
-        int halfScreen = PlayerUtils.getScreenWidth(getContext(), true) / 2;
-        if (e.getX() > halfScreen) {//长按3倍速
-            if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                fastSpeedPlay();
-            }
+//        int halfScreen = PlayerUtils.getScreenWidth(getContext(), true) / 2;
+        if (e.getAction() == MotionEvent.ACTION_DOWN) {
+            fastSpeedPlay();
         }
     }
 
@@ -865,7 +863,7 @@ public class VodController extends BaseController {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (et > 0 && position + (et * 1000) >= duration) {
+            if (et > 0 && position >= et * 1000) {
                 skipEnd = false;
                 listener.playNext(true);
             }

@@ -897,5 +897,10 @@ public class DetailActivity extends BaseActivity {
         if (playFragment.mController != null) {
             playFragment.mController.setIsFullScreen(fullWindows);
         }
+//        if (fullWindows) {
+//            playFragment.initDefaultBright(this, 0.43f);
+//        } else {
+//            playFragment.initDefaultBright(this, WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE);
+//        }
     }
 }

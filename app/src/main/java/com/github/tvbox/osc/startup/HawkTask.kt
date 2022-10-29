@@ -16,7 +16,7 @@ class HawkTask : AndroidStartup<String>() {
 
     }
 
-    override fun waitOnMainThread() = false
+    override fun waitOnMainThread() = true
     override fun createExecutor(): Executor {
         return ExecutorManager.instance.cpuExecutor
     }

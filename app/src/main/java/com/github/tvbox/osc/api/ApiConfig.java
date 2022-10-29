@@ -43,6 +43,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -180,6 +181,11 @@ public class ApiConfig {
                     @Override
                     public void onCacheSuccess(Response<String> response) {
                         super.onCacheSuccess(response);
+                        try {
+                            response.setBody(fixRelativePath(response.body(), apiUrl));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         isConfigLoadCache = true;
                         configLoad(response, configKey, apiUrl, cache, callback);
                     }
@@ -200,20 +206,28 @@ public class ApiConfig {
                     }
 
                     public String convertResponse(okhttp3.Response response) throws Throwable {
-                        String result = "";
-                        if (response.body() == null) {
-                            result = "";
-                        } else {
-                            result = response.body().string();
+                        String responseStr = "";
+                        if (response.body() != null) {
+                            responseStr = response.body().string();
                         }
-                        if (apiUrl.startsWith("clan")) {
-                            result = clanContentFix(clanToAddress(apiUrl), result);
-                        }
-                        //假相對路徑
-                        result = fixContentPath(apiUrl, result);
-                        return result;
+                        return fixRelativePath(responseStr, apiUrl);
                     }
                 });
+    }
+
+    private String fixRelativePath(String responseBoy, String apiUrl) throws IOException {
+        String result = "";
+        if (responseBoy == null) {
+            result = "";
+        } else {
+            result = responseBoy;
+        }
+        if (apiUrl.startsWith("clan")) {
+            result = clanContentFix(clanToAddress(apiUrl), result);
+        }
+        //假相對路徑
+        result = fixContentPath(apiUrl, result);
+        return result;
     }
 
     private void configLoad(Response<String> response, String configKey, String apiUrl, File cache, LoadConfigCallback callback) {

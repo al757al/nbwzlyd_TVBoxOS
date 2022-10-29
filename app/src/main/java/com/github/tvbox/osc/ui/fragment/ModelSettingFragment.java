@@ -678,7 +678,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         findViewById(R.id.clear_interface_data).setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("确定要清空接口缓存");
-            builder.setMessage("为了加快响应速度，增加了接口缓存，接口缓存默认是10小时，清空后，第一次网络获取数据可能会比较慢");
+            builder.setMessage("为了加快响应速度，增加了接口缓存，接口响应数据缓存默认是3天，线路链接缓存是10小时，清空后，第一次网络获取数据可能会比较慢");
             builder.setNegativeButton("取消", (dialog, which) -> {
 
             });
