@@ -566,9 +566,13 @@ public class LivePlayActivity extends BaseActivity {
                 return true;
             } else {
                 if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                    showSettingGroup();
+                    if (!isListOrSettingLayoutVisible()) {
+                        showSettingGroup();
+                    }
                 } else {
-                    playNextSource();
+                    if (!isListOrSettingLayoutVisible()) {
+                        playNextSource();
+                    }
                 }
             }
         }
