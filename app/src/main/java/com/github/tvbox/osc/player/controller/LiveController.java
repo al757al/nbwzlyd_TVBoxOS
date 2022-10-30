@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.player.controller;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -108,19 +109,19 @@ public class LiveController extends BaseController {
 
     public void hideProgressContainer() {
         if (mProgressContainer.getVisibility() == VISIBLE) {
-            mProgressContainer.setVisibility(View.INVISIBLE);
+            new Handler().postDelayed(() -> mProgressContainer.setVisibility(View.INVISIBLE), 1000);
         }
     }
 
     @Override
     public void updateSeekUI(int curr, int seekTo, int duration) {
+        if (mProgressContainer.getVisibility() != VISIBLE) {
+            mProgressContainer.setVisibility(View.VISIBLE);
+        }
         if (seekTo > curr) {
             mProgressIcon.setImageResource(R.drawable.icon_pre);
         } else {
             mProgressIcon.setImageResource(R.drawable.icon_back);
-        }
-        if (mProgressContainer.getVisibility() != VISIBLE) {
-            mProgressContainer.setVisibility(View.VISIBLE);
         }
         mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
         mHandler.sendEmptyMessage(1000);

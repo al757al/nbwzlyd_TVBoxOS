@@ -116,6 +116,7 @@ public class LivePlayActivity extends BaseActivity {
     private CountDownTimer countDownTimer;
     private CountDownTimer progressCountDownTimer;
     private int seekPosition;
+    float simSlideOffset = 0;
     private boolean isLongPress;
     private View divLoadEpg;
     private View divLoadEpgleft;
@@ -554,6 +555,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
+
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -563,6 +565,8 @@ public class LivePlayActivity extends BaseActivity {
             if (isLongPress) {
                 isLongPress = false;
                 mVideoView.seekTo(seekPosition);
+                seekPosition = 0;
+                simSlideOffset = 0;
                 liveController.hideProgressContainer();
                 return true;
             } else {
@@ -594,13 +598,12 @@ public class LivePlayActivity extends BaseActivity {
         return super.onKeyUp(keyCode, event);
     }
 
-    float simSlideOffset = 0;
     public void tvSlideStart(int dir) {
         int duration = (int) mVideoView.getDuration();
         if (duration <= 0)
             return;
-        // 每次10秒
-        simSlideOffset += (10000.0f * dir);
+        // 每次5秒
+        simSlideOffset += (5000 * dir);
         int currentPosition = (int) mVideoView.getCurrentPosition();
         int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
@@ -1125,6 +1128,7 @@ public class LivePlayActivity extends BaseActivity {
                         sBar.setMax((int) mVideoView.getDuration());
                         tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                         tv_duration.setText(durationToString((int) mVideoView.getDuration()));
+                        liveController.hideProgressContainer();
                         break;
                     case VideoView.STATE_ERROR:
                     case VideoView.STATE_PLAYBACK_COMPLETED:
