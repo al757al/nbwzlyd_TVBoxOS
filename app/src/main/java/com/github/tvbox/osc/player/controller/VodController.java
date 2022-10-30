@@ -83,7 +83,6 @@ public class VodController extends BaseController {
     TextView mPlayerIJKBtn;
     TextView mPlayerRetry;
     TextView mPlayrefresh;
-    private int currentPlayTime = 0;
 
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
@@ -227,10 +226,16 @@ public class VodController extends BaseController {
 
     private void stopFastSpeedPlay() {
         isFastSpeed = false;
-        mControlWrapper.setSpeed(1.0f);
-        if (mTvSpeedPlay.getVisibility() == View.VISIBLE) {
-            mTvSpeedPlay.setVisibility(INVISIBLE);
+        try {
+            float speed = (float) mPlayerConfig.getDouble("sp");
+            mControlWrapper.setSpeed(speed);
+            if (mTvSpeedPlay.getVisibility() == View.VISIBLE) {
+                mTvSpeedPlay.setVisibility(INVISIBLE);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
     }
 
     @Override
@@ -637,7 +642,7 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
-                    mPlayerConfig.put("st", currentPlayTime);
+                    mPlayerConfig.put("st", PlayerUtils.getCurrentPlayPositionTime((int) mControlWrapper.getCurrentPosition()));
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                 } catch (JSONException e) {
@@ -666,7 +671,11 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
-                    mPlayerConfig.put("et", currentPlayTime);
+                    if (mControlWrapper.getDuration() <= 0) {
+                        return;
+                    }
+                    int endTime = (int) (mControlWrapper.getDuration() - mControlWrapper.getCurrentPosition());
+                    mPlayerConfig.put("et", PlayerUtils.getCurrentPlayPositionTime(endTime));
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                 } catch (JSONException e) {
@@ -797,13 +806,28 @@ public class VodController extends BaseController {
             mPlayerIJKBtn.setVisibility(playerType == 1 ? VISIBLE : GONE);
             mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
             mPlayerSpeedBtn.setText("x" + mPlayerConfig.getDouble("sp"));
-            mPlayerTimeStartBtn.setText("片头" + PlayerUtils.stringForTime(mPlayerConfig.getInt("st") * 1000));
-            mPlayerTimeSkipBtn.setText("片尾" + PlayerUtils.stringForTime(mPlayerConfig.getInt("et") * 1000));
+            updateStartAndEndTime();
 //            mPlayerTimeStepBtn.setText(Hawk.get(HawkConfig.PLAY_TIME_STEP, 5) + "s");
             mAudioTrackBtn.setVisibility((playerType == 1) ? VISIBLE : GONE);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateStartAndEndTime() {
+        try {
+            mPlayerTimeStartBtn.setText("片头" + PlayerUtils.stringForTime(mPlayerConfig.getInt("st") * 1000));
+            int endTime = mPlayerConfig.getInt("et");
+            if (endTime > 0 && mControlWrapper.getDuration() > 0) {
+                float showEndTime = (mControlWrapper.getDuration() - endTime * 1000L);
+                mPlayerTimeSkipBtn.setText("片尾" + PlayerUtils.stringForTime((int) showEndTime));
+            } else {
+                mPlayerTimeSkipBtn.setText("片尾" + PlayerUtils.stringForTime(endTime * 1000));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void setTitle(String playTitleInfo) {
@@ -863,14 +887,13 @@ public class VodController extends BaseController {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (et > 0 && position >= et * 1000) {
+            if (et > 0 && position + (et * 1000) >= duration) {
                 skipEnd = false;
                 listener.playNext(true);
             }
         }
         mCurrentTime.setText(PlayerUtils.stringForTime(position));
         mTotalTime.setText(PlayerUtils.stringForTime(duration));
-        currentPlayTime = PlayerUtils.getCurrentPlayPositionTime(position);
         if (isFastSpeed) {
             mTvSpeedPlay.setText("当前3倍速播放中 " + mCurrentTime.getText() + "/" + mTotalTime.getText());
         }
@@ -962,6 +985,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
+                updateStartAndEndTime();
                 mPlayLoadNetSpeed.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
