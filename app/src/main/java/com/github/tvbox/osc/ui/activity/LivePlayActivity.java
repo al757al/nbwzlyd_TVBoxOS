@@ -495,12 +495,12 @@ public class LivePlayActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            if (!checkCanChangeProgress()) {
+                return super.onKeyDown(keyCode, event);
+            }
             if (isLongPress) {
                 int dir = keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1;
                 tvSlideStart(dir);
-            }
-            if (!checkCanChangeProgress()) {
-                return super.onKeyDown(keyCode, event);
             }
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 event.startTracking();
@@ -559,17 +559,7 @@ public class LivePlayActivity extends BaseActivity {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-            if (!checkCanChangeProgress()) {
-                return super.onKeyUp(keyCode, event);
-            }
-            if (isLongPress) {
-                isLongPress = false;
-                mVideoView.seekTo(seekPosition);
-                seekPosition = 0;
-                simSlideOffset = 0;
-                liveController.hideProgressContainer();
-                return true;
-            } else {
+            if (!checkCanChangeProgress()) {//如果不能快进快退，就显示
                 if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                     if (!isListOrSettingLayoutVisible()) {
                         showSettingGroup();
@@ -579,20 +569,20 @@ public class LivePlayActivity extends BaseActivity {
                         playNextSource();
                     }
                 }
+                return super.onKeyUp(keyCode, event);
+            }
+            if (isLongPress) {
+                isLongPress = false;
+                mVideoView.seekTo(seekPosition);
+                seekPosition = 0;
+                simSlideOffset = 0;
+                liveController.hideProgressContainer();
+                return true;
             }
         }
 
         if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {//菜单键
             showSettingGroup();
-//            //长按
-//            if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
-//                if (event.getAction() == KeyEvent.ACTION_DOWN) {
-//                    showLiveSourceDialog();
-//                }
-//            } else {
-//                if (event.getAction() == KeyEvent.ACTION_UP)
-//                    showSettingGroup();
-//            }
         }
 
         return super.onKeyUp(keyCode, event);
@@ -745,8 +735,8 @@ public class LivePlayActivity extends BaseActivity {
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
 
-    private boolean checkCanChangeProgress() {
-        return mVideoView != null && mVideoView.getDuration() > 0;
+    private boolean checkCanChangeProgress() {//大于1分钟才支持快进
+        return mVideoView != null && mVideoView.getDuration() > 60 * 1000;
     }
 
     //显示设置列表
