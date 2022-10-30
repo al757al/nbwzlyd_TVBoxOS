@@ -806,19 +806,28 @@ public class VodController extends BaseController {
             mPlayerIJKBtn.setVisibility(playerType == 1 ? VISIBLE : GONE);
             mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
             mPlayerSpeedBtn.setText("x" + mPlayerConfig.getDouble("sp"));
-            mPlayerTimeStartBtn.setText("片头" + PlayerUtils.stringForTime(mPlayerConfig.getInt("st") * 1000));
-            int endTime = mPlayerConfig.getInt("et");
-            if (endTime > 0 && mControlWrapper.getDuration() > 0) {
-                int showEndTime = (int) (mControlWrapper.getDuration() - endTime * 1000);
-                mPlayerTimeSkipBtn.setText("片尾" + PlayerUtils.stringForTime(showEndTime));
-            } else {
-                mPlayerTimeSkipBtn.setText("片尾" + PlayerUtils.stringForTime(endTime * 1000));
-            }
+            updateStartAndEndTime();
 //            mPlayerTimeStepBtn.setText(Hawk.get(HawkConfig.PLAY_TIME_STEP, 5) + "s");
             mAudioTrackBtn.setVisibility((playerType == 1) ? VISIBLE : GONE);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateStartAndEndTime() {
+        try {
+            mPlayerTimeStartBtn.setText("片头" + PlayerUtils.stringForTime(mPlayerConfig.getInt("st") * 1000));
+            int endTime = mPlayerConfig.getInt("et");
+            if (endTime > 0 && mControlWrapper.getDuration() > 0) {
+                float showEndTime = (mControlWrapper.getDuration() - endTime * 1000L);
+                mPlayerTimeSkipBtn.setText("片尾" + PlayerUtils.stringForTime((int) showEndTime));
+            } else {
+                mPlayerTimeSkipBtn.setText("片尾" + PlayerUtils.stringForTime(endTime * 1000));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void setTitle(String playTitleInfo) {
@@ -976,6 +985,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
+                updateStartAndEndTime();
                 mPlayLoadNetSpeed.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
