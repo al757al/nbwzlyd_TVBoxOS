@@ -2,11 +2,16 @@ package com.github.tvbox.osc.player.controller;
 
 import android.content.Context;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.github.tvbox.osc.R;
 
 import org.jetbrains.annotations.NotNull;
+
+import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
  * 直播控制器
@@ -16,6 +21,9 @@ public class LiveController extends BaseController {
     protected ProgressBar mLoading;
     private int minFlingDistance = 100;             //最小识别距离
     private int minFlingVelocity = 10;              //最小识别速度
+    private ImageView mProgressIcon;
+    private TextView mProgressText;
+    private View mProgressContainer;
 
     public LiveController(@NotNull Context context) {
         super(context);
@@ -30,6 +38,9 @@ public class LiveController extends BaseController {
     protected void initView() {
         super.initView();
         mLoading = findViewById(R.id.loading);
+        mProgressIcon = findViewById(R.id.tv_progress_icon);
+        mProgressText = findViewById(R.id.tv_progress_text);
+        mProgressContainer = findViewById(R.id.tv_progress_container);
     }
 
     @Override
@@ -65,6 +76,30 @@ public class LiveController extends BaseController {
     protected void onPlayStateChanged(int playState) {
         super.onPlayStateChanged(playState);
         listener.playStateChanged(playState);
+    }
+
+    @Override
+    protected void stopSlide() {
+        super.stopSlide();
+        if (mProgressContainer.getVisibility() == VISIBLE) {
+            mProgressContainer.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void updateSeekUI(int curr, int seekTo, int duration) {
+        if (seekTo > curr) {
+            mProgressIcon.setImageResource(R.drawable.icon_pre);
+        } else {
+            mProgressIcon.setImageResource(R.drawable.icon_back);
+        }
+        if (mProgressContainer.getVisibility() != VISIBLE) {
+            mProgressContainer.setVisibility(View.VISIBLE);
+        }
+        mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
+        mHandler.sendEmptyMessage(1000);
+        mHandler.removeMessages(1001);
+        mHandler.sendEmptyMessageDelayed(1001, 1000);
     }
 
     @Override

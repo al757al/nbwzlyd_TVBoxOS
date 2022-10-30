@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.Spider;
@@ -306,7 +307,7 @@ public class ApiConfig {
                             if (jarLoader.load(response.body().getAbsolutePath())) {
                                 callback.success();
                             } else {
-                                callback.error("jar内部解析失败");
+                                callback.error("");
                             }
                         } else {
                             callback.error("jar不存在");
@@ -316,12 +317,13 @@ public class ApiConfig {
             @Override
             public void onCacheSuccess(Response<File> response) {
                 super.onCacheSuccess(response);
+                LogUtils.dTag("derek111", "加载缓存");
                 if (response.body().exists()) {
                     if (jarLoader.load(response.body().getAbsolutePath())) {
                         isCacheReady = true;
                         callback.success();
                     } else {
-                        callback.error("jar内部解析失败");
+                        callback.error("");
                     }
                 } else {
                     callback.error("jar不存在");

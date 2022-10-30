@@ -46,6 +46,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     protected Handler mHandler;
 
     protected HandlerCallback mHandlerCallback;
+    private OnDoubleTapListener onDoubleTapListener;
 
     protected interface HandlerCallback {
         void callback(Message msg);
@@ -243,8 +244,19 @@ public abstract class BaseController extends BaseVideoController implements Gest
      */
     @Override
     public boolean onDoubleTap(MotionEvent e) {
+        if (onDoubleTapListener != null) {
+            onDoubleTapListener.onDoubleTap();
+        }
         if (mIsDoubleTapTogglePlayEnabled && !isLocked() && isInPlaybackState()) togglePlay();
         return true;
+    }
+
+    public void setOnDoubleTapListener(OnDoubleTapListener onDoubleTapListener) {
+        this.onDoubleTapListener = onDoubleTapListener;
+    }
+
+    public interface OnDoubleTapListener {
+        void onDoubleTap();
     }
 
     /**
@@ -315,7 +327,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
         mSeekPosition = position;
     }
 
-    protected void updateSeekUI(int curr, int seekTo, int duration) {
+    public void updateSeekUI(int curr, int seekTo, int duration) {
 
     }
 
@@ -393,7 +405,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
         return super.onTouchEvent(event);
     }
 
-    private void stopSlide() {
+    protected void stopSlide() {
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
             IControlComponent component = next.getKey();
             if (component instanceof IGestureComponent) {

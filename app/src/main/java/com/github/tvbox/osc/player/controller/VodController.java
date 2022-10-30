@@ -922,7 +922,7 @@ public class VodController extends BaseController {
     }
 
     @Override
-    protected void updateSeekUI(int curr, int seekTo, int duration) {
+    public void updateSeekUI(int curr, int seekTo, int duration) {
         super.updateSeekUI(curr, seekTo, duration);
         if (seekTo > curr) {
             mProgressIcon.setImageResource(R.drawable.icon_pre);

@@ -18,10 +18,13 @@
         <entry key="..\:/tvbox/TVBoxOS/app/src/main/res/layout/item_live_channel_layout.xml" value="0.22826086956521738" />
         <entry key="..\:/tvbox/TVBoxOS/app/src/main/res/layout/player_vod_control_view.xml" value="0.3619791666666667" />
         <entry key="app/src/main/res/drawable/app_bg.xml" value="0.181" />
+        <entry key="app/src/main/res/drawable/bg_progress_bar_out.xml" value="0.1485" />
         <entry key="app/src/main/res/drawable/box_controller_top_bg.xml" value="0.284698486328125" />
+        <entry key="app/src/main/res/drawable/button_detail_quick_search.xml" value="0.1855" />
         <entry key="app/src/main/res/drawable/button_home_sort_focus.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/img_loading_placeholder.xml" value="0.181" />
         <entry key="app/src/main/res/drawable/input_dialog_api_input.xml" value="0.181" />
+        <entry key="app/src/main/res/drawable/item_bg_selector_right.xml" value="0.1405" />
         <entry key="app/src/main/res/drawable/shape_dialog_bg_main.xml" value="0.287" />
         <entry key="app/src/main/res/drawable/shape_player_control_vod_seek_thumb.xml" value="0.181" />
         <entry key="app/src/main/res/drawable/shape_source_series_focus.xml" value="0.149" />
@@ -36,7 +39,7 @@
         <entry key="app/src/main/res/layout/activity_history.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_home_top_indicator.xml" value="0.25625" />
-        <entry key="app/src/main/res/layout/activity_live_play.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_live_play.xml" value="0.42095914742451157" />
         <entry key="app/src/main/res/layout/activity_play.xml" value="0.25625" />
         <entry key="app/src/main/res/layout/activity_search.xml" value="0.2640625" />
         <entry key="app/src/main/res/layout/activity_setting.xml" value="0.1" />
@@ -61,12 +64,11 @@
         <entry key="app/src/main/res/layout/item_search_history.xml" value="0.356" />
         <entry key="app/src/main/res/layout/item_series.xml" value="0.1875" />
         <entry key="app/src/main/res/layout/item_setting_menu.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/item_user_hot_vod.xml" value="0.215625" />
         <entry key="app/src/main/res/layout/live_source_dialog_select.xml" value="0.1" />
         <entry key="app/src/main/res/layout/loadsir_loading_layout.xml" value="0.1" />
         <entry key="app/src/main/res/layout/modle_setting_3.xml" value="0.38" />
         <entry key="app/src/main/res/layout/more_source_dialog_select.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/player_live_control_view.xml" value="0.25625" />
+        <entry key="app/src/main/res/layout/player_live_control_view.xml" value="0.45" />
         <entry key="app/src/main/res/layout/player_more_fuc_pop.xml" value="0.335" />
         <entry key="app/src/main/res/layout/player_vod_control_view.xml" value="0.29545454545454547" />
         <entry key="app/src/main/res/layout/search_history_layout.xml" value="0.45" />

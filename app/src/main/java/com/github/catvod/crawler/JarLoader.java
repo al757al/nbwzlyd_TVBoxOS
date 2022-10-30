@@ -2,7 +2,6 @@ package com.github.catvod.crawler;
 
 import android.content.Context;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.js.SpiderJS;
@@ -67,9 +66,8 @@ public class JarLoader {
                         }
                         break;
                     }
-//                    Thread.sleep(200);
+                    Thread.sleep(200);
                 } catch (Exception e) {
-                    ToastUtils.showShort(e.getMessage());
                     if (e instanceof ClassNotFoundException) {
                         File cache = new File(jar);
                         if (cache.exists()) {//修复由于强制关闭loading导致资源下载不完全，每次会加载jar失败的问题
