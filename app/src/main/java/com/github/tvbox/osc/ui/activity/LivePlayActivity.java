@@ -477,6 +477,35 @@ public class LivePlayActivity extends BaseActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            if (!checkCanChangeProgress()) {
+                return super.onKeyLongPress(keyCode, event);
+            }
+            isLongPress = true;
+        }
+        return super.onKeyLongPress(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            if (isLongPress) {
+                int dir = keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1;
+                tvSlideStart(dir);
+            }
+            if (!checkCanChangeProgress()) {
+                return super.onKeyDown(keyCode, event);
+            }
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                event.startTracking();
+                return !isListOrSettingLayoutVisible();
+            }
+        }
         if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {//菜单键
             //长按
             if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
@@ -488,9 +517,12 @@ public class LivePlayActivity extends BaseActivity {
                     showSettingGroup();
             }
         }
+        handleKeyDownEvent(keyCode, event);
+        return super.onKeyDown(keyCode, event);
+    }
 
+    private void handleKeyDownEvent(int keyCode, KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            int keyCode = event.getKeyCode();
             if (!isListOrSettingLayoutVisible()) {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_UP:
@@ -504,16 +536,6 @@ public class LivePlayActivity extends BaseActivity {
                             playPrevious();
                         else
                             playNext();
-                        break;
-                    case KeyEvent.KEYCODE_DPAD_LEFT:
-                        showSettingGroup();
-                        break;
-                    case KeyEvent.KEYCODE_DPAD_RIGHT:
-                        if (backcontroller.getVisibility() == View.VISIBLE) {
-                            showProgressBars(true);
-                        } else {
-                            playNextSource();
-                        }
                         break;
                     case KeyEvent.KEYCODE_ESCAPE:
                         onBackPressed();
@@ -530,34 +552,6 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
         }
-        return super.dispatchKeyEvent(event);
-    }
-
-    @Override
-    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-            if (!checkCanChangeProgress()) {
-                return super.onKeyLongPress(keyCode, event);
-            }
-            isLongPress = true;
-            tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
-        }
-        return super.onKeyLongPress(keyCode, event);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-            if (!checkCanChangeProgress()) {
-                return super.onKeyDown(keyCode, event);
-            }
-            isLongPress = false;
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                event.startTracking();
-                return !isListOrSettingLayoutVisible();
-            }
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -567,24 +561,46 @@ public class LivePlayActivity extends BaseActivity {
                 return super.onKeyUp(keyCode, event);
             }
             if (isLongPress) {
+                isLongPress = false;
                 mVideoView.seekTo(seekPosition);
                 return true;
+            } else {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    showSettingGroup();
+                } else {
+                    playNextSource();
+                }
             }
         }
+
+        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {//菜单键
+            showSettingGroup();
+//            //长按
+//            if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
+//                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+//                    showLiveSourceDialog();
+//                }
+//            } else {
+//                if (event.getAction() == KeyEvent.ACTION_UP)
+//                    showSettingGroup();
+//            }
+        }
+
         return super.onKeyUp(keyCode, event);
     }
 
+    float simSlideOffset = 0;
     public void tvSlideStart(int dir) {
         int duration = (int) mVideoView.getDuration();
         if (duration <= 0)
             return;
         // 每次10秒
-        float simSlideOffset = 0;
         simSlideOffset += (10000.0f * dir);
         int currentPosition = (int) mVideoView.getCurrentPosition();
         int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
+        seekPosition = position;
         liveController.updateSeekUI(currentPosition, position, duration);
 //        simSeekPosition = position;
     }

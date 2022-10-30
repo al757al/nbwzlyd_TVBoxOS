@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.player.controller;
 
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -64,6 +65,26 @@ public class LiveController extends BaseController {
         void playStateChanged(int playState);
 
         void changeSource(int direction);
+    }
+
+    @Override
+    public boolean onKeyEvent(KeyEvent event) {
+        return super.onKeyEvent(event);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        return super.onKeyLongPress(keyCode, event);
     }
 
     @Override
