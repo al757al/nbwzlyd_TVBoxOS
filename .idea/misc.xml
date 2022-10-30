@@ -61,6 +61,7 @@
         <entry key="app/src/main/res/layout/item_dialog_select.xml" value="0.165" />
         <entry key="app/src/main/res/layout/item_grid.xml" value="0.375" />
         <entry key="app/src/main/res/layout/item_home_sort.xml" value="0.13279132791327913" />
+        <entry key="app/src/main/res/layout/item_live_setting_group.xml" value="0.26266666666666666" />
         <entry key="app/src/main/res/layout/item_search_history.xml" value="0.356" />
         <entry key="app/src/main/res/layout/item_series.xml" value="0.1875" />
         <entry key="app/src/main/res/layout/item_setting_menu.xml" value="0.1" />
