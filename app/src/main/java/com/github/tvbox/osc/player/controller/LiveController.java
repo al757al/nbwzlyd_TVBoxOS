@@ -102,6 +102,11 @@ public class LiveController extends BaseController {
     @Override
     protected void stopSlide() {
         super.stopSlide();
+        hideProgressContainer();
+
+    }
+
+    public void hideProgressContainer() {
         if (mProgressContainer.getVisibility() == VISIBLE) {
             mProgressContainer.setVisibility(View.INVISIBLE);
         }

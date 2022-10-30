@@ -563,6 +563,7 @@ public class LivePlayActivity extends BaseActivity {
             if (isLongPress) {
                 isLongPress = false;
                 mVideoView.seekTo(seekPosition);
+                liveController.hideProgressContainer();
                 return true;
             } else {
                 if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
