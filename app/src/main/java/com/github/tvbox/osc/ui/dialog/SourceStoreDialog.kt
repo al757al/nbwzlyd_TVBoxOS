@@ -172,6 +172,8 @@ private var DEFAULT_STORE_URL = "ABC"
             override fun onError(response: Response<String>?) {
                 super.onError(response)
                 mLoading.letGone()
+                //加载本地存储的
+                inflateCustomSource(mutableListOf())
                 Toast.makeText(
                     context,
                     "接口拉取失败" + response?.exception?.message + "将使用缓存",
