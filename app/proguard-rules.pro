@@ -24,6 +24,13 @@
 # 将包里的类混淆成n个再重新打包到一个统一的package中  会覆盖flattenpackagehierarchy选项
 -repackageclasses androidx.base
 
+
+-obfuscationdictionary ./dic.txt
+
+-classobfuscationdictionary ./dic.txt
+
+-packageobfuscationdictionary ./dic.txt
+
 # 把混淆类中的方法名也混淆了
 -useuniqueclassmembernames
 #############################################
