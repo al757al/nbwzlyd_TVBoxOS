@@ -34,6 +34,7 @@ import com.github.tvbox.osc.ui.adapter.ParseAdapter;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.view.ChoosePlayPopUp;
+import com.github.tvbox.osc.ui.view.PlayerMoreFucPop;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.IDMDownLoadUtil;
@@ -83,6 +84,7 @@ public class VodController extends BaseController {
     TextView mPlayerIJKBtn;
     TextView mPlayerRetry;
     TextView mPlayrefresh;
+    private PlayerMoreFucPop mPlayerMoreFuc;
 
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
@@ -305,7 +307,7 @@ public class VodController extends BaseController {
                 choosePlay(v);
             }
         });
-        mPlayerScaleBtn = findViewById(R.id.play_scale);
+//        mPlayerScaleBtn = findViewById(R.id.play_scale);
         mPlayerSpeedBtn = findViewById(R.id.play_speed);
         mPlayerBtn = findViewById(R.id.play_player);
         mPlayerIJKBtn = findViewById(R.id.play_ijk);
@@ -323,30 +325,39 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         TextView timeShow = findViewById(R.id.time_show);
 
-        boolean isTimeShowOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
-        if (isTimeShowOpen) {
-            timeShow.setText("屏显开");
-            timeShow.setTag(1);
-        } else {
-            timeShow.setText("屏显关");
-            timeShow.setTag(2);
-        }
-        timeShow.setOnClickListener(v -> {
-            boolean isTimeShow = (int) timeShow.getTag() == 1;
-            if (isTimeShow) {
-                timeShow.setTag(2);
-            } else {
-                timeShow.setTag(1);
-            }
-            isTimeShow = !isTimeShow;
-            timeShow.setText(isTimeShow ? "屏显开" : "屏显关");
-            KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isTimeShow);
-        });
+        setTimeShowOrDismiss(timeShow);
 
         findViewById(R.id.idm_download).setOnClickListener(v -> {
             FastClickCheckUtil.check(v);
             new IDMDownLoadUtil().startIDMDownLoad(getContext());
         });
+        findViewById(R.id.more_fuc).setOnClickListener(v -> new PlayerMoreFucPop(getContext())
+                .setOnItemClickListener(view -> {
+                    if (view.getId() == R.id.play_scale) {
+                        scaleVideoView();
+                    }
+                    if (view.getId() == R.id.play_speed) {
+                        setSpeedVideoView();
+                    }
+                    if (view.getId() == R.id.audio_track_select) {
+                        setAudioTrack();
+                    }
+
+                    if (view.getId() == R.id.landscape_portrait) {
+                        setLandscapePortrait();
+                        hideBottom();
+                    }
+                    if (view.getId() == R.id.idm_download) {
+                        new IDMDownLoadUtil().startIDMDownLoad(getContext());
+                    }
+
+                    if (view.getId() == R.id.time_show) {
+                        setTimeShowOrDismiss((TextView) view);
+                    }
+                    return null;
+                })
+                .setPopupGravity(Gravity.END)
+                .showPopupWindow());
 
         initSubtitleInfo();
 
@@ -448,39 +459,13 @@ public class VodController extends BaseController {
         mPlayerScaleBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                myHandle.removeCallbacks(myRunnable);
-                myHandle.postDelayed(myRunnable, myHandleSeconds);
-                try {
-                    int scaleType = mPlayerConfig.getInt("sc");
-                    scaleType++;
-                    if (scaleType > 5)
-                        scaleType = 0;
-                    mPlayerConfig.put("sc", scaleType);
-                    updatePlayerCfgView();
-                    listener.updatePlayerCfg();
-                    mControlWrapper.setScreenScaleType(scaleType);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                scaleVideoView();
             }
         });
         mPlayerSpeedBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                myHandle.removeCallbacks(myRunnable);
-                myHandle.postDelayed(myRunnable, myHandleSeconds);
-                try {
-                    float speed = (float) mPlayerConfig.getDouble("sp");
-                    speed += 0.25f;
-                    if (speed > 3)
-                        speed = 0.5f;
-                    mPlayerConfig.put("sp", speed);
-                    updatePlayerCfgView();
-                    listener.updatePlayerCfg();
-                    mControlWrapper.setSpeed(speed);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                setSpeedVideoView();
             }
         });
         // takagen99: Add long press to reset speed
@@ -735,9 +720,7 @@ public class VodController extends BaseController {
         mAudioTrackBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FastClickCheckUtil.check(view);
-                listener.selectAudioTrack();
-                hideBottom();
+                setAudioTrack();
             }
         });
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
@@ -749,6 +732,67 @@ public class VodController extends BaseController {
             }
         });
         initLandscapePortraitBtnInfo();
+    }
+
+    private void setTimeShowOrDismiss(TextView timeShow) {
+        boolean isTimeShowOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
+        if (isTimeShowOpen) {
+            timeShow.setText("屏显开");
+            timeShow.setTag(1);
+        } else {
+            timeShow.setText("屏显关");
+            timeShow.setTag(2);
+        }
+        timeShow.setOnClickListener(v -> {
+            boolean isTimeShow = (int) timeShow.getTag() == 1;
+            if (isTimeShow) {
+                timeShow.setTag(2);
+            } else {
+                timeShow.setTag(1);
+            }
+            isTimeShow = !isTimeShow;
+            timeShow.setText(isTimeShow ? "屏显开" : "屏显关");
+            KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isTimeShow);
+        });
+    }
+
+    private void setAudioTrack() {
+        listener.selectAudioTrack();
+        hideBottom();
+    }
+
+    private void setSpeedVideoView() {
+        myHandle.removeCallbacks(myRunnable);
+        myHandle.postDelayed(myRunnable, myHandleSeconds);
+        try {
+            float speed = (float) mPlayerConfig.getDouble("sp");
+            speed += 0.25f;
+            if (speed > 3)
+                speed = 0.5f;
+            mPlayerConfig.put("sp", speed);
+            updatePlayerCfgView();
+            listener.updatePlayerCfg();
+            mControlWrapper.setSpeed(speed);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void scaleVideoView() {
+        myHandle.removeCallbacks(myRunnable);
+        myHandle.postDelayed(myRunnable, myHandleSeconds);
+        try {
+            int scaleType = mPlayerConfig.getInt("sc");
+            scaleType++;
+            if (scaleType > 5)
+                scaleType = 0;
+            mPlayerConfig.put("sc", scaleType);
+            updatePlayerCfgView();
+            listener.updatePlayerCfg();
+            mControlWrapper.setScreenScaleType(scaleType);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void choosePlay(View view) {
@@ -795,6 +839,7 @@ public class VodController extends BaseController {
     public void setPlayerConfig(JSONObject playerCfg) {
         this.mPlayerConfig = playerCfg;
         updatePlayerCfgView();
+        mPlayerMoreFuc = new PlayerMoreFucPop(getContext(), mPlayerConfig);
     }
 
     void updatePlayerCfgView() {

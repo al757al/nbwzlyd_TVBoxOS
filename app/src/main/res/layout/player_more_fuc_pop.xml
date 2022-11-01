@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:padding="@dimen/vs_30">
+    android:paddingHorizontal="@dimen/vs_30"
+    android:paddingTop="@dimen/vs_70"
+    android:background="@drawable/shape_user_focus">
 
     <TextView
         android:id="@+id/title1"
@@ -15,6 +17,7 @@
         android:padding="@dimen/vs_10"
         android:singleLine="true"
         android:text="播放"
+        android:clickable="false"
         android:textColor="@android:color/white"
         android:textSize="@dimen/ts_28"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -98,6 +101,7 @@
         android:padding="@dimen/vs_10"
         android:singleLine="true"
         android:text="其他"
+        android:clickable="false"
         android:textColor="@android:color/white"
         android:textSize="@dimen/ts_28"
         app:layout_constraintLeft_toLeftOf="parent"
