@@ -8,14 +8,20 @@ buildscript {
         mavenCentral()
         maven { url "https://jitpack.io" }
         //maven { url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2' }
-        maven { url 'http://home.jundie.top:81/xwalk/maven2' }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://home.jundie.top:81/xwalk/maven2'
+        }
 //        maven { url 'http://9xi4o.tk/maven2' }
     }
     dependencies {
         //引入gradle插件
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.android.tools.build:gradle:4.2.1"
-        classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.21'
+        classpath 'com.github.megatronking.stringfog:gradle-plugin:4.0.0'
+        // 选用加解密算法库，默认实现了xor算法，也可以使用自己的加解密库。
+        classpath 'com.github.megatronking.stringfog:xor:4.0.0'
+//        classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.21'
 
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -31,7 +37,9 @@ allprojects {
         maven { url "https://jitpack.io" }
         //maven { url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2' }
 //        maven { url 'http://9xi4o.tk/maven2' }
-        maven { url 'http://home.jundie.top:81/xwalk/maven2' }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://home.jundie.top:81/xwalk/maven2' }
     }
 }
 

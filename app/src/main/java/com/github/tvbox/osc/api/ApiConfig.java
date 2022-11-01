@@ -7,6 +7,7 @@ import android.util.Base64;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.github.UA;
 import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.crawler.SpiderNull;
@@ -24,7 +25,6 @@ import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.MD5;
-import com.github.tvbox.osc.util.UA;
 import com.github.tvbox.osc.util.VideoParseRuler;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

@@ -1,4 +1,4 @@
-package com.github.tvbox.osc.util;
+package com.github;
 
 import com.github.tvbox.osc.base.App;
 

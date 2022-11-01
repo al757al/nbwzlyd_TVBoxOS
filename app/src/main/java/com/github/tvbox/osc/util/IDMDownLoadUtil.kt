@@ -7,6 +7,7 @@ import android.net.Uri
 import android.text.TextUtils
 import android.view.Gravity
 import com.blankj.utilcode.util.ToastUtils
+import com.github.UA
 import com.github.tvbox.osc.base.App.Companion.instance
 
 /**

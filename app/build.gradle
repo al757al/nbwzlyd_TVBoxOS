@@ -1,6 +1,22 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply from: 'and_res_guard.gradle'
+//apply from: 'and_res_guard.gradle'
+apply plugin: 'stringfog'
+import com.github.megatronking.stringfog.plugin.kg.RandomKeyGenerator
+stringfog {
+    // 必要：加解密库的实现类路径，需和上面配置的加解密算法库一致。
+    implementation 'com.github.megatronking.stringfog.xor.StringFogImpl'
+    // 可选：加密开关，默认开启。
+    enable true
+    // 可选：指定需加密的代码包路径，可配置多个，未指定将默认全部加密。
+    fogPackages = ['com.github.tvbox.osc']
+//    // 可选（3.0版本新增）：指定密钥生成器，默认使用长度8的随机密钥（每个字符串均有不同随机密钥）,
+//    // 也可以指定一个固定的密钥：HardCodeKeyGenerator("This is a key")
+    kg new RandomKeyGenerator()
+//    // 可选（4.0版本新增）：用于控制字符串加密后在字节码中的存在形式, 默认为base64，
+//    // 也可以使用text或者bytes
+    mode base64
+}
 android {
     compileSdkVersion 30
     viewBinding {
@@ -91,7 +107,6 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation files('libs\\thunder.jar')
     implementation files('libs\\pyramid.aar')
-    implementation files('libs\\commons-lang3-3.12.0.jar')
 
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     annotationProcessor 'androidx.room:room-compiler:2.3.0'
@@ -103,6 +118,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.7'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.jessyan:autosize:1.2.1'
+    implementation 'com.github.megatronking.stringfog:xor:4.0.0'
     implementation('com.thoughtworks.xstream:xstream:1.4.15') {
         exclude group: 'xmlpull', module: 'xmlpull'
     }

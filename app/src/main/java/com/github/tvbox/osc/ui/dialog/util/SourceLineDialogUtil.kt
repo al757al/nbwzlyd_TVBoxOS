@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.widget.Toast
 import com.blankj.utilcode.util.ToastUtils
+import com.github.UA
 import com.github.tvbox.osc.api.ApiConfig
 import com.github.tvbox.osc.bean.MoreSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
@@ -12,7 +13,6 @@ import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter
 import com.github.tvbox.osc.ui.dialog.SelectDialogNew
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
-import com.github.tvbox.osc.util.UA
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.cache.CacheMode
 import com.lzy.okgo.callback.StringCallback

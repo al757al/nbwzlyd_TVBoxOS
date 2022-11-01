@@ -331,7 +331,7 @@ public class VodController extends BaseController {
             FastClickCheckUtil.check(v);
             new IDMDownLoadUtil().startIDMDownLoad(getContext());
         });
-        findViewById(R.id.more_fuc).setOnClickListener(v -> new PlayerMoreFucPop(getContext())
+        findViewById(R.id.more_fuc).setOnClickListener(v -> new PlayerMoreFucPop(getContext(), mPlayerConfig)
                 .setOnItemClickListener(view -> {
                     if (view.getId() == R.id.play_scale) {
                         scaleVideoView();

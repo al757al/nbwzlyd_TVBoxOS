@@ -11,6 +11,7 @@ import com.blankj.utilcode.util.SpanUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.github.UA
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.api.ApiConfig
 import com.github.tvbox.osc.bean.MoreSourceBean
@@ -27,7 +28,6 @@ import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.KVStorage
-import com.github.tvbox.osc.util.UA
 import com.github.tvbox.osc.util.urlhttp.JumpUtils
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.cache.CacheMode
