@@ -4,7 +4,6 @@ import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
@@ -37,10 +36,8 @@ import com.github.tvbox.osc.ui.view.ChoosePlayPopUp;
 import com.github.tvbox.osc.ui.view.PlayerMoreFucPop;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.IDMDownLoadUtil;
 import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.PlayerHelper;
-import com.github.tvbox.osc.util.ScreenUtils;
 import com.github.tvbox.osc.util.SubtitleHelper;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
@@ -78,7 +75,7 @@ public class VodController extends BaseController {
     TextView mTvSpeedPlay;
     TextView mNextBtn;
     TextView mPreBtn;
-    TextView mPlayerScaleBtn;
+//    TextView mPlayerScaleBtn;
     public TextView mPlayerSpeedBtn;
     TextView mPlayerBtn;
     TextView mPlayerIJKBtn;
@@ -100,8 +97,6 @@ public class VodController extends BaseController {
     private boolean mIsFullScreen = false;
     public SimpleSubtitleView mSubtitleView;
     TextView mZimuBtn;
-    TextView mAudioTrackBtn;
-    public TextView mLandscapePortraitBtn;
 
     Handler myHandle;
     Runnable myRunnable;
@@ -321,42 +316,21 @@ public class VodController extends BaseController {
         mVideoSize = findViewById(R.id.tv_videosize);
         mSubtitleView = findViewById(R.id.subtitle_view);
         mZimuBtn = findViewById(R.id.zimu_select);
-        mAudioTrackBtn = findViewById(R.id.audio_track_select);
-        mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
-        TextView timeShow = findViewById(R.id.time_show);
-
-        setTimeShowOrDismiss(timeShow);
-
-        findViewById(R.id.idm_download).setOnClickListener(v -> {
-            FastClickCheckUtil.check(v);
-            new IDMDownLoadUtil().startIDMDownLoad(getContext());
-        });
-        findViewById(R.id.more_fuc).setOnClickListener(v -> new PlayerMoreFucPop(getContext(), mPlayerConfig)
-                .setOnItemClickListener(view -> {
-                    if (view.getId() == R.id.play_scale) {
-                        scaleVideoView();
-                    }
-                    if (view.getId() == R.id.play_speed) {
-                        setSpeedVideoView();
-                    }
-                    if (view.getId() == R.id.audio_track_select) {
-                        setAudioTrack();
-                    }
-
-                    if (view.getId() == R.id.landscape_portrait) {
-                        setLandscapePortrait();
-                        hideBottom();
-                    }
-                    if (view.getId() == R.id.idm_download) {
-                        new IDMDownLoadUtil().startIDMDownLoad(getContext());
-                    }
-
-                    if (view.getId() == R.id.time_show) {
-                        setTimeShowOrDismiss((TextView) view);
-                    }
-                    return null;
-                })
-                .setPopupGravity(Gravity.END)
+        findViewById(R.id.more_fuc).setOnClickListener(v ->
+                mPlayerMoreFuc
+                        .setOnItemClickListener(textView -> {
+                            if (textView.getId() == R.id.play_scale) {
+                                scaleVideoView(textView);
+                            }
+                            if (textView.getId() == R.id.play_speed) {
+                                setSpeedVideoView(textView);
+                            }
+                            if (textView.getId() == R.id.audio_track_select) {
+                                setAudioTrack();
+                            }
+                            return null;
+                        })
+                        .setPopupGravity(Gravity.END)
                 .showPopupWindow());
 
         initSubtitleInfo();
@@ -456,33 +430,28 @@ public class VodController extends BaseController {
                 hideBottom();
             }
         });
-        mPlayerScaleBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                scaleVideoView();
-            }
-        });
-        mPlayerSpeedBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setSpeedVideoView();
-            }
-        });
+//        mPlayerScaleBtn.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                scaleVideoView();
+//            }
+//        });
+
         // takagen99: Add long press to reset speed
-        mPlayerSpeedBtn.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                try {
-                    mPlayerConfig.put("sp", 1.0f);
-                    updatePlayerCfgView();
-                    listener.updatePlayerCfg();
-                    mControlWrapper.setSpeed(1.0f);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
-        });
+//        mPlayerSpeedBtn.setOnLongClickListener(new OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//                try {
+//                    mPlayerConfig.put("sp", 1.0f);
+//                    updatePlayerCfgView();
+//                    listener.updatePlayerCfg();
+//                    mControlWrapper.setSpeed(1.0f);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                return true;
+//            }
+//        });
         mPlayerBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -717,51 +686,15 @@ public class VodController extends BaseController {
                 return true;
             }
         });
-        mAudioTrackBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setAudioTrack();
-            }
-        });
-        mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FastClickCheckUtil.check(view);
-                setLandscapePortrait();
-                hideBottom();
-            }
-        });
-        initLandscapePortraitBtnInfo();
     }
 
-    private void setTimeShowOrDismiss(TextView timeShow) {
-        boolean isTimeShowOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
-        if (isTimeShowOpen) {
-            timeShow.setText("屏显开");
-            timeShow.setTag(1);
-        } else {
-            timeShow.setText("屏显关");
-            timeShow.setTag(2);
-        }
-        timeShow.setOnClickListener(v -> {
-            boolean isTimeShow = (int) timeShow.getTag() == 1;
-            if (isTimeShow) {
-                timeShow.setTag(2);
-            } else {
-                timeShow.setTag(1);
-            }
-            isTimeShow = !isTimeShow;
-            timeShow.setText(isTimeShow ? "屏显开" : "屏显关");
-            KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isTimeShow);
-        });
-    }
 
     private void setAudioTrack() {
         listener.selectAudioTrack();
         hideBottom();
     }
 
-    private void setSpeedVideoView() {
+    private void setSpeedVideoView(TextView textView) {
         myHandle.removeCallbacks(myRunnable);
         myHandle.postDelayed(myRunnable, myHandleSeconds);
         try {
@@ -771,6 +704,7 @@ public class VodController extends BaseController {
                 speed = 0.5f;
             mPlayerConfig.put("sp", speed);
             updatePlayerCfgView();
+            textView.setText("x" + mPlayerConfig.getDouble("sp"));
             listener.updatePlayerCfg();
             mControlWrapper.setSpeed(speed);
         } catch (JSONException e) {
@@ -778,7 +712,7 @@ public class VodController extends BaseController {
         }
     }
 
-    private void scaleVideoView() {
+    private void scaleVideoView(TextView textView) {
         myHandle.removeCallbacks(myRunnable);
         myHandle.postDelayed(myRunnable, myHandleSeconds);
         try {
@@ -788,6 +722,7 @@ public class VodController extends BaseController {
                 scaleType = 0;
             mPlayerConfig.put("sc", scaleType);
             updatePlayerCfgView();
+            textView.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
             listener.updatePlayerCfg();
             mControlWrapper.setScreenScaleType(scaleType);
         } catch (JSONException e) {
@@ -799,25 +734,6 @@ public class VodController extends BaseController {
         ChoosePlayPopUp playPopUp = new ChoosePlayPopUp(mActivity);
         playPopUp.setPopupGravity(Gravity.TOP).showPopupWindow(view);
 
-    }
-
-    void initLandscapePortraitBtnInfo() {
-        double screenSqrt = ScreenUtils.getSqrt(mActivity);
-        if (screenSqrt < 20.0) {
-            mLandscapePortraitBtn.setVisibility(View.VISIBLE);
-            mLandscapePortraitBtn.setText("竖屏");
-        }
-    }
-
-    void setLandscapePortrait() {
-        int requestedOrientation = mActivity.getRequestedOrientation();
-        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-            mLandscapePortraitBtn.setText("横屏");
-            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-        } else if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-            mLandscapePortraitBtn.setText("竖屏");
-            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-        }
     }
 
     void initSubtitleInfo() {
@@ -846,14 +762,13 @@ public class VodController extends BaseController {
         try {
             int playerType = mPlayerConfig.getInt("pl");
             mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
-            mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
+//            mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
             mPlayerIJKBtn.setText(mPlayerConfig.getString("ijk"));
             mPlayerIJKBtn.setVisibility(playerType == 1 ? VISIBLE : GONE);
-            mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
-            mPlayerSpeedBtn.setText("x" + mPlayerConfig.getDouble("sp"));
+//            mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
+//            mPlayerSpeedBtn.setText("x" + mPlayerConfig.getDouble("sp"));
             updateStartAndEndTime();
 //            mPlayerTimeStepBtn.setText(Hawk.get(HawkConfig.PLAY_TIME_STEP, 5) + "s");
-            mAudioTrackBtn.setVisibility((playerType == 1) ? VISIBLE : GONE);
         } catch (JSONException e) {
             e.printStackTrace();
         }

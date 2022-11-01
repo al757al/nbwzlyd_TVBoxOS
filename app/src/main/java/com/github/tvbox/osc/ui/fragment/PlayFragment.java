@@ -89,7 +89,6 @@ import org.xwalk.core.XWalkWebResourceResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -247,14 +246,14 @@ public class PlayFragment extends BaseLazyFragment {
     void initVideoDurationSomeThing() {
         videoDuration = mVideoView.getMediaPlayer().getDuration();
         if (videoDuration == 0) {
-            mController.mPlayerSpeedBtn.setVisibility(View.GONE);
+//            mController.mPlayerSpeedBtn.setVisibility(View.GONE);
 //            mController.mPlayerTimeStartEndText.setVisibility(View.GONE);
             mController.mPlayerTimeStartBtn.setVisibility(View.GONE);
             mController.mPlayerTimeSkipBtn.setVisibility(View.GONE);
 //            mController.mPlayerTimeStepBtn.setVisibility(View.GONE);
             mController.mPlayerTimeResetBtn.setVisibility(View.GONE);
         }else {
-            mController.mPlayerSpeedBtn.setVisibility(View.VISIBLE);
+//            mController.mPlayerSpeedBtn.setVisibility(View.VISIBLE);
 //            mController.mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
             mController.mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
             mController.mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
@@ -715,7 +714,6 @@ public class PlayFragment extends BaseLazyFragment {
         int requestedOrientation = getActivity().getRequestedOrientation();
         if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            mController.mLandscapePortraitBtn.setText("竖屏");
         }
         if (mController.onBackPressed()) {
             return true;

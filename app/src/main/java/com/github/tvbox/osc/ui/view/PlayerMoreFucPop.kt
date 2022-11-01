@@ -3,12 +3,16 @@ package com.github.tvbox.osc.ui.view
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
+import android.os.Handler
+import android.os.Looper
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.Animation
 import android.widget.TextView
-import androidx.core.view.forEach
 import com.github.tvbox.osc.R
+import com.github.tvbox.osc.util.HawkConfig
+import com.github.tvbox.osc.util.IDMDownLoadUtil
+import com.github.tvbox.osc.util.KVStorage.getBoolean
+import com.github.tvbox.osc.util.KVStorage.putBoolean
 import com.github.tvbox.osc.util.PlayerHelper
 import com.github.tvbox.osc.util.ScreenUtils
 import org.json.JSONObject
@@ -27,10 +31,17 @@ import razerdp.util.animation.TranslationConfig
 class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
     BasePopupWindow(context) {
 
+    private var mIdmDownLoad: TextView? = null
+    private var mShowTime: TextView? = null
+    private var onClick: ((view: TextView?) -> Unit)? = null
     private var mScaleBtn: TextView? = null
     private var mSpeedBtn: TextView? = null
     private var mAudioTrack: TextView? = null
     private var mLandscapePortraitBtn: TextView? = null
+
+    private val mHandler by lazy {
+        Handler(Looper.getMainLooper())
+    }
 
     init {
         setContentView(R.layout.player_more_fuc_pop)
@@ -39,6 +50,8 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
         mSpeedBtn = findViewById(R.id.play_speed)
         mAudioTrack = findViewById(R.id.audio_track_select)
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait)
+        mIdmDownLoad = findViewById(R.id.idm_download)
+        mShowTime = findViewById(R.id.time_show)
         mLandscapePortraitBtn?.setOnClickListener {
             setLandscapePortrait()
         }
@@ -47,17 +60,39 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
             mSpeedBtn?.text = "x" + playConfig.getDouble("sp")
             mAudioTrack?.visibility = if (it.getInt("pl") == 1) View.VISIBLE else View.GONE
             initLandscapePortraitBtnInfo()
+            mScaleBtn?.text = PlayerHelper.getScaleName(it.getInt("sc"))
+        }
+        mScaleBtn?.setOnClickListener {
+            onClick?.invoke(it as TextView?)
+        }
+        mSpeedBtn?.setOnClickListener {
+            onClick?.invoke(it as TextView?)
+        }
+        mAudioTrack?.setOnClickListener {
+            onClick?.invoke(it as TextView?)
+        }
+        mIdmDownLoad?.setOnClickListener {
+            IDMDownLoadUtil().startIDMDownLoad(getContext())
+        }
+
+        setTimeShowOrDismiss(mShowTime)
+        mShowTime?.setOnClickListener { v: View? ->
+            var isTimeShow = mShowTime?.tag as Int == 1
+            if (isTimeShow) {
+                mShowTime?.tag = 2
+            } else {
+                mShowTime?.tag = 1
+            }
+            isTimeShow = !isTimeShow
+            mShowTime?.text = if (isTimeShow) "屏显开" else "屏显关"
+            putBoolean(HawkConfig.VIDEO_SHOW_TIME, isTimeShow)
         }
         initLandscapePortraitBtnInfo()
 
     }
 
-    fun setOnItemClickListener(onClick: ((view: View?) -> Unit)? = null): PlayerMoreFucPop {
-        (contentView as? ViewGroup)?.forEach {
-            it.setOnClickListener { childView ->
-                onClick?.invoke(childView)
-            }
-        }
+    fun setOnItemClickListener(onClick: ((view: TextView?) -> Unit)? = null): PlayerMoreFucPop {
+        this.onClick = onClick
         return this
     }
 
@@ -84,11 +119,34 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
         val requestedOrientation: Int = context.requestedOrientation
         if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
             mLandscapePortraitBtn?.text = "横屏"
-            context.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            context.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
         } else if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
             mLandscapePortraitBtn?.text = "竖屏"
             context.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         }
+    }
+
+    private fun setTimeShowOrDismiss(timeShow: TextView?) {
+        val isTimeShowOpen = getBoolean(HawkConfig.VIDEO_SHOW_TIME, false)
+        if (isTimeShowOpen) {
+            timeShow?.text = "屏显开"
+            timeShow?.tag = 1
+        } else {
+            timeShow?.text = "屏显关"
+            timeShow?.tag = 2
+        }
+    }
+
+    override fun onShowing() {
+        super.onShowing()
+        mHandler.postDelayed({
+            this.dismiss()
+        }, 3000)
+    }
+
+    override fun onDismiss() {
+        super.onDismiss()
+        mHandler.removeCallbacksAndMessages(null)
     }
 
 }
