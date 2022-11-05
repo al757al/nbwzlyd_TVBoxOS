@@ -78,6 +78,13 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
             getWindow().setNavigationBarColor(Color.TRANSPARENT);
         }
         changeWallpaper(false);
+        //横屏沉浸式
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
+            getWindow().setAttributes(lp);
+        }
+
     }
 
     public void hideSysBar() {
