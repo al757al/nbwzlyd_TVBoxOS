@@ -5,6 +5,8 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.Animation
 import android.widget.TextView
@@ -38,6 +40,9 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
     private var mSpeedBtn: TextView? = null
     private var mAudioTrack: TextView? = null
     private var mLandscapePortraitBtn: TextView? = null
+    private val dismissRunnable: DismissRunnable by lazy {
+        DismissRunnable()
+    }
 
     private val mHandler by lazy {
         Handler(Looper.getMainLooper())
@@ -115,6 +120,7 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
         }
     }
 
+
     private fun setLandscapePortrait() {
         val requestedOrientation: Int = context.requestedOrientation
         if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
@@ -135,6 +141,38 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
             timeShow?.text = "屏显关"
             timeShow?.tag = 2
         }
+    }
+
+    override fun onDispatchKeyEvent(event: KeyEvent?): Boolean {
+        when (event?.action) {
+            KeyEvent.ACTION_DOWN -> {
+                mHandler.removeCallbacksAndMessages(null)
+            }
+            KeyEvent.ACTION_UP -> {
+                mHandler.postDelayed(dismissRunnable, 3000)
+            }
+        }
+        return super.onDispatchKeyEvent(event)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                mHandler.removeCallbacksAndMessages(null)
+            }
+            MotionEvent.ACTION_UP -> {
+                mHandler.postDelayed(dismissRunnable, 3000)
+            }
+        }
+        return super.onTouchEvent(event)
+    }
+
+
+    inner class DismissRunnable : Runnable {
+        override fun run() {
+            this@PlayerMoreFucPop.dismiss()
+        }
+
     }
 
     override fun onShowing() {
