@@ -23,6 +23,8 @@ import com.github.tvbox.osc.callback.EmptyCallback;
 import com.github.tvbox.osc.callback.LoadingCallback;
 import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.util.AppManager;
+import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.ScreenUtils;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
@@ -81,7 +83,7 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
         //横屏沉浸式
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             WindowManager.LayoutParams lp = getWindow().getAttributes();
-            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
+            lp.layoutInDisplayCutoutMode = KVStorage.getBoolean(HawkConfig.IMMERSIVE_SWITCH, false) ? WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS : 0;
             getWindow().setAttributes(lp);
         }
 

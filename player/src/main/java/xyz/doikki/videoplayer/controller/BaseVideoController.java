@@ -80,6 +80,7 @@ public abstract class BaseVideoController extends FrameLayout
 
     private Animation mShowAnim;
     private Animation mHideAnim;
+    private boolean mImmersive;
 
     public BaseVideoController(@NonNull Context context) {
         this(context, null);
@@ -112,6 +113,10 @@ public abstract class BaseVideoController extends FrameLayout
         if (mActivity instanceof LifecycleOwner) {
             ((LifecycleOwner) mActivity).getLifecycle().addObserver(this);
         }
+    }
+
+    public void setForceImmersive(boolean immersive) {
+        this.mImmersive = immersive;
     }
 
     /**
@@ -623,7 +628,7 @@ public abstract class BaseVideoController extends FrameLayout
                     mOrientationHelper.disable();
                 }
                 if (hasCutout()) {
-                    CutoutUtil.adaptCutoutAboveAndroidP(getContext(), false);
+                    CutoutUtil.adaptCutoutAboveAndroidP(getContext(), mImmersive);
                 }
                 break;
             case VideoView.PLAYER_FULL_SCREEN:

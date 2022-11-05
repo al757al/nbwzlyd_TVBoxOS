@@ -80,7 +80,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvFastSearchText;
     private View mClearDataTextView;
 
-    boolean isLastOpen = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
+    boolean isLastOpen = KVStorage.getBoolean(HawkConfig.IMMERSIVE_SWITCH, false);
 
 
     public static ModelSettingFragment newInstance() {
@@ -641,13 +641,13 @@ public class ModelSettingFragment extends BaseLazyFragment {
             new SourceStoreDialog(mActivity).show();
 
         });
-        View view = findViewById(R.id.ll_sys_time_switch);
-        TextView textView = findViewById(R.id.sys_time_switch);
+        View view = findViewById(R.id.ll_immersive_switch);
+        TextView textView = findViewById(R.id.text_immersive_switch);
         setTimeSwitch(textView, isLastOpen);
         view.setOnClickListener(v -> {
             isLastOpen = !isLastOpen;
             setTimeSwitch(textView, isLastOpen);
-            KVStorage.putBoolean(HawkConfig.VIDEO_SHOW_TIME, isLastOpen);
+            KVStorage.putBoolean(HawkConfig.IMMERSIVE_SWITCH, isLastOpen);
         });
         mClearDataTextView.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

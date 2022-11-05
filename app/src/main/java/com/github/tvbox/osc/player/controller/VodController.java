@@ -267,6 +267,7 @@ public class VodController extends BaseController {
     @Override
     protected void initView() {
         super.initView();
+        setForceImmersive(KVStorage.getBoolean(HawkConfig.IMMERSIVE_SWITCH, false));
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
 //        mPlayTitle = findViewById(R.id.tv_info_name);
