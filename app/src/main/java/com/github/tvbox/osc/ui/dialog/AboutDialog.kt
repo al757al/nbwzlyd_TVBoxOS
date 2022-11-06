@@ -17,12 +17,16 @@ class AboutDialog(context: Context) : BaseDialog(context) {
         append("版本号 V" + BuildConfig.VERSION_NAME + "更新日志:")
             .append("\n").append(
                 """  
-                    该版本主要是针对1.0.16版本的bugfix。功能参考1.0.16发版日志
-1. 修复倍速问题
-2. 亮度默认
-3. 修正片尾逻辑
-4. 搜索线程改为8
-5. 修复多仓地址报错后，缓存的仓库丢失问题
+1.直播增加快进功能
+2.直播默认exo播放器
+3.播放页不常用按钮聚合
+4.设置页UI改版
+5.直播增加二次确认退出，避免意外退出问题
+6.直播优化
+7.增加搜索线程
+8.同步q版代码，但不是最新
+10.增加沉浸式开关
+
 
     """.trimIndent()
             ).create()
