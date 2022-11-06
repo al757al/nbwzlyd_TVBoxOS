@@ -310,6 +310,9 @@ public abstract class BaseController extends BaseVideoController implements Gest
     }
 
     protected void slideToChangePosition(float deltaX) {
+        if (mControlWrapper.getDuration() < 60 * 1000) {//如果视频小于30s，不允许快进
+            return;
+        }
         deltaX = -deltaX;
         int width = getMeasuredWidth();
         int duration = (int) mControlWrapper.getDuration();
