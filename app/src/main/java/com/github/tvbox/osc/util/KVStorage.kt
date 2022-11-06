@@ -32,6 +32,11 @@ object KVStorage {
     }
 
     @JvmStatic
+    fun putInt(key: String, defaultValue: Int) {
+        mmkv.putInt(key, defaultValue)
+    }
+
+    @JvmStatic
     fun <T> putList(key: String, list: List<T>) {
         val dataStr = GsonUtil.BeanToJson(list)
         putString(key, dataStr)

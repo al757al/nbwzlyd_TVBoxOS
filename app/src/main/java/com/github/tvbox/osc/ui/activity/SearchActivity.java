@@ -126,7 +126,7 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = Executors.newFixedThreadPool(8);
+            searchExecutorService = Executors.newFixedThreadPool(KVStorage.getInt(HawkConfig.THREAD_COUNT, 8));
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);

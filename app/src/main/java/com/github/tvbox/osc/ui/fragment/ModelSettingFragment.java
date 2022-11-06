@@ -1,9 +1,13 @@
 package com.github.tvbox.osc.ui.fragment;
 
+import static android.text.InputType.TYPE_CLASS_NUMBER;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +58,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import okhttp3.HttpUrl;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -63,7 +68,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * @description:
  */
 public class ModelSettingFragment extends BaseLazyFragment {
-    private TextView tvDebugOpen;
+    //    private TextView tvDebugOpen;
     private TextView tvMediaCodec;
     private TextView tvParseWebView;
     private TextView tvPlay;
@@ -93,7 +98,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     protected int getLayoutResID() {
-        return R.layout.fragment_model_new;
+        return R.layout.fragment_model_new2;
     }
 
     @Override
@@ -104,7 +109,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
         tvShowPreviewText = findViewById(R.id.showPreviewText);
         tvShowPreviewText.setText(Hawk.get(HawkConfig.SHOW_PREVIEW, true) ? "开启" : "关闭");
-        tvDebugOpen = findViewById(R.id.tvDebugOpen);
+//        tvDebugOpen = findViewById(R.id.tvDebugOpen);
         tvParseWebView = findViewById(R.id.tvParseWebView);
         tvMediaCodec = findViewById(R.id.tvMediaCodec);
         tvPlay = findViewById(R.id.tvPlay);
@@ -118,7 +123,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvHistoryNum = findViewById(R.id.tvHistoryNum);
         tvSearchView = findViewById(R.id.tvSearchView);
         tvMediaCodec.setText(Hawk.get(HawkConfig.IJK_CODEC, ""));
-        tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
+//        tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
         tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
         String apiUrl = Hawk.get(HawkConfig.API_URL, "");
         MoreSourceBean moreSourceBean = KVStorage.getBean(HawkConfig.API_URL_BEAN, MoreSourceBean.class);
@@ -136,14 +141,21 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvScale.setText(PlayerHelper.getScaleName(Hawk.get(HawkConfig.PLAY_SCALE, 0)));
         tvPlay.setText(PlayerHelper.getPlayerName(Hawk.get(HawkConfig.PLAY_TYPE, 0)));
         tvRender.setText(PlayerHelper.getRenderName(Hawk.get(HawkConfig.PLAY_RENDER, 2)));
-        findViewById(R.id.llDebug).setOnClickListener(new View.OnClickListener() {
+//        findViewById(R.id.llDebug).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                FastClickCheckUtil.check(v);
+//                Hawk.put(HawkConfig.DEBUG_OPEN, !Hawk.get(HawkConfig.DEBUG_OPEN, false));
+//                tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
+//            }
+//        });
+        findViewById(R.id.ll_thread_count).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FastClickCheckUtil.check(v);
-                Hawk.put(HawkConfig.DEBUG_OPEN, !Hawk.get(HawkConfig.DEBUG_OPEN, false));
-                tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
+                showThreadCountDialog();
             }
         });
+        showThreadCountText(KVStorage.getInt(HawkConfig.THREAD_COUNT, 8));
         findViewById(R.id.llParseWebVew).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -306,31 +318,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 dialog.show();
             }
         });
-
-//        findViewById(R.id.epgApi).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                FastClickCheckUtil.check(v);
-//                EpgDialog dialog = new EpgDialog(mActivity);
-//                EventBus.getDefault().register(dialog);
-//                dialog.setOnListener(new EpgDialog.OnListener() {
-//                    @Override
-//                    public void onchange(String api) {
-//                        Hawk.put(HawkConfig.EPG_URL, api);
-//                        tvEpgApi.setText(api);
-//                    }
-//                });
-//                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss(DialogInterface dialog) {
-//                        ((BaseActivity) mActivity).hideSysBar();
-//                        EventBus.getDefault().unregister(dialog);
-//                    }
-//                });
-//                dialog.show();
-//            }
-//        });
-
 
         findViewById(R.id.llMediaCodec).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -566,12 +553,12 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 dialog.show();
             }
         });
-        SettingActivity.callback = new SettingActivity.DevModeCallback() {
-            @Override
-            public void onChange() {
-                findViewById(R.id.llDebug).setVisibility(View.VISIBLE);
-            }
-        };
+//        SettingActivity.callback = new SettingActivity.DevModeCallback() {
+//            @Override
+//            public void onChange() {
+//                findViewById(R.id.llDebug).setVisibility(View.VISIBLE);
+//            }
+//        };
 
         findViewById(R.id.showPreview).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -690,6 +677,37 @@ public class ModelSettingFragment extends BaseLazyFragment {
             builder.create().show();
 
         });
+    }
+
+    private void showThreadCountDialog() {
+        EditText editText = new EditText(getContext());
+        editText.setLayoutParams(new ViewGroup.LayoutParams(AutoSizeUtils.mm2px(getContext(), 10f), AutoSizeUtils.mm2px(getContext(), 30f)));
+        editText.setInputType(TYPE_CLASS_NUMBER);
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setTitle("设置搜索线程")
+                .setMessage("因机器设备性能问题，搜索线程不是越大越好，线程太多可能会闪退（不超30）")
+                .setView(editText)
+                .setNegativeButton("取消", (dialog1, which) -> {
+                }).setPositiveButton("确定", (dialog12, which) -> {
+                    int count = 8;
+                    try {
+                        count = Integer.parseInt(editText.getText().toString().trim());
+                        if (count >= 30) {
+                            ToastUtils.showShort("线程数量不要超过30,没卵用");
+                            return;
+                        }
+                    } catch (Exception e) {
+                        count = 8;
+                    }
+                    KVStorage.putInt(HawkConfig.THREAD_COUNT, count);
+                    showThreadCountText(count);
+                }).create();
+        dialog.show();
+    }
+
+    private void showThreadCountText(int count) {
+        TextView threadCount = findViewById(R.id.tvThreadCount);
+        threadCount.setText(count + "线程");
     }
 
     private void setTimeSwitch(TextView textView, boolean isLastOpen) {
