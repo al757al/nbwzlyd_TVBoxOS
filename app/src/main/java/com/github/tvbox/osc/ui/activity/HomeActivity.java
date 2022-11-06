@@ -56,6 +56,7 @@ import com.hjq.permissions.XXPermissions;
 import com.lzy.okgo.OkGo;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
+import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -653,6 +654,7 @@ public class HomeActivity extends BaseActivity {
             String homeSourceKey = ApiConfig.get().getHomeSourceBean().getKey();
             SelectDialog<SourceBean> dialog = new SelectDialog<>(HomeActivity.this);
             dialog.setTip("请选择首页数据源");
+            dialog.setLayoutManger(new V7GridLayoutManager(HomeActivity.this, 3));
             dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
                 @Override
                 public void click(SourceBean value, int pos) {
