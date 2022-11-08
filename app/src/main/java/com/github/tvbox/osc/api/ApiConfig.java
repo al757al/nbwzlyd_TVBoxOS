@@ -449,14 +449,14 @@ public class ApiConfig {
             }
         }
         // 广告地址
-        JsonObject defaultJsonObject = new Gson().fromJson(AdBlocker.defaultIJKADS, JsonObject.class);
+
         if (AdBlocker.isEmpty()) {
             if (infoJson.has("ads")) {
                 for (JsonElement host : infoJson.getAsJsonArray("ads")) {
                     AdBlocker.addAdHost(host.getAsString());
                 }
             } else {
-                for (JsonElement ads : defaultJsonObject.getAsJsonArray("ads")) {
+                for (JsonElement ads : AdBlocker.defaultJsonObject.getAsJsonArray("ads")) {
                     AdBlocker.addAdHost(ads.getAsString());
                 }
             }
@@ -467,7 +467,7 @@ public class ApiConfig {
         if (ijkCodes == null) {
             ijkCodes = new ArrayList<>();
         }
-        for (JsonElement opt : defaultJsonObject.get("ijk").getAsJsonArray()) {
+        for (JsonElement opt : AdBlocker.defaultJsonObject.get("ijk").getAsJsonArray()) {
             JsonObject obj = (JsonObject) opt;
             String name = obj.get("group").getAsString();
             LinkedHashMap<String, String> baseOpt = new LinkedHashMap<>();
