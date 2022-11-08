@@ -35,15 +35,15 @@ public class SelectDialog<T> extends BaseDialog {
 
 
     public void setLayoutManger(RecyclerView.LayoutManager layoutManger) {
-        findViewById(R.id.rootLayout).setLayoutParams(new FrameLayout.LayoutParams(AutoSizeUtils.dp2px(getContext(), 650), ViewGroup.LayoutParams.WRAP_CONTENT));
+        findViewById(R.id.rootLayout).setLayoutParams(new FrameLayout.LayoutParams(AutoSizeUtils.mm2px(getContext(), 650), ViewGroup.LayoutParams.WRAP_CONTENT));
         TvRecyclerView recyclerView = (TvRecyclerView) findViewById(R.id.list);
         recyclerView.setLayoutManager(layoutManger);
         if (recyclerView.getItemDecorationCount() == 0) {
             recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
                 @Override
                 public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                    outRect.left = AutoSizeUtils.dp2px(getContext(), 5);
-                    outRect.right = AutoSizeUtils.dp2px(getContext(), 5);
+                    outRect.left = AutoSizeUtils.mm2px(getContext(), 5);
+                    outRect.right = AutoSizeUtils.mm2px(getContext(), 5);
 //                    super.getItemOffsets(outRect, view, parent, state);
                 }
             });
