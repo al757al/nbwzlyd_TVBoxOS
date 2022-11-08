@@ -52,6 +52,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -104,9 +106,11 @@ public class ApiConfig {
         String content = json;
         try {
             if (AES.isJson(content)) return content;
-            if(content.contains("**")){
-                String[] data = json.split("\\*\\*");
-                content = new String(Base64.decode(data[1], Base64.DEFAULT));
+            Pattern pattern = Pattern.compile("[A-Za-z0]{8}\\*\\*");
+            Matcher matcher = pattern.matcher(content);
+            if(matcher.find()){
+                content=content.substring(content.indexOf(matcher.group()) + 10);
+                content = new String(Base64.decode(content, Base64.DEFAULT));
             }
             if (content.startsWith("2423")) {
                 String data = content.substring(content.indexOf("2324") + 4, content.length() - 26);
@@ -372,7 +376,7 @@ public class ApiConfig {
             sb.setQuickSearch(DefaultConfig.safeJsonInt(obj, "quickSearch", 1));
             sb.setFilterable(DefaultConfig.safeJsonInt(obj, "filterable", 1));
             sb.setPlayerUrl(DefaultConfig.safeJsonString(obj, "playUrl", ""));
-            if(obj.has("ext") && (obj.get("ext").isJsonArray() || obj.get("ext").isJsonObject())){
+            if(obj.has("ext") && (obj.get("ext").isJsonObject() || obj.get("ext").isJsonArray())){
                 sb.setExt(obj.get("ext").toString());
             }else {
                 sb.setExt(DefaultConfig.safeJsonString(obj, "ext", ""));
@@ -397,15 +401,18 @@ public class ApiConfig {
         vipParseFlags = DefaultConfig.safeJsonStringList(infoJson, "flags");
         // 解析地址
         parseBeanList.clear();
-        for (JsonElement opt : infoJson.get("parses").getAsJsonArray()) {
-            JsonObject obj = (JsonObject) opt;
-            ParseBean pb = new ParseBean();
-            pb.setName(obj.get("name").getAsString().trim());
-            pb.setUrl(obj.get("url").getAsString().trim());
-            String ext = obj.has("ext") ? obj.get("ext").getAsJsonObject().toString() : "";
-            pb.setExt(ext);
-            pb.setType(DefaultConfig.safeJsonInt(obj, "type", 0));
-            parseBeanList.add(pb);
+        if(infoJson.has("parses")){
+            JsonArray parses = infoJson.get("parses").getAsJsonArray();
+            for (JsonElement opt : parses) {
+                JsonObject obj = (JsonObject) opt;
+                ParseBean pb = new ParseBean();
+                pb.setName(obj.get("name").getAsString().trim());
+                pb.setUrl(obj.get("url").getAsString().trim());
+                String ext = obj.has("ext") ? obj.get("ext").getAsJsonObject().toString() : "";
+                pb.setExt(ext);
+                pb.setType(DefaultConfig.safeJsonInt(obj, "type", 0));
+                parseBeanList.add(pb);
+            }
         }
         // 获取默认解析
         if (parseBeanList != null && parseBeanList.size() > 0) {
@@ -421,6 +428,7 @@ public class ApiConfig {
         loadLiveSourceUrl(apiUrl, infoJson);
         //video parse rule for host
         if (infoJson.has("rules")) {
+            VideoParseRuler.clearRule();
             for(JsonElement oneHostRule : infoJson.getAsJsonArray("rules")) {
                 JsonObject obj = (JsonObject) oneHostRule;
                 String host = obj.get("host").getAsString();
@@ -570,7 +578,23 @@ public class ApiConfig {
                 liveChannelGroup.setGroupName(realUrl);
                 liveChannelGroupList.add(liveChannelGroup);
             } else {
-                loadLives(infoJson.get("lives").getAsJsonArray());
+                String lives = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject().toString();
+                if(!lives.contains("type")){
+                    loadLives(infoJson.get("lives").getAsJsonArray());
+                }else {
+                    JsonObject fengMiLives = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject();
+                    String type=fengMiLives.get("type").getAsString();
+                    if(type.equals("0")){
+                        String url =fengMiLives.get("url").getAsString();
+                        if(url.startsWith("http")){
+                            url = Base64.encodeToString(url.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                        }
+                        url ="http://127.0.0.1:9978/proxy?do=live&type=txt&ext="+url;
+                        LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
+                        liveChannelGroup.setGroupName(url);
+                        liveChannelGroupList.add(liveChannelGroup);
+                    }
+                }
             }
         } catch (Throwable th) {
             th.printStackTrace();

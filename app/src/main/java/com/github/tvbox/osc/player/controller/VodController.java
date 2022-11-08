@@ -1,5 +1,6 @@
 package com.github.tvbox.osc.player.controller;
 
+import android.annotation.SuppressLint;
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
 import android.app.Activity;
@@ -103,6 +104,9 @@ public class VodController extends BaseController {
     int myHandleSeconds = 6000;//闲置多少毫秒秒关闭底栏  默认6秒
     private TextView mNetSpeed;
     SimpleDateFormat timeFormat2 = new SimpleDateFormat("HH:mm:ss");
+
+    int videoPlayState = 0;
+
     private Runnable myRunnable2 = new Runnable() {
         @Override
         public void run() {
@@ -922,6 +926,7 @@ public class VodController extends BaseController {
     @Override
     protected void onPlayStateChanged(int playState) {
         super.onPlayStateChanged(playState);
+        videoPlayState = playState;
         switch (playState) {
             case VideoView.STATE_IDLE:
                 break;

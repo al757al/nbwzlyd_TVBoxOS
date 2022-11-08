@@ -44,7 +44,8 @@ public class HawkConfig {
     public static final String SEARCH_HISTORY = "SEARCH_HISTORY";
     public static final String SUBTITLE_TEXT_SIZE = "subtitle_text_size";
     public static final String SUBTITLE_TIME_DELAY = "subtitle_time_delay";
-    public static final String SOURCES_FOR_SEARCH = "sources_for_search";
+    public static final String SOURCES_FOR_SEARCH = "checked_sources_for_search";
     public static final String HOME_REC_STYLE = "home_rec_style";
     public static final String NOW_DATE = "now_date"; //当前日期
+    public static final String REMOTE_TVBOX = "remote_tvbox_host";
 }
