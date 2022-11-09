@@ -26,6 +26,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.github.megatronking.stringfog.annotation.StringFogIgnore;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.App;
@@ -74,6 +75,7 @@ import java.util.Locale;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+@StringFogIgnore
 public class HomeActivity extends BaseActivity {
     private LinearLayout topLayout;
     private LinearLayout contentLayout;
