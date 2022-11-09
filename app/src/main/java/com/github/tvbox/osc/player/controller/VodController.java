@@ -76,7 +76,7 @@ public class VodController extends BaseController {
     TextView mNextBtn;
     TextView mPreBtn;
 //    TextView mPlayerScaleBtn;
-    public TextView mPlayerSpeedBtn;
+//    public TextView mPlayerSpeedBtn;
     TextView mPlayerBtn;
     TextView mPlayerIJKBtn;
     TextView mPlayerRetry;
@@ -304,7 +304,7 @@ public class VodController extends BaseController {
             }
         });
 //        mPlayerScaleBtn = findViewById(R.id.play_scale);
-        mPlayerSpeedBtn = findViewById(R.id.play_speed);
+//        mPlayerSpeedBtn = findViewById(R.id.play_speed);
         mPlayerBtn = findViewById(R.id.play_player);
         mPlayerIJKBtn = findViewById(R.id.play_ijk);
         mPlayerTimeStartBtn = findViewById(R.id.play_time_start);

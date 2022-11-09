@@ -4,6 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.15520833333333334" />
+        <entry key="app/src/main/res/drawable/bg_progress_bar_out.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_dialog_filter_bg.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_dialog_pg_search_checkbox.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_live_channel_num.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_live_focus.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_live_select.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_user_focus.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_user_search.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_history.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_search.xml" value="0.1140625" />
