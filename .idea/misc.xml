@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/drawable/shape_live_select.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/shape_user_focus.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/shape_user_search.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_detail.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_history.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_home_top_indicator.xml" value="0.1" />
@@ -25,6 +26,7 @@
         <entry key="app/src/main/res/layout/fragment_user.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_dialog_select.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_search_history.xml" value="0.1140625" />
+        <entry key="app/src/main/res/layout/item_series.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_user_hot_vod.xml" value="0.1" />
         <entry key="app/src/main/res/layout/more_source_dialog_select.xml" value="0.1" />
         <entry key="app/src/main/res/layout/player_more_fuc_pop.xml" value="0.21796875" />
