@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Html;
@@ -551,7 +552,6 @@ public class DetailActivity extends BaseActivity {
                     data.addAll(next.getValue());
                 }
             }
-//           wallhaven-48goky.jpeg3d107f0491244691b28d59c91645d1e1.jpg
             mClassifyAdapter.setNewData(classifyData);
             seriesAdapter.setNewData(data);
             mNumberClassification.setVisibility(View.VISIBLE);

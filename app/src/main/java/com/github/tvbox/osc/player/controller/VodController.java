@@ -1,6 +1,5 @@
 package com.github.tvbox.osc.player.controller;
 
-import android.annotation.SuppressLint;
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
 import android.app.Activity;
@@ -455,6 +454,12 @@ public class VodController extends BaseController {
                     e.printStackTrace();
                 }
                 return true;
+            }
+        });
+        mPlayerSpeedBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setSpeedVideoView((TextView) v);
             }
         });
         mPlayerBtn.setOnClickListener(new OnClickListener() {
