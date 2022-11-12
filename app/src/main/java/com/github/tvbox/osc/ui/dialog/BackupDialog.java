@@ -46,6 +46,12 @@ public class BackupDialog extends BaseDialog {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (view.getId() == R.id.tvName) {
                     restore((String) adapter.getItem(position));
+                } else if (view.getId() == R.id.tvDel) {
+                    if (deleteItem(position)) {
+                        adapter.getData().remove(position);
+                        adapter.notifyItemRemoved(position);
+                        adapter.notifyItemChanged(position);
+                    }
                 }
             }
         });
@@ -86,6 +92,34 @@ public class BackupDialog extends BaseDialog {
                 }
             }
         });
+    }
+
+    boolean deleteItem(int position) {
+        try {
+            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
+            File file = new File(root + "/tvbox_backup/");
+            File[] list = file.listFiles();
+            Arrays.sort(list, new Comparator<File>() {
+                        @Override
+                        public int compare(File o1, File o2) {
+                            if (o1.isDirectory() && o2.isFile()) return -1;
+                            return o1.isFile() && o2.isDirectory() ? 1 : o2.getName().compareTo(o1.getName());
+                        }
+                    }
+
+            );
+            for (int i = 0; i < list.length; i++) {
+                if (i == position) {
+                    file = list[i];
+                    FileUtils.recursiveDelete(file);
+                    return true;
+                }
+            }
+        } catch (
+                Exception e) {
+            return false;
+        }
+        return false;
     }
 
     List<String> allBackup() {
