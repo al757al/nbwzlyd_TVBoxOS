@@ -552,9 +552,7 @@ public class DetailActivity extends BaseActivity {
                     data.addAll(next.getValue());
                 }
             }
-//            if (isReverse){
-//                Collections.reverse(classifyData);
-//            }
+//           wallhaven-48goky.jpeg3d107f0491244691b28d59c91645d1e1.jpg
             mClassifyAdapter.setNewData(classifyData);
             seriesAdapter.setNewData(data);
             mNumberClassification.setVisibility(View.VISIBLE);
