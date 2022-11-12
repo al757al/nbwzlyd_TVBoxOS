@@ -2,6 +2,7 @@ package com.github.tvbox.osc.ui.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -79,7 +80,7 @@ public class SearchActivity extends BaseActivity {
     private String searchTitle = "";
     private TextView tvSearchCheckboxBtn;
 
-    private HashMap<String, String> mCheckSources = null;
+    private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
     private TextView mSearchHistoryTextView;
 
@@ -95,6 +96,7 @@ public class SearchActivity extends BaseActivity {
         initView();
         initViewModel();
         initData();
+        hasKeyBoard = true;
     }
 
     /*
@@ -133,6 +135,13 @@ public class SearchActivity extends BaseActivity {
             }
             pauseRunnable.clear();
             pauseRunnable = null;
+        }
+        if (hasKeyBoard) {
+            tvSearch.requestFocus();
+            tvSearch.requestFocusFromTouch();
+        }else {
+            etSearch.requestFocus();
+            etSearch.requestFocusFromTouch();
         }
     }
 
@@ -188,6 +197,7 @@ public class SearchActivity extends BaseActivity {
                     } catch (Throwable th) {
                         th.printStackTrace();
                     }
+                    hasKeyBoard = false;
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
@@ -199,6 +209,7 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
+                hasKeyBoard = true;
                 String wd = etSearch.getText().toString().trim();
                 if (!TextUtils.isEmpty(wd)) {
                     search(wd);
@@ -263,6 +274,12 @@ public class SearchActivity extends BaseActivity {
                     }
                     mSearchCheckboxDialog = new SearchCheckboxDialog(SearchActivity.this, searchAbleSource, mCheckSources);
                 }
+                mSearchCheckboxDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        dialog.dismiss();
+                    }
+                });
                 mSearchCheckboxDialog.show();
             }
         });
@@ -406,6 +423,10 @@ public class SearchActivity extends BaseActivity {
 
     private void initCheckedSourcesForSearch() {
         mCheckSources = SearchHelper.getSourcesForSearch();
+    }
+
+    public static void setCheckedSourcesForSearch(HashMap<String,String> checkedSources) {
+        mCheckSources = checkedSources;
     }
 
     private void search(String title) {

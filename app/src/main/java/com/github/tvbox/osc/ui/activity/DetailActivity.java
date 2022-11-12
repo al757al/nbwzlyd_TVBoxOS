@@ -5,7 +5,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Html;

@@ -68,6 +68,7 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
 
         setContentView(getLayoutResID());
         mContext = this;
+        CutoutUtil.adaptCutoutAboveAndroidP(mContext, true);//设置刘海
         AppManager.getInstance().addActivity(this);
         init();
     }
