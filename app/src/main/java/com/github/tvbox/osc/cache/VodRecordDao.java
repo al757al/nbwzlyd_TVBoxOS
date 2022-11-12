@@ -27,9 +27,6 @@ public interface VodRecordDao {
     @Delete
     int delete(VodRecord record);
 
-    @Query("DELETE FROM vodRecord")
-    int deleteAllVodRecord();
-
     @Query("select count(*) from vodRecord")
     int getCount();
 
@@ -41,4 +38,7 @@ public interface VodRecordDao {
      */
     @Query("DELETE FROM vodRecord where id NOT IN (SELECT id FROM vodRecord ORDER BY updateTime desc LIMIT :size)")
     int reserver(int size);
+
+    @Query("DELETE FROM vodRecord")
+    int deleteAllVodRecord();
 }

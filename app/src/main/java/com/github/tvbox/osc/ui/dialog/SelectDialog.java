@@ -28,11 +28,16 @@ public class SelectDialog<T> extends BaseDialog {
         setContentView(R.layout.dialog_select);
     }
 
+    private boolean muteCheck = false;
+
     public SelectDialog(@NonNull @NotNull Context context, int resId) {
         super(context);
         setContentView(resId);
     }
 
+    public void setItemCheckDisplay(boolean shouldShowCheck) {
+        muteCheck = !shouldShowCheck;
+    }
 
     public void setLayoutManger(RecyclerView.LayoutManager layoutManger) {
         findViewById(R.id.rootLayout).setLayoutParams(new FrameLayout.LayoutParams(AutoSizeUtils.mm2px(getContext(), 720), ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -60,7 +65,7 @@ public class SelectDialog<T> extends BaseDialog {
     }
 
     public void setAdapter(SelectDialogAdapter.SelectDialogInterface<T> sourceBeanSelectDialogInterface, DiffUtil.ItemCallback<T> sourceBeanItemCallback, List<T> data, int select) {
-        SelectDialogAdapter<T> adapter = new SelectDialogAdapter(sourceBeanSelectDialogInterface, sourceBeanItemCallback);
+        SelectDialogAdapter<T> adapter = new SelectDialogAdapter(sourceBeanSelectDialogInterface, sourceBeanItemCallback, muteCheck);
         adapter.setData(data, select);
         TvRecyclerView tvRecyclerView = ((TvRecyclerView) findViewById(R.id.list));
         tvRecyclerView.setAdapter(adapter);

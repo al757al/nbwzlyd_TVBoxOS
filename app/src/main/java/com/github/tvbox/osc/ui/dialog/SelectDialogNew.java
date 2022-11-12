@@ -39,7 +39,7 @@ public class SelectDialogNew<T> extends BaseDialog {
         TvRecyclerView tvRecyclerView = findViewById(R.id.list);
         SelectDialogAdapter<T> adapter = (SelectDialogAdapter<T>) tvRecyclerView.getAdapter();
         if (adapter == null) {
-            adapter = new SelectDialogAdapter(sourceBeanSelectDialogInterface, null);
+            adapter = new SelectDialogAdapter(sourceBeanSelectDialogInterface, null, false);
             tvRecyclerView.setAdapter(adapter);
         }
         adapter.setSelect(select);

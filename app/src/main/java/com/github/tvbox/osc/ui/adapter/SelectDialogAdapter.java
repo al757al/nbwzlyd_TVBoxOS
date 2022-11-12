@@ -22,6 +22,8 @@ import java.util.List;
 
 public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.SelectViewHolder> {
 
+    private final boolean muteCheck;
+
     class SelectViewHolder extends RecyclerView.ViewHolder {
 
         public SelectViewHolder(@NonNull @NotNull View itemView) {
@@ -41,9 +43,10 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
 
     private SelectDialogInterface dialogInterface = null;
 
-    public SelectDialogAdapter(SelectDialogInterface dialogInterface, DiffUtil.ItemCallback diffCallback) {
+    public SelectDialogAdapter(SelectDialogInterface dialogInterface, DiffUtil.ItemCallback diffCallback, boolean muteCheck) {
         super(diffCallback);
         this.dialogInterface = dialogInterface;
+        this.muteCheck = muteCheck;
     }
 
     public void setData(List<T> newData, int defaultSelect) {

@@ -63,4 +63,5 @@
     <dimen name="vs_70">70mm</dimen>
     <dimen name="vs_640">640mm</dimen>
     <dimen name="vs_80">80mm</dimen>
+    <dimen name="ts_10">10mm</dimen>
 </resources>

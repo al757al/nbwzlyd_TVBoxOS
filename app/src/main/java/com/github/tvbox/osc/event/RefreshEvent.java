@@ -20,6 +20,7 @@ public class RefreshEvent {
     public static final int TYPE_STORE_PUSH = 11;
     public static final int TYPE_LIVE_SOURCE_PUSH = 12;
     public static final int TYPE_SETTING_SEARCH_TV = 13;
+    public static final int TYPE_DRIVE_REFRESH = 14;
     public int type;
     public Object obj;
 

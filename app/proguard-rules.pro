@@ -91,6 +91,19 @@
     public static ** valueOf(java.lang.String);
 }
 
+# sardine webdav
+-keep class com.thegrizzlylabs.sardineandroid.** { *; }
+-dontwarn com.thegrizzlylabs.sardineandroid.**
+
+# filepicker
+-keep class com.obsez.android.lib.filechooser.** { *; }
+-dontwarn com.obsez.android.lib.filechooser.**
+
+# jcifs (smb)
+-keep class jcifs.** { *; }
+-dontwarn jcifs.**
+
+
 # 保留我们自定义控件（继承自View）不被混淆
 -keep public class * extends android.view.View{
     *** get*();
