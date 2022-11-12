@@ -24,7 +24,6 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -218,17 +217,15 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
-                    if (VodInfoClassifyUtil.checkVodInfoNeedClassify(vodInfo.seriesMap.get(vodInfo.playFlag))) {
-                        ToastUtils.make().setTextSize(AutoSizeUtils.mm2px(mContext, 10)).show("分组情况下倒叙逻辑还暂不支持");
-                        return;
-                    }
                     vodInfo.reverseSort = !vodInfo.reverseSort;
                     isReverse = !isReverse;
                     vodInfo.reverse();
                     vodInfo.playIndex = (vodInfo.seriesMap.get(vodInfo.playFlag).size() - 1) - vodInfo.playIndex;
+
 //                    insertVod(sourceKey, vodInfo);
                     firstReverse = true;
-                    seriesAdapter.notifyDataSetChanged();
+                    loadVodInfo();
+//                    seriesAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -530,6 +527,17 @@ public class DetailActivity extends BaseActivity {
         if (offset > 6) offset = 6;
         this.mGridViewLayoutMgr.setSpanCount(offset);
 
+        loadVodInfo();
+
+        mGridView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mGridView.scrollToPosition(vodInfo.playIndex);
+            }
+        }, 100);
+    }
+
+    private void loadVodInfo() {
         if (VodInfoClassifyUtil.checkVodInfoNeedClassify(vodInfo.seriesMap.get(vodInfo.playFlag))) {
             mapData = VodInfoClassifyUtil.getClassifyData(vodInfo.seriesMap.get(vodInfo.playFlag));
             List<VodInfo.VodSeries> data = new ArrayList<>();
@@ -544,6 +552,9 @@ public class DetailActivity extends BaseActivity {
                     data.addAll(next.getValue());
                 }
             }
+//            if (isReverse){
+//                Collections.reverse(classifyData);
+//            }
             mClassifyAdapter.setNewData(classifyData);
             seriesAdapter.setNewData(data);
             mNumberClassification.setVisibility(View.VISIBLE);
@@ -551,13 +562,6 @@ public class DetailActivity extends BaseActivity {
             mNumberClassification.setVisibility(View.GONE);
             seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
         }
-
-        mGridView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mGridView.scrollToPosition(vodInfo.playIndex);
-            }
-        }, 100);
     }
 
 
@@ -596,7 +600,7 @@ public class DetailActivity extends BaseActivity {
         if (event.type == RefreshEvent.TYPE_REFRESH) {
             if (event.obj != null) {
                 if (event.obj instanceof Integer) {
-                    int freshIndex = (int) event.obj % 20;
+                    int freshIndex = (int) event.obj % 30;
                     for (int j = 0; j < seriesAdapter.getData().size(); j++) {
                         seriesAdapter.getData().get(j).selected = false;
                         seriesAdapter.notifyItemChanged(j);

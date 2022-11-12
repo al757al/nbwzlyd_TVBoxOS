@@ -14,12 +14,12 @@ class VodInfoClassifyUtil {
     companion object {
         @JvmStatic
         fun checkVodInfoNeedClassify(vodSeries: MutableList<VodInfo.VodSeries>?): Boolean {
-            return (vodSeries?.size ?: 0) > 20
+            return (vodSeries?.size ?: 0) >= 30
         }
 
         @JvmStatic
         fun getClassifyData(vodSeries: List<VodInfo.VodSeries>?): LinkedHashMap<VodInfo.VodSeriesFlag, List<VodInfo.VodSeries>> {
-            return averageAssignFixLength(vodSeries, 20)
+            return averageAssignFixLength(vodSeries, 30)
         }
 
         private fun <T> averageAssignFixLength(
@@ -44,11 +44,11 @@ class VodInfoClassifyUtil {
                             source.subList(i * splitItemNum, source.size)
                         }
                         val vodSeriesFlag = VodInfo.VodSeriesFlag().apply {
-                            var endInt = (i + 1) * 20
+                            var endInt = (i + 1) * 30
                             if (endInt > source.size) {
                                 endInt = source.size
                             }
-                            this.name = "${i * 20 + 1}-${endInt}"
+                            this.name = "${i * 30 + 1}-${endInt}"
                             this.selected = i == 0
                         }
                         result[vodSeriesFlag] = value
