@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.github.megatronking.stringfog.annotation.StringFogIgnore;
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.bean.MovieSort;
 import com.github.tvbox.osc.bean.SourceBean;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
  * @date :2020/12/21
  * @description:
  */
+@StringFogIgnore
 public class DefaultConfig {
 
     public static List<MovieSort.SortData> adjustSort(String sourceKey, List<MovieSort.SortData> list, boolean withMy) {

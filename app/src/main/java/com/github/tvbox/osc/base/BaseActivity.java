@@ -37,6 +37,7 @@ import java.io.InputStreamReader;
 
 import me.jessyan.autosize.AutoSizeCompat;
 import me.jessyan.autosize.internal.CustomAdapt;
+import xyz.doikki.videoplayer.util.CutoutUtil;
 
 /**
  * @author pj567
@@ -62,7 +63,9 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
         } catch (Throwable th) {
             th.printStackTrace();
         }
+
         super.onCreate(savedInstanceState);
+
         setContentView(getLayoutResID());
         mContext = this;
         AppManager.getInstance().addActivity(this);
@@ -81,12 +84,7 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
         }
         changeWallpaper(false);
         //横屏沉浸式
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            WindowManager.LayoutParams lp = getWindow().getAttributes();
-            lp.layoutInDisplayCutoutMode = KVStorage.getBoolean(HawkConfig.IMMERSIVE_SWITCH, false) ? WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS : 0;
-            getWindow().setAttributes(lp);
-        }
-
+        CutoutUtil.adaptCutoutAboveAndroidP(this, KVStorage.getBoolean(HawkConfig.IMMERSIVE_SWITCH, false));
     }
 
     public void hideSysBar() {

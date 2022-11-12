@@ -46,6 +46,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.IDMDownLoadUtil;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.SearchHelper;
+import com.github.tvbox.osc.util.VodInfoClassifyUtil;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -71,7 +72,10 @@ import java.io.ObjectOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -105,12 +109,14 @@ public class DetailActivity extends BaseActivity {
     private TextView tvQuickSearch;
     private TextView tvCollect;
     private TvRecyclerView mGridViewFlag;
+    private TvRecyclerView mNumberClassification;
     private TvRecyclerView mGridView;
     private LinearLayout mEmptyPlayList;
     private SourceViewModel sourceViewModel;
     private Movie.Video mVideo;
     private VodInfo vodInfo;
     private SeriesFlagAdapter seriesFlagAdapter;
+    private SeriesFlagAdapter mClassifyAdapter;//集数分类adapter
     private SeriesAdapter seriesAdapter;
     public String vodId;
     public String sourceKey;
@@ -121,6 +127,9 @@ public class DetailActivity extends BaseActivity {
     private boolean firstReverse;
     private V7GridLayoutManager mGridViewLayoutMgr = null;
     private HashMap<String, String> mCheckSources = null;
+
+    private LinkedHashMap<VodInfo.VodSeriesFlag, List<VodInfo.VodSeries>> mapData = new LinkedHashMap<>();//分组
+    private VodInfo.VodSeriesFlag mLastSelectedVodSeriesFlag = null;
 
     @Override
     protected int getLayoutResID() {
@@ -179,6 +188,14 @@ public class DetailActivity extends BaseActivity {
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
         seriesAdapter = new SeriesAdapter();
         mGridView.setAdapter(seriesAdapter);
+
+
+        mNumberClassification = findViewById(R.id.mNumberClassification);
+        mNumberClassification.setHasFixedSize(true);
+        mNumberClassification.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
+        mClassifyAdapter = new SeriesFlagAdapter();
+        mNumberClassification.setAdapter(mClassifyAdapter);
+
         mGridViewFlag = findViewById(R.id.mGridViewFlag);
         mGridViewFlag.setHasFixedSize(true);
         mGridViewFlag.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
@@ -204,9 +221,11 @@ public class DetailActivity extends BaseActivity {
                     isReverse = !isReverse;
                     vodInfo.reverse();
                     vodInfo.playIndex = (vodInfo.seriesMap.get(vodInfo.playFlag).size() - 1) - vodInfo.playIndex;
+
 //                    insertVod(sourceKey, vodInfo);
                     firstReverse = true;
-                    seriesAdapter.notifyDataSetChanged();
+                    loadVodInfo();
+//                    seriesAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -276,7 +295,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 //获取剪切板管理器
-                ClipboardManager cm = (ClipboardManager) getSystemService(mContext.CLIPBOARD_SERVICE);
+                ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 //设置内容到剪切板
                 cm.setPrimaryClip(ClipData.newPlainText(null, tvPlayUrl.getText().toString().replace("播放地址：", "")));
                 Toast.makeText(DetailActivity.this, "已复制", Toast.LENGTH_SHORT).show();
@@ -346,18 +365,21 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
-                if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+                List<VodInfo.VodSeries> allData = vodInfo.seriesMap.get(vodInfo.playFlag);
+                if (vodInfo != null && allData.size() > 0) {
                     boolean reload = false;
-                    for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
-                        seriesAdapter.getData().get(j).selected = false;
-                        seriesAdapter.notifyItemChanged(j);
+                    //清理以前选中的剧集
+                    for (VodInfo.VodSeries allItem : allData) {
+                        allItem.selected = false;
                     }
+                    seriesAdapter.notifyDataSetChanged();
+                    VodInfo.VodSeries clickItem = seriesAdapter.getData().get(position);
+                    int clickPlayIndex = allData.indexOf(clickItem);
                     //解决倒叙不刷新
-                    if (vodInfo.playIndex != position) {
-                        seriesAdapter.getData().get(position).selected = true;
+                    if (vodInfo.playIndex != clickPlayIndex) {
+                        clickItem.selected = true;
                         seriesAdapter.notifyItemChanged(position);
-                        vodInfo.playIndex = position;
-
+                        vodInfo.playIndex = allData.indexOf(clickItem);
                         reload = true;
                     }
                     //解决当前集不刷新的BUG
@@ -365,15 +387,41 @@ public class DetailActivity extends BaseActivity {
                         reload = true;
                     }
 
-                    seriesAdapter.getData().get(vodInfo.playIndex).selected = true;
-                    seriesAdapter.notifyItemChanged(vodInfo.playIndex);
-                    //选集全屏 想选集不全屏的注释下面一行
+                    seriesAdapter.getData().get(position).selected = true;
+                    seriesAdapter.notifyItemChanged(position);
+//                    //选集全屏 想选集不全屏的注释下面一行
                     if (showPreview && !fullWindows) toggleFullPreview();
                     if (!showPreview || reload) {
                         jumpToPlay();
                         firstReverse = false;
                     }
                 }
+            }
+        });
+        mClassifyAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                VodInfo.VodSeriesFlag item = mClassifyAdapter.getItem(position);
+                if (item != null) {
+                    if (item.selected) {//如果点击的已经是选中的了，return
+                        return;
+                    }
+                    item.selected = true;
+                    mClassifyAdapter.notifyItemChanged(position);
+                }
+                if (mLastSelectedVodSeriesFlag != null) {
+                    mLastSelectedVodSeriesFlag.selected = false;
+                    int index = mClassifyAdapter.getData().indexOf(mLastSelectedVodSeriesFlag);
+                    mClassifyAdapter.notifyItemChanged(index);
+                }
+                mLastSelectedVodSeriesFlag = item;
+                mNumberClassification.scrollToPosition(position);
+                mNumberClassification.setSelection(position);
+                List<VodInfo.VodSeries> vodSeries = mapData.get(item);
+                if (vodSeries != null) {
+                    seriesAdapter.setNewData(vodSeries);
+                }
+
             }
         });
         setLoadSir(llLayout);
@@ -479,7 +527,8 @@ public class DetailActivity extends BaseActivity {
         if (offset > 6) offset = 6;
         this.mGridViewLayoutMgr.setSpanCount(offset);
 
-        seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
+        loadVodInfo();
+
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -487,6 +536,32 @@ public class DetailActivity extends BaseActivity {
             }
         }, 100);
     }
+
+    private void loadVodInfo() {
+        if (VodInfoClassifyUtil.checkVodInfoNeedClassify(vodInfo.seriesMap.get(vodInfo.playFlag))) {
+            mapData = VodInfoClassifyUtil.getClassifyData(vodInfo.seriesMap.get(vodInfo.playFlag));
+            List<VodInfo.VodSeries> data = new ArrayList<>();
+            Iterator<Map.Entry<VodInfo.VodSeriesFlag, List<VodInfo.VodSeries>>> iterator = mapData.entrySet().iterator();
+            List<VodInfo.VodSeriesFlag> classifyData = new ArrayList<>();
+            while (iterator.hasNext()) {
+                Map.Entry<VodInfo.VodSeriesFlag, List<VodInfo.VodSeries>> next = iterator.next();
+                VodInfo.VodSeriesFlag key = next.getKey();
+                classifyData.add(key);
+                if (data.isEmpty()) {//默认第一个分类里的数据
+                    mLastSelectedVodSeriesFlag = key;
+                    data.addAll(next.getValue());
+                }
+            }
+//           wallhaven-48goky.jpeg3d107f0491244691b28d59c91645d1e1.jpg
+            mClassifyAdapter.setNewData(classifyData);
+            seriesAdapter.setNewData(data);
+            mNumberClassification.setVisibility(View.VISIBLE);
+        } else {
+            mNumberClassification.setVisibility(View.GONE);
+            seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
+        }
+    }
+
 
     private String getHtml(String label, String content) {
         if (content == null) {
@@ -523,15 +598,15 @@ public class DetailActivity extends BaseActivity {
         if (event.type == RefreshEvent.TYPE_REFRESH) {
             if (event.obj != null) {
                 if (event.obj instanceof Integer) {
-                    int index = (int) event.obj;
-                    for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
+                    int freshIndex = (int) event.obj % 30;
+                    for (int j = 0; j < seriesAdapter.getData().size(); j++) {
                         seriesAdapter.getData().get(j).selected = false;
                         seriesAdapter.notifyItemChanged(j);
                     }
-                    seriesAdapter.getData().get(index).selected = true;
-                    seriesAdapter.notifyItemChanged(index);
-                    mGridView.setSelection(index);
-                    vodInfo.playIndex = index;
+                    seriesAdapter.getData().get(freshIndex).selected = true;
+                    seriesAdapter.notifyItemChanged(freshIndex);
+                    mGridView.setSelection(freshIndex);
+                    vodInfo.playIndex = (int) event.obj;
                     //保存历史
                     insertVod(sourceKey, vodInfo);
                 } else if (event.obj instanceof JSONObject) {

@@ -27,11 +27,15 @@ public interface VodRecordDao {
     @Delete
     int delete(VodRecord record);
 
+    @Query("DELETE FROM vodRecord")
+    int deleteAllVodRecord();
+
     @Query("select count(*) from vodRecord")
     int getCount();
 
     /**
      * 保留最新指定条数, 其他删除.
+     *
      * @param size 保留条数
      * @return
      */

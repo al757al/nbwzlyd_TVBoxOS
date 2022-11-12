@@ -25,6 +25,7 @@ import com.github.tvbox.osc.base.BaseLazyFragment;
 import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.MoreSourceBean;
 import com.github.tvbox.osc.bean.SourceBean;
+import com.github.tvbox.osc.cache.RoomDataManger;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
@@ -651,6 +652,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 CleanUtils.cleanInternalFiles();
                 CleanUtils.cleanInternalSp();
                 CacheManager.getInstance().clear();//清空接口缓存
+                //删除历史记录
+                new Thread(RoomDataManger::deleteAllRecord).start();
                 Hawk.deleteAll();
                 KVStorage.deleteAll();
                 ToastUtils.showShort("重置App完毕");

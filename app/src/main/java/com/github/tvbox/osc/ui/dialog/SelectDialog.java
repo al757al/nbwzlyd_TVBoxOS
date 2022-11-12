@@ -35,7 +35,7 @@ public class SelectDialog<T> extends BaseDialog {
 
 
     public void setLayoutManger(RecyclerView.LayoutManager layoutManger) {
-        findViewById(R.id.rootLayout).setLayoutParams(new FrameLayout.LayoutParams(AutoSizeUtils.mm2px(getContext(), 650), ViewGroup.LayoutParams.WRAP_CONTENT));
+        findViewById(R.id.rootLayout).setLayoutParams(new FrameLayout.LayoutParams(AutoSizeUtils.mm2px(getContext(), 720), ViewGroup.LayoutParams.WRAP_CONTENT));
         TvRecyclerView recyclerView = (TvRecyclerView) findViewById(R.id.list);
         recyclerView.setLayoutManager(layoutManger);
         if (recyclerView.getItemDecorationCount() == 0) {

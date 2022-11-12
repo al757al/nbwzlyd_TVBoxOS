@@ -76,7 +76,7 @@ public class VodController extends BaseController {
     TextView mTvSpeedPlay;
     TextView mNextBtn;
     TextView mPreBtn;
-//    TextView mPlayerScaleBtn;
+    //    TextView mPlayerScaleBtn;
     public TextView mPlayerSpeedBtn;
     TextView mPlayerBtn;
     TextView mPlayerIJKBtn;
@@ -443,20 +443,20 @@ public class VodController extends BaseController {
 //        });
 
         // takagen99: Add long press to reset speed
-//        mPlayerSpeedBtn.setOnLongClickListener(new OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View view) {
-//                try {
-//                    mPlayerConfig.put("sp", 1.0f);
-//                    updatePlayerCfgView();
-//                    listener.updatePlayerCfg();
-//                    mControlWrapper.setSpeed(1.0f);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                return true;
-//            }
-//        });
+        mPlayerSpeedBtn.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                try {
+                    mPlayerConfig.put("sp", 1.0f);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                    mControlWrapper.setSpeed(1.0f);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+        });
         mPlayerBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -771,7 +771,7 @@ public class VodController extends BaseController {
             mPlayerIJKBtn.setText(mPlayerConfig.getString("ijk"));
             mPlayerIJKBtn.setVisibility(playerType == 1 ? VISIBLE : GONE);
 //            mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
-//            mPlayerSpeedBtn.setText("x" + mPlayerConfig.getDouble("sp"));
+            mPlayerSpeedBtn.setText("x" + mPlayerConfig.getDouble("sp"));
             updateStartAndEndTime();
 //            mPlayerTimeStepBtn.setText(Hawk.get(HawkConfig.PLAY_TIME_STEP, 5) + "s");
         } catch (JSONException e) {

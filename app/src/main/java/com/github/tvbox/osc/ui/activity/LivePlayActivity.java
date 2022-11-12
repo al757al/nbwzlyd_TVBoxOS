@@ -473,7 +473,7 @@ public class LivePlayActivity extends BaseActivity {
                 super.onBackPressed();
             } else {
                 exitTime = System.currentTimeMillis();
-                ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setTextSize(AutoSizeUtils.mm2px(this, 8))
+                ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setTextSize(AutoSizeUtils.mm2px(this, 12))
                         .show("再按一次退出直播");
             }
 
