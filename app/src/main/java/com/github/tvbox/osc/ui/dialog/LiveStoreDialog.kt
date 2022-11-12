@@ -256,16 +256,23 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             RefreshEvent.TYPE_LIVE_SOURCE_PUSH -> {
                 val moreSourceBean = refreshEvent.obj as LiveSourceBean
                 val sourceUrl = moreSourceBean.sourceUrl.trim();
-                if (sourceUrl.startsWith("http") || sourceUrl.startsWith("https")) {
+                if (sourceUrl.startsWith("http") || sourceUrl.startsWith("https") || sourceUrl.startsWith(
+                        "clan://"
+                    )
+                ) {
+                    var saveSourceUrl = sourceUrl
+                    if (saveSourceUrl.startsWith("clan://")) {
+                        saveSourceUrl = ApiConfig.clanToAddress(saveSourceUrl)
+                    }
                     moreSourceBean.sourceUrl = Base64.encodeToString(
-                        moreSourceBean.sourceUrl.toByteArray(charset("UTF-8")),
+                        saveSourceUrl.toByteArray(charset("UTF-8")),
                         Base64.DEFAULT or Base64.URL_SAFE or Base64.NO_WRAP
                     )
                     saveCustomSourceBean(moreSourceBean)
                 } else {
                     Toast.makeText(
                         this@LiveStoreDialog.context,
-                        "直播源只支持http或者https！",
+                        "不支持当前格式",
                         Toast.LENGTH_LONG
                     )
                         .show()
