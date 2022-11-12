@@ -52,7 +52,7 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
         setContentView(R.layout.player_more_fuc_pop)
         setBackgroundColor(Color.TRANSPARENT)
         mScaleBtn = findViewById(R.id.play_scale)
-        mSpeedBtn = findViewById(R.id.play_speed)
+//        mSpeedBtn = findViewById(R.id.play_speed)
         mAudioTrack = findViewById(R.id.audio_track_select)
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait)
         mIdmDownLoad = findViewById(R.id.idm_download)
@@ -62,7 +62,7 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
         }
         playConfig?.let {
             mScaleBtn?.text = PlayerHelper.getScaleName(it.getInt("sc"))
-            mSpeedBtn?.text = "x" + playConfig.getDouble("sp")
+//            mSpeedBtn?.text = "x" + playConfig.getDouble("sp")
             mAudioTrack?.visibility = if (it.getInt("pl") == 1) View.VISIBLE else View.GONE
             initLandscapePortraitBtnInfo()
             mScaleBtn?.text = PlayerHelper.getScaleName(it.getInt("sc"))
@@ -70,9 +70,9 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
         mScaleBtn?.setOnClickListener {
             onClick?.invoke(it as TextView?)
         }
-        mSpeedBtn?.setOnClickListener {
-            onClick?.invoke(it as TextView?)
-        }
+//        mSpeedBtn?.setOnClickListener {
+//            onClick?.invoke(it as TextView?)
+//        }
         mAudioTrack?.setOnClickListener {
             onClick?.invoke(it as TextView?)
         }
