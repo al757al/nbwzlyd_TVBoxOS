@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -229,7 +230,12 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 enableKeyboard(SearchActivity.this);
-                openSystemKeyBoard();//再次尝试拉起键盘
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        openSystemKeyBoard();//再次尝试拉起键盘
+                    }
+                }, 50);
                 SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             }
         });
