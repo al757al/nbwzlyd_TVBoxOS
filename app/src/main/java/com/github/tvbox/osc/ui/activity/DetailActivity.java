@@ -298,7 +298,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 //获取剪切板管理器
-                ClipboardManager cm = (ClipboardManager) getSystemService(mContext.CLIPBOARD_SERVICE);
+                ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 //设置内容到剪切板
                 cm.setPrimaryClip(ClipData.newPlainText(null, tvPlayUrl.getText().toString().replace("播放地址：", "")));
                 Toast.makeText(DetailActivity.this, "已复制", Toast.LENGTH_SHORT).show();
