@@ -231,19 +231,19 @@ public class DetailActivity extends BaseActivity {
                         mNumberClassification.setSelection(newTarget);
                         Collections.reverse(mClassifyAdapter.getData());
                         mClassifyAdapter.notifyDataSetChanged();
-                        if (mNumberClassification.getLayoutManager() != null) {
-                            View viewByPosition = mNumberClassification.getLayoutManager().findViewByPosition(newTarget);
-                            if (viewByPosition != null) {
-                                viewByPosition.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mNumberClassification.scrollToPosition(newTarget);
-                                        viewByPosition.performClick();
-
-                                    }
-                                });
-                            }
-                        }
+//                        if (mNumberClassification.getLayoutManager() != null) {
+//                            View viewByPosition = mNumberClassification.getLayoutManager().findViewByPosition(newTarget);
+//                            if (viewByPosition != null) {
+//                                viewByPosition.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        mNumberClassification.scrollToPosition(newTarget);
+//                                        viewByPosition.performClick();
+//
+//                                    }
+//                                });
+//                            }
+//                        }
                     }
                     seriesAdapter.notifyDataSetChanged();
                 }
@@ -439,9 +439,9 @@ public class DetailActivity extends BaseActivity {
                 mNumberClassification.setSelection(position);
                 List<VodInfo.VodSeries> vodSeries = mapData.get(item);
                 if (vodSeries != null) {
-                    if (isReverse) {
-                        Collections.reverse(vodSeries);
-                    }
+//                    if (isReverse) {
+//                        Collections.reverse(vodSeries);
+//                    }
                     seriesAdapter.setNewData(vodSeries);
                 }
 
