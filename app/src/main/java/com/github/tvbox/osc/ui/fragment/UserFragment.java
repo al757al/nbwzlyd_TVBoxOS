@@ -16,6 +16,7 @@ import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.RoomDataManger;
 import com.github.tvbox.osc.event.ServerEvent;
+import com.github.tvbox.osc.ui.activity.CollectActivity;
 import com.github.tvbox.osc.ui.activity.DetailActivity;
 import com.github.tvbox.osc.ui.activity.DriveActivity;
 import com.github.tvbox.osc.ui.activity.FastSearchActivity;
@@ -131,7 +132,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         changeStore.setOnFocusChangeListener(focusChangeListener);
         TvRecyclerView tvHotList = findViewById(R.id.tvHotList);
         tvHotList.setHasFixedSize(true);
-        tvHotList.setLayoutManager(new V7GridLayoutManager(this.mContext, 6));        homeHotVodAdapter = new HomeHotVodAdapter();
+        tvHotList.setLayoutManager(new V7GridLayoutManager(this.mContext, 6));
+        homeHotVodAdapter = new HomeHotVodAdapter();
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -190,7 +192,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
             }
         });
-        tvHotList.setLayoutManager(new V7GridLayoutManager(getContext(),5));
+        tvHotList.setLayoutManager(new V7GridLayoutManager(getContext(), 5));
         tvHotList.setAdapter(homeHotVodAdapter);
 
         initHomeHotVod(homeHotVodAdapter);
@@ -226,24 +228,24 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             OkGo.<String>get(doubanUrl)
                     .headers("User-Agent", UA.randomOne())
                     .execute(new AbsCallback<String>() {
-                @Override
-                public void onSuccess(Response<String> response) {
-                    String netJson = response.body();
-                    Hawk.put("home_hot_day", today);
-                    Hawk.put("home_hot", netJson);
-                    mActivity.runOnUiThread(new Runnable() {
                         @Override
-                        public void run() {
-                            adapter.setNewData(loadHots(netJson));
+                        public void onSuccess(Response<String> response) {
+                            String netJson = response.body();
+                            Hawk.put("home_hot_day", today);
+                            Hawk.put("home_hot", netJson);
+                            mActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.setNewData(loadHots(netJson));
+                                }
+                            });
+                        }
+
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            return response.body().string();
                         }
                     });
-                }
-
-                @Override
-                public String convertResponse(okhttp3.Response response) throws Throwable {
-                    return response.body().string();
-                }
-            });
         } catch (Throwable th) {
             th.printStackTrace();
         }
@@ -292,15 +294,17 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         } else if (v.getId() == R.id.tvPush) {
             jumpActivity(PushActivity.class);
         } else if (v.getId() == R.id.tvFavorite) {
-            jumpActivity(DriveActivity.class);
+            jumpActivity(CollectActivity.class);
         } else if (v.getId() == R.id.changeStore) {
             new SourceStoreDialog(getActivity()).show();
-        }else if (v.getId() == R.id.changeLine){
+        } else if (v.getId() == R.id.changeLine) {
             new SourceLineDialogUtil(getContext()).getData(() -> {
                 JumpUtils.forceRestartHomeActivity(getContext());
                 ToastUtils.make().show("线路已切换，若加载数据失败可尝试切换首页数据源或者再次切换线路");
                 return null;
             });
+        } else if (v.getId() == R.id.tvWebDav) {
+            jumpActivity(DriveActivity.class);
         }
     }
 

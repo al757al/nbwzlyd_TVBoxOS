@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/vs_30"
+    android:paddingLeft="@dimen/vs_30"
     android:paddingTop="@dimen/vs_10">
 
     <include

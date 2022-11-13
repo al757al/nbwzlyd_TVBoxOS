@@ -27,6 +27,9 @@ class HawkTask : AndroidStartup<String>() {
         if (!Hawk.contains(HawkConfig.PLAY_TYPE)) {
             Hawk.put(HawkConfig.PLAY_TYPE, 1)
         }
+        if (!Hawk.contains(HawkConfig.IMMERSIVE_SWITCH)) {
+            Hawk.put(HawkConfig.IMMERSIVE_SWITCH, true)
+        }
 //        val homeUrl = Hawk.get(HawkConfig.API_URL, "")
 //        if (TextUtils.isEmpty(homeUrl)) {
 //            Hawk.put(
