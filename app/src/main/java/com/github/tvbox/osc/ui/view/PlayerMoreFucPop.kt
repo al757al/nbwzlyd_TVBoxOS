@@ -1,5 +1,6 @@
 package com.github.tvbox.osc.ui.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -8,8 +9,10 @@ import android.os.Looper
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.widget.TextView
+import androidx.core.view.forEach
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.IDMDownLoadUtil
@@ -31,6 +34,7 @@ import razerdp.util.animation.TranslationConfig
  *     version:
  * </pre>
  */
+@SuppressLint("ClickableViewAccessibility")
 class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
     BasePopupWindow(context) {
 
@@ -71,7 +75,7 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
         mScaleBtn?.setOnClickListener {
             onClick?.invoke(it as TextView?)
         }
-        mTinyProgress?.text = if (Hawk.get(HawkConfig.MINI_PROGRESS)) "迷你进度开" else "迷你进度关"
+        mTinyProgress?.text = if (Hawk.get(HawkConfig.MINI_PROGRESS, false)) "迷你进度开" else "迷你进度关"
         mTinyProgress?.setOnClickListener {
             onClick?.invoke(it as TextView?)
         }
@@ -95,6 +99,17 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
             putBoolean(HawkConfig.VIDEO_SHOW_TIME, isTimeShow)
         }
         initLandscapePortraitBtnInfo()
+        (popupWindow?.contentView as? ViewGroup)?.forEach {
+            it.setOnTouchListener { v, event ->
+                if (event?.action == MotionEvent.ACTION_DOWN) {
+                    mHandler.removeCallbacksAndMessages(null)
+                }
+                if (event?.action == MotionEvent.ACTION_UP) {
+                    mHandler.postDelayed(dismissRunnable, 3000)
+                }
+                false
+            }
+        }
 
     }
 
@@ -156,19 +171,6 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
         }
         return super.onDispatchKeyEvent(event)
     }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        when (event?.action) {
-            MotionEvent.ACTION_DOWN -> {
-                mHandler.removeCallbacksAndMessages(null)
-            }
-            MotionEvent.ACTION_UP -> {
-                mHandler.postDelayed(dismissRunnable, 3000)
-            }
-        }
-        return super.onTouchEvent(event)
-    }
-
 
     inner class DismissRunnable : Runnable {
         override fun run() {

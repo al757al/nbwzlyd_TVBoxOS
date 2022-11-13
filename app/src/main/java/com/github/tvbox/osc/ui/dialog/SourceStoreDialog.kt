@@ -63,7 +63,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     override fun dismiss() {
         EventBus.getDefault().unregister(this)
         //更新成最新的仓库排序
-        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, mAdapter.data)
+        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, mAdapter.data)
         super.dismiss()
     }
 
@@ -74,8 +74,6 @@ private var DEFAULT_STORE_URL = ""
 
     init {
         setContentView(R.layout.more_source_dialog_select)
-        DEFAULT_STORE_URL = KVStorage.getString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
-            ?: ""
         mRecyclerView = findViewById(R.id.list)
         mAddMoreBtn = findViewById(R.id.inputSubmit)
         mSourceNameEdit = findViewById(R.id.input_sourceName)
@@ -112,11 +110,7 @@ private var DEFAULT_STORE_URL = ""
             }
         }
         refeshQRcode()
-        if (DEFAULT_STORE_URL.startsWith("http") || DEFAULT_STORE_URL.startsWith("https")) {
-            getMutiSource()
-        } else {
-            inflateCustomSource(mutableListOf())
-        }
+        inflateCustomSource(mutableListOf())
     }
 
     private fun saveCustomSourceBean(sourceUrl0: String?, sourceName0: String?) {
@@ -128,7 +122,7 @@ private var DEFAULT_STORE_URL = ""
             lineSource = ApiConfig.clanToAddress(lineSource)
         }
         val saveList =
-            KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
+            KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, MoreSourceBean::class.java)
         val sourceBean = MoreSourceBean().apply {
             this.sourceUrl = lineSource.toString()
             this.sourceName = sourceName0?.ifEmpty { "自用仓库" + saveList.size }.toString()
@@ -138,7 +132,7 @@ private var DEFAULT_STORE_URL = ""
             mAdapter.addData(sourceBean)
             mRecyclerView?.scrollToPosition(0)
             saveList.add(sourceBean)
-            KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE, saveList)
+            KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, saveList)
         }
         mSourceUrlEdit?.setText("")
         mSourceNameEdit?.setText("")
@@ -147,12 +141,13 @@ private var DEFAULT_STORE_URL = ""
 
     private fun getMutiSource(moreSourceBean: MoreSourceBean? = null) {
         mLoading.letVisible()
-        if (DEFAULT_STORE_URL.startsWith("clan://")) {
-            DEFAULT_STORE_URL = ApiConfig.clanToAddress(DEFAULT_STORE_URL)
+        var requestURL = moreSourceBean?.sourceUrl
+        if (moreSourceBean?.sourceUrl?.startsWith("clan://") == true) {
+            requestURL = ApiConfig.clanToAddress(requestURL)
         }
-        val req = OkGo.get<String>(DEFAULT_STORE_URL)
+        val req = OkGo.get<String>(requestURL)
             .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
-        if (DEFAULT_STORE_URL.startsWith("https://gitcode")) {
+        if (requestURL?.startsWith("https://gitcode") == true) {
             req.headers(
                 "User-Agent",
                 UA.randomOne()
@@ -212,11 +207,7 @@ private var DEFAULT_STORE_URL = ""
                             .setBold()
                             .setForegroundColor(Color.RED).append("文章").create()
                     ToastUtils.showShort(text)
-                }
-            } else {
-                jsonArray = jsonObj.getJSONArray("storeHouse")
-                if (!response.isFromCache) {
-                    KVStorage.putString(HawkConfig.STORE_HOUSE_URL, DEFAULT_STORE_URL)
+                    return
                 }
             }
             for (i in 0 until (jsonArray?.length() ?: 0)) {
@@ -237,9 +228,7 @@ private var DEFAULT_STORE_URL = ""
                     DEFAULT_DATA[sourceBean.sourceUrl] = sourceBean
                 }
             }
-            val result = DEFAULT_DATA.filter {
-                !KVStorage.getBoolean(it.value.sourceUrl, false)
-            }.map {
+            val result = DEFAULT_DATA.map {
                 it.value
             }.toMutableList()
 
@@ -251,7 +240,8 @@ private var DEFAULT_STORE_URL = ""
     }
 
     private fun inflateCustomSource(serverResult: MutableList<MoreSourceBean>) {
-        val localData = KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
+        val localData =
+            KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, MoreSourceBean::class.java)
         if (localData.isEmpty() && serverResult.isNotEmpty()) {//如果本地保存的是空的，就把新的结果放进去
             localData.addAll(serverResult)
         } else {//否则进行匹配，只保存本地没有的
@@ -277,6 +267,7 @@ private var DEFAULT_STORE_URL = ""
                 index = localData.indexOf(it)
             }
         }
+        Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE_DATA, localData)
 
         val diffResult =
             DiffUtil.calculateDiff(AdapterDiffCallBack(mAdapter.data, localData), false)
@@ -300,14 +291,13 @@ private var DEFAULT_STORE_URL = ""
     //删除仓库地址
     private fun deleteItem(position: Int) {
         val deleteData = mAdapter.data[position]
-        val custom = KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE, MoreSourceBean::class.java)
+        val custom =
+            KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, MoreSourceBean::class.java)
         custom.removeFirstIf {
             it.sourceUrl == deleteData.sourceUrl
         }
-        if (deleteData.isServer) {
-            KVStorage.putBoolean(deleteData.sourceUrl, true)
-        }
         mAdapter.remove(position)
+        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, custom)
     }
 
     private fun selectItem(position: Int) {
@@ -396,7 +386,6 @@ private var DEFAULT_STORE_URL = ""
         when (refreshEvent.type) {
             RefreshEvent.TYPE_STORE_PUSH -> {
                 val moreSourceBean = refreshEvent.obj as MoreSourceBean
-                DEFAULT_STORE_URL = moreSourceBean.sourceUrl
                 getMutiSource(moreSourceBean)
             }
         }

@@ -15,7 +15,7 @@ public class HawkConfig {
     public static final String HOME_API = "home_api";
     public static final String MINI_PROGRESS = "mini_progress";
     public static final String STORAGE_DRIVE_SORT = "storage_drive_sort";
-    public static final String CUSTOM_STORE_HOUSE = "custom_store_house";//自定义多源仓库地址
+    public static final String CUSTOM_STORE_HOUSE_DATA = "custom_store_house";//自定义多源仓库
     public static final String CUSTOM_STORE_HOUSE_SELECTED = "custom_store_house_selected";//选中的仓库地址
     public static final String DEFAULT_PARSE = "parse_default";
     public static final String DEBUG_OPEN = "debug_open";
