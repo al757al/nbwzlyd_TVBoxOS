@@ -14,7 +14,7 @@ class VodInfoClassifyUtil {
     companion object {
         @JvmStatic
         fun checkVodInfoNeedClassify(vodSeries: MutableList<VodInfo.VodSeries>?): Boolean {
-            return (vodSeries?.size ?: 0) >= 30
+            return (vodSeries?.size ?: 0) >= 35
         }
 
         @JvmStatic
@@ -23,11 +23,13 @@ class VodInfoClassifyUtil {
         }
 
         private fun <T> averageAssignFixLength(
-            source: List<T>?,
+            data: List<T>?,
             splitItemNum: Int
         ): LinkedHashMap<VodInfo.VodSeriesFlag, List<T>> {
+            val source = ArrayList<T>()
+            data?.let { source.addAll(it) }
             val result = LinkedHashMap<VodInfo.VodSeriesFlag, List<T>>()
-            if (source != null && source.run { isNotEmpty() } && splitItemNum > 0) {
+            if (source.run { isNotEmpty() } && splitItemNum > 0) {
                 if (source.size <= splitItemNum) {
                     return result
                 } else {

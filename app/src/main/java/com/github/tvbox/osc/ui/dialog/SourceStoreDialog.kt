@@ -66,8 +66,8 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         super.dismiss()
     }
 
-//    private var DEFAULT_STORE_URL = "https://gitcode.net/wzlyd1/00/-/raw/master/000.txt"
-private var DEFAULT_STORE_URL = ""
+    //    private var DEFAULT_STORE_URL = "https://gitcode.net/wzlyd1/00/-/raw/master/000.txt"
+    private var DEFAULT_STORE_URL = ""
 
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
 
@@ -208,31 +208,32 @@ private var DEFAULT_STORE_URL = ""
                     ToastUtils.showShort(text)
                     return
                 }
-            }
-            jsonArray = jsonObj.getJSONArray("storeHouse")
-            for (i in 0 until (jsonArray?.length() ?: 0)) {
-                val childJsonObj = jsonArray?.getJSONObject(i)
-                val sourceName = childJsonObj?.optString("sourceName")
-                val sourceUrl = childJsonObj?.optString("sourceUrl")
-                val sourceBean = DEFAULT_DATA[sourceUrl]
-                if (sourceBean == null) {
-                    val moreSourceBeanNew = MoreSourceBean().apply {
-                        this.sourceName = childJsonObj?.optString("sourceName") ?: ""
-                        this.sourceUrl = childJsonObj?.optString("sourceUrl") ?: ""
-                        this.isServer = true
+            } else {
+                jsonArray = jsonObj.getJSONArray("storeHouse")
+                for (i in 0 until (jsonArray?.length() ?: 0)) {
+                    val childJsonObj = jsonArray?.getJSONObject(i)
+                    val sourceName = childJsonObj?.optString("sourceName")
+                    val sourceUrl = childJsonObj?.optString("sourceUrl")
+                    val sourceBean = DEFAULT_DATA[sourceUrl]
+                    if (sourceBean == null) {
+                        val moreSourceBeanNew = MoreSourceBean().apply {
+                            this.sourceName = childJsonObj?.optString("sourceName") ?: ""
+                            this.sourceUrl = childJsonObj?.optString("sourceUrl") ?: ""
+                            this.isServer = true
+                        }
+                        DEFAULT_DATA[moreSourceBeanNew.sourceUrl] = moreSourceBeanNew
+                    } else {
+                        sourceBean.sourceName = sourceName ?: ""
+                        sourceBean.sourceUrl = sourceUrl ?: ""
+                        DEFAULT_DATA[sourceBean.sourceUrl] = sourceBean
                     }
-                    DEFAULT_DATA[moreSourceBeanNew.sourceUrl] = moreSourceBeanNew
-                } else {
-                    sourceBean.sourceName = sourceName ?: ""
-                    sourceBean.sourceUrl = sourceUrl ?: ""
-                    DEFAULT_DATA[sourceBean.sourceUrl] = sourceBean
                 }
-            }
-            val result = DEFAULT_DATA.map {
-                it.value
-            }.toMutableList()
+                val result = DEFAULT_DATA.map {
+                    it.value
+                }.toMutableList()
 
-            inflateCustomSource(result)
+                inflateCustomSource(result)
+            }
 
         } catch (e: Exception) {
             Toast.makeText(context, "JSON解析失败${e.message}", Toast.LENGTH_LONG).show()

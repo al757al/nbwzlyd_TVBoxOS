@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.blankj.utilcode.util.CollectionUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -71,6 +72,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -224,8 +226,11 @@ public class DetailActivity extends BaseActivity {
 
 //                    insertVod(sourceKey, vodInfo);
                     firstReverse = true;
-                    loadVodInfo();
-//                    seriesAdapter.notifyDataSetChanged();
+                    if (!CollectionUtils.isEmpty(mClassifyAdapter.getData())) {
+                        Collections.reverse(mClassifyAdapter.getData());
+                        mClassifyAdapter.notifyDataSetChanged();
+                    }
+                    seriesAdapter.notifyDataSetChanged();
                 }
             }
         });
