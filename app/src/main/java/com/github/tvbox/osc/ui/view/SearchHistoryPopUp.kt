@@ -12,10 +12,10 @@ import com.github.tvbox.osc.event.ServerEvent
 import com.github.tvbox.osc.event.ServerEvent.SERVER_SEARCH
 import com.github.tvbox.osc.ui.adapter.SearchHistoryAdapter
 import com.github.tvbox.osc.util.HawkConfig
-import com.github.tvbox.osc.util.KVStorage
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.orhanobut.hawk.Hawk
 import com.owen.tvrecyclerview.widget.TvRecyclerView
 import org.greenrobot.eventbus.EventBus
 import razerdp.basepopup.BasePopupWindow
@@ -56,7 +56,7 @@ class SearchHistoryPopUp(context: Context) : BasePopupWindow(context) {
         }
         mClearHistory = contentView?.findViewById(R.id.clear_history_data)
         mClearHistory?.setOnClickListener {
-            KVStorage.remove(HawkConfig.SEARCH_HISTORY)
+            Hawk.delete(HawkConfig.SEARCH_HISTORY)
             historyAdapter?.data?.clear()
             historyAdapter?.notifyDataSetChanged()
         }
@@ -83,7 +83,7 @@ class SearchHistoryPopUp(context: Context) : BasePopupWindow(context) {
         super.showPopupWindow()
         popupWindow.isFocusable = true
         (context as? Activity)?.window?.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-        historyAdapter?.setNewData(KVStorage.getList(HawkConfig.SEARCH_HISTORY, String::class.java))
+        historyAdapter?.setNewData(Hawk.get(HawkConfig.SEARCH_HISTORY, ArrayList<String>()))
     }
 
     override fun onDismiss() {

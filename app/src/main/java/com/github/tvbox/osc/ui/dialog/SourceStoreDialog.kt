@@ -27,7 +27,6 @@ import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
-import com.github.tvbox.osc.util.KVStorage
 import com.github.tvbox.osc.util.urlhttp.JumpUtils
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.cache.CacheMode
@@ -63,7 +62,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     override fun dismiss() {
         EventBus.getDefault().unregister(this)
         //更新成最新的仓库排序
-        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, mAdapter.data)
+        Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE_DATA, mAdapter.data)
         super.dismiss()
     }
 
@@ -122,7 +121,7 @@ private var DEFAULT_STORE_URL = ""
             lineSource = ApiConfig.clanToAddress(lineSource)
         }
         val saveList =
-            KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, MoreSourceBean::class.java)
+            Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_DATA, ArrayList<MoreSourceBean>())
         val sourceBean = MoreSourceBean().apply {
             this.sourceUrl = lineSource.toString()
             this.sourceName = sourceName0?.ifEmpty { "自用仓库" + saveList.size }.toString()
@@ -132,7 +131,7 @@ private var DEFAULT_STORE_URL = ""
             mAdapter.addData(sourceBean)
             mRecyclerView?.scrollToPosition(0)
             saveList.add(sourceBean)
-            KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, saveList)
+            Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE_DATA, saveList)
         }
         mSourceUrlEdit?.setText("")
         mSourceNameEdit?.setText("")
@@ -210,6 +209,7 @@ private var DEFAULT_STORE_URL = ""
                     return
                 }
             }
+            jsonArray = jsonObj.getJSONArray("storeHouse")
             for (i in 0 until (jsonArray?.length() ?: 0)) {
                 val childJsonObj = jsonArray?.getJSONObject(i)
                 val sourceName = childJsonObj?.optString("sourceName")
@@ -241,7 +241,7 @@ private var DEFAULT_STORE_URL = ""
 
     private fun inflateCustomSource(serverResult: MutableList<MoreSourceBean>) {
         val localData =
-            KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, MoreSourceBean::class.java)
+            Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_DATA, ArrayList<MoreSourceBean>())
         if (localData.isEmpty() && serverResult.isNotEmpty()) {//如果本地保存的是空的，就把新的结果放进去
             localData.addAll(serverResult)
         } else {//否则进行匹配，只保存本地没有的
@@ -254,9 +254,9 @@ private var DEFAULT_STORE_URL = ""
             }
         }
         val lastSelectBean =
-            KVStorage.getBean(
+            Hawk.get(
                 HawkConfig.CUSTOM_STORE_HOUSE_SELECTED,
-                MoreSourceBean::class.java
+                MoreSourceBean()
             )
         var index = 0
         localData.forEach {
@@ -292,12 +292,12 @@ private var DEFAULT_STORE_URL = ""
     private fun deleteItem(position: Int) {
         val deleteData = mAdapter.data[position]
         val custom =
-            KVStorage.getList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, MoreSourceBean::class.java)
+            Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_DATA, ArrayList<MoreSourceBean>())
         custom.removeFirstIf {
             it.sourceUrl == deleteData.sourceUrl
         }
         mAdapter.remove(position)
-        KVStorage.putList(HawkConfig.CUSTOM_STORE_HOUSE_DATA, custom)
+        Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE_DATA, custom)
     }
 
     private fun selectItem(position: Int) {
@@ -313,7 +313,7 @@ private var DEFAULT_STORE_URL = ""
             mRecyclerView?.setSelectedPosition(position)
         }
         mLastSelectBean = selectData
-        KVStorage.putBean(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, selectData)
+        Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, selectData)
         this@SourceStoreDialog.dismiss()
         Toast.makeText(context, "稍等片刻，正在打开线路切换弹框", Toast.LENGTH_SHORT).show()
         SourceLineDialogUtil(activity).getData {

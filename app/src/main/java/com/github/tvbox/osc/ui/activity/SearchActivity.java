@@ -35,7 +35,6 @@ import com.github.tvbox.osc.ui.tv.widget.SearchKeyboard;
 import com.github.tvbox.osc.ui.view.SearchHistoryPopUp;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.SearchHelper;
 import com.github.tvbox.osc.util.js.JSEngine;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
@@ -129,7 +128,7 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = Executors.newFixedThreadPool(KVStorage.getInt(HawkConfig.THREAD_COUNT, 8));
+            searchExecutorService = Executors.newFixedThreadPool(Hawk.get(HawkConfig.THREAD_COUNT, 8));
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -441,14 +440,14 @@ public class SearchActivity extends BaseActivity {
         this.searchTitle = title;
         mGridView.setVisibility(View.INVISIBLE);
         searchAdapter.setNewData(new ArrayList<>());
-        List<String> list = KVStorage.getList(HawkConfig.SEARCH_HISTORY, String.class);
+        List<String> list = Hawk.get(HawkConfig.SEARCH_HISTORY, new ArrayList<>());
         if (list.size()>20){
             list.remove(list.size()-1);
         }
         if (!list.contains(title)) {
             list.add(0, title);
         }
-        KVStorage.putList(HawkConfig.SEARCH_HISTORY,list);
+        Hawk.put(HawkConfig.SEARCH_HISTORY, list);
         searchResult();
     }
 

@@ -16,8 +16,6 @@ import androidx.core.view.forEach
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.IDMDownLoadUtil
-import com.github.tvbox.osc.util.KVStorage.getBoolean
-import com.github.tvbox.osc.util.KVStorage.putBoolean
 import com.github.tvbox.osc.util.PlayerHelper
 import com.github.tvbox.osc.util.ScreenUtils
 import com.orhanobut.hawk.Hawk
@@ -96,7 +94,7 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
             }
             isTimeShow = !isTimeShow
             mShowTime?.text = if (isTimeShow) "屏显开" else "屏显关"
-            putBoolean(HawkConfig.VIDEO_SHOW_TIME, isTimeShow)
+            Hawk.put(HawkConfig.VIDEO_SHOW_TIME, isTimeShow)
         }
         initLandscapePortraitBtnInfo()
         (popupWindow?.contentView as? ViewGroup)?.forEach {
@@ -150,7 +148,7 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
     }
 
     private fun setTimeShowOrDismiss(timeShow: TextView?) {
-        val isTimeShowOpen = getBoolean(HawkConfig.VIDEO_SHOW_TIME, false)
+        val isTimeShowOpen = Hawk.get(HawkConfig.VIDEO_SHOW_TIME, false)
         if (isTimeShowOpen) {
             timeShow?.text = "屏显开"
             timeShow?.tag = 1

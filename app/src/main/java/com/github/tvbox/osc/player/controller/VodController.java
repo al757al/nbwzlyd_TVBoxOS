@@ -36,7 +36,6 @@ import com.github.tvbox.osc.ui.view.ChoosePlayPopUp;
 import com.github.tvbox.osc.ui.view.PlayerMoreFucPop;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.SubtitleHelper;
 import com.orhanobut.hawk.Hawk;
@@ -183,7 +182,7 @@ public class VodController extends BaseController {
             mPlayPauseTime.setVisibility(View.VISIBLE);
             return;
         }
-        boolean showTime = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
+        boolean showTime = Hawk.get(HawkConfig.VIDEO_SHOW_TIME, false);
         if (showTime) {
             mPlayPauseTime.setVisibility(View.VISIBLE);
         } else {
@@ -263,7 +262,7 @@ public class VodController extends BaseController {
         if (!isFullScreen) {
             mPlayPauseTime.setVisibility(GONE);
         } else {
-            boolean showTime = KVStorage.getBoolean(HawkConfig.VIDEO_SHOW_TIME, false);
+            boolean showTime = Hawk.get(HawkConfig.VIDEO_SHOW_TIME, false);
             if (showTime) {
                 mPlayPauseTime.setVisibility(VISIBLE);
             }
@@ -273,7 +272,7 @@ public class VodController extends BaseController {
     @Override
     protected void initView() {
         super.initView();
-        setForceImmersive(KVStorage.getBoolean(HawkConfig.IMMERSIVE_SWITCH, false));
+        setForceImmersive(Hawk.get(HawkConfig.IMMERSIVE_SWITCH, false));
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
 //        mPlayTitle = findViewById(R.id.tv_info_name);

@@ -40,7 +40,6 @@ import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.HistoryHelper;
-import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.OkGoHelper;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.urlhttp.JumpUtils;
@@ -87,7 +86,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvFastSearchText;
     private View mClearDataTextView;
 
-    boolean isLastOpen = KVStorage.getBoolean(HawkConfig.IMMERSIVE_SWITCH, false);
+    boolean isLastOpen = Hawk.get(HawkConfig.IMMERSIVE_SWITCH, false);
 
 
     public static ModelSettingFragment newInstance() {
@@ -128,7 +127,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
 //        tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
         tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
         String apiUrl = Hawk.get(HawkConfig.API_URL, "");
-        MoreSourceBean moreSourceBean = KVStorage.getBean(HawkConfig.API_URL_BEAN, MoreSourceBean.class);
+        MoreSourceBean moreSourceBean = Hawk.get(HawkConfig.API_URL_BEAN, null);
         if (moreSourceBean == null) {
             tvApi.setText(apiUrl);
         } else if (TextUtils.equals(moreSourceBean.getSourceUrl(), apiUrl)) {
@@ -157,7 +156,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 showThreadCountDialog();
             }
         });
-        showThreadCountText(KVStorage.getInt(HawkConfig.THREAD_COUNT, 8));
+        showThreadCountText(Hawk.get(HawkConfig.THREAD_COUNT, 8));
         findViewById(R.id.llParseWebVew).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -637,7 +636,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         view.setOnClickListener(v -> {
             isLastOpen = !isLastOpen;
             setTimeSwitch(textView, isLastOpen);
-            KVStorage.putBoolean(HawkConfig.IMMERSIVE_SWITCH, isLastOpen);
+            Hawk.put(HawkConfig.IMMERSIVE_SWITCH, isLastOpen);
         });
         mClearDataTextView.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -655,7 +654,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 //删除历史记录
                 new Thread(RoomDataManger::deleteAllRecord).start();
                 Hawk.deleteAll();
-                KVStorage.deleteAll();
                 ToastUtils.showShort("重置App完毕");
                 ApiConfig.release();
                 Intent intent = new Intent(mActivity, HomeActivity.class);
@@ -704,7 +702,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     } catch (Exception e) {
                         count = 8;
                     }
-                    KVStorage.putInt(HawkConfig.THREAD_COUNT, count);
+                    Hawk.put(HawkConfig.THREAD_COUNT, count);
                     showThreadCountText(count);
                 }).create();
         dialog.show();

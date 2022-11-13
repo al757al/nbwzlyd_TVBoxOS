@@ -12,7 +12,6 @@ import com.github.tvbox.osc.ext.findFirst
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter
 import com.github.tvbox.osc.ui.dialog.SelectDialogNew
 import com.github.tvbox.osc.util.HawkConfig
-import com.github.tvbox.osc.util.KVStorage
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.cache.CacheMode
 import com.lzy.okgo.callback.StringCallback
@@ -38,7 +37,7 @@ class SourceLineDialogUtil(private val context: Context) {
 
     init {
         val defaultBean =
-            KVStorage.getBean(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, MoreSourceBean::class.java)
+            Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, MoreSourceBean())
         if (defaultBean != null) {
             DEFAULT_URL = defaultBean.sourceUrl
         }
@@ -156,7 +155,7 @@ class SourceLineDialogUtil(private val context: Context) {
         override fun click(moreSourceBea: MoreSourceBean?, pos: Int) {
             //更新源
             Hawk.put(HawkConfig.API_URL, moreSourceBea?.sourceUrl)
-            KVStorage.putBean(HawkConfig.API_URL_BEAN, moreSourceBea)
+            Hawk.put(HawkConfig.API_URL_BEAN, moreSourceBea)
 //            val history = Hawk.get(HawkConfig.API_HISTORY, ArrayList<String>())
 //            if (!history.contains(moreSourceBea?.sourceUrl)) {
 //                history.add(0, moreSourceBea?.sourceUrl.toString())

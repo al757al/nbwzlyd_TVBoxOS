@@ -23,7 +23,6 @@ import com.github.tvbox.osc.util.AES;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.VideoParseRuler;
 import com.google.gson.Gson;
@@ -52,10 +51,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author pj567
@@ -510,7 +509,7 @@ public class ApiConfig {
         liveChannelGroupList.clear();           //修复从后台切换重复加载频道列表
         try {
             boolean isWebUrl;//是否是网络直播地址
-            LiveSourceBean liveSourceBean = KVStorage.getBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, LiveSourceBean.class);
+            LiveSourceBean liveSourceBean = Hawk.get(HawkConfig.LIVE_SOURCE_URL_CURRENT, null);
             String liveSource;
             if (liveSourceBean != null) {
                 if (liveSourceBean.isOfficial()) {//如果是官方源
@@ -564,7 +563,7 @@ public class ApiConfig {
                         liveSourceBean.setSourceUrl(extUrlFix);
                         liveSourceBean.setOfficial(true);
                         liveSourceBean.setExtraKey(apiUrl);
-                        ArrayList<LiveSourceBean> list = (ArrayList<LiveSourceBean>) KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean.class);
+                        ArrayList<LiveSourceBean> list = Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, new ArrayList<LiveSourceBean>());
                         Iterator<LiveSourceBean> iterator = list.iterator();
                         while (iterator.hasNext()) {
                             if (iterator.next().isOfficial()) {
@@ -572,9 +571,9 @@ public class ApiConfig {
                                 break;
                             }
                         }
-                        list.add(0,liveSourceBean);
-                        KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, list);
-                        KVStorage.putBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean);
+                        list.add(0, liveSourceBean);
+                        Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, list);
+                        Hawk.put(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean);
                     }
                 }
                 LiveChannelGroup liveChannelGroup = new LiveChannelGroup();

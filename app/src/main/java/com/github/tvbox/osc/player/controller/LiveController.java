@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.KVStorage;
+import com.orhanobut.hawk.Hawk;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +45,7 @@ public class LiveController extends BaseController {
         mProgressIcon = findViewById(R.id.tv_progress_icon);
         mProgressText = findViewById(R.id.tv_progress_text);
         mProgressContainer = findViewById(R.id.tv_progress_container);
-        setForceImmersive(KVStorage.getBoolean(HawkConfig.IMMERSIVE_SWITCH, false));
+        setForceImmersive(Hawk.get(HawkConfig.IMMERSIVE_SWITCH, false));
     }
 
     @Override

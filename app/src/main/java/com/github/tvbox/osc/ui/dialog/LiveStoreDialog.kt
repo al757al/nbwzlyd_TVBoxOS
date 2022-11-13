@@ -24,7 +24,6 @@ import com.github.tvbox.osc.ui.dialog.util.AdapterDiffCallBack
 import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
-import com.github.tvbox.osc.util.KVStorage
 import com.orhanobut.hawk.Hawk
 import com.owen.tvrecyclerview.widget.TvRecyclerView
 import me.jessyan.autosize.utils.AutoSizeUtils
@@ -52,7 +51,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     override fun dismiss() {
         EventBus.getDefault().unregister(this)
-        KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, mAdapter.data)
+        Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, mAdapter.data)
         super.dismiss()
     }
 
@@ -95,15 +94,15 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             }
         }
         refeshQRcode()
-        val list = KVStorage.getList(
+        val list = Hawk.get(
             HawkConfig.LIVE_SOURCE_URL_HISTORY,
-            LiveSourceBean::class.java
+            ArrayList<LiveSourceBean>()
         )
         inflateCustomSource(list)
     }
 
     private fun selectNewLiveSource(liveSourceBean: LiveSourceBean) {
-        KVStorage.putBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean)
+        Hawk.put(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean)
         this.dismiss()
         ApiConfig.get().loadLiveSourceUrl(Hawk.get(HawkConfig.API_URL, ""), null)
         val intent = Intent(App.instance, LivePlayActivity::class.java)
@@ -115,7 +114,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         val sourceUrl0 = liveSourceBean.sourceUrl.trim()
         val sourceName0 = liveSourceBean.sourceName.trim()
         val saveList =
-            KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean::class.java)
+            Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, ArrayList<LiveSourceBean>())
         if (saveList.contains(liveSourceBean)) {
             return
         }
@@ -134,7 +133,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     private fun inflateCustomSource(result: MutableList<LiveSourceBean>) {
         val localData =
-            KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean::class.java)
+            Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, ArrayList<LiveSourceBean>())
         if (localData.isEmpty() && result.isNotEmpty()) {//如果本地保存的是空的，就把新的结果放进去
             localData.addAll(result)
         } else {//否则进行匹配，只保存本地没有的
@@ -147,9 +146,9 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             }
         }
         val lastSelectBean =
-            KVStorage.getBean(
+            Hawk.get(
                 HawkConfig.LIVE_SOURCE_URL_CURRENT,
-                LiveSourceBean::class.java
+                LiveSourceBean()
             )
         var index = 0
         localData.forEach {
@@ -183,16 +182,16 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private fun deleteItem(position: Int) {
         val deleteData = mAdapter.data[position]
         val custom =
-            KVStorage.getList(HawkConfig.LIVE_SOURCE_URL_HISTORY, LiveSourceBean::class.java)
+            Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, ArrayList<LiveSourceBean>())
         custom.removeFirstIf {
             it.sourceUrl == deleteData.sourceUrl
         }
         val currentBean =
-            KVStorage.getBean(HawkConfig.LIVE_SOURCE_URL_CURRENT, LiveSourceBean::class.java)
+            Hawk.get(HawkConfig.LIVE_SOURCE_URL_CURRENT, LiveSourceBean())
         if (deleteData.uniKey == currentBean?.uniKey) {
-            KVStorage.remove(HawkConfig.LIVE_SOURCE_URL_CURRENT)
+            Hawk.delete(HawkConfig.LIVE_SOURCE_URL_CURRENT)
         }
-        KVStorage.putList(HawkConfig.LIVE_SOURCE_URL_HISTORY, custom)
+        Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, custom)
         mAdapter.remove(position)
     }
 
