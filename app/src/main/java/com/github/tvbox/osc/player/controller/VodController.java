@@ -39,6 +39,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.KVStorage;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.SubtitleHelper;
+import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 
@@ -97,6 +98,8 @@ public class VodController extends BaseController {
     private boolean mIsFullScreen = false;
     public SimpleSubtitleView mSubtitleView;
     TextView mZimuBtn;
+    private TextView mMiniProgressTextView;
+    private boolean mShowMiniProgress;
 
     Handler myHandle;
     Runnable myRunnable;
@@ -284,6 +287,8 @@ public class VodController extends BaseController {
         mBottomRoot = findViewById(R.id.bottom_container);
         mTopRoot1 = findViewById(R.id.tv_top_l_container);
         backBtn = findViewById(R.id.tv_back);
+        mMiniProgressTextView = findViewById(R.id.tiny_progress);
+        mShowMiniProgress = Hawk.get(HawkConfig.MINI_PROGRESS, false);
         backBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -331,6 +336,11 @@ public class VodController extends BaseController {
                             }
                             if (textView.getId() == R.id.audio_track_select) {
                                 setAudioTrack();
+                            }
+                            if (textView.getId() == R.id.tiny_progress) {
+                                mShowMiniProgress = !mShowMiniProgress;
+                                textView.setText(mShowMiniProgress ? "迷你进度开" : "迷你进度关");
+                                Hawk.put(HawkConfig.MINI_PROGRESS, mShowMiniProgress);
                             }
                             return null;
                         })
@@ -383,8 +393,10 @@ public class VodController extends BaseController {
 
                 long duration = mControlWrapper.getDuration();
                 long newPosition = (duration * progress) / seekBar.getMax();
+                String currentTime = stringForTime((int) newPosition);
                 if (mCurrentTime != null)
-                    mCurrentTime.setText(stringForTime((int) newPosition));
+                    mCurrentTime.setText(currentTime);
+                mMiniProgressTextView.setText(currentTime);
             }
 
             @Override
@@ -686,7 +698,6 @@ public class VodController extends BaseController {
         });
     }
 
-
     private void setAudioTrack() {
         listener.selectAudioTrack();
         hideBottom();
@@ -850,8 +861,16 @@ public class VodController extends BaseController {
                 listener.playNext(true);
             }
         }
-        mCurrentTime.setText(PlayerUtils.stringForTime(position));
-        mTotalTime.setText(PlayerUtils.stringForTime(duration));
+        String curTime = PlayerUtils.stringForTime(position);
+        String totalTime = PlayerUtils.stringForTime(duration);
+        mCurrentTime.setText(curTime);
+        mTotalTime.setText(totalTime);
+        mMiniProgressTextView.setText(curTime + "/" + totalTime);
+        if (mShowMiniProgress) {
+            mMiniProgressTextView.setVisibility(VISIBLE);
+        } else {
+            mMiniProgressTextView.setVisibility(GONE);
+        }
         if (isFastSpeed) {
             mTvSpeedPlay.setText("当前3倍速播放中 " + mCurrentTime.getText() + "/" + mTotalTime.getText());
         }
@@ -925,6 +944,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PLAYING:
                 startProgress();
+                mNetSpeed.setVisibility(GONE);
                 break;
             case VideoView.STATE_PAUSED:
                 mTopRoot1.setVisibility(GONE);

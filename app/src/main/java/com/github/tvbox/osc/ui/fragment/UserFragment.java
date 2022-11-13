@@ -20,7 +20,6 @@ import com.github.tvbox.osc.ui.activity.DetailActivity;
 import com.github.tvbox.osc.ui.activity.DriveActivity;
 import com.github.tvbox.osc.ui.activity.FastSearchActivity;
 import com.github.tvbox.osc.ui.activity.HistoryActivity;
-import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.activity.LivePlayActivity;
 import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
@@ -30,6 +29,7 @@ import com.github.tvbox.osc.ui.dialog.SourceStoreDialog;
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.urlhttp.JumpUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -297,7 +297,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             new SourceStoreDialog(getActivity()).show();
         }else if (v.getId() == R.id.changeLine){
             new SourceLineDialogUtil(getContext()).getData(() -> {
-                ((HomeActivity)getActivity()).forceRestartHomeActivity();
+                JumpUtils.forceRestartHomeActivity(getContext());
                 ToastUtils.make().show("线路已切换，若加载数据失败可尝试切换首页数据源或者再次切换线路");
                 return null;
             });

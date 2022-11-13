@@ -17,6 +17,7 @@ import com.github.tvbox.osc.util.KVStorage.getBoolean
 import com.github.tvbox.osc.util.KVStorage.putBoolean
 import com.github.tvbox.osc.util.PlayerHelper
 import com.github.tvbox.osc.util.ScreenUtils
+import com.orhanobut.hawk.Hawk
 import org.json.JSONObject
 import razerdp.basepopup.BasePopupWindow
 import razerdp.util.animation.AnimationHelper
@@ -37,7 +38,7 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
     private var mShowTime: TextView? = null
     private var onClick: ((view: TextView?) -> Unit)? = null
     private var mScaleBtn: TextView? = null
-    private var mSpeedBtn: TextView? = null
+    private var mTinyProgress: TextView? = null
     private var mAudioTrack: TextView? = null
     private var mLandscapePortraitBtn: TextView? = null
     private val dismissRunnable: DismissRunnable by lazy {
@@ -52,7 +53,7 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
         setContentView(R.layout.player_more_fuc_pop)
         setBackgroundColor(Color.TRANSPARENT)
         mScaleBtn = findViewById(R.id.play_scale)
-//        mSpeedBtn = findViewById(R.id.play_speed)
+        mTinyProgress = findViewById(R.id.tiny_progress)
         mAudioTrack = findViewById(R.id.audio_track_select)
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait)
         mIdmDownLoad = findViewById(R.id.idm_download)
@@ -70,9 +71,10 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
         mScaleBtn?.setOnClickListener {
             onClick?.invoke(it as TextView?)
         }
-//        mSpeedBtn?.setOnClickListener {
-//            onClick?.invoke(it as TextView?)
-//        }
+        mTinyProgress?.text = if (Hawk.get(HawkConfig.MINI_PROGRESS)) "迷你进度开" else "迷你进度关"
+        mTinyProgress?.setOnClickListener {
+            onClick?.invoke(it as TextView?)
+        }
         mAudioTrack?.setOnClickListener {
             onClick?.invoke(it as TextView?)
         }
