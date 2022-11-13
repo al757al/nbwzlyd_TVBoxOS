@@ -1,39 +1,37 @@
 package com.github.tvbox.osc.util
 
-import com.tencent.mmkv.MMKV
+import com.orhanobut.hawk.Hawk
 
 object KVStorage {
 
-    private var mmkv = MMKV.defaultMMKV();
-
     @JvmStatic
     fun getString(key: String, defaultValue: String): String? {
-        return mmkv.getString(key, defaultValue)
+        return Hawk.get(key, defaultValue)
     }
 
     @JvmStatic
     fun putString(key: String, defaultValue: String) {
-        mmkv.putString(key, defaultValue)
+        Hawk.put(key, defaultValue)
     }
 
     @JvmStatic
     fun putBoolean(key: String, defaultValue: Boolean) {
-        mmkv.putBoolean(key, defaultValue)
+        Hawk.put(key, defaultValue)
     }
 
     @JvmStatic
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
-        return mmkv.getBoolean(key, defaultValue)
+        return Hawk.get(key, defaultValue)
     }
 
     @JvmStatic
     fun getInt(key: String, defaultValue: Int): Int {
-        return mmkv.getInt(key, defaultValue)
+        return Hawk.get(key, defaultValue)
     }
 
     @JvmStatic
     fun putInt(key: String, defaultValue: Int) {
-        mmkv.putInt(key, defaultValue)
+        Hawk.put(key, defaultValue)
     }
 
     @JvmStatic
@@ -69,13 +67,11 @@ object KVStorage {
 
     @JvmStatic
     fun deleteAll() {
-        mmkv.allKeys()?.forEach {
-            mmkv.remove(it)
-        }
+        Hawk.deleteAll()
     }
 
     fun remove(key: String) {
-        mmkv.remove(key)
+        Hawk.delete(key)
     }
 
 }
