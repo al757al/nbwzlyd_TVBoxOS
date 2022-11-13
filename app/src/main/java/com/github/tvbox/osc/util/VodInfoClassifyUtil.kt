@@ -18,7 +18,9 @@ class VodInfoClassifyUtil {
         }
 
         @JvmStatic
-        fun getClassifyData(vodSeries: List<VodInfo.VodSeries>?): LinkedHashMap<VodInfo.VodSeriesFlag, List<VodInfo.VodSeries>> {
+        fun getClassifyData(
+            vodSeries: MutableList<out VodInfo.VodSeries>?
+        ): java.util.LinkedHashMap<VodInfo.VodSeriesFlag, List<VodInfo.VodSeries>> {
             return averageAssignFixLength(vodSeries, 30)
         }
 

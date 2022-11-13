@@ -227,8 +227,23 @@ public class DetailActivity extends BaseActivity {
 //                    insertVod(sourceKey, vodInfo);
                     firstReverse = true;
                     if (!CollectionUtils.isEmpty(mClassifyAdapter.getData())) {
+                        int newTarget = mClassifyAdapter.getData().size() - 1 - mNumberClassification.getSelectedPosition();
+                        mNumberClassification.setSelection(newTarget);
                         Collections.reverse(mClassifyAdapter.getData());
                         mClassifyAdapter.notifyDataSetChanged();
+                        if (mNumberClassification.getLayoutManager() != null) {
+                            View viewByPosition = mNumberClassification.getLayoutManager().findViewByPosition(newTarget);
+                            if (viewByPosition != null) {
+                                viewByPosition.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mNumberClassification.scrollToPosition(newTarget);
+                                        viewByPosition.performClick();
+
+                                    }
+                                });
+                            }
+                        }
                     }
                     seriesAdapter.notifyDataSetChanged();
                 }
@@ -424,6 +439,9 @@ public class DetailActivity extends BaseActivity {
                 mNumberClassification.setSelection(position);
                 List<VodInfo.VodSeries> vodSeries = mapData.get(item);
                 if (vodSeries != null) {
+                    if (isReverse) {
+                        Collections.reverse(vodSeries);
+                    }
                     seriesAdapter.setNewData(vodSeries);
                 }
 
@@ -557,6 +575,10 @@ public class DetailActivity extends BaseActivity {
                     data.addAll(next.getValue());
                 }
             }
+//            if (vodInfo.reverseSort) {
+//                Collections.reverse(classifyData);
+//                Collections.reverse(data);
+//            }
             mClassifyAdapter.setNewData(classifyData);
             seriesAdapter.setNewData(data);
             mNumberClassification.setVisibility(View.VISIBLE);
