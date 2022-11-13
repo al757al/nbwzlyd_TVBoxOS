@@ -64,6 +64,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     private TextView tvPush;
     private HomeHotVodAdapter homeHotVodAdapter;
     private List<Movie.Video> homeSourceRec;
+    private View tvWebDav;
 
     public static UserFragment newInstance() {
         return new UserFragment();
@@ -107,6 +108,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     protected void init() {
         EventBus.getDefault().register(this);
         tvLive = findViewById(R.id.tvLive);
+        tvWebDav = findViewById(R.id.tvWebDav);
         tvSearch = findViewById(R.id.tvSearch);
         tvSetting = findViewById(R.id.tvSetting);
         tvCollect = findViewById(R.id.tvFavorite);
@@ -122,6 +124,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         changeStore.setOnClickListener(this);
         changeLine.setOnClickListener(this);
         tvCollect.setOnClickListener(this);
+        tvWebDav.setOnClickListener(this);
         tvLive.setOnFocusChangeListener(focusChangeListener);
         tvSearch.setOnFocusChangeListener(focusChangeListener);
         tvSetting.setOnFocusChangeListener(focusChangeListener);
