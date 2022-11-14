@@ -91,12 +91,14 @@ public class SearchActivity extends BaseActivity {
 
 
     private static Boolean hasKeyBoard;
+    private static Boolean isSearchBack;
     @Override
     protected void init() {
         initView();
         initViewModel();
         initData();
         hasKeyBoard = true;
+        isSearchBack = false;
     }
 
     /*
@@ -140,8 +142,10 @@ public class SearchActivity extends BaseActivity {
             tvSearch.requestFocus();
             tvSearch.requestFocusFromTouch();
         }else {
-            etSearch.requestFocus();
-            etSearch.requestFocusFromTouch();
+            if(!isSearchBack){
+                etSearch.requestFocus();
+                etSearch.requestFocusFromTouch();
+            }
         }
     }
 
@@ -198,6 +202,7 @@ public class SearchActivity extends BaseActivity {
                         th.printStackTrace();
                     }
                     hasKeyBoard = false;
+                    isSearchBack = true;
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
