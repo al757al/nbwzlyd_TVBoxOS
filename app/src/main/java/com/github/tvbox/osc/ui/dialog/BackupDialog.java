@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -38,6 +39,8 @@ import java.util.List;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 public class BackupDialog extends BaseDialog {
+
+    public static final String BACK_UP_DIR = "/tvboxStore_backup/";
 
     public BackupDialog(@NonNull @NotNull Context context) {
         super(context);
@@ -102,7 +105,7 @@ public class BackupDialog extends BaseDialog {
     boolean deleteItem(int position) {
         try {
             String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-            File file = new File(root + "/tvbox_backup/");
+            File file = new File(root + BACK_UP_DIR);
             File[] list = file.listFiles();
             Arrays.sort(list, new Comparator<File>() {
                         @Override
@@ -131,7 +134,7 @@ public class BackupDialog extends BaseDialog {
         ArrayList<String> result = new ArrayList<>();
         try {
             String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-            File file = new File(root + "/tvbox_backup/");
+            File file = new File(root + BACK_UP_DIR);
             File[] list = file.listFiles();
             Arrays.sort(list, new Comparator<File>() {
                 @Override
@@ -154,13 +157,15 @@ public class BackupDialog extends BaseDialog {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+        LogUtils.dTag("derek110", f.format(System.currentTimeMillis()));
         return result;
     }
 
     void restore(String dir) {
         try {
             String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-            File backup = new File(root + "/tvbox_backup/" + dir);
+            File backup = new File(root + BACK_UP_DIR + dir);
             if (backup.exists()) {
                 File db = new File(backup, "sqlite");
                 if (AppDataManager.restore(db)) {
@@ -197,11 +202,11 @@ public class BackupDialog extends BaseDialog {
     void backup() {
         try {
             String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-            File file = new File(root + "/tvbox_backup/");
+            File file = new File(root + BACK_UP_DIR);
             if (!file.exists())
                 file.mkdirs();
             Date now = new Date();
-            SimpleDateFormat f = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-ddHHmmss");
             File backup = new File(file, f.format(now));
             backup.mkdirs();
             File db = new File(backup, "sqlite");
