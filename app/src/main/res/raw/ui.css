@@ -64,6 +64,12 @@ body {
     text-align: center;
     display: block;
 }
+#live_name{
+    width: 30%;
+}
+#live_address{
+    width: 70%;
+}
 #live_push{
     background-color: #10aeff;
     padding: 10px;

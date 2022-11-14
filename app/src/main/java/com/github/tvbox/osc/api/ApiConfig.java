@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.UA;
 import com.github.catvod.crawler.JarLoader;
@@ -320,7 +319,6 @@ public class ApiConfig {
             @Override
             public void onCacheSuccess(Response<File> response) {
                 super.onCacheSuccess(response);
-                LogUtils.dTag("derek111", "加载缓存");
                 if (response.body().exists()) {
                     if (jarLoader.load(response.body().getAbsolutePath())) {
                         isCacheReady = true;

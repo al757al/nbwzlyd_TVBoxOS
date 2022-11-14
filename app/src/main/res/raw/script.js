@@ -1,21 +1,40 @@
+
+
 function search() {
-    doAction('search', { word: $('#search_key_word').val() });
+    doAction('search', {word: $('#search_key_word').val()});
 }
 
 function api() {
-    doAction('api', { url: $('#diy_api_url').val() });
+    doAction('api', {url: $('#diy_api_url').val()});
 }
 
 function push() {
-    doAction('push', { url: $('#push_url').val() });
+    doAction('push', {url: $('#push_url').val()});
 }
 
 function pushStore() {
-    doAction('pushStore', { pushStore_name: $('#diy_store_name').val(), pushStore_url: $('#diy_store_url').val()});
+    doAction('pushStore', {pushStore_name: $('#diy_store_name').val(), pushStore_url: $('#diy_store_url').val()});
 }
 
-function livePush(){
-    doAction('livePush', { live_name: $('#live_name').val(), live_address: $('#live_address').val()});
+function livePush() {
+    doAction('livePush', {live_name: $('#live_name').val(), live_address: $('#live_address').val()});
+}
+
+function copyLiveUrl(type) {
+//     if (type === 1) {
+//         new ClipboardJS('#liveCopy', {
+//             text: function (trigger) {
+//                 return document.getElementById("fileUrl1").value;
+//             }
+//         }).on('success', function (e) {
+//             alert("复制成功！！！");
+//             e.clearSelection();
+//         }).on('error', function (e) {
+//             alert('Error!');
+//         });
+//     } else {
+// //        doAction('api', { url: current_remote + current_file });
+//     }
 }
 
 
@@ -31,7 +50,7 @@ function doAction(action, kv) {
 
 function tpl_top(path) {
     return `<a class="weui-cell  weui-cell_access" href="javascript:void(0)" onclick="listFile('` + path + `')">
-    <div class="weui-cell__hd"><img src="`+ ic_dir + `" alt="" style="width: 32px; margin-right: 16px; display: block;"></div>
+    <div class="weui-cell__hd"><img src="` + ic_dir + `" alt="" style="width: 32px; margin-right: 16px; display: block;"></div>
     <span class="weui-cell__bd">
         <span>..</span>
     </span>
@@ -42,10 +61,10 @@ function tpl_top(path) {
 
 function tpl_dir(name, time, path) {
     return `<a class="weui-cell  weui-cell_access" href="#" onclick="listFile('` + path + `')">
-    <div class="weui-cell__hd"><img src="`+ ic_dir + `" alt="" style="width: 32px; margin-right: 16px; display: block;"></div>
+    <div class="weui-cell__hd"><img src="` + ic_dir + `" alt="" style="width: 32px; margin-right: 16px; display: block;"></div>
     <span class="weui-cell__bd">
-    <span>`+ name + `</span>
-        <div class="weui-cell__desc">`+ time + `</div>
+    <span>` + name + `</span>
+        <div class="weui-cell__desc">` + time + `</div>
     </span>
     <span class="weui-cell__ft">
     </span>
@@ -54,10 +73,10 @@ function tpl_dir(name, time, path) {
 
 function tpl_file(name, time, path, canDel) {
     return `<a class="weui-cell  weui-cell_access" href="javascript:void(0)" onclick="selectFile('` + path + `', ` + canDel + `)">
-    <div class="weui-cell__hd"><img src="`+ ic_file + `" alt="" style="width: 32px; margin-right: 16px; display: block;"></div>
+    <div class="weui-cell__hd"><img src="` + ic_file + `" alt="" style="width: 32px; margin-right: 16px; display: block;"></div>
     <span class="weui-cell__bd">
-        <span>`+ name + `</span>
-        <div class="weui-cell__desc">`+ time + `</div>
+        <span>` + name + `</span>
+        <div class="weui-cell__desc">` + time + `</div>
     </span>
     </a>`;
 }
@@ -92,9 +111,9 @@ function selectFile(path, canDel) {
 
 function fileToApi(type) {
     if (type === 1) {
-        doAction('api', { url: "clan://localhost/" + current_file });
+        doAction('api', {url: "clan://localhost/" + current_file});
     } else {
-        doAction('api', { url: current_remote + current_file });
+        doAction('api', {url: current_remote + current_file});
     }
 }
 
@@ -196,7 +215,7 @@ function doNewFolder(yes) {
         if (name.length <= 0)
             return false;
         $('#loadingToast').show();
-        $.post('/newFolder', { path: current_root, name: '' + name }, function (data) {
+        $.post('/newFolder', {path: current_root, name: '' + name}, function (data) {
             $('#loadingToast').hide();
             listFile(current_root);
         });
@@ -213,23 +232,18 @@ function doDelFolder(yes) {
     $('#delFolder').hide();
     if (yes == 1) {
         $('#loadingToast').show();
-        $.post('/delFolder', { path: current_root }, function (data) {
+        $.post('/delFolder', {path: current_root}, function (data) {
             $('#loadingToast').hide();
             listFile(current_parent);
         });
     }
 }
 
-function delFolder() {
-    $('#delFolderContent').html('是否删除 ' + current_root);
-    $('#delFolder').show();
-}
-
 function doDelFolder(yes) {
     $('#delFolder').hide();
     if (yes == 1) {
         $('#loadingToast').show();
-        $.post('/delFolder', { path: current_root }, function (data) {
+        $.post('/delFolder', {path: current_root}, function (data) {
             $('#loadingToast').hide();
             listFile(current_parent);
         });
@@ -246,7 +260,7 @@ function doDelFile(yes) {
     $('#delFile').hide();
     if (yes == 1) {
         $('#loadingToast').show();
-        $.post('/delFile', { path: current_file }, function (data) {
+        $.post('/delFile', {path: current_file}, function (data) {
             $('#loadingToast').hide();
             listFile(current_root);
         });
