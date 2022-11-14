@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -157,9 +156,26 @@ public class BackupDialog extends BaseDialog {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
-        LogUtils.dTag("derek110", f.format(System.currentTimeMillis()));
-        return result;
+        //做一下显示优化
+        ArrayList<String> newData = new ArrayList<>();
+        for (String s : result) {
+            StringBuilder stringBuilder = new StringBuilder();
+            String[] s1 = s.split(" ");
+            if (s1.length > 1) {
+                stringBuilder.append(s1[0]).append(" ");
+                String[] times = s1[1].split(",");
+                for (int i = 0; i < times.length; i++) {
+                    String time = times[i];
+                    if (i == times.length - 1) {
+                        stringBuilder.append(time);
+                    } else {
+                        stringBuilder.append(time).append(":");
+                    }
+                }
+            }
+            newData.add(stringBuilder.toString());
+        }
+        return newData;
     }
 
     void restore(String dir) {
@@ -206,7 +222,7 @@ public class BackupDialog extends BaseDialog {
             if (!file.exists())
                 file.mkdirs();
             Date now = new Date();
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-ddHHmmss");
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH,mm,ss");
             File backup = new File(file, f.format(now));
             backup.mkdirs();
             File db = new File(backup, "sqlite");
