@@ -46,6 +46,7 @@
         <entry key="app/src/main/res/layout/item_dialog_backup.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layout/item_dialog_select.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_drive.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_live_channel_group.xml" value="0.10234375" />
         <entry key="app/src/main/res/layout/item_search_history.xml" value="0.1140625" />
         <entry key="app/src/main/res/layout/item_series.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_user_hot_vod.xml" value="0.1" />
@@ -58,9 +59,4 @@
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
-  <component name="SwUserDefinedSpecifications">
-    <option name="specTypeByUrl">
-      <map />
-    </option>
-  </component>
 </project>
