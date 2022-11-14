@@ -42,6 +42,9 @@ public class PlayerHelper {
             e.printStackTrace();
         }
         IJKCode codec = ApiConfig.get().getIJKCodec(ijkCode);
+        if (codec == null) {
+            return;
+        }
         PlayerFactory playerFactory;
         if (playerType == 1) {
             playerFactory = new PlayerFactory<IjkMediaPlayer>() {

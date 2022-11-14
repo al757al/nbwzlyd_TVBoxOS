@@ -120,6 +120,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         }
         val sourceBean = LiveSourceBean().apply {
             this.sourceUrl = sourceUrl0
+            this.isOfficial = false
             this.sourceName = sourceName0.ifEmpty { "自用直播源" + saveList.size }
         }
         mAdapter.addData(sourceBean)

@@ -249,25 +249,24 @@ public class BackupDialog extends BaseDialog {
             File backup = new File(file, f.format(now));
             backup.mkdirs();
             File db = new File(backup, "sqlite");
-            if (AppDataManager.backup(db)) {
-                SharedPreferences sharedPreferences = App.getInstance().getSharedPreferences("Hawk2", Context.MODE_PRIVATE);
-                JSONObject jsonObject = new JSONObject();
-                for (String key : sharedPreferences.getAll().keySet()) {
-                    jsonObject.put(key, sharedPreferences.getString(key, ""));
-                }
-                sharedPreferences = App.getInstance().getSharedPreferences("crypto.KEY_256", Context.MODE_PRIVATE);
-                for (String key : sharedPreferences.getAll().keySet()) {
-                    jsonObject.put(key, sharedPreferences.getString(key, ""));
-                }
-                if (!FileUtils.writeSimple(jsonObject.toString().getBytes("UTF-8"), new File(backup, "hawk"))) {
-                    backup.delete();
-                    Toast.makeText(getContext(), "备份Hawk失败!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "备份成功!", Toast.LENGTH_SHORT).show();
-                }
-            } else {
+            if (!AppDataManager.backup(db)) {
                 Toast.makeText(getContext(), "DB文件不存在!", Toast.LENGTH_SHORT).show();
                 backup.delete();
+            }
+            SharedPreferences sharedPreferences = App.getInstance().getSharedPreferences("Hawk2", Context.MODE_PRIVATE);
+            JSONObject jsonObject = new JSONObject();
+            for (String key : sharedPreferences.getAll().keySet()) {
+                jsonObject.put(key, sharedPreferences.getString(key, ""));
+            }
+            sharedPreferences = App.getInstance().getSharedPreferences("crypto.KEY_256", Context.MODE_PRIVATE);
+            for (String key : sharedPreferences.getAll().keySet()) {
+                jsonObject.put(key, sharedPreferences.getString(key, ""));
+            }
+            if (!FileUtils.writeSimple(jsonObject.toString().getBytes("UTF-8"), new File(backup, "hawk"))) {
+                backup.delete();
+                Toast.makeText(getContext(), "备份Hawk失败!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "备份成功!", Toast.LENGTH_SHORT).show();
             }
         } catch (Throwable e) {
             e.printStackTrace();

@@ -15,6 +15,7 @@ import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.LiveChannelGroup;
 import com.github.tvbox.osc.bean.LiveChannelItem;
 import com.github.tvbox.osc.bean.LiveSourceBean;
+import com.github.tvbox.osc.bean.MoreSourceBean;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.server.ControlManager;
@@ -504,36 +505,27 @@ public class ApiConfig {
         // 直播源
         liveChannelGroupList.clear();           //修复从后台切换重复加载频道列表
         try {
-            boolean isWebUrl;//是否是网络直播地址
             LiveSourceBean liveSourceBean = Hawk.get(HawkConfig.LIVE_SOURCE_URL_CURRENT, null);
             String liveSource;
             if (liveSourceBean != null) {
-                if (liveSourceBean.isOfficial()) {//如果是官方源
-                    if (!TextUtils.equals(liveSourceBean.getExtraKey(), apiUrl)) {//如果不是同一个线路下的直播源,以接口下发的为准
-                        liveSource = infoJson.get("lives").getAsJsonArray().toString();
-                        isWebUrl = true;
-                    } else {//如果是同一个线路下的直播源
-                        liveSource = "proxy://do=live&type=txt&ext=" + liveSourceBean.getSourceUrl();
-                        isWebUrl = false;
-                    }
+                //这个时候切换了主页源，且当前选中的是官方源，要以新的主页源的直播为准
+                if (!TextUtils.isEmpty(apiUrl) && !TextUtils.equals(apiUrl, liveSourceBean.getExtraKey()) && liveSourceBean.isOfficial()) {
+                    JsonObject livesOBJ = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject();
+                    liveSource = livesOBJ.toString();
                 } else {
-                    liveSource = "proxy://do=live&type=txt&ext=" + liveSourceBean.getSourceUrl();
-                    isWebUrl = false;
+                    liveSource = "proxy://do=live&type=txt&ext=" + liveSourceBean.getSourceUrl() + "\"";
                 }
             } else {
+                liveSourceBean = new LiveSourceBean();
+                liveSourceBean.setOfficial(true);
                 JsonObject livesOBJ = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject();
                 liveSource = livesOBJ.toString();
-                isWebUrl = true;
             }
             int index = liveSource.indexOf("proxy://");
             if (index != -1) {
+                int endIndex = liveSource.lastIndexOf("\"");
                 String realUrl;
-                if (isWebUrl) {
-                    int endIndex = liveSource.lastIndexOf("\"");
-                    realUrl = DefaultConfig.checkReplaceProxy(liveSource.substring(index, endIndex));
-                } else {
-                    realUrl = DefaultConfig.checkReplaceProxy(liveSource);
-                }
+                realUrl = DefaultConfig.checkReplaceProxy(liveSource.substring(index, endIndex));
                 //clan
                 String extUrl = Uri.parse(realUrl).getQueryParameter("ext");
                 if (extUrl != null && !extUrl.isEmpty()) {
@@ -554,24 +546,27 @@ public class ApiConfig {
                         extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
                         realUrl = realUrl.replace(extUrl, extUrlFix);
                     }
-                    if (isWebUrl) {
-                        liveSourceBean = new LiveSourceBean();
-                        liveSourceBean.setSourceName("自带直播");
-                        liveSourceBean.setSourceUrl(extUrlFix);
-                        liveSourceBean.setOfficial(true);
-                        liveSourceBean.setExtraKey(apiUrl);
-                        ArrayList<LiveSourceBean> list = Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, new ArrayList<LiveSourceBean>());
-                        Iterator<LiveSourceBean> iterator = list.iterator();
-                        while (iterator.hasNext()) {
-                            if (iterator.next().isOfficial()) {
-                                iterator.remove();
-                                break;
-                            }
+
+                    ArrayList<LiveSourceBean> list = Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, new ArrayList<>());
+                    Iterator<LiveSourceBean> iterator = list.iterator();
+                    liveSourceBean.setSourceUrl(extUrlFix);
+                    liveSourceBean.setExtraKey(apiUrl);
+                    while (iterator.hasNext()) {
+                        LiveSourceBean next = iterator.next();
+                        //同一个源，移除
+                        if (TextUtils.equals(next.getSourceUrl(), extUrlFix)) {
+                            iterator.remove();
                         }
-                        list.add(0, liveSourceBean);
-                        Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, list);
-                        Hawk.put(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean);
                     }
+                    if (liveSourceBean.isOfficial()) {
+                        MoreSourceBean moreSourceBean = Hawk.get(HawkConfig.API_URL_BEAN, null);
+                        if (moreSourceBean != null) {
+                            liveSourceBean.setSourceName(moreSourceBean.getSourceName() + "直播");
+                        }
+                    }
+                    list.add(0, liveSourceBean);
+                    Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, list);
+                    Hawk.put(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean);
                 }
                 LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
                 liveChannelGroup.setGroupName(realUrl);
@@ -760,6 +755,9 @@ public class ApiConfig {
     }
 
     public IJKCode getIJKCodec(String name) {
+        if (ijkCodes == null) {
+            return null;
+        }
         for (IJKCode code : ijkCodes) {
             if (code.getName().equals(name))
                 return code;

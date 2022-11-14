@@ -1475,6 +1475,10 @@ public class LivePlayActivity extends BaseActivity {
 
     private void initLiveChannelList() {
         List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
+        if (list.isEmpty()) {//在没有配置任何数据的时候，我只配置了直播列表，尝试读取本地直播列表
+            ApiConfig.get().loadLiveSourceUrl("", null);
+        }
+        list = ApiConfig.get().getChannelGroupList();
         if (list.isEmpty()) {
             Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
             showLiveSourceDialog();
