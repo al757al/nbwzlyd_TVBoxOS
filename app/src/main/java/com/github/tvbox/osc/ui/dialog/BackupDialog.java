@@ -52,7 +52,7 @@ public class BackupDialog extends BaseDialog {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (view.getId() == R.id.tvName) {
-                    restore((String) adapter.getItem(position));
+                    restore(convertFileNameToSave((String) adapter.getItem(position)));
                 } else if (view.getId() == R.id.tvDel) {
                     if (deleteItem(position)) {
                         adapter.getData().remove(position);
@@ -156,6 +156,11 @@ public class BackupDialog extends BaseDialog {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+        return convertFileNameToShow(result);
+    }
+
+    //android11 不支持文件夹包含:,所以要转换一下
+    ArrayList<String> convertFileNameToShow(ArrayList<String> result) {
         //做一下显示优化
         ArrayList<String> newData = new ArrayList<>();
         for (String s : result) {
@@ -176,6 +181,24 @@ public class BackupDialog extends BaseDialog {
             newData.add(stringBuilder.toString());
         }
         return newData;
+    }
+
+
+    String convertFileNameToSave(String showResult) {
+        //做一下显示优化
+        String[] newS = showResult.split(" ");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(newS[0]).append(" ");
+        String[] timeNews = newS[1].split(":");
+        for (int i = 0; i < timeNews.length; i++) {
+            String timeNew = timeNews[i];
+            if (i == timeNews.length - 1) {
+                stringBuilder.append(timeNew);
+            } else {
+                stringBuilder.append(timeNew).append(",");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     void restore(String dir) {
@@ -200,7 +223,7 @@ public class BackupDialog extends BaseDialog {
                                 sharedPreferences.edit().putString(key, value).commit();
                             }
                         }
-                        ToastUtils.make().setTextSize(AutoSizeUtils.mm2px(App.getInstance(), 12)).show("恢复成功,系统为你自动重启app");
+                        ToastUtils.make().setTextSize(AutoSizeUtils.mm2px(App.getInstance(), 10)).show("恢复成功,系统为你自动重启app");
                         new Handler().postDelayed(() -> JumpUtils.forceRestartHomeActivityByClearTask(getContext()), 500);
 
                     } else {

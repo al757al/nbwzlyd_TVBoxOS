@@ -53,7 +53,6 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
@@ -473,7 +472,7 @@ public class LivePlayActivity extends BaseActivity {
                 super.onBackPressed();
             } else {
                 exitTime = System.currentTimeMillis();
-                ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setTextSize(AutoSizeUtils.mm2px(this, 12))
+                ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setTextSize(AutoSizeUtils.mm2px(this, 10))
                         .show("再按一次退出直播");
             }
 
