@@ -22,6 +22,7 @@ public class RefreshEvent {
     public static final int TYPE_STORE_PUSH = 14;
     public static final int TYPE_LIVE_SOURCE_PUSH = 15;
     public static final int TYPE_DRIVE_REFRESH = 16;
+    public static final int TYPE_FILTER_CHANGE = 17;
     public int type;
     public Object obj;
 
