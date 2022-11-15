@@ -17,15 +17,15 @@ class AboutDialog(context: Context) : BaseDialog(context) {
         append("版本号 V" + BuildConfig.VERSION_NAME + "更新日志:")
             .append("\n").append(
                 """  
-1.直播增加快进功能
-2.直播默认exo播放器
-3.播放页不常用按钮聚合
-4.设置页UI改版
-5.直播增加二次确认退出，避免意外退出问题
-6.直播优化，避免闪退和无效动画刷新
-7.增加搜索线程
-8.同步q版代码，但不是最新
-10.增加沉浸式开关
+1.直播增加收藏功能
+2.增加集数分组
+3.直播源支持clan本地配置
+4.备份显示优化
+5.支持仓库备份还原，并自动重启app
+6.支持alist网盘等功能 同步taka版本，感谢优秀开发者
+7.调整再按一次退出直播toast字体大小
+8.默认沉浸式开关开启，优化首页布局
+10.同步q版代码，ijk优化等
     """.trimIndent()
             ).create()
     }

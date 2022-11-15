@@ -19,10 +19,10 @@
 -renamesourcefileattribute SourceFile
 
 # 重新包装所有重命名的包并放在给定的单一包中
--flattenpackagehierarchy androidx.google
+-flattenpackagehierarchy com.androidx
 
 # 将包里的类混淆成n个再重新打包到一个统一的package中  会覆盖flattenpackagehierarchy选项
--repackageclasses androidx.google
+-repackageclasses com.androidx
 
 
 -obfuscationdictionary ./dic.txt
