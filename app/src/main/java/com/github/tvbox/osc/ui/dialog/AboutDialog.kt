@@ -25,7 +25,8 @@ class AboutDialog(context: Context) : BaseDialog(context) {
 6.支持alist网盘等功能 同步taka版本，感谢优秀开发者
 7.调整再按一次退出直播toast字体大小
 8.默认沉浸式开关开启，优化首页布局
-10.同步q版代码，ijk优化等
+10.增加视频迷你进度
+11.同步q版代码，ijk优化等
     """.trimIndent()
             ).create()
     }
