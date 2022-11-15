@@ -1301,12 +1301,12 @@ public class LivePlayActivity extends BaseActivity {
                 List<LiveChannelItem> tmpChanelData = liveChannelGroupTmp.getLiveChannels();
                 if (item.isCollected) {//如果收藏了
                     LiveChannelItem cloneItem = item.clone();
+                    liveChannelGroupTmp.getLiveChannels().add(cloneItem);
                     int index = tmpChanelData.size() - 1;
                     if (index < 0) {
                         index = 0;
                     }
                     cloneItem.setChannelIndex(index);//重制index
-                    liveChannelGroupTmp.getLiveChannels().add(cloneItem);
                     ToastUtils.make().setTextSize(AutoSizeUtils.mm2px(mContext, 10)).show("收藏成功");
                 } else {
                     ToastUtils.make().setTextSize(AutoSizeUtils.mm2px(mContext, 10)).show("收藏移除");
