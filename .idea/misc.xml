@@ -46,6 +46,7 @@
         <entry key="app/src/main/res/layout/item_dialog_backup.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layout/item_dialog_select.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_drive.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_home_sort.xml" value="0.3234375" />
         <entry key="app/src/main/res/layout/item_live_channel_group.xml" value="0.10234375" />
         <entry key="app/src/main/res/layout/item_search_history.xml" value="0.1140625" />
         <entry key="app/src/main/res/layout/item_series.xml" value="0.1" />

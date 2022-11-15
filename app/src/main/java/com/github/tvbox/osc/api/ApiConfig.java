@@ -128,6 +128,16 @@ public class ApiConfig {
         return json;
     }
 
+    private static byte[] getImgJar(String body){
+        Pattern pattern = Pattern.compile("[A-Za-z0]{8}\\*\\*");
+        Matcher matcher = pattern.matcher(body);
+        if(matcher.find()){
+            body = body.substring(body.indexOf(matcher.group()) + 10);
+            return Base64.decode(body, Base64.DEFAULT);
+        }
+        return "".getBytes();
+    }
+
     private boolean isConfigLoadCache;
 
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
@@ -277,6 +287,8 @@ public class ApiConfig {
                 return;
             }
         }
+        boolean isJarInImg = jarUrl.startsWith("img+");
+        jarUrl = jarUrl.replace("img+", "");
         GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar")
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST).cacheTime(10L * 60L * 60L * 1000);
         isCacheReady = false;
@@ -295,7 +307,13 @@ public class ApiConfig {
                 if (cache.exists())
                     cache.delete();
                 FileOutputStream fos = new FileOutputStream(cache);
-                fos.write(response.body().bytes());
+                if(isJarInImg) {
+                    String respData = response.body().string();
+                    byte[] imgJar = getImgJar(respData);
+                    fos.write(imgJar);
+                } else {
+                    fos.write(response.body().bytes());
+                }
                 fos.flush();
                 fos.close();
                 return cache;
