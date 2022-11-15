@@ -597,7 +597,12 @@ public class ApiConfig {
 
     public void loadLives(JsonArray livesArray) {
         liveChannelGroupList.clear();
-        int groupIndex = 0;
+
+        LiveChannelGroup collectedGroup = Hawk.get(HawkConfig.LIVE_CHANELE_COLLECTD, new LiveChannelGroup());
+        collectedGroup.setGroupName("(♥ω♥)我的收藏");
+        collectedGroup.isCollected = true;
+        liveChannelGroupList.add(collectedGroup);
+        int groupIndex = 1;
         int channelIndex = 0;
         int channelNum = 0;
         for (JsonElement groupElement : livesArray) {

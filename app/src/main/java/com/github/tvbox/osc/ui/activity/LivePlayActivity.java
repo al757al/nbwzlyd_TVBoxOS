@@ -103,7 +103,7 @@ public class LivePlayActivity extends BaseActivity {
     private LiveSettingItemAdapter liveSettingItemAdapter;
     private List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
 
-    public static int currentChannelGroupIndex = 0;
+    public static int currentChannelGroupIndex = 1;
     private Handler mHandler = new Handler();
 
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
@@ -112,7 +112,7 @@ public class LivePlayActivity extends BaseActivity {
     private LiveChannelItem currentLiveChannelItem = null;
     private LivePlayerManager livePlayerManager = new LivePlayerManager();
     private ArrayList<Integer> channelGroupPasswordConfirmed = new ArrayList<>();
-
+    private boolean needNotify;//在我的收藏里移除收藏时为true
     //EPG   by 龍
     private static LiveChannelItem channel_Name = null;
     private static Hashtable hsEpg = new Hashtable();
@@ -1173,6 +1173,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
 
+
     private void initChannelGroupView() {
         mChannelGroupView.setHasFixedSize(true);
         mChannelGroupView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
@@ -1190,6 +1191,7 @@ public class LivePlayActivity extends BaseActivity {
 
         //电视
         mChannelGroupView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
             }
@@ -1217,7 +1219,13 @@ public class LivePlayActivity extends BaseActivity {
         });
     }
 
+    private void checkNeedNotify(int position) {
+        LiveChannelGroup liveChannelGroup = liveChannelGroupAdapter.getData().get(position);
+        needNotify = liveChannelGroup.isCollected;
+    }
+
     private void selectChannelGroup(int groupIndex, boolean focus, int liveChannelIndex) {
+        checkNeedNotify(groupIndex);
         if (focus) {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
             liveChannelItemAdapter.setFocusedChannelIndex(-1);
@@ -1280,6 +1288,43 @@ public class LivePlayActivity extends BaseActivity {
                 clickLiveChannel(position);
             }
         });
+
+        liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                LiveChannelItem item = liveChannelItemAdapter.getItem(position);
+                if (item == null) {
+                    return true;
+                }
+                item.isCollected = !item.isCollected;
+                LiveChannelGroup liveChannelGroupTmp = liveChannelGroupList.get(0);
+                List<LiveChannelItem> tmpChanelData = liveChannelGroupTmp.getLiveChannels();
+                if (item.isCollected) {//如果收藏了
+                    LiveChannelItem cloneItem = item.clone();
+                    int index = tmpChanelData.size() - 1;
+                    if (index < 0) {
+                        index = 0;
+                    }
+                    cloneItem.setChannelIndex(index);//重制index
+                    liveChannelGroupTmp.getLiveChannels().add(cloneItem);
+                    ToastUtils.make().setTextSize(AutoSizeUtils.mm2px(mContext, 10)).show("收藏成功");
+                } else {
+                    ToastUtils.make().setTextSize(AutoSizeUtils.mm2px(mContext, 10)).show("收藏移除");
+                    if (needNotify) {
+                        tmpChanelData.remove(position);
+                        for (int i = 0; i < tmpChanelData.size(); i++) {
+                            tmpChanelData.get(i).setChannelIndex(i);
+                        }
+                        liveChannelItemAdapter.notifyItemRemoved(position);
+                        liveChannelItemAdapter.notifyItemRangeChanged(position, tmpChanelData.size() - position);
+                        liveChannelItemAdapter.notifyItemChanged(position);
+                    }
+                }
+                Hawk.put(HawkConfig.LIVE_CHANELE_COLLECTD, liveChannelGroupTmp);
+                return true;
+            }
+        });
+
     }
 
     private void clickLiveChannel(int position) {
@@ -1482,7 +1527,6 @@ public class LivePlayActivity extends BaseActivity {
         if (list.isEmpty()) {
             Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
             showLiveSourceDialog();
-
             return;
         }
 
@@ -1494,6 +1538,10 @@ public class LivePlayActivity extends BaseActivity {
             showSuccess();
             initLiveState();
         }
+    }
+
+    private LiveChannelGroup getLiveCollected() {
+        return Hawk.get(HawkConfig.LIVE_CHANELE_COLLECTD, new LiveChannelGroup());
     }
 
     public void loadProxyLives(String url) {
@@ -1540,7 +1588,6 @@ public class LivePlayActivity extends BaseActivity {
 
     private void initLiveState() {
         String lastChannelName = Hawk.get(HawkConfig.LIVE_CHANNEL, "");
-
         int lastChannelGroupIndex = -1;
         int lastLiveChannelIndex = -1;
         for (LiveChannelGroup liveChannelGroup : liveChannelGroupList) {
@@ -1786,9 +1833,15 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private int getFirstNoPasswordChannelGroup() {
+        boolean empty = getLiveCollected().getLiveChannels().isEmpty();
         for (LiveChannelGroup liveChannelGroup : liveChannelGroupList) {
-            if (liveChannelGroup.getGroupPassword().isEmpty())
+            if (liveChannelGroup.getGroupPassword().isEmpty()) {
+                int groupIndex = liveChannelGroup.getGroupIndex();
+                if (empty && groupIndex == 0) {
+                    return 1;
+                }
                 return liveChannelGroup.getGroupIndex();
+            }
         }
         return -1;
     }

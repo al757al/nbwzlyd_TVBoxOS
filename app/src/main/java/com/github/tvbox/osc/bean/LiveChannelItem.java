@@ -1,5 +1,8 @@
 package com.github.tvbox.osc.bean;
 
+import androidx.annotation.NonNull;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,7 +10,7 @@ import java.util.ArrayList;
  * @date :2021/1/12
  * @description:
  */
-public class LiveChannelItem {
+public class LiveChannelItem implements Serializable, Cloneable {
     /**
      * channelIndex : 频道索引号
      * channelNum : 频道名称
@@ -24,6 +27,8 @@ public class LiveChannelItem {
     public int sourceIndex = 0;
     public int sourceNum = 0;
     public boolean include_back = false;
+    public boolean isCollected;
+
 
     public void setinclude_back(boolean include_back) {
         this.include_back = include_back;
@@ -100,5 +105,19 @@ public class LiveChannelItem {
 
     public String getSourceName() {
         return channelSourceNames.get(sourceIndex);
+    }
+
+    @NonNull
+    @Override
+    public LiveChannelItem clone() {
+        try {
+            LiveChannelItem clone = (LiveChannelItem) super.clone();
+//            clone.channelSourceNames = (ArrayList<String>) clone.channelSourceNames.clone();
+//            clone.channelUrls = (ArrayList<String>) clone.channelUrls.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

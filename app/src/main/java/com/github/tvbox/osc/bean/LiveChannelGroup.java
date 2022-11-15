@@ -10,8 +10,10 @@ public class LiveChannelGroup {
      */
     private int groupIndex;
     private String groupName;
-    private String groupPassword;
-    private ArrayList<LiveChannelItem> liveChannelItems;
+    private String groupPassword = "";
+    private ArrayList<LiveChannelItem> liveChannelItems = new ArrayList<>();
+
+    public boolean isCollected;
 
     public int getGroupIndex() {
         return groupIndex;
