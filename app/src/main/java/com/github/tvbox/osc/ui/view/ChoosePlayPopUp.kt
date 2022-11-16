@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import com.blankj.utilcode.util.ScreenUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -25,6 +27,9 @@ import razerdp.basepopup.BasePopupWindow
 class ChoosePlayPopUp(context: Context?) : BasePopupWindow(context) {
     private var seriesAdapter: SeriesAdapter? = null
     private var mGridView: TvRecyclerView? = null
+    private val mHandler by lazy {
+        Handler(Looper.getMainLooper())
+    }
 
     init {
         setContentView(R.layout.choose_play_layout)
@@ -88,13 +93,32 @@ class ChoosePlayPopUp(context: Context?) : BasePopupWindow(context) {
         if (offset <= 1) offset = 1
         if (offset > 6) offset = 6
         (this.mGridView?.layoutManager as V7GridLayoutManager).spanCount = offset
+        seriesAdapter?.setNewData(vodInfo?.seriesMap?.get(vodInfo.playFlag))
+
+        mHandler.postDelayed({
+            mGridView?.layoutManager?.let {
+                val childCount = it.childCount;
+                for (i in 0 until childCount) {
+                    it.getChildAt(i)?.setOnFocusChangeListener { v, hasFocus ->
+                        mHandler.removeCallbacksAndMessages(null)
+                        mHandler.postDelayed(dismissRunnable, 4000)
+                    }
+                }
+            }
+        }, 500)
+
+
     }
 
     override fun showPopupWindow(anchorView: View?) {
         super.showPopupWindow(anchorView)
         popupWindow.isFocusable = true
-        val vodInfo = App.instance?.getVodInfo()
-        seriesAdapter?.setNewData(vodInfo?.seriesMap?.get(vodInfo.playFlag))
+        mHandler.postDelayed(dismissRunnable, 4000)
+    }
+
+    override fun dismiss() {
+        super.dismiss()
+        mHandler.removeCallbacksAndMessages(null)
     }
 
     private fun insertVod(vodInfo: VodInfo) {
@@ -106,5 +130,7 @@ class ChoosePlayPopUp(context: Context?) : BasePopupWindow(context) {
         RoomDataManger.insertVodRecord(vodInfo.sourceKey, vodInfo)
         EventBus.getDefault().post(RefreshEvent(RefreshEvent.TYPE_HISTORY_REFRESH))
     }
+
+    private val dismissRunnable: Runnable = Runnable { this@ChoosePlayPopUp.dismiss() }
 
 }

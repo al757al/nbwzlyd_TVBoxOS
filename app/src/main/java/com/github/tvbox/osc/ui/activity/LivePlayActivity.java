@@ -255,6 +255,8 @@ public class LivePlayActivity extends BaseActivity {
                 if (!fromuser) {
                     return;
                 }
+                mHandler.removeCallbacks(liveProgressRunable);
+                mHandler.postDelayed(liveProgressRunable, 3000);
                 if (countDownTimer != null) {
                     mVideoView.seekTo(progress);
                     countDownTimer.cancel();
