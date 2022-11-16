@@ -1,373 +1,373 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center|top"
-    android:focusable="false"
-    android:focusableInTouchMode="false"
-    android:padding="@dimen/vs_20"
-    android:scrollbars="none">
+<merge></merge><!--<?xml version="1.0" encoding="utf-8"?>-->
+    <!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--    android:layout_width="match_parent"-->
+    <!--    android:layout_height="match_parent"-->
+    <!--    android:layout_gravity="center|top"-->
+    <!--    android:focusable="false"-->
+    <!--    android:focusableInTouchMode="false"-->
+    <!--    android:padding="@dimen/vs_20"-->
+    <!--    android:scrollbars="none">-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|top"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:orientation="vertical">
-
-
-        <com.github.tvbox.osc.ui.view.SettingItemView
-            android:id="@+id/llHomeApi"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vs_60"
-            android:layout_marginBottom="@dimen/vs_10"
-            android:background="@drawable/shape_setting_model_focus"
-            android:focusable="true"
-            app:main_title="首页数据源"
-            app:sub_title="" />
-
-        <com.github.tvbox.osc.ui.view.SettingItemView
-            android:id="@+id/llApi"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vs_60"
-            android:layout_marginTop="@dimen/vs_8"
-            android:layout_marginBottom="@dimen/vs_10"
-            android:background="@drawable/shape_setting_model_focus"
-            android:focusable="true"
-            app:main_title="配置地址"
-            app:sub_title="" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vs_60"
-            android:layout_marginBottom="@dimen/vs_10"
-            android:focusable="false"
-            android:orientation="horizontal">
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/default_more_store"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginTop="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_marginBottom="@dimen/vs_10"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:main_title="切换多源仓库"
-                app:sub_title="" />
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/more_source"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:main_title="选择线路"
-                app:sub_title="" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vs_60"
-            android:layout_marginBottom="@dimen/vs_10"
-            android:focusable="false"
-            android:orientation="horizontal">
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llHomeRec"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toRightOf="@id/more_source"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/more_source"
-                app:main_title="首页推荐"
-                app:sub_title="豆瓣热播" />
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_gravity="center|top"-->
+    <!--        android:clipChildren="false"-->
+    <!--        android:clipToPadding="false"-->
+    <!--        android:focusable="false"-->
+    <!--        android:focusableInTouchMode="false"-->
+    <!--        android:orientation="vertical">-->
 
 
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/sys_time_switch"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toRightOf="@id/more_source"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/more_source"
-                app:main_title="时间显示"
-                app:sub_title="打开" />
+    <!--        <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--            android:id="@+id/llHomeApi"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="@dimen/vs_60"-->
+    <!--            android:layout_marginBottom="@dimen/vs_10"-->
+    <!--            android:background="@drawable/shape_setting_model_focus"-->
+    <!--            android:focusable="true"-->
+    <!--            app:main_title="首页数据源"-->
+    <!--            app:sub_title="" />-->
+
+    <!--        <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--            android:id="@+id/llApi"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="@dimen/vs_60"-->
+    <!--            android:layout_marginTop="@dimen/vs_8"-->
+    <!--            android:layout_marginBottom="@dimen/vs_10"-->
+    <!--            android:background="@drawable/shape_setting_model_focus"-->
+    <!--            android:focusable="true"-->
+    <!--            app:main_title="配置地址"-->
+    <!--            app:sub_title="" />-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="@dimen/vs_60"-->
+    <!--            android:layout_marginBottom="@dimen/vs_10"-->
+    <!--            android:focusable="false"-->
+    <!--            android:orientation="horizontal">-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/default_more_store"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginTop="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_marginBottom="@dimen/vs_10"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:main_title="切换多源仓库"-->
+    <!--                app:sub_title="" />-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/more_source"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:main_title="选择线路"-->
+    <!--                app:sub_title="" />-->
+    <!--        </LinearLayout>-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="@dimen/vs_60"-->
+    <!--            android:layout_marginBottom="@dimen/vs_10"-->
+    <!--            android:focusable="false"-->
+    <!--            android:orientation="horizontal">-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llHomeRec"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toRightOf="@id/more_source"-->
+    <!--                app:layout_constraintRight_toRightOf="parent"-->
+    <!--                app:layout_constraintTop_toTopOf="@id/more_source"-->
+    <!--                app:main_title="首页推荐"-->
+    <!--                app:sub_title="豆瓣热播" />-->
 
 
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llSearchView"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toRightOf="@id/llRender"
-                app:layout_constraintRight_toLeftOf="@id/llHistoryNum"
-                app:layout_constraintTop_toTopOf="@id/llRender"
-                app:main_title="搜索展示"
-                app:sub_title="" />
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/showFastSearch"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginTop="@dimen/vs_10"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:main_title="聚合模式"
-                app:sub_title="已关闭" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vs_60"
-            android:layout_marginBottom="@dimen/vs_10"
-            android:focusable="false"
-            android:orientation="horizontal">
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llPlay"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginTop="@dimen/vs_10"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:main_title="播放器"
-                app:sub_title="IJK播放器" />
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llMediaCodec"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginTop="@dimen/vs_10"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:main_title="IJK解码方式"
-                app:sub_title="硬解码" />
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/showPreview"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginTop="@dimen/vs_10"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:main_title="窗口预览"
-                app:sub_title="关闭" />
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/sys_time_switch"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toRightOf="@id/more_source"-->
+    <!--                app:layout_constraintRight_toRightOf="parent"-->
+    <!--                app:layout_constraintTop_toTopOf="@id/more_source"-->
+    <!--                app:main_title="时间显示"-->
+    <!--                app:sub_title="打开" />-->
 
 
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llScale"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toRightOf="@id/llDns"
-                app:layout_constraintRight_toLeftOf="@id/llWp"
-                app:layout_constraintTop_toTopOf="@id/llDns"
-                app:main_title="画面缩放"
-                app:sub_title="默认" />
-        </LinearLayout>
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llSearchView"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toRightOf="@id/llRender"-->
+    <!--                app:layout_constraintRight_toLeftOf="@id/llHistoryNum"-->
+    <!--                app:layout_constraintTop_toTopOf="@id/llRender"-->
+    <!--                app:main_title="搜索展示"-->
+    <!--                app:sub_title="" />-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vs_60"
-            android:layout_marginBottom="@dimen/vs_10"
-            android:focusable="false"
-            android:orientation="horizontal">
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/showFastSearch"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginTop="@dimen/vs_10"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:main_title="聚合模式"-->
+    <!--                app:sub_title="已关闭" />-->
+    <!--        </LinearLayout>-->
 
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llWp"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginTop="@dimen/vs_8"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toRightOf="@id/llScale"
-                app:layout_constraintRight_toLeftOf="@id/llWpRecovery"
-                app:layout_constraintTop_toBottomOf="@id/llRender"
-                app:main_title="换张壁纸"
-                app:sub_title="" />
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="@dimen/vs_60"-->
+    <!--            android:layout_marginBottom="@dimen/vs_10"-->
+    <!--            android:focusable="false"-->
+    <!--            android:orientation="horizontal">-->
 
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llWpRecovery"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toRightOf="@id/llWp"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/llWp"
-                app:main_title="重置壁纸"
-                app:sub_title="" />
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llPlay"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginTop="@dimen/vs_10"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:main_title="播放器"-->
+    <!--                app:sub_title="IJK播放器" />-->
 
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llDns"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginTop="@dimen/vs_8"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/llScale"
-                app:layout_constraintTop_toBottomOf="@id/llParseWebVew"
-                app:main_title="安全DNS"
-                app:sub_title="" />
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llMediaCodec"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginTop="@dimen/vs_10"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:main_title="IJK解码方式"-->
+    <!--                app:sub_title="硬解码" />-->
 
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llHistoryNum"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toRightOf="@id/llSearchView"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/llSearchView"
-                app:main_title="历史记录"
-                app:sub_title="" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vs_60"
-            android:layout_marginBottom="@dimen/vs_10"
-            android:focusable="false"
-            android:orientation="horizontal">
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llParseWebVew"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginTop="@dimen/vs_8"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/llRender"
-                app:layout_constraintTop_toBottomOf="@id/llPlay"
-                app:main_title="嗅探"
-                app:sub_title="" />
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llRender"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toRightOf="@id/llParseWebVew"
-                app:layout_constraintRight_toLeftOf="@id/llSearchView"
-                app:layout_constraintTop_toTopOf="@id/llParseWebVew"
-                app:main_title="渲染方式"
-                app:sub_title="" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vs_60"
-            android:layout_marginBottom="@dimen/vs_10"
-            android:focusable="false"
-            android:orientation="horizontal">
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/llBackup"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginTop="@dimen/vs_8"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/clear_interface_data"
-                app:layout_constraintTop_toBottomOf="@id/llWp"
-                app:main_title="数据备份还原"
-                app:sub_title="" />
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/clear_data"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toRightOf="@id/clear_interface_data"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/clear_interface_data"
-                app:main_title="重置App"
-                app:sub_title="" />
-
-            <com.github.tvbox.osc.ui.view.SettingItemView
-                android:id="@+id/clear_interface_data"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_60"
-                android:layout_marginTop="@dimen/vs_8"
-                android:layout_marginEnd="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_8"
-                android:layout_weight="1"
-                android:background="@drawable/shape_setting_model_focus"
-                android:focusable="true"
-                app:layout_constraintLeft_toRightOf="@id/llBackup"
-                app:layout_constraintRight_toLeftOf="@id/clear_data"
-                app:layout_constraintTop_toBottomOf="@id/llWp"
-                app:main_title="清理接口缓存"
-                app:sub_title="" />
-
-        </LinearLayout>
-
-        <com.github.tvbox.osc.ui.view.SettingItemView
-            android:id="@+id/llAbout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vs_60"
-            android:layout_marginTop="@dimen/vs_10"
-            android:background="@drawable/shape_setting_model_focus"
-            android:focusable="true"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/clear_data"
-            app:main_title="关于" />
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/showPreview"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginTop="@dimen/vs_10"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:main_title="窗口预览"-->
+    <!--                app:sub_title="关闭" />-->
 
 
-    </LinearLayout>
-</ScrollView>
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llScale"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toRightOf="@id/llDns"-->
+    <!--                app:layout_constraintRight_toLeftOf="@id/llWp"-->
+    <!--                app:layout_constraintTop_toTopOf="@id/llDns"-->
+    <!--                app:main_title="画面缩放"-->
+    <!--                app:sub_title="默认" />-->
+    <!--        </LinearLayout>-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="@dimen/vs_60"-->
+    <!--            android:layout_marginBottom="@dimen/vs_10"-->
+    <!--            android:focusable="false"-->
+    <!--            android:orientation="horizontal">-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llWp"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginTop="@dimen/vs_8"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toRightOf="@id/llScale"-->
+    <!--                app:layout_constraintRight_toLeftOf="@id/llWpRecovery"-->
+    <!--                app:layout_constraintTop_toBottomOf="@id/llRender"-->
+    <!--                app:main_title="换张壁纸"-->
+    <!--                app:sub_title="" />-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llWpRecovery"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toRightOf="@id/llWp"-->
+    <!--                app:layout_constraintRight_toRightOf="parent"-->
+    <!--                app:layout_constraintTop_toTopOf="@id/llWp"-->
+    <!--                app:main_title="重置壁纸"-->
+    <!--                app:sub_title="" />-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llDns"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginTop="@dimen/vs_8"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--                app:layout_constraintRight_toLeftOf="@id/llScale"-->
+    <!--                app:layout_constraintTop_toBottomOf="@id/llParseWebVew"-->
+    <!--                app:main_title="安全DNS"-->
+    <!--                app:sub_title="" />-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llHistoryNum"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toRightOf="@id/llSearchView"-->
+    <!--                app:layout_constraintRight_toRightOf="parent"-->
+    <!--                app:layout_constraintTop_toTopOf="@id/llSearchView"-->
+    <!--                app:main_title="历史记录"-->
+    <!--                app:sub_title="" />-->
+    <!--        </LinearLayout>-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="@dimen/vs_60"-->
+    <!--            android:layout_marginBottom="@dimen/vs_10"-->
+    <!--            android:focusable="false"-->
+    <!--            android:orientation="horizontal">-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llParseWebVew"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginTop="@dimen/vs_8"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--                app:layout_constraintRight_toLeftOf="@id/llRender"-->
+    <!--                app:layout_constraintTop_toBottomOf="@id/llPlay"-->
+    <!--                app:main_title="嗅探"-->
+    <!--                app:sub_title="" />-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llRender"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toRightOf="@id/llParseWebVew"-->
+    <!--                app:layout_constraintRight_toLeftOf="@id/llSearchView"-->
+    <!--                app:layout_constraintTop_toTopOf="@id/llParseWebVew"-->
+    <!--                app:main_title="渲染方式"-->
+    <!--                app:sub_title="" />-->
+    <!--        </LinearLayout>-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="@dimen/vs_60"-->
+    <!--            android:layout_marginBottom="@dimen/vs_10"-->
+    <!--            android:focusable="false"-->
+    <!--            android:orientation="horizontal">-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/llBackup"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginTop="@dimen/vs_8"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--                app:layout_constraintRight_toLeftOf="@id/clear_interface_data"-->
+    <!--                app:layout_constraintTop_toBottomOf="@id/llWp"-->
+    <!--                app:main_title="数据备份还原"-->
+    <!--                app:sub_title="" />-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/clear_data"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toRightOf="@id/clear_interface_data"-->
+    <!--                app:layout_constraintRight_toRightOf="parent"-->
+    <!--                app:layout_constraintTop_toTopOf="@id/clear_interface_data"-->
+    <!--                app:main_title="重置App"-->
+    <!--                app:sub_title="" />-->
+
+    <!--            <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--                android:id="@+id/clear_interface_data"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/vs_60"-->
+    <!--                android:layout_marginTop="@dimen/vs_8"-->
+    <!--                android:layout_marginEnd="@dimen/vs_8"-->
+    <!--                android:layout_marginRight="@dimen/vs_8"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:background="@drawable/shape_setting_model_focus"-->
+    <!--                android:focusable="true"-->
+    <!--                app:layout_constraintLeft_toRightOf="@id/llBackup"-->
+    <!--                app:layout_constraintRight_toLeftOf="@id/clear_data"-->
+    <!--                app:layout_constraintTop_toBottomOf="@id/llWp"-->
+    <!--                app:main_title="清理接口缓存"-->
+    <!--                app:sub_title="" />-->
+
+    <!--        </LinearLayout>-->
+
+    <!--        <com.github.tvbox.osc.ui.view.SettingItemView-->
+    <!--            android:id="@+id/llAbout"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="@dimen/vs_60"-->
+    <!--            android:layout_marginTop="@dimen/vs_10"-->
+    <!--            android:background="@drawable/shape_setting_model_focus"-->
+    <!--            android:focusable="true"-->
+    <!--            app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--            app:layout_constraintRight_toRightOf="parent"-->
+    <!--            app:layout_constraintTop_toBottomOf="@id/clear_data"-->
+    <!--            app:main_title="关于" />-->
+
+
+    <!--    </LinearLayout>-->
+    <!--</ScrollView>-->
