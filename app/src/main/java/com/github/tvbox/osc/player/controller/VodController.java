@@ -56,7 +56,7 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 
 public class VodController extends BaseController {
 
-    SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
 
     SeekBar mSeekBar;
@@ -104,7 +104,7 @@ public class VodController extends BaseController {
     Runnable myRunnable;
     int myHandleSeconds = 6000;//闲置多少毫秒秒关闭底栏  默认6秒
     private TextView mNetSpeed;
-    SimpleDateFormat timeFormat2 = new SimpleDateFormat("HH:mm:ss");
+    private View line;
 
     int videoPlayState = 0;
 
@@ -193,12 +193,11 @@ public class VodController extends BaseController {
     //显示最新时间
     private void handleLastedTime() {
         Date date = new Date();
+        mPlayPauseTime.setText(timeFormat.format(date));
         if (mTopRoot1.getVisibility() == VISIBLE) {
             mPlayPauseTime.setAlpha(1);
-            mPlayPauseTime.setText(timeFormat.format(date));
         } else {
             mPlayPauseTime.setAlpha(0.6f);
-            mPlayPauseTime.setText(timeFormat2.format(date));
         }
     }
 
@@ -254,6 +253,10 @@ public class VodController extends BaseController {
         return super.onTouchEvent(event);
     }
 
+    boolean needShowLine() {
+        return mPlayPauseTime.getVisibility() == VISIBLE && mMiniProgressTextView.getVisibility() == VISIBLE;
+    }
+
     public void setIsFullScreen(boolean isFullScreen) {
         mIsFullScreen = isFullScreen;
         if (mPlayPauseTime == null) {
@@ -291,6 +294,7 @@ public class VodController extends BaseController {
         mBottomRoot = findViewById(R.id.bottom_container);
         mTopRoot1 = findViewById(R.id.tv_top_l_container);
         backBtn = findViewById(R.id.tv_back);
+        line = findViewById(R.id.line);
         mMiniProgressTextView = findViewById(R.id.tiny_progress);
         mShowMiniProgress = Hawk.get(HawkConfig.MINI_PROGRESS, false);
         backBtn.setOnClickListener(new OnClickListener() {
@@ -349,7 +353,7 @@ public class VodController extends BaseController {
                             return null;
                         })
                         .setPopupGravity(Gravity.END)
-                .showPopupWindow());
+                        .showPopupWindow());
 
         initSubtitleInfo();
 
@@ -874,6 +878,15 @@ public class VodController extends BaseController {
             mMiniProgressTextView.setVisibility(VISIBLE);
         } else {
             mMiniProgressTextView.setVisibility(GONE);
+        }
+        if (needShowLine()) {
+            if (line.getVisibility() != View.VISIBLE) {
+                line.setVisibility(VISIBLE);
+            }
+        } else {
+            if (line.getVisibility() == View.VISIBLE) {
+                line.setVisibility(GONE);
+            }
         }
         if (isFastSpeed) {
             mTvSpeedPlay.setText("当前3倍速播放中 " + mCurrentTime.getText() + "/" + mTotalTime.getText());

@@ -69,15 +69,27 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/ts_24"
             android:visibility="gone"
-            android:drawablePadding="@dimen/vs_10"
-            android:drawableRight="@drawable/shape_line"
             tools:visibility="visible" />
+
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="1dp"
+            android:layout_gravity="bottom"
+            android:layout_height="@dimen/vs_22"
+            android:layout_marginRight="@dimen/vs_10"
+            android:alpha="0.6"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_marginBottom="@dimen/vs_4"
+            android:background="@drawable/shape_line" />
 
         <TextView
             android:id="@+id/tv_sys_time"
             android:layout_width="@dimen/vs_100"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:ellipsize="end"
+            android:gravity="bottom"
             android:maxLines="1"
             android:paddingTop="@dimen/vs_10"
             android:tag="vod_control_pause_time"
