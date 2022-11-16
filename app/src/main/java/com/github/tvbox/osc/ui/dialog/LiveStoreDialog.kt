@@ -2,6 +2,7 @@ package com.github.tvbox.osc.ui.dialog
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.util.Base64
 import android.view.View
 import android.widget.*
@@ -40,6 +41,9 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private var mSourceUrlEdit: EditText? = null
     private var mQrCode: ImageView? = null
     private var mLoading: ProgressBar? = null
+    private val address: String by lazy {
+        ControlManager.get().getAddress(false)
+    }
     private val mAdapter: MoreSourceAdapter by lazy {
         MoreSourceAdapter()
     }
@@ -62,6 +66,15 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         mSourceNameEdit = findViewById(R.id.input_sourceName)
         mSourceUrlEdit = findViewById(R.id.input_source_url)
         mAddMoreBtn = findViewById(R.id.inputSubmit)
+        findViewById<View>(R.id.jump_web).setOnClickListener {
+            val intent = Intent()
+            // 设置意图动作为打开浏览器
+            intent.action = Intent.ACTION_VIEW
+            // 声明一个Uri
+            val uri: Uri = Uri.parse(address)
+            intent.data = uri
+            context.startActivity(intent)
+        }
         mQrCode = findViewById(R.id.qrCode)
         mLoading = findViewById(R.id.play_loading)
         mRecyclerView?.adapter = mAdapter
@@ -240,7 +253,6 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     }
 
     private fun refeshQRcode() {
-        val address = ControlManager.get().getAddress(false)
         mQrCode?.setImageBitmap(
             QRCodeGen.generateBitmap(
                 address,
