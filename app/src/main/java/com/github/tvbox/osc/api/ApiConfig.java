@@ -580,13 +580,15 @@ public class ApiConfig {
                             iterator.remove();
                         }
                     }
+                    list.add(0, liveSourceBean);
                     if (liveSourceBean.isOfficial()) {
                         MoreSourceBean moreSourceBean = Hawk.get(HawkConfig.API_URL_BEAN, null);
-                        if (moreSourceBean != null) {
+                        if (moreSourceBean != null && moreSourceBean.getSourceUrl().equals(apiUrl)) {//修复直接推送线路导致直播显示重复问题
                             liveSourceBean.setSourceName(moreSourceBean.getSourceName() + "直播");
+                        } else {
+                            liveSourceBean.setSourceName("直播线路" + list.size());
                         }
                     }
-                    list.add(0, liveSourceBean);
                     Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, list);
                     Hawk.put(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean);
                 }
