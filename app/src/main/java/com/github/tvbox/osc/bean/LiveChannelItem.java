@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author pj567
@@ -111,13 +112,22 @@ public class LiveChannelItem implements Serializable, Cloneable {
     @Override
     public LiveChannelItem clone() {
         try {
-            LiveChannelItem clone = (LiveChannelItem) super.clone();
-//            clone.channelSourceNames = (ArrayList<String>) clone.channelSourceNames.clone();
-//            clone.channelUrls = (ArrayList<String>) clone.channelUrls.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return clone;
+            return (LiveChannelItem) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LiveChannelItem that = (LiveChannelItem) o;
+        return channelNum == that.channelNum && Objects.equals(channelName, that.channelName) && Objects.equals(channelSourceNames, that.channelSourceNames) && Objects.equals(channelUrls, that.channelUrls);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(channelNum, channelName, channelSourceNames, channelUrls);
     }
 }

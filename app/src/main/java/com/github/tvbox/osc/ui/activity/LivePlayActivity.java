@@ -1307,14 +1307,14 @@ public class LivePlayActivity extends BaseActivity {
                         index = 0;
                     }
                     cloneItem.setChannelIndex(index);//重制index
-                    ToastUtils.make().setTextSize(AutoSizeUtils.mm2px(mContext, 10)).show("收藏成功");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setTextSize(AutoSizeUtils.mm2px(mContext, 10)).show("收藏成功");
                 } else {
-                    ToastUtils.make().setTextSize(AutoSizeUtils.mm2px(mContext, 10)).show("收藏移除");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).setTextSize(AutoSizeUtils.mm2px(mContext, 10)).show("收藏移除");
+                    tmpChanelData.remove(item);
+                    for (int i = 0; i < tmpChanelData.size(); i++) {
+                        tmpChanelData.get(i).setChannelIndex(i);
+                    }
                     if (needNotify) {
-                        tmpChanelData.remove(position);
-                        for (int i = 0; i < tmpChanelData.size(); i++) {
-                            tmpChanelData.get(i).setChannelIndex(i);
-                        }
                         liveChannelItemAdapter.notifyItemRemoved(position);
                         liveChannelItemAdapter.notifyItemRangeChanged(position, tmpChanelData.size() - position);
                         liveChannelItemAdapter.notifyItemChanged(position);
