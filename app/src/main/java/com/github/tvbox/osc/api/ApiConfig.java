@@ -372,7 +372,6 @@ public class ApiConfig {
     ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private void parseJson(String apiUrl, String jsonStr) {
-        executorService.execute(() -> PythonLoader.getInstance().setConfig(jsonStr));
         JsonObject infoJson = new Gson().fromJson(jsonStr, JsonObject.class);
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
@@ -413,6 +412,11 @@ public class ApiConfig {
             else
                 setSourceBean(sh);
         }
+        //只有加载了py的情况下才开始解析py站点
+        if (App.getInstance().getPyLoadSuccess()) {
+            executorService.execute(() -> PythonLoader.getInstance().setConfig(jsonStr));
+        }
+
         // 需要使用vip解析的flag
         vipParseFlags = DefaultConfig.safeJsonStringList(infoJson, "flags");
         // 解析地址
