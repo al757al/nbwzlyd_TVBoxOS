@@ -261,11 +261,16 @@ public class VodController extends BaseController {
         }
         if (!isFullScreen) {
             mPlayPauseTime.setVisibility(GONE);
+            mMiniProgressTextView.setVisibility(GONE);
         } else {
             boolean showTime = Hawk.get(HawkConfig.VIDEO_SHOW_TIME, false);
             if (showTime) {
                 mPlayPauseTime.setVisibility(VISIBLE);
             }
+            if (mShowMiniProgress) {
+                mMiniProgressTextView.setVisibility(VISIBLE);
+            }
+
         }
     }
 
