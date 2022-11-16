@@ -1,5 +1,6 @@
 package com.github.tvbox.osc.ui.activity;
 
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -9,7 +10,6 @@ import android.widget.Toast;
 
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.base.BaseActivity;
-import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.RoomDataManger;
 import com.github.tvbox.osc.event.RefreshEvent;
@@ -71,13 +71,21 @@ public class HistoryActivity extends BaseActivity {
             }
         });
         tvDelAll.setOnClickListener(v -> {
-            List<VodInfo> data = historyAdapter.getData();
-            for (VodInfo datum : data) {
-                RoomDataManger.deleteVodRecord(datum.sourceKey, datum);
-            }
-            data.clear();
-            historyAdapter.notifyDataSetChanged();
-            Toast.makeText(mContext, "删除成功~", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            builder.setPositiveButton("确定", (dialog, which) -> {
+                List<VodInfo> data = historyAdapter.getData();
+                for (VodInfo datum : data) {
+                    RoomDataManger.deleteVodRecord(datum.sourceKey, datum);
+                }
+                data.clear();
+                historyAdapter.notifyDataSetChanged();
+                Toast.makeText(mContext, "删除成功~", Toast.LENGTH_SHORT).show();
+            });
+            builder.setNegativeButton("取消", (dialog, which) -> {
+
+            });
+            builder.setTitle("确定要删除所有记录吗?");
+            builder.create().show();
         });
         mGridView.setOnInBorderKeyEventListener((direction, focused) -> {
             if (direction == View.FOCUS_UP) {
