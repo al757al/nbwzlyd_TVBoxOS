@@ -17,16 +17,7 @@ class AboutDialog(context: Context) : BaseDialog(context) {
         append("版本号 V" + BuildConfig.VERSION_NAME + "更新日志:")
             .append("\n").append(
                 """  
-1.直播增加收藏功能
-2.增加集数分组
-3.直播源支持clan本地配置
-4.备份显示优化
-5.支持仓库备份还原，并自动重启app
-6.支持alist网盘等功能 同步taka版本，感谢优秀开发者
-7.调整再按一次退出直播toast字体大小
-8.默认沉浸式开关开启，优化首页布局
-10.增加视频迷你进度
-11.同步q版代码，ijk优化等
+修复2.0的各种bug。具体可参考公众号
     """.trimIndent()
             ).create()
     }
