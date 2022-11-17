@@ -621,11 +621,6 @@ public class ApiConfig {
 
     public void loadLives(JsonArray livesArray) {
         liveChannelGroupList.clear();
-
-        LiveChannelGroup collectedGroup = Hawk.get(HawkConfig.LIVE_CHANELE_COLLECTD, new LiveChannelGroup());
-        collectedGroup.setGroupName("(♥ω♥)我的收藏");
-        collectedGroup.isCollected = true;
-        liveChannelGroupList.add(collectedGroup);
         int groupIndex = 1;
         int channelIndex = 0;
         int channelNum = 0;
@@ -665,6 +660,12 @@ public class ApiConfig {
                 liveChannelGroup.getLiveChannels().add(liveChannelItem);
             }
             liveChannelGroupList.add(liveChannelGroup);
+        }
+        if (!liveChannelGroupList.isEmpty()) {
+            LiveChannelGroup collectedGroup = Hawk.get(HawkConfig.LIVE_CHANELE_COLLECTD, new LiveChannelGroup());
+            collectedGroup.setGroupName("(♥ω♥)我的收藏");
+            collectedGroup.isCollected = true;
+            liveChannelGroupList.add(0, collectedGroup);
         }
     }
 
