@@ -42,7 +42,7 @@ public class SelectDialog<T> extends BaseDialog {
     public void setLayoutManger(RecyclerView.LayoutManager layoutManger) {
         findViewById(R.id.rootLayout).setLayoutParams(new FrameLayout.LayoutParams(AutoSizeUtils.mm2px(getContext(), 650), ViewGroup.LayoutParams.WRAP_CONTENT));
         TvRecyclerView recyclerView = (TvRecyclerView) findViewById(R.id.list);
-        int padding = AutoSizeUtils.mm2px(getContext(), 15);
+        int padding = AutoSizeUtils.mm2px(getContext(), 8);
         recyclerView.setPadding(padding, 0, padding, 0);
         recyclerView.setLayoutManager(layoutManger);
         if (recyclerView.getItemDecorationCount() == 0) {
