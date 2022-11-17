@@ -20,11 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.ActivityUtils;
@@ -554,17 +552,17 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void showFilterIcon(boolean visible, boolean hasFilters) {
-        VectorDrawableCompat vectorDrawableCompat = VectorDrawableCompat.create(getResources(), R.drawable.icon_filter, null);
-        //你需要改变的颜色
-        if (vectorDrawableCompat != null) {
-            if (hasFilters) {
-                vectorDrawableCompat.setTint(ContextCompat.getColor(getApplicationContext(), R.color.color_FF5F00));
-            } else {
-                vectorDrawableCompat.setTint(ContextCompat.getColor(getApplicationContext(), R.color.color_FFFFFF));
-            }
-        }
+//        VectorDrawableCompat vectorDrawableCompat = VectorDrawableCompat.create(getResources(), R.drawable.icon_filter, null);
+////        //你需要改变的颜色
+////        if (vectorDrawableCompat != null) {
+////            if (hasFilters) {
+////                vectorDrawableCompat.setTint(ContextCompat.getColor(getApplicationContext(), R.color.color_FF5F00));
+////            } else {
+////                vectorDrawableCompat.setTint(ContextCompat.getColor(getApplicationContext(), R.color.color_FFFFFF));
+////            }
+////        }
         ImageView imageView = currentView.findViewById(R.id.tvFilter);
-        imageView.setImageDrawable(vectorDrawableCompat);
+//        imageView.setImageDrawable(vectorDrawableCompat);
         imageView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
