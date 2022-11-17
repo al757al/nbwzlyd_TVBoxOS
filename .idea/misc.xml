@@ -12,12 +12,15 @@
         <entry key="app/src/main/res/drawable/icon_drive.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/icon_file.xml" value="0.1165" />
         <entry key="app/src/main/res/drawable/icon_film.xml" value="0.1165" />
+        <entry key="app/src/main/res/drawable/icon_filter.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/icon_filter_color.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/icon_folder.xml" value="0.1165" />
         <entry key="app/src/main/res/drawable/icon_home.xml" value="0.1165" />
         <entry key="app/src/main/res/drawable/icon_sdcard.xml" value="0.1165" />
         <entry key="app/src/main/res/drawable/icon_setting_small.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/icon_sort.xml" value="0.1165" />
         <entry key="app/src/main/res/drawable/icon_trash_solid.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_dialog_bg_main.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/shape_dialog_filter_bg.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/shape_dialog_pg_search_checkbox.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/shape_line.xml" value="0.102" />
@@ -33,12 +36,13 @@
         <entry key="app/src/main/res/layout/activity_drive.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_history.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_home_top_indicator.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_home_top_indicator.xml" value="0.375" />
         <entry key="app/src/main/res/layout/activity_search.xml" value="0.1140625" />
         <entry key="app/src/main/res/layout/choose_play_layout.xml" value="0.26875" />
         <entry key="app/src/main/res/layout/dialog_about.xml" value="0.1" />
         <entry key="app/src/main/res/layout/dialog_alistdrive.xml" value="0.165" />
         <entry key="app/src/main/res/layout/dialog_backup.xml" value="0.16770833333333332" />
+        <entry key="app/src/main/res/layout/dialog_grid_filter.xml" value="0.1" />
         <entry key="app/src/main/res/layout/dialog_search_remotetv.xml" value="0.1" />
         <entry key="app/src/main/res/layout/dialog_select.xml" value="0.1" />
         <entry key="app/src/main/res/layout/dialog_webdav.xml" value="0.1" />
