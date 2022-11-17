@@ -1,16 +1,13 @@
 package com.github.tvbox.osc.ui.dialog;
 
 import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -19,29 +16,74 @@ import com.github.tvbox.osc.ui.adapter.GridFilterKVAdapter;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 
-public class GridFilterDialog extends BaseDialog {
+import razerdp.basepopup.BasePopupWindow;
+
+public class GridFilterDialog extends BasePopupWindow {
     private LinearLayout filterRoot;
 
-    public GridFilterDialog(@NonNull @NotNull Context context) {
+    public GridFilterDialog(Context context) {
         super(context);
-        setCanceledOnTouchOutside(false);
-        setCancelable(true);
         setContentView(R.layout.dialog_grid_filter);
         filterRoot = findViewById(R.id.filterRoot);
+        setBackgroundColor(Color.TRANSPARENT);
+        setPopupGravity(Gravity.BOTTOM);
     }
+
+
+    @Override
+    public void onWindowFocusChanged(View popupDecorViewProxy, boolean hasWindowFocus) {
+        super.onWindowFocusChanged(popupDecorViewProxy, hasWindowFocus);
+        filterRoot.requestFocus();
+    }
+
+    @Override
+    protected Animation onCreateDismissAnimation() {
+        return super.onCreateDismissAnimation();
+    }
+
+    @Override
+    protected Animation onCreateShowAnimation() {
+        return super.onCreateShowAnimation();
+    }
+
+//    override fun onWindowFocusChanged(popupDecorViewProxy: View?, hasWindowFocus: Boolean) {
+//        super.onWindowFocusChanged(popupDecorViewProxy, hasWindowFocus)
+//        mGridView?.isFocusable = true
+//        mGridView?.requestFocus()
+//    }
+//
+//
+//    override fun onCreateShowAnimation(): Animation {
+//        return AnimationHelper.asAnimation().withTranslation(TranslationConfig.FROM_LEFT).toShow()
+//
+//    }
+//
+//    override fun onCreateDismissAnimation(): Animation {
+//        return AnimationHelper.asAnimation().withTranslation(TranslationConfig.TO_LEFT)
+//                .toDismiss()
+//    }
+
+
+//    public GridFilterDialog(@NonNull @NotNull Context context) {
+//        super(context);
+//        setCanceledOnTouchOutside(true);
+//        setCancelable(true);
+//        setContentView(R.layout.dialog_grid_filter);
+//        filterRoot = findViewById(R.id.filterRoot);
+//        findViewById(R.id.outRoot).setOnClickListener(v -> dismiss());
+//
+//    }
 
     public interface Callback {
         void change();
     }
 
     public void setOnDismiss(Callback callback) {
-        setOnDismissListener(new DialogInterface.OnDismissListener() {
+        setOnDismissListener(new OnDismissListener() {
             @Override
-            public void onDismiss(DialogInterface dialogInterface) {
+            public void onDismiss() {
                 if (selectChange) {
                     callback.change();
                 }
@@ -91,13 +133,6 @@ public class GridFilterDialog extends BaseDialog {
 
     public void show() {
         selectChange = false;
-        super.show();
-        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-        layoutParams.gravity = Gravity.BOTTOM;
-        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        layoutParams.dimAmount = 0f;
-        getWindow().getDecorView().setPadding(0, 0, 0, 0);
-        getWindow().setAttributes(layoutParams);
+        showPopupWindow();
     }
 }

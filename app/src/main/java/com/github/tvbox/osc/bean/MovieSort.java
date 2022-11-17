@@ -44,6 +44,9 @@ public class MovieSort implements Serializable {
 
         public int filterSelectCount() {
             int count = 0;
+            if (filterSelect == null || filterSelect.isEmpty()) {
+                return 0;
+            }
             for (String filter : filterSelect.values()) {
                 if (!filter.isEmpty()) {
                     count++;
