@@ -14,14 +14,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.ActivityUtils;
@@ -173,7 +176,6 @@ public class HomeActivity extends BaseActivity {
                                 view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start();
                                 textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
                                 view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                                view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
                             }
                             textView.invalidate();
                         }
@@ -195,7 +197,7 @@ public class HomeActivity extends BaseActivity {
                     textView.invalidate();
                     MovieSort.SortData sortData = sortAdapter.getItem(position);
                     if (sortData != null && !sortData.filters.isEmpty()) {
-                        showFilterIcon(sortData.filterSelectCount());
+                        showFilterIcon(true, sortData.showHasFilters());
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
@@ -548,17 +550,22 @@ public class HomeActivity extends BaseActivity {
                 newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 HomeActivity.this.startActivity(newIntent);
             }
-        } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
-            if (currentView != null) {
-                showFilterIcon((int) event.obj);
-            }
         }
     }
 
-    private void showFilterIcon(int count) {
-        boolean visible = count > 0;
-        currentView.findViewById(R.id.tvFilterColor).setVisibility(visible ? View.VISIBLE : View.GONE);
-        currentView.findViewById(R.id.tvFilter).setVisibility(visible ? View.GONE : View.VISIBLE);
+    public void showFilterIcon(boolean visible, boolean hasFilters) {
+        VectorDrawableCompat vectorDrawableCompat = VectorDrawableCompat.create(getResources(), R.drawable.icon_filter, null);
+        //你需要改变的颜色
+        if (vectorDrawableCompat != null) {
+            if (hasFilters) {
+                vectorDrawableCompat.setTint(ContextCompat.getColor(getApplicationContext(), R.color.color_FF5F00));
+            } else {
+                vectorDrawableCompat.setTint(ContextCompat.getColor(getApplicationContext(), R.color.color_FFFFFF));
+            }
+        }
+        ImageView imageView = currentView.findViewById(R.id.tvFilter);
+        imageView.setImageDrawable(vectorDrawableCompat);
+        imageView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private Runnable mDataRunnable = new Runnable() {

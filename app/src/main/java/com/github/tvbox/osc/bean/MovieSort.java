@@ -42,17 +42,11 @@ public class MovieSort implements Serializable {
             this.name = name;
         }
 
-        public int filterSelectCount() {
-            int count = 0;
+        public boolean showHasFilters() {
             if (filterSelect == null || filterSelect.isEmpty()) {
-                return 0;
+                return false;
             }
-            for (String filter : filterSelect.values()) {
-                if (!filter.isEmpty()) {
-                    count++;
-                }
-            }
-            return count;
+            return true;
         }
 
         @Override

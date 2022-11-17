@@ -2,7 +2,9 @@ package com.github.tvbox.osc.ui.fragment;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
+import android.widget.Toast;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -15,9 +17,9 @@ import com.github.tvbox.osc.bean.AbsXml;
 import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.bean.MovieSort;
 import com.github.tvbox.osc.bean.SourceBean;
-import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.ui.activity.DetailActivity;
 import com.github.tvbox.osc.ui.activity.FastSearchActivity;
+import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.adapter.GridAdapter;
 import com.github.tvbox.osc.ui.dialog.GridFilterDialog;
@@ -29,11 +31,8 @@ import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
-import java.util.Stack;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
-import org.greenrobot.eventbus.EventBus;
+import java.util.Stack;
 
 /**
  * @author pj567
@@ -290,14 +289,14 @@ public class GridFragment extends BaseLazyFragment {
         showLoading();
         isLoad = false;
         scrollTop();
-        toggleFilterColor();
+//        toggleFilterColor();
         sourceViewModel.getList(sortData, page);
     }
 
-    private void toggleFilterColor() {
-        int count = sortData.filterSelectCount();
-        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE, count));
-    }
+//    private void toggleFilterColor() {
+//        int count = sortData.filterSelectCount();
+//        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE, count));
+//    }
 
     public boolean isTop() {
         return isTop;
@@ -312,11 +311,11 @@ public class GridFragment extends BaseLazyFragment {
         if (!sortData.filters.isEmpty() && gridFilterDialog == null) {
             gridFilterDialog = new GridFilterDialog(mContext);
             gridFilterDialog.setData(sortData);
-            gridFilterDialog.setOnDismiss(new GridFilterDialog.Callback() {
-                @Override
-                public void change() {
-                    page = 1;
-                    initData();
+            gridFilterDialog.setOnDismiss(() -> {
+                page = 1;
+                initData();
+                if (getActivity() instanceof HomeActivity) {
+                    ((HomeActivity) getActivity()).showFilterIcon(true, sortData.showHasFilters());
                 }
             });
         }
