@@ -34,6 +34,7 @@
     <dimen name="vs_55">55mm</dimen>
     <dimen name="vs_60">60mm</dimen>
     <dimen name="vs_100">100mm</dimen>
+    <dimen name="vs_110">110mm</dimen>
     <dimen name="vs_120">120mm</dimen>
     <dimen name="vs_128">128mm</dimen>
     <dimen name="vs_132">132mm</dimen>
@@ -59,6 +60,7 @@
     <dimen name="vs_600">600mm</dimen>
     <dimen name="vs_720">720mm</dimen>
     <dimen name="vs_960">960mm</dimen>
+    <dimen name="vs_900">900mm</dimen>
     <dimen name="ts_100">100mm</dimen>
     <dimen name="vs_70">70mm</dimen>
     <dimen name="vs_640">640mm</dimen>

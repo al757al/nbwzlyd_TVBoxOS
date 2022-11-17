@@ -69,6 +69,9 @@ import com.github.tvbox.osc.util.VideoParseRuler;
 import com.github.tvbox.osc.util.XWalkUtils;
 import com.github.tvbox.osc.util.thunder.Thunder;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.HttpHeaders;
@@ -666,8 +669,10 @@ public class PlayActivity extends BaseActivity {
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
             Bundle bundle = intent.getExtras();
-//            mVodInfo = (VodInfo) bundle.getSerializable("VodInfo");
-            mVodInfo = App.getInstance().getVodInfo();
+            mVodInfo = (VodInfo) bundle.getSerializable("VodInfo");
+            if (mVodInfo == null) {
+                mVodInfo = App.getInstance().getVodInfo();
+            }
             sourceKey = bundle.getString("sourceKey");
             sourceBean = ApiConfig.get().getSource(sourceKey);
             initPlayerCfg();
@@ -683,7 +688,7 @@ public class PlayActivity extends BaseActivity {
         }
         try {
             if (!mVodPlayerCfg.has("pl")) {
-                mVodPlayerCfg.put("pl", (sourceBean.getPlayerType() == -1) ? (int) Hawk.get(HawkConfig.PLAY_TYPE, 1) : sourceBean.getPlayerType());
+                mVodPlayerCfg.put("pl", (sourceBean == null || sourceBean.getPlayerType() == -1) ? (int) Hawk.get(HawkConfig.PLAY_TYPE, 1) : sourceBean.getPlayerType());
             }
             if (!mVodPlayerCfg.has("pr")) {
                 mVodPlayerCfg.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 2));
@@ -871,6 +876,23 @@ public class PlayActivity extends BaseActivity {
         if (reset) {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
             CacheManager.delete(MD5.string2MD5(subtitleCacheKey), 0);
+        }
+
+        if (vs.url.startsWith("tvbox-drive://")) {
+            mController.showParse(false);
+            HashMap<String, String> headers = null;
+            if (mVodInfo.playerCfg != null && mVodInfo.playerCfg.length() > 0) {
+                JsonObject playerConfig = JsonParser.parseString(mVodInfo.playerCfg).getAsJsonObject();
+                if (playerConfig.has("headers")) {
+                    headers = new HashMap<>();
+                    for (JsonElement headerEl : playerConfig.getAsJsonArray("headers")) {
+                        JsonObject headerJson = headerEl.getAsJsonObject();
+                        headers.put(headerJson.get("name").getAsString(), headerJson.get("value").getAsString());
+                    }
+                }
+            }
+            playUrl(vs.url.replace("tvbox-drive://", ""), headers);
+            return;
         }
         if (Thunder.play(vs.url, new Thunder.ThunderCallback() {
             @Override

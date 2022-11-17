@@ -234,11 +234,11 @@ public class DriveActivity extends BaseActivity {
                     if (StorageDriveType.isVideoType(selectedItem.fileType)) {
                         DriveFolderFile currentDrive = viewModel.getCurrentDrive();
                         if (currentDrive.getDriveType() == StorageDriveType.TYPE.LOCAL)
-                            playFile(currentDrive.name + selectedItem.getAccessingPathStr() + selectedItem.name);
+                            playFile(currentDrive.name + selectedItem.getAccessingPathStr() + selectedItem.name, selectedItem.name);
                         else if (currentDrive.getDriveType() == StorageDriveType.TYPE.WEBDAV) {
                             JsonObject config = currentDrive.getConfig();
                             String targetPath = selectedItem.getAccessingPathStr() + selectedItem.name;
-                            playFile(config.get("url").getAsString() + targetPath);
+                            playFile(config.get("url").getAsString() + targetPath, selectedItem.name);
                         } else if (currentDrive.getDriveType() == StorageDriveType.TYPE.ALISTWEB) {
                             AlistDriveViewModel boxedViewModel = (AlistDriveViewModel) viewModel;
                             boxedViewModel.loadFile(selectedItem, new AlistDriveViewModel.LoadFileCallback() {
@@ -247,7 +247,7 @@ public class DriveActivity extends BaseActivity {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            playFile(fileUrl);
+                                            playFile(fileUrl, selectedItem.name);
                                         }
                                     });
                                 }
@@ -273,9 +273,9 @@ public class DriveActivity extends BaseActivity {
         setLoadSir(findViewById(R.id.mLayout));
     }
 
-    private void playFile(String fileUrl) {
+    private void playFile(String fileUrl, String name) {
         VodInfo vodInfo = new VodInfo();
-        vodInfo.name = "存储";
+        vodInfo.name = name;
         vodInfo.playFlag = "drive";
         DriveFolderFile currentDrive = viewModel.getCurrentDrive();
         if (currentDrive.getDriveType() == StorageDriveType.TYPE.WEBDAV) {

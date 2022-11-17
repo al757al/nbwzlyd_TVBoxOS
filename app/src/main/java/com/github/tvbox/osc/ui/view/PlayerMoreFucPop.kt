@@ -68,7 +68,6 @@ class PlayerMoreFucPop(context: Context?, private val playConfig: JSONObject?) :
 //            mSpeedBtn?.text = "x" + playConfig.getDouble("sp")
             mAudioTrack?.visibility = if (it.getInt("pl") == 1) View.VISIBLE else View.GONE
             initLandscapePortraitBtnInfo()
-            mScaleBtn?.text = PlayerHelper.getScaleName(it.getInt("sc"))
         }
         mScaleBtn?.setOnClickListener {
             onClick?.invoke(it as TextView?)
