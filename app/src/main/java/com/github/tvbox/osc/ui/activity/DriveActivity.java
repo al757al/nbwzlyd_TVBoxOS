@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -227,8 +228,16 @@ public class DriveActivity extends BaseActivity {
                         return;
                     }
                 }
+                JsonObject configJson = selectedItem.getConfig();
+                JsonObject lastConfig = viewModel.getCurrentDrive().getConfig();
+                if (configJson != null) {//解决点击某个网盘报错后，其他网盘也报错的问题
+                    String currentSelectedUrl = configJson.get("url").getAsString();
+                    String lastConfigUrl = lastConfig.get("url").getAsString();
+                    if (!TextUtils.isEmpty(currentSelectedUrl) && !TextUtils.equals(currentSelectedUrl, lastConfigUrl)) {
+                        viewModel.setCurrentDrive(selectedItem);
+                    }
+                }
                 if (!selectedItem.isFile) {
-                    viewModel.setCurrentDrive(selectedItem);
                     viewModel.setCurrentDriveNote(selectedItem);
                     loadDriveData();
                 } else {
@@ -550,6 +559,7 @@ public class DriveActivity extends BaseActivity {
 
     private void cancel() {
         OkGo.getInstance().cancelTag("drive");
+        showSuccess();
     }
 
     private void returnPreviousFolder() {
@@ -588,7 +598,7 @@ public class DriveActivity extends BaseActivity {
     public void onBackPressed() {
         if (viewModel != null) {
             cancel();
-            mGridView.onClick(mGridView.getChildAt(0));
+            returnPreviousFolder();
             return;
         }
         if (!delMode)

@@ -92,6 +92,7 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                                 }
                 );
             } catch (Exception ex) {
+                callback.fail(ex.getMessage());
                 ex.printStackTrace();
             }
             return targetPath;
