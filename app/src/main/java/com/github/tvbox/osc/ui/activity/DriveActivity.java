@@ -221,12 +221,14 @@ public class DriveActivity extends BaseActivity {
                         viewModel = new AlistDriveViewModel();
                     }
                     viewModel.setCurrentDrive(selectedItem);
+
                     if (!selectedItem.isFile) {
                         loadDriveData();
                         return;
                     }
                 }
                 if (!selectedItem.isFile) {
+                    viewModel.setCurrentDrive(selectedItem);
                     viewModel.setCurrentDriveNote(selectedItem);
                     loadDriveData();
                 } else {
@@ -273,7 +275,7 @@ public class DriveActivity extends BaseActivity {
                 }
             }
         });
-        setLoadSir(findViewById(R.id.mLayout));
+        setLoadSir(findViewById(R.id.mGridView));
     }
 
     private void playFile(String fileUrl, String name) {

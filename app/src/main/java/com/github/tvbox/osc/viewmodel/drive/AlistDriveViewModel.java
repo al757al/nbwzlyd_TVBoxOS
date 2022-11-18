@@ -50,12 +50,12 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
         }
         String targetPath = currentDriveNote.getAccessingPathStr() + currentDriveNote.name;
         if (currentDriveNote.getChildren() == null) {
-            String webLink = config.get("url").getAsString();
-            if (webLink.contains("https://drive.9t.ee")) {//解析方式不同，换解析
-                alistWebParse.parseAlistList(webLink, callback);
-                return targetPath;
-            }
             try {
+                String webLink = config.get("url").getAsString();
+                if (webLink.contains("https://drive.9t.ee")) {//解析方式不同，换解析
+                    alistWebParse.parseAlistList(webLink, callback);
+                    return targetPath;
+                }
                 JSONObject requestBody = new JSONObject();
                 requestBody.put("path", targetPath.isEmpty() ? "/" : targetPath);
                 requestBody.put("password", currentDrive.getConfig().get("password").getAsString());
@@ -82,6 +82,12 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                                     public void onCacheSuccess(Response<String> response) {
                                         super.onCacheSuccess(response);
                                         parseFileListData(response, callback);
+                                    }
+
+                                    @Override
+                                    public void onError(Response<String> response) {
+                                        super.onError(response);
+                                        callback.fail(response.getException().getMessage());
                                     }
                                 }
                 );
