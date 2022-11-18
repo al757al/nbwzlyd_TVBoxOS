@@ -12,9 +12,9 @@ import java.util.Locale;
 
 public abstract class AbstractDriveViewModel extends ViewModel {
 
-    protected DriveFolderFile currentDrive = null;
-    protected DriveFolderFile currentDriveNote = null;
-    protected int sortType = 0;
+    public DriveFolderFile currentDrive = null;
+    public DriveFolderFile currentDriveNote = null;
+    public int sortType = 0;
 
     public DriveFolderFile getCurrentDrive() {
         return currentDrive;
@@ -40,7 +40,7 @@ public abstract class AbstractDriveViewModel extends ViewModel {
 
     public abstract Runnable search(String keyword, LoadDataCallback callback);
 
-    protected void sortData(List<DriveFolderFile> data) {
+    public void sortData(List<DriveFolderFile> data) {
         DriveFolderFile backItem = null;
         if (data.size() > 0 && data.get(0).name == null)
             backItem = data.remove(0);

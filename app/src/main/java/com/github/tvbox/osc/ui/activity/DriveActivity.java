@@ -241,9 +241,11 @@ public class DriveActivity extends BaseActivity {
                             playFile(config.get("url").getAsString() + targetPath, selectedItem.name);
                         } else if (currentDrive.getDriveType() == StorageDriveType.TYPE.ALISTWEB) {
                             AlistDriveViewModel boxedViewModel = (AlistDriveViewModel) viewModel;
+                            showLoading();
                             boxedViewModel.loadFile(selectedItem, new AlistDriveViewModel.LoadFileCallback() {
                                 @Override
                                 public void callback(String fileUrl) {
+                                    showSuccess();
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -254,6 +256,7 @@ public class DriveActivity extends BaseActivity {
 
                                 @Override
                                 public void fail(String msg) {
+                                    showEmpty();
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {

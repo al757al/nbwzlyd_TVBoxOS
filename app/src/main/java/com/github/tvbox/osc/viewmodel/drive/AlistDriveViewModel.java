@@ -3,6 +3,7 @@ package com.github.tvbox.osc.viewmodel.drive;
 import com.github.UA;
 import com.github.tvbox.osc.bean.DriveFolderFile;
 import com.github.tvbox.osc.cache.StorageDrive;
+import com.github.tvbox.osc.ui.dialog.util.AlistWebParse;
 import com.github.tvbox.osc.util.StorageDriveType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -22,6 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlistDriveViewModel extends AbstractDriveViewModel {
+
+    public static final String API1_GET = "api/fs/get";
+    public static final String API_LIST = "api/fs/list";
+
+    private AlistWebParse alistWebParse = new AlistWebParse(this);
 
     private void setRequestHeader(PostRequest request, String origin) {
         request.headers("User-Agent", UA.random());
@@ -43,72 +49,36 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
         }
         String targetPath = currentDriveNote.getAccessingPathStr() + currentDriveNote.name;
         if (currentDriveNote.getChildren() == null) {
-            new Thread() {
-                public void run() {
-                    String webLink = config.get("url").getAsString();
-                    PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
-                    try {
-                        JSONObject requestBody = new JSONObject();
-                        requestBody.put("path", targetPath.isEmpty() ? "/" : targetPath);
-                        requestBody.put("password", currentDrive.getConfig().get("password").getAsString());
-                        requestBody.put("page_num", 1);
-                        requestBody.put("page_size", 30);
-                        request.upJson(requestBody);
-                        setRequestHeader(request, webLink);
-                        request.execute(new AbsCallback<String>() {
+            String webLink = config.get("url").getAsString();
+            if (webLink.contains("https://drive.9t.ee")) {//解析方式不同，换解析
+                alistWebParse.parseAlistList(webLink, callback);
+                return targetPath;
+            }
+            PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
+            try {
+                JSONObject requestBody = new JSONObject();
+                requestBody.put("path", targetPath.isEmpty() ? "/" : targetPath);
+                requestBody.put("password", currentDrive.getConfig().get("password").getAsString());
+                requestBody.put("page_num", 1);
+                requestBody.put("page_size", 30);
+                request.upJson(requestBody);
+                setRequestHeader(request, webLink);
+                request.execute(new AbsCallback<String>() {
 
-                            @Override
-                            public String convertResponse(okhttp3.Response response) throws Throwable {
-                                return response.body().string();
-                            }
-
-                            @Override
-                            public void onSuccess(Response<String> response) {
-                                String respBody = response.body();
-                                try {
-                                    JsonObject respData = JsonParser.parseString(respBody).getAsJsonObject();
-                                    List<DriveFolderFile> items = new ArrayList<>();
-                                    if (respData.get("code").getAsInt() == 200) {
-                                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                                        for (JsonElement file : respData.get("data").getAsJsonObject().get("files").getAsJsonArray()) {
-                                            JsonObject fileObj = file.getAsJsonObject();
-                                            String fileName = fileObj.get("name").getAsString();
-                                            int extNameStartIndex = fileName.lastIndexOf(".");
-                                            boolean isFile = fileObj.get("type").getAsInt() != 1;
-                                            String fileUrl = null;
-                                            if (fileObj.has("url") && !fileObj.get("url").getAsString().isEmpty())
-                                                fileUrl = fileObj.get("url").getAsString();
-                                            try {
-                                                DriveFolderFile driveFile = new DriveFolderFile(currentDriveNote, fileName, isFile,
-                                                        isFile && extNameStartIndex >= 0 && extNameStartIndex < fileName.length() ?
-                                                                fileName.substring(extNameStartIndex + 1) : null,
-                                                        dateFormat.parse(fileObj.get("updated_at").getAsString()).getTime());
-                                                if (fileUrl != null)
-                                                    driveFile.fileUrl = fileUrl;
-                                                items.add(driveFile);
-                                            } catch (ParseException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
+                                    @Override
+                                    public String convertResponse(okhttp3.Response response) throws Throwable {
+                                        return response.body().string();
                                     }
-                                    sortData(items);
-                                    DriveFolderFile backItem = new DriveFolderFile(null, null, false, null, null);
-                                    backItem.parentFolder = backItem;
-                                    items.add(0, backItem);
-                                    currentDriveNote.setChildren(items);
-                                    if (callback != null)
-                                        callback.callback(currentDriveNote.getChildren(), false);
-                                } catch (Exception ex) {
-                                    if (callback != null)
-                                        callback.fail("无法访问，请注意地址格式");
+
+                                    @Override
+                                    public void onSuccess(Response<String> response) {
+                                        parseFileListData(response, callback);
+                                    }
                                 }
-                            }
-                        });
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }.start();
+                );
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             return targetPath;
         } else {
             sortData(currentDriveNote.getChildren());
@@ -116,6 +86,47 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                 callback.callback(currentDriveNote.getChildren(), true);
         }
         return targetPath;
+    }
+
+    private void parseFileListData(Response<String> response, LoadDataCallback callback) {
+        String respBody = response.body();
+        try {
+            JsonObject respData = JsonParser.parseString(respBody).getAsJsonObject();
+            List<DriveFolderFile> items = new ArrayList<>();
+            if (respData.get("code").getAsInt() == 200) {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                for (JsonElement file : respData.get("data").getAsJsonObject().get("files").getAsJsonArray()) {
+                    JsonObject fileObj = file.getAsJsonObject();
+                    String fileName = fileObj.get("name").getAsString();
+                    int extNameStartIndex = fileName.lastIndexOf(".");
+                    boolean isFile = fileObj.get("type").getAsInt() != 1;
+                    String fileUrl = null;
+                    if (fileObj.has("url") && !fileObj.get("url").getAsString().isEmpty())
+                        fileUrl = fileObj.get("url").getAsString();
+                    try {
+                        DriveFolderFile driveFile = new DriveFolderFile(currentDriveNote, fileName, isFile,
+                                isFile && extNameStartIndex >= 0 && extNameStartIndex < fileName.length() ?
+                                        fileName.substring(extNameStartIndex + 1) : null,
+                                dateFormat.parse(fileObj.get("updated_at").getAsString()).getTime());
+                        if (fileUrl != null)
+                            driveFile.fileUrl = fileUrl;
+                        items.add(driveFile);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            sortData(items);
+            DriveFolderFile backItem = new DriveFolderFile(null, null, false, null, null);
+            backItem.parentFolder = backItem;
+            items.add(0, backItem);
+            currentDriveNote.setChildren(items);
+            if (callback != null)
+                callback.callback(currentDriveNote.getChildren(), false);
+        } catch (Exception ex) {
+            if (callback != null)
+                callback.fail("无法访问，请注意地址格式");
+        }
     }
 
     @Override
@@ -190,52 +201,55 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
             if (callback != null)
                 callback.callback(targetFile.fileUrl);
         } else {
-            new Thread() {
-                public void run() {
-                    JsonObject config = currentDrive.getConfig();
-                    String targetPath = targetFile.getAccessingPathStr() + targetFile.name;
-                    String webLink = config.get("url").getAsString();
-                    PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
-                    try {
-                        JSONObject requestBody = new JSONObject();
-                        requestBody.put("path", targetPath);
-                        requestBody.put("password", currentDrive.getConfig().get("password").getAsString());
-                        requestBody.put("page_num", 1);
-                        requestBody.put("page_size", 30);
-                        request.upJson(requestBody);
-                        setRequestHeader(request, webLink);
-                        request.execute(new AbsCallback<String>() {
 
-                            @Override
-                            public String convertResponse(okhttp3.Response response) throws Throwable {
-                                return response.body().string();
+            JsonObject config = currentDrive.getConfig();
+            String targetPath = targetFile.getAccessingPathStr() + targetFile.name;
+            String webLink = config.get("url").getAsString();
+
+            if (webLink.contains("https://drive.9t.ee")) {//解析方式不同，换解析
+                alistWebParse.loadFile(targetFile, callback);
+                return;
+            }
+
+            PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
+            try {
+                JSONObject requestBody = new JSONObject();
+                requestBody.put("path", targetPath);
+                requestBody.put("password", currentDrive.getConfig().get("password").getAsString());
+                requestBody.put("page_num", 1);
+                requestBody.put("page_size", 30);
+                request.upJson(requestBody);
+                setRequestHeader(request, webLink);
+                request.execute(new AbsCallback<String>() {
+
+                    @Override
+                    public String convertResponse(okhttp3.Response response) throws Throwable {
+                        return response.body().string();
+                    }
+
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        String respBody = response.body();
+                        JsonObject respData = JsonParser.parseString(respBody).getAsJsonObject();
+                        if (respData.get("code").getAsInt() == 200) {
+                            JsonArray files = respData.get("data").getAsJsonObject().get("files").getAsJsonArray();
+                            if (files.size() > 0 && callback != null) {
+                                callback.callback(files.get(0).getAsJsonObject().get("url").getAsString());
+                                return;
                             }
-
-                            @Override
-                            public void onSuccess(Response<String> response) {
-                                String respBody = response.body();
-                                JsonObject respData = JsonParser.parseString(respBody).getAsJsonObject();
-                                List<DriveFolderFile> items = new ArrayList<>();
-                                if (respData.get("code").getAsInt() == 200) {
-                                    JsonArray files = respData.get("data").getAsJsonObject().get("files").getAsJsonArray();
-                                    if (files.size() > 0 && callback != null) {
-                                        callback.callback(files.get(0).getAsJsonObject().get("url").getAsString());
-                                        return;
-                                    }
-                                }
-                                if (callback != null)
-                                    callback.fail("不能获取该视频地址");
-
-                            }
-                        });
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                        }
                         if (callback != null)
                             callback.fail("不能获取该视频地址");
+
                     }
-                }
-            }.start();
+                });
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                if (callback != null)
+                    callback.fail("不能获取该视频地址");
+            }
         }
+
     }
 
     public interface LoadFileCallback {
