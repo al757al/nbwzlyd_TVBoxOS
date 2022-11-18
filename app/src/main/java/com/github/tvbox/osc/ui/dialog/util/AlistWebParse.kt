@@ -8,6 +8,7 @@ import com.github.tvbox.osc.viewmodel.drive.AlistDriveViewModel.LoadFileCallback
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.lzy.okgo.OkGo
+import com.lzy.okgo.cache.CacheMode
 import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.PostRequest
@@ -52,7 +53,9 @@ class AlistWebParse(val alistDriveViewModel: AlistDriveViewModel) {
         requestBody.put("page_num", 1)
         requestBody.put("page_size", 30)
         val request =
-            OkGo.post<String>(webLink).tag("drive")
+            OkGo.post<String>(webLink).tag("drive").cacheTime(2 * 60 * 60 * 1000);
+        request.cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
+        request.cacheKey(request.url + requestBody.get("path"))
         request.upJson(requestBody)
         setRequestHeader(request, webLink)
         request.execute(object : StringCallback() {
@@ -92,11 +95,12 @@ class AlistWebParse(val alistDriveViewModel: AlistDriveViewModel) {
                     val isDir = jsonObject.get("is_dir").asBoolean
                     val updateTime = jsonObject.get("modified").asString
 
+                    val extNameStartIndex: Int = name.lastIndexOf(".")
                     val driveFile = DriveFolderFile(
                         alistDriveViewModel.currentDriveNote,
                         name,
                         !isDir,
-                        if (fileType == "2") "MP4" else fileType,
+                        if (fileType == "2") name.substring(extNameStartIndex + 1) else fileType,
                         dateFormat.parse(updateTime).time
                     )
                     items.add(driveFile)
@@ -126,7 +130,8 @@ class AlistWebParse(val alistDriveViewModel: AlistDriveViewModel) {
             val targetPath = (targetFile.accessingPathStr + targetFile.name)
             val webLink = config["url"].asString
             val request: PostRequest<String> =
-                OkGo.post<String>(webLink + "api/fs/get").tag("drive")
+                OkGo.post<String>(webLink + "api/fs/get").tag("drive");
+
             try {
                 val requestBody = JSONObject()
                 requestBody.put(
@@ -137,6 +142,9 @@ class AlistWebParse(val alistDriveViewModel: AlistDriveViewModel) {
                 requestBody.put("page_num", 1)
                 requestBody.put("page_size", 30)
                 requestBody.put("path", targetPath)
+                request.cacheTime(2 * 60 * 60 * 1000)
+                    .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
+                    .cacheKey(request.url + requestBody.get("path"))
                 request.upJson(requestBody)
                 request.execute(object : StringCallback() {
                     override fun onSuccess(response: Response<String>?) {

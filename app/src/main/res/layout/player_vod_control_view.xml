@@ -16,9 +16,9 @@
         android:visibility="gone"
         tools:visibility="visible">
 
-        <TextView
+        <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
             android:id="@+id/tv_info_name1"
-            android:layout_width="@dimen/vs_900"
+            android:layout_width="@dimen/vs_940"
             android:layout_height="wrap_content"
             android:maxWidth="@dimen/vs_480"
             android:layout_gravity="left"

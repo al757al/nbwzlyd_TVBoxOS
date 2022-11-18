@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.PostRequest;
@@ -54,13 +55,15 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                 alistWebParse.parseAlistList(webLink, callback);
                 return targetPath;
             }
-            PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
             try {
                 JSONObject requestBody = new JSONObject();
                 requestBody.put("path", targetPath.isEmpty() ? "/" : targetPath);
                 requestBody.put("password", currentDrive.getConfig().get("password").getAsString());
                 requestBody.put("page_num", 1);
                 requestBody.put("page_size", 30);
+                PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
+                request.cacheTime(2 * 60 * 60 * 1000).cacheKey(request.getUrl() + requestBody.get("path"))
+                        .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST);
                 request.upJson(requestBody);
                 setRequestHeader(request, webLink);
                 request.execute(new AbsCallback<String>() {
@@ -72,6 +75,12 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
 
                                     @Override
                                     public void onSuccess(Response<String> response) {
+                                        parseFileListData(response, callback);
+                                    }
+
+                                    @Override
+                                    public void onCacheSuccess(Response<String> response) {
+                                        super.onCacheSuccess(response);
                                         parseFileListData(response, callback);
                                     }
                                 }
@@ -211,13 +220,15 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                 return;
             }
 
-            PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
             try {
                 JSONObject requestBody = new JSONObject();
                 requestBody.put("path", targetPath);
                 requestBody.put("password", currentDrive.getConfig().get("password").getAsString());
                 requestBody.put("page_num", 1);
                 requestBody.put("page_size", 30);
+                PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
+                request.cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheKey(request.getUrl() + requestBody.get("path"))
+                        .cacheTime(2 * 60 * 60 * 1000);
                 request.upJson(requestBody);
                 setRequestHeader(request, webLink);
                 request.execute(new AbsCallback<String>() {
@@ -241,6 +252,22 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                         if (callback != null)
                             callback.fail("不能获取该视频地址");
 
+                    }
+
+                    @Override
+                    public void onCacheSuccess(Response<String> response) {
+                        super.onCacheSuccess(response);
+                        String respBody = response.body();
+                        JsonObject respData = JsonParser.parseString(respBody).getAsJsonObject();
+                        if (respData.get("code").getAsInt() == 200) {
+                            JsonArray files = respData.get("data").getAsJsonObject().get("files").getAsJsonArray();
+                            if (files.size() > 0 && callback != null) {
+                                callback.callback(files.get(0).getAsJsonObject().get("url").getAsString());
+                                return;
+                            }
+                        }
+                        if (callback != null)
+                            callback.fail("不能获取该视频地址");
                     }
                 });
             } catch (Exception ex) {

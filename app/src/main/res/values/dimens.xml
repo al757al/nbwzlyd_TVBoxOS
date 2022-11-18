@@ -60,6 +60,7 @@
     <dimen name="vs_600">600mm</dimen>
     <dimen name="vs_720">720mm</dimen>
     <dimen name="vs_960">960mm</dimen>
+    <dimen name="vs_940">940mm</dimen>
     <dimen name="vs_900">900mm</dimen>
     <dimen name="ts_100">100mm</dimen>
     <dimen name="vs_70">70mm</dimen>
