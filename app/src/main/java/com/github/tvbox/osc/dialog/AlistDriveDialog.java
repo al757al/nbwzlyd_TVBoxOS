@@ -2,17 +2,21 @@ package com.github.tvbox.osc.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.cache.RoomDataManger;
 import com.github.tvbox.osc.cache.StorageDrive;
 import com.github.tvbox.osc.event.RefreshEvent;
-import com.github.tvbox.osc.ui.dialog.BaseDialog;
 import com.github.tvbox.osc.util.StorageDriveType;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -20,7 +24,9 @@ import com.google.gson.JsonParser;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
-public class AlistDriveDialog extends BaseDialog {
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+public class AlistDriveDialog extends DialogFragment {
 
     private StorageDrive drive = null;
     private EditText etName;
@@ -29,19 +35,39 @@ public class AlistDriveDialog extends BaseDialog {
     private EditText etPassword;
 
     public AlistDriveDialog(@NonNull @NotNull Context context, StorageDrive drive) {
-        super(context);
-        setContentView(R.layout.dialog_alistdrive);
+        super();
         if (drive != null)
             this.drive = drive;
     }
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.dialog_alistdrive, container, false);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        etName = findViewById(R.id.etName);
-        etUrl = findViewById(R.id.etUrl);
-        etInitPath = findViewById(R.id.etInitPath);
-        etPassword = findViewById(R.id.etPassword);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialogStyle);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getDialog().setCanceledOnTouchOutside(false);
+        final WindowManager.LayoutParams attributes = getDialog().getWindow().getAttributes();
+        attributes.width = AutoSizeUtils.mm2px(getContext(), 600);
+        getDialog().getWindow().setAttributes(attributes);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        etName = view.findViewById(R.id.etName);
+        etUrl = view.findViewById(R.id.etUrl);
+        etInitPath = view.findViewById(R.id.etInitPath);
+        etPassword = view.findViewById(R.id.etPassword);
         if (drive != null) {
             etName.setText(drive.name);
             try {
@@ -52,7 +78,7 @@ public class AlistDriveDialog extends BaseDialog {
             } catch (Exception ex) {
             }
         }
-        findViewById(R.id.btnConfirm).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btnConfirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String name = etName.getText().toString();
@@ -88,7 +114,7 @@ public class AlistDriveDialog extends BaseDialog {
                 AlistDriveDialog.this.dismiss();
             }
         });
-        findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlistDriveDialog.this.dismiss();

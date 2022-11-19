@@ -84,7 +84,8 @@
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".ui.activity.DriveActivity"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="adjustPan" />
 
         <receiver android:name=".receiver.SearchReceiver">
             <intent-filter>

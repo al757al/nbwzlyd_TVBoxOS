@@ -5,6 +5,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+
+import com.blankj.utilcode.util.ActivityUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.github.tvbox.osc.R;
@@ -91,7 +94,7 @@ public class DriveAdapter extends BaseQuickAdapter<DriveFolderFile, BaseViewHold
                     @Override
                     public void onClick(View view) {
                         AlistDriveDialog dialog = new AlistDriveDialog(mContext, item.getDriveData());
-                        dialog.show();
+                        dialog.show(((FragmentActivity) ActivityUtils.getTopActivity()).getSupportFragmentManager(), "");
                     }
                 });
             }

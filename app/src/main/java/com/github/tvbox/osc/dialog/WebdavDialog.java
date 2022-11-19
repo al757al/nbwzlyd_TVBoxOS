@@ -39,6 +39,7 @@ public class WebdavDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setCanceledOnTouchOutside(false);
         etName = findViewById(R.id.etName);
         etUrl = findViewById(R.id.etUrl);
         etInitPath = findViewById(R.id.etInitPath);

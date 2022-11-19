@@ -391,7 +391,7 @@ public class DriveActivity extends BaseActivity {
 
     private void openAlistDriveDialog(StorageDrive drive) {
         AlistDriveDialog dialog = new AlistDriveDialog(mContext, drive);
-        dialog.show();
+        dialog.show(getSupportFragmentManager(), "alidialog");
     }
 
     public void toggleDelMode() {
