@@ -14,7 +14,7 @@ class VodInfoClassifyUtil {
     companion object {
         @JvmStatic
         fun checkVodInfoNeedClassify(vodSeries: MutableList<VodInfo.VodSeries>?): Boolean {
-            return (vodSeries?.size ?: 0) >= 40
+            return false
         }
 
         @JvmStatic

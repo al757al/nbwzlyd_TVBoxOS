@@ -47,8 +47,8 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.IDMDownLoadUtil;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.SearchHelper;
-import com.github.tvbox.osc.util.VodInfoClassifyUtil;
 import com.github.tvbox.osc.util.SubtitleHelper;
+import com.github.tvbox.osc.util.VodInfoClassifyUtil;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -75,9 +75,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -629,11 +629,12 @@ public class DetailActivity extends BaseActivity {
         if (event.type == RefreshEvent.TYPE_REFRESH) {
             if (event.obj != null) {
                 if (event.obj instanceof Integer) {
-                    int freshIndex = (int) event.obj % 30;
-                    for (int j = 0; j < seriesAdapter.getData().size(); j++) {
-                        seriesAdapter.getData().get(j).selected = false;
-                        seriesAdapter.notifyItemChanged(j);
-                    }
+                    int freshIndex = (int) event.obj;
+//                            % 30;
+//                    for (int j = 0; j < seriesAdapter.getData().size(); j++) {
+//                        seriesAdapter.getData().get(j).selected = false;
+//                        seriesAdapter.notifyItemChanged(j);
+//                    }
                     seriesAdapter.getData().get(freshIndex).selected = true;
                     seriesAdapter.notifyItemChanged(freshIndex);
                     mGridView.setSelection(freshIndex);
