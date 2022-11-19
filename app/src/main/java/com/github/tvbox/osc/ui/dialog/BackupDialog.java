@@ -40,6 +40,8 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 public class BackupDialog extends BaseDialog {
 
     public static final String BACK_UP_DIR = "/tvboxStore_backup/";
+    private static String root = Environment.getExternalStorageDirectory().getAbsolutePath();
+    private static final String root0 = "/storage/emulated/0/";
 
     public BackupDialog(@NonNull @NotNull Context context) {
         super(context);
@@ -103,7 +105,6 @@ public class BackupDialog extends BaseDialog {
 
     boolean deleteItem(int position) {
         try {
-            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
             File file = new File(root + BACK_UP_DIR);
             File[] list = file.listFiles();
             Arrays.sort(list, new Comparator<File>() {
@@ -132,8 +133,11 @@ public class BackupDialog extends BaseDialog {
     List<String> allBackup() {
         ArrayList<String> result = new ArrayList<>();
         try {
-            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
             File file = new File(root + BACK_UP_DIR);
+            if (!file.exists()) {
+                root = root0;
+            }
+            file = new File(root + BACK_UP_DIR);
             File[] list = file.listFiles();
             Arrays.sort(list, new Comparator<File>() {
                 @Override
@@ -203,7 +207,6 @@ public class BackupDialog extends BaseDialog {
 
     void restore(String dir) {
         try {
-            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
             File backup = new File(root + BACK_UP_DIR + dir);
             if (backup.exists()) {
                 File db = new File(backup, "sqlite");
@@ -240,10 +243,13 @@ public class BackupDialog extends BaseDialog {
 
     void backup() {
         try {
-            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
             File file = new File(root + BACK_UP_DIR);
             if (!file.exists())
                 file.mkdirs();
+            if (!file.exists()) {
+                root = root0;
+                file = new File(root + BACK_UP_DIR);
+            }
             Date now = new Date();
             SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH,mm,ss");
             File backup = new File(file, f.format(now));
@@ -270,7 +276,7 @@ public class BackupDialog extends BaseDialog {
             }
         } catch (Throwable e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "备份失败!请检查存储权限~", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "备份失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }
