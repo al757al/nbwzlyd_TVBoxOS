@@ -567,7 +567,7 @@ public class LivePlayActivity extends BaseActivity {
             if (!checkCanChangeProgress()) {//如果不能快进快退，就显示
                 if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                     if (!isListOrSettingLayoutVisible()) {
-                        showSettingGroup();
+                       playPreSource();
                     }
                 } else {
                     if (!isListOrSettingLayoutVisible()) {
