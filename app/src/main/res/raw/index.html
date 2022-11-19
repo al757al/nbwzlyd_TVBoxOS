@@ -611,4 +611,18 @@
         <script src="script.js"></script>
     </body>
 
+    <script>
+        new ClipboardJS('#liveCopy', {
+            text: function (trigger) {
+                return document.getElementById("fileUrl1").value;
+            }
+        }).on('success', function (e) {
+            alert("复制成功！！！");
+            e.clearSelection();
+        }).on('error', function (e) {
+            alert('Error!');
+        });
+
+    </script>
+
 </html>
