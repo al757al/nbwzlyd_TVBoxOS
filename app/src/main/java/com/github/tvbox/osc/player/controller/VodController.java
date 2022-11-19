@@ -398,7 +398,8 @@ public class VodController extends BaseController {
                 if (!fromUser) {
                     return;
                 }
-
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 long duration = mControlWrapper.getDuration();
                 long newPosition = (duration * progress) / seekBar.getMax();
                 String currentTime = stringForTime((int) newPosition);
