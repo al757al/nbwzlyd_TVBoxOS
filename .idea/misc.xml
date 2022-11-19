@@ -36,7 +36,7 @@
         <entry key="app/src/main/res/layout/activity_drive.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_history.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_home_top_indicator.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/activity_home_top_indicator.xml" value="0.16847826086956522" />
         <entry key="app/src/main/res/layout/activity_search.xml" value="0.1140625" />
         <entry key="app/src/main/res/layout/choose_play_layout.xml" value="0.26875" />
         <entry key="app/src/main/res/layout/dialog_about.xml" value="0.1" />
@@ -49,7 +49,7 @@
         <entry key="app/src/main/res/layout/fragment_model.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_model_new.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_model_new2.xml" value="0.375" />
-        <entry key="app/src/main/res/layout/fragment_user.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_user.xml" value="0.165" />
         <entry key="app/src/main/res/layout/item_dialog_backup.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layout/item_dialog_select.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_drive.xml" value="0.1" />
