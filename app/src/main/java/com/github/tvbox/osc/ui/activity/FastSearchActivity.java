@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -257,7 +258,7 @@ public class FastSearchActivity extends BaseActivity {
     }
 
     private void filterResult(String spName) {
-        if (spName == "全部显示") {
+        if (spName.equals("全部显示")) {
             mGridView.setVisibility(View.VISIBLE);
             mGridViewFilter.setVisibility(View.GONE);
             return;
@@ -265,9 +266,9 @@ public class FastSearchActivity extends BaseActivity {
         mGridView.setVisibility(View.GONE);
         mGridViewFilter.setVisibility(View.VISIBLE);
         String key = spNames.get(spName);
-        if (key.isEmpty()) return;
+        if (key == null || key.isEmpty()) return;
 
-        if (searchFilterKey == key) return;
+        if (Objects.equals(searchFilterKey, key)) return;
         searchFilterKey = key;
 
         List<Movie.Video> list = resultVods.get(key);
