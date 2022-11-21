@@ -84,21 +84,28 @@ public class GridFragment extends BaseLazyFragment {
 
     private void changeView(String id){
         initView();
-        this.sortData.id =id; // 修改sortData.id为新的ID
+        if (sortData == null) {
+            return;
+        }
+        this.sortData.id = id; // 修改sortData.id为新的ID
         initViewModel();
         initData();
     }
     public boolean isFolederMode(){ return (getUITag() =='1'); }
+
     // 获取当前页面UI的显示模式 ‘0’ 正常模式 '1' 文件夹模式 '2' 显示缩略图的文件夹模式
-    public char getUITag(){
-        System.out.println(sortData);
-        return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 ) ?  '0' : sortData.flag.charAt(0);
+    public char getUITag() {
+        return (sortData == null || sortData.flag == null || sortData.flag.length() == 0) ? '0' : sortData.flag.charAt(0);
     }
+
     // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
-    public boolean enableFastSearch(){  return (sortData.flag == null || sortData.flag.length() < 2 ) ?  true : (sortData.flag.charAt(1) =='1'); }
+    public boolean enableFastSearch() {
+        return sortData.flag == null || sortData.flag.length() < 2 || (sortData.flag.charAt(1) == '1');
+    }
+
     // 保存当前页面
-    private void saveCurrentView(){
-        if(this.mGridView == null) return;
+    private void saveCurrentView() {
+        if (this.mGridView == null) return;
         GridInfo info = new GridInfo();
         info.sortID = this.sortData.id;
         info.mGridView = this.mGridView;
