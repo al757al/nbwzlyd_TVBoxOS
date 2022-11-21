@@ -67,6 +67,9 @@ public class GridFragment extends BaseLazyFragment {
 
     public GridFragment setArguments(MovieSort.SortData sortData) {
         this.sortData = sortData;
+        if (sortData == null) {
+            this.sortData = new MovieSort.SortData();
+        }
         return this;
     }
 
