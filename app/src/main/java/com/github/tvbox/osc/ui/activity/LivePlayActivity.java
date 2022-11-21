@@ -49,6 +49,7 @@ import com.github.tvbox.osc.ui.dialog.LivePasswordDialog;
 import com.github.tvbox.osc.ui.dialog.LiveStoreDialog;
 import com.github.tvbox.osc.ui.tv.widget.ViewObj;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
+import com.github.tvbox.osc.util.Force;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
@@ -634,6 +635,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         OkGo.getInstance().cancelTag("epgAddress");
         mHandler.removeCallbacksAndMessages(null);
+        Force.get().stop();
     }
 
     private void showChannelList() {
@@ -1956,5 +1958,6 @@ public class LivePlayActivity extends BaseActivity {
             }
         }
     };
+
 
 }

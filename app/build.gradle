@@ -131,6 +131,8 @@ dependencies {
     implementation project(":player")
     implementation project(":quickjs")
     implementation project(":tv-recyclerview")
+    implementation project(":tvbus")
+    implementation project(":forcetech")
 
     implementation('org.xwalk:xwalk_shared_library:23.53.589.4') {
         exclude group: 'com.android.support'
