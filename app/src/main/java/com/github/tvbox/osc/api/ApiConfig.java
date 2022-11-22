@@ -21,6 +21,7 @@ import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.AES;
 import com.github.tvbox.osc.util.AdBlocker;
+import com.github.tvbox.osc.util.AlistDriveUtil;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.MD5;
@@ -29,9 +30,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.AbsCallback;
+import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.GetRequest;
 import com.orhanobut.hawk.Hawk;
@@ -403,14 +406,23 @@ public class ApiConfig {
             if (firstSite == null)
                 firstSite = sb;
             sourceBeanList.put(siteKey, sb);
+            if (siteKey.contains("Alist") || sb.getApi().contains("Alist")) {
+                executorService.execute(() -> OkGo.<String>get(sb.getExt()).execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        AlistDriveUtil.saveAlist(JsonParser.parseString(response.body()).getAsJsonObject());
+                    }
+                }));
+            }
         }
         if (sourceBeanList != null && sourceBeanList.size() > 0) {
             String home = Hawk.get(HawkConfig.HOME_API, "");
             SourceBean sh = getSource(home);
-            if (sh == null)
+            if (sh == null) {
                 setSourceBean(firstSite);
-            else
+            } else {
                 setSourceBean(sh);
+            }
         }
         //只有加载了py的情况下才开始解析py站点
         if (App.getInstance().getPyLoadSuccess()) {

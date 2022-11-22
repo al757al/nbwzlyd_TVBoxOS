@@ -2,6 +2,7 @@ package com.github.tvbox.osc.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,11 +86,11 @@ public class AlistDriveDialog extends DialogFragment {
                 String url = etUrl.getText().toString();
                 String initPath = etInitPath.getText().toString();
                 String password = etPassword.getText().toString();
-                if (name == null || name.length() == 0) {
+                if (TextUtils.isEmpty(name)) {
                     Toast.makeText(AlistDriveDialog.this.getContext(), "请赋予一个空间名称", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (url == null || url.length() == 0) {
+                if (TextUtils.isEmpty(url)) {
                     Toast.makeText(AlistDriveDialog.this.getContext(), "请务必填入Alist网页地址", Toast.LENGTH_SHORT).show();
                     return;
                 }

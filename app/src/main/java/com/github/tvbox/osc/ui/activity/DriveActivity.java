@@ -402,6 +402,7 @@ public class DriveActivity extends BaseActivity {
             this.btnRemoveServer.setColorFilter(ContextCompat.getColor(mContext, R.color.color_FFFFFF));
         }
         adapter.toggleDelMode(delMode);
+        adapter.notifyDataSetChanged();
     }
 
     private void initData() {
