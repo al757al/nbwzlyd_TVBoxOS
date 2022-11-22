@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.ScreenUtils;
@@ -54,6 +56,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
+import com.github.tvbox.osc.viewmodel.LiveViewModel;
 import com.google.gson.JsonArray;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
@@ -96,6 +99,8 @@ public class LivePlayActivity extends BaseActivity {
     private TvRecyclerView mLiveChannelView;
     private LiveChannelGroupAdapter liveChannelGroupAdapter;
     private LiveChannelItemAdapter liveChannelItemAdapter;
+
+    private LiveViewModel mLiveViewModel;
 
     private LinearLayout tvRightSettingLayout;
     private TvRecyclerView mSettingGroupView;
@@ -152,7 +157,6 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isSHIYI = false;
     private static String shiyi_time;//时移时间
     private static int shiyi_time_c;//时移时间差值
-    public static String playUrl;
     SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
     private View backcontroller;
     private TextView tv_currentpos;
@@ -174,6 +178,15 @@ public class LivePlayActivity extends BaseActivity {
 
         setLoadSir(findViewById(R.id.live_root));
         mVideoView = findViewById(R.id.mVideoView);
+        mLiveViewModel = new ViewModelProvider(this).get(LiveViewModel.class);
+        mLiveViewModel.result.observe(this, new Observer<Object>() {
+            @Override
+            public void onChanged(Object o) {
+                if (o instanceof String) {
+                    mVideoView.setUrl((String) o);
+                }
+            }
+        });
 
         tvLeftChannelListLayout = findViewById(R.id.tvLeftChannnelListLayout);
         mChannelGroupView = findViewById(R.id.mGroupGridView);
@@ -460,6 +473,7 @@ public class LivePlayActivity extends BaseActivity {
 
 
     private long exitTime;
+
     @Override
     public void onBackPressed() {
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
@@ -568,7 +582,7 @@ public class LivePlayActivity extends BaseActivity {
             if (!checkCanChangeProgress()) {//如果不能快进快退，就显示
                 if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                     if (!isListOrSettingLayoutVisible()) {
-                       playPreSource();
+                        playPreSource();
                     }
                 } else {
                     if (!isListOrSettingLayoutVisible()) {
@@ -713,7 +727,8 @@ public class LivePlayActivity extends BaseActivity {
         }
         showBottomEpg();
         getEpg(new Date());
-        mVideoView.setUrl(currentLiveChannelItem.getUrl());
+        mLiveViewModel.getUrl(currentLiveChannelItem);
+//        mVideoView.setUrl(currentLiveChannelItem.getUrl());
         mVideoView.start();
         return true;
     }
@@ -881,7 +896,8 @@ public class LivePlayActivity extends BaseActivity {
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
+                    mLiveViewModel.getUrl(currentLiveChannelItem);
+//                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
                     return;
@@ -907,9 +923,8 @@ public class LivePlayActivity extends BaseActivity {
                             shiyiUrl += "&playseek=" + shiyi_time;
                         }
                     }
-                    playUrl = shiyiUrl;
-
-                    mVideoView.setUrl(playUrl);
+                    mLiveViewModel.getUrl(shiyiUrl);
+//                    mVideoView.setUrl(shiyiUrl);
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
 //                    epgListAdapter.notifyDataSetChanged();
@@ -950,7 +965,8 @@ public class LivePlayActivity extends BaseActivity {
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
+                    mLiveViewModel.getUrl(currentLiveChannelItem);
+//                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
                     return;
@@ -958,7 +974,7 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if (now.compareTo(selectedData.startdateTime) < 0) {
 
-                } else if (shiyiUrl.indexOf("PLTV/8888") != -1) {
+                } else if (shiyiUrl.contains("PLTV/8888")) {
                     mHandler.removeCallbacks(mHideChannelListRun);
                     mHandler.postDelayed(mHideChannelListRun, 100);
 
@@ -976,9 +992,9 @@ public class LivePlayActivity extends BaseActivity {
                             shiyiUrl += "&playseek=" + shiyi_time;
                         }
                     }
-                    playUrl = shiyiUrl;
-
-                    mVideoView.setUrl(playUrl);
+//                    mVideoView.get(shiyiUrl);
+                    mLiveViewModel.getUrl(shiyiUrl);
+//                    mVideoView.setUrl(shiyiUrl);
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
                     mRightEpgList.setSelectedPosition(position);
@@ -1487,7 +1503,8 @@ public class LivePlayActivity extends BaseActivity {
             case 2://播放解码
                 mVideoView.release();
                 livePlayerManager.changeLivePlayerType(mVideoView, position, currentLiveChannelItem.getChannelName());
-                mVideoView.setUrl(currentLiveChannelItem.getUrl());
+                mLiveViewModel.getUrl(currentLiveChannelItem);
+//                mVideoView.setUrl(currentLiveChannelItem.getUrl());
                 mVideoView.start();
                 break;
             case 3://超时换源

@@ -30,7 +30,6 @@ public class LiveChannelItem implements Serializable, Cloneable {
     public boolean include_back = false;
     public boolean isCollected;
 
-
     public void setinclude_back(boolean include_back) {
         this.include_back = include_back;
     }
@@ -89,7 +88,12 @@ public class LiveChannelItem implements Serializable, Cloneable {
     }
 
     public String getUrl() {
+
         return channelUrls.get(sourceIndex);
+    }
+
+    public boolean isForceTv() {
+        return getUrl().startsWith("P") || getUrl().equals("mitv");
     }
 
     public int getSourceNum() {
