@@ -1,6 +1,8 @@
 package com.github.tvbox.osc.bean;
 
-public class IpScanningVo {
+import java.io.Serializable;
+
+public class IpScanningVo implements Serializable {
 
     private String hostName;
     private String ip;

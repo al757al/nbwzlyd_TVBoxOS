@@ -1,8 +1,9 @@
 package com.github.tvbox.osc.bean;
-import java.util.ArrayList;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class LiveEpgDate {
+public class LiveEpgDate implements Serializable {
 
     private int index;
     private String datePresented;

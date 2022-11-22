@@ -1,15 +1,12 @@
 package com.github.tvbox.osc.bean;
 
-import com.github.tvbox.osc.util.HawkConfig;
-import com.orhanobut.hawk.Hawk;
-
+import java.io.Serializable;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class Epginfo {
+public class Epginfo implements Serializable {
 
     public Date startdateTime;
     public Date enddateTime;

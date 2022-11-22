@@ -1,6 +1,8 @@
 package com.github.tvbox.osc.bean;
 
-public class Subtitle {
+import java.io.Serializable;
+
+public class Subtitle implements Serializable {
 
     private String name;
 

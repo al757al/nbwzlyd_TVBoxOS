@@ -1,8 +1,9 @@
 package com.github.tvbox.osc.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class LiveChannelGroup {
+public class LiveChannelGroup implements Serializable {
     /**
      * groupIndex : 分组索引号
      * groupName : 分组名称

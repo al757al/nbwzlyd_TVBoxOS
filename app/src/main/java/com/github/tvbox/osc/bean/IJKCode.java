@@ -3,6 +3,7 @@ package com.github.tvbox.osc.bean;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.orhanobut.hawk.Hawk;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 
 /**
@@ -10,7 +11,7 @@ import java.util.LinkedHashMap;
  * @date :2021/3/8
  * @description:
  */
-public class IJKCode {
+public class IJKCode implements Serializable {
     private String name;
     private LinkedHashMap<String, String> option;
     private boolean selected;

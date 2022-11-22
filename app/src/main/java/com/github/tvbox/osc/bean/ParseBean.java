@@ -4,12 +4,14 @@ import android.util.Base64;
 
 import com.github.tvbox.osc.util.DefaultConfig;
 
+import java.io.Serializable;
+
 /**
  * @author pj567
  * @date :2021/3/8
  * @description:
  */
-public class ParseBean {
+public class ParseBean implements Serializable {
 
     private String name;
     private String url;

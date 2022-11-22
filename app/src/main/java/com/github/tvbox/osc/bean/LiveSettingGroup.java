@@ -1,8 +1,9 @@
 package com.github.tvbox.osc.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class LiveSettingGroup {
+public class LiveSettingGroup implements Serializable {
     private int groupIndex;
     private String groupName;
     private ArrayList<LiveSettingItem> liveSettingItems;
