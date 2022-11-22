@@ -184,6 +184,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onChanged(Object o) {
                 if (o instanceof String) {
                     mVideoView.setUrl((String) o);
+                    mVideoView.start();
                 }
             }
         });
@@ -729,7 +730,7 @@ public class LivePlayActivity extends BaseActivity {
         getEpg(new Date());
         mLiveViewModel.getUrl(currentLiveChannelItem);
 //        mVideoView.setUrl(currentLiveChannelItem.getUrl());
-        mVideoView.start();
+//        mVideoView.start();
         return true;
     }
 
@@ -898,7 +899,7 @@ public class LivePlayActivity extends BaseActivity {
                     isSHIYI = false;
                     mLiveViewModel.getUrl(currentLiveChannelItem);
 //                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
-                    mVideoView.start();
+//                    mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
                     return;
                 }
@@ -925,7 +926,7 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     mLiveViewModel.getUrl(shiyiUrl);
 //                    mVideoView.setUrl(shiyiUrl);
-                    mVideoView.start();
+//                    mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
 //                    epgListAdapter.notifyDataSetChanged();
                     mRightEpgList.setSelectedPosition(position);
@@ -967,7 +968,7 @@ public class LivePlayActivity extends BaseActivity {
                     isSHIYI = false;
                     mLiveViewModel.getUrl(currentLiveChannelItem);
 //                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
-                    mVideoView.start();
+//                    mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
                     return;
                 }
@@ -995,7 +996,7 @@ public class LivePlayActivity extends BaseActivity {
 //                    mVideoView.get(shiyiUrl);
                     mLiveViewModel.getUrl(shiyiUrl);
 //                    mVideoView.setUrl(shiyiUrl);
-                    mVideoView.start();
+//                    mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
                     mRightEpgList.setSelectedPosition(position);
                     mRightEpgList.post(new Runnable() {
@@ -1505,7 +1506,7 @@ public class LivePlayActivity extends BaseActivity {
                 livePlayerManager.changeLivePlayerType(mVideoView, position, currentLiveChannelItem.getChannelName());
                 mLiveViewModel.getUrl(currentLiveChannelItem);
 //                mVideoView.setUrl(currentLiveChannelItem.getUrl());
-                mVideoView.start();
+//                mVideoView.start();
                 break;
             case 3://超时换源
                 Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, position);
