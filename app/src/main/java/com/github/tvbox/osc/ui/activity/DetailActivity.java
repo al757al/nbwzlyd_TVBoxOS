@@ -46,6 +46,7 @@ import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.IDMDownLoadUtil;
 import com.github.tvbox.osc.util.MD5;
+import com.github.tvbox.osc.util.ScreenUtils;
 import com.github.tvbox.osc.util.SearchHelper;
 import com.github.tvbox.osc.util.SubtitleHelper;
 import com.github.tvbox.osc.util.VodInfoClassifyUtil;
@@ -178,12 +179,12 @@ public class DetailActivity extends BaseActivity {
         tvSort = findViewById(R.id.tvSort);
         tvCollect = findViewById(R.id.tvCollect);
         TextView downLoadBtn = findViewById(R.id.idm_download);
-        downLoadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new IDMDownLoadUtil().startIDMDownLoad(DetailActivity.this);
-            }
-        });
+        if (ScreenUtils.isTv(mContext)) {//电视不显示idm下载，无意义
+            downLoadBtn.setVisibility(View.GONE);
+        } else {
+            downLoadBtn.setVisibility(View.VISIBLE);
+        }
+        downLoadBtn.setOnClickListener(v -> new IDMDownLoadUtil().startIDMDownLoad(DetailActivity.this));
         tvQuickSearch = findViewById(R.id.tvQuickSearch);
         mEmptyPlayList = findViewById(R.id.mEmptyPlaylist);
         mGridView = findViewById(R.id.mGridView);
