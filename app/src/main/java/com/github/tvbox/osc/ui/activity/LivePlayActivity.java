@@ -53,6 +53,7 @@ import com.github.tvbox.osc.ui.tv.widget.ViewObj;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.Force;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.M3uLiveParser;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
@@ -710,7 +711,9 @@ public class LivePlayActivity extends BaseActivity {
             // showChannelInfo();
             return true;
         }
-        mVideoView.release();
+        if (mVideoView != null) {
+            mVideoView.release();
+        }
         if (!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
@@ -1588,18 +1591,20 @@ public class LivePlayActivity extends BaseActivity {
             public void onSuccess(Response<String> response) {
                 JsonArray livesArray;
                 LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> linkedHashMap = new LinkedHashMap<>();
-                TxtSubscribe.parse(linkedHashMap, response.body());
-                livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
-
-                ApiConfig.get().loadLives(livesArray);
-                List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
-                if (list.isEmpty()) {
+                List<LiveChannelGroup> tmpList = M3uLiveParser.start(response.body());//尝试m3u解析
+                if (tmpList.isEmpty()) {//m3u解析是空
+                    TxtSubscribe.parse(linkedHashMap, response.body());
+                    livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
+                    ApiConfig.get().loadLives(livesArray);
+                    tmpList = ApiConfig.get().getChannelGroupList();
+                }
+                if (tmpList.isEmpty()) {
                     Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
                     showLiveSourceDialog();
                     return;
                 }
                 liveChannelGroupList.clear();
-                liveChannelGroupList.addAll(list);
+                liveChannelGroupList.addAll(tmpList);
                 mHandler.post(() -> {
                     LivePlayActivity.this.showSuccess();
                     initLiveState();
