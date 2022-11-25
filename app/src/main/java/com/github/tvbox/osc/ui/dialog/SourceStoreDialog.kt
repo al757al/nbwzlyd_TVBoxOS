@@ -29,6 +29,7 @@ import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
+import com.github.tvbox.osc.util.StringUtils
 import com.github.tvbox.osc.util.urlhttp.JumpUtils
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.cache.CacheMode
@@ -119,6 +120,11 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 R.id.tvName -> {
                     selectItem(position)
 
+                }
+                R.id.tvCopy -> {
+                    val item = mAdapter.getItem(position)
+                    val text = "${item?.sourceName}\n${item?.sourceUrl}"
+                    StringUtils.copyText(context, text)
                 }
             }
         }
@@ -348,6 +354,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         override fun createBaseViewHolder(view: View?): BaseViewHolder {
             val holder = super.createBaseViewHolder(view)
             holder.addOnClickListener(R.id.tvDel)
+            holder.addOnClickListener(R.id.tvCopy)
             holder.setVisible(R.id.tvDel, true)
             holder.addOnClickListener(R.id.tvName)
             return holder

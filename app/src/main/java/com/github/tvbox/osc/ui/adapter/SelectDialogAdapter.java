@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.SpanUtils;
 import com.github.tvbox.osc.R;
+import com.github.tvbox.osc.bean.MoreSourceBean;
+import com.github.tvbox.osc.util.StringUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +59,7 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
         notifyDataSetChanged();
     }
 
-    public void setSelect(int select){
+    public void setSelect(int select) {
         this.select = select;
     }
 
@@ -80,6 +83,13 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
         T value = data.get(position);
         String name = dialogInterface.getDisplay(value);
         TextView textView = holder.itemView.findViewById(R.id.tvName);
+        ImageView tvCopyView = holder.itemView.findViewById(R.id.tvCopy);
+
+        if (value instanceof MoreSourceBean) {
+            tvCopyView.setVisibility(View.VISIBLE);
+        } else {
+            tvCopyView.setVisibility(View.GONE);
+        }
 
         if (position == select) {
             textView.setText(SpanUtils.with(textView).
@@ -90,13 +100,21 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
             holder.itemView.clearFocus();
         }
         holder.itemView.setFocusable(true);
-        holder.itemView.setOnClickListener(v -> {
+        textView.setOnClickListener(v -> {
             if (position == select)
                 return;
             notifyItemChanged(select);
             select = position;
             notifyItemChanged(select);
             dialogInterface.click(value, position);
+        });
+
+        tvCopyView.setOnClickListener(v -> {
+            if (value instanceof MoreSourceBean) {
+                String copyText = ((MoreSourceBean) value).getSourceName() + "\n" + ((MoreSourceBean) value).getSourceUrl();
+                StringUtils.copyText(textView.getContext(), copyText);
+            }
+
         });
     }
 }
