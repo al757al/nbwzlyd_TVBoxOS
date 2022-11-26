@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -405,7 +406,7 @@ public class DetailActivity extends BaseActivity {
                     if (vodInfo.playIndex != clickPlayIndex) {
                         clickItem.selected = true;
                         seriesAdapter.notifyItemChanged(position);
-                        vodInfo.playIndex = allData.indexOf(clickItem);
+                        vodInfo.playIndex = clickPlayIndex;
                         reload = true;
                     }
                     //解决当前集不刷新的BUG
@@ -558,12 +559,13 @@ public class DetailActivity extends BaseActivity {
 
         loadVodInfo();
 
-        mGridView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mGridView.scrollToPosition(vodInfo.playIndex);
-            }
-        }, 100);
+//        mGridView.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                LogUtils.dTag("derek119",vodInfo.playIndex);
+//                mGridView.scrollToPosition(vodInfo.playIndex);
+//            }
+//        }, 100);
     }
 
     private void loadVodInfo() {
@@ -638,7 +640,7 @@ public class DetailActivity extends BaseActivity {
 //                    }
                     seriesAdapter.getData().get(freshIndex).selected = true;
                     seriesAdapter.notifyItemChanged(freshIndex);
-                    mGridView.setSelection(freshIndex);
+                    scrollToPlayPosAndRequestFoucuse(freshIndex);
                     vodInfo.playIndex = (int) event.obj;
                     //保存历史
                     insertVod(sourceKey, vodInfo);
@@ -1004,6 +1006,9 @@ public class DetailActivity extends BaseActivity {
         if (playFragment.mController != null) {
             playFragment.mController.setIsFullScreen(fullWindows);
         }
+        if (!fullWindows && vodInfo != null) {//恢复焦点
+            scrollToPlayPosAndRequestFoucuse(vodInfo.playIndex);
+        }
 //        if (fullWindows) {
 //            playFragment.initDefaultBright(this, 0.43f);
 //        } else {
@@ -1012,8 +1017,21 @@ public class DetailActivity extends BaseActivity {
         toggleSubtitleTextSize();
     }
 
+    private void scrollToPlayPosAndRequestFoucuse(int freshIndex) {
+        if (mGridView != null && mGridView.getLayoutManager() != null) {
+            mGridView.getLayoutManager().scrollToPosition(freshIndex);
+            new Handler().postDelayed(() -> {
+                View requestView = mGridView.getLayoutManager().findViewByPosition(freshIndex);
+                if (requestView != null) {
+                    requestView.requestFocus();
+                }
+            }, 300);
+
+        }
+    }
+
     void toggleSubtitleTextSize() {
-        int subtitleTextSize  = SubtitleHelper.getTextSize(this);
+        int subtitleTextSize = SubtitleHelper.getTextSize(this);
         if (!fullWindows) {
             subtitleTextSize *= 0.6;
         }

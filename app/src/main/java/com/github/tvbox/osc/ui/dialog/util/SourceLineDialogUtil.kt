@@ -1,7 +1,7 @@
 package com.github.tvbox.osc.ui.dialog.util
 
 import android.content.Context
-import android.text.TextUtils
+import android.view.Gravity
 import android.widget.Toast
 import com.blankj.utilcode.util.ToastUtils
 import com.github.UA
@@ -25,7 +25,6 @@ class SourceLineDialogUtil(private val context: Context) {
 
     //vip 线路 https://agit.ai/guot54/ygbh/raw/branch/master/PRO.json
 
-    private var DEFAULT_URL = ""
     private val dialog by lazy {
         SelectDialogNew<MoreSourceBean>(context)
     }
@@ -33,30 +32,38 @@ class SourceLineDialogUtil(private val context: Context) {
         SelectDialogAdapterInterface()
     }
     private var select: (() -> Unit)? = null
-
-
-    init {
-        val defaultBean =
-            Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, MoreSourceBean())
-        if (defaultBean != null) {
-            DEFAULT_URL = defaultBean.sourceUrl
-        }
-    }
+    private val history: ArrayList<String> =
+        Hawk.get(HawkConfig.API_HISTORY, java.util.ArrayList<String>())
+    private val defaultBean: MoreSourceBean =
+        Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, MoreSourceBean())
 
     fun getData(onSelect: () -> Unit) {
-        if (TextUtils.isEmpty(DEFAULT_URL)) {
-            ToastUtils.showShort("请先选择一个仓库哦~")
+        if (history.isEmpty() && defaultBean.sourceUrl.isEmpty()) {
+            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("当前没有线路链接")
             return
         }
-        if (DEFAULT_URL.startsWith("clan://")) {
-            DEFAULT_URL = ApiConfig.clanToAddress(DEFAULT_URL)
+        if (defaultBean.sourceUrl.isEmpty()) {//加载本地存储的线路
+            val localData = history.mapIndexed { index, s ->
+                MoreSourceBean().apply {
+                    sourceUrl = s
+                    sourceName = "自定义配置地址${index + 1}"
+                }
+            }
+            val selectUrl = Hawk.get(HawkConfig.API_URL, "")
+            val findData = localData.find {
+                it.sourceUrl == selectUrl
+            }
+            showDialog(localData, localData.indexOf(findData), onSelect = onSelect)
+            return
+        }
+        if (defaultBean.sourceUrl.startsWith("clan://")) {
+            defaultBean.sourceUrl = ApiConfig.clanToAddress(defaultBean.sourceUrl)
         }
 
-        val req = OkGo.get<String>(DEFAULT_URL).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
-        if (DEFAULT_URL.startsWith("https://gitcode")) {
+        val req = OkGo.get<String>(defaultBean.sourceUrl).cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
+        if (defaultBean.sourceUrl.startsWith("https://gitcode")) {
             req.headers(
-                "User-Agent",
-                UA.randomOne()
+                "User-Agent", UA.randomOne()
             ).headers("Accept", ApiConfig.requestAccept)
         }
         req.cacheTime(10L * 60L * 60L * 1000).execute(object : StringCallback() {
@@ -72,9 +79,7 @@ class SourceLineDialogUtil(private val context: Context) {
             override fun onError(response: Response<String>?) {
                 super.onError(response)
                 Toast.makeText(
-                    context,
-                    "接口请求失败${response?.exception?.message}",
-                    Toast.LENGTH_LONG
+                    context, "接口请求失败${response?.exception?.message}", Toast.LENGTH_LONG
                 ).show()
             }
 
@@ -82,9 +87,7 @@ class SourceLineDialogUtil(private val context: Context) {
     }
 
     private fun inflateData(
-        response: Response<String>?,
-        onSelect: () -> Unit,
-        isCache: Boolean = false
+        response: Response<String>?, onSelect: () -> Unit, isCache: Boolean = false
     ) {
         try {
             val json = JSONObject(response?.body().toString())
@@ -108,7 +111,7 @@ class SourceLineDialogUtil(private val context: Context) {
             val dataMap = data.associateBy {
                 it.sourceUrl
             }
-            val history = Hawk.get(HawkConfig.API_HISTORY, java.util.ArrayList<String>())
+
             history.forEachIndexed { index, s ->
                 if (dataMap[s] == null) {//返回的数据中不包含历史配置，添加进去
                     val configBean = MoreSourceBean().apply {
@@ -165,10 +168,8 @@ class SourceLineDialogUtil(private val context: Context) {
 //            if (history.size > 20) history.removeAt(20)
 //            Hawk.put(HawkConfig.API_HISTORY, history)
             EventBus.getDefault().post(
-                RefreshEvent(
-                    RefreshEvent.TYPE_API_URL_CHANGE,
-                    moreSourceBea?.sourceName?.ifEmpty { moreSourceBea.sourceUrl }
-                )
+                RefreshEvent(RefreshEvent.TYPE_API_URL_CHANGE,
+                    moreSourceBea?.sourceName?.ifEmpty { moreSourceBea.sourceUrl })
             )
             select?.invoke()
         }
