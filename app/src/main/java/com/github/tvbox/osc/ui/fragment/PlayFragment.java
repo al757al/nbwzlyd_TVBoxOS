@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
@@ -1158,7 +1159,11 @@ public class PlayFragment extends BaseLazyFragment {
                             if (rs.has("ua")) {
                                 webUserAgent = rs.optString("ua").trim();
                             }
-                            requireActivity().runOnUiThread(new Runnable() {
+                            FragmentActivity fragmentActivity = getActivity();
+                            if (fragmentActivity == null || PlayFragment.this.isDetached() || fragmentActivity.isFinishing()) {
+                                return;
+                            }
+                            fragmentActivity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     String mixParseUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));
