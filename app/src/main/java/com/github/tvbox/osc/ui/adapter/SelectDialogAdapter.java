@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.blankj.utilcode.util.SpanUtils;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.MoreSourceBean;
+import com.github.tvbox.osc.util.ScreenUtils;
 import com.github.tvbox.osc.util.StringUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -85,7 +86,7 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
         TextView textView = holder.itemView.findViewById(R.id.tvName);
         ImageView tvCopyView = holder.itemView.findViewById(R.id.tvCopy);
 
-        if (value instanceof MoreSourceBean) {
+        if (value instanceof MoreSourceBean && !ScreenUtils.isTv(textView.getContext())) {
             tvCopyView.setVisibility(View.VISIBLE);
         } else {
             tvCopyView.setVisibility(View.GONE);

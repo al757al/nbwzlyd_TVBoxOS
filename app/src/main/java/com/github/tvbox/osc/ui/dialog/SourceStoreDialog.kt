@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -29,6 +30,7 @@ import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
+import com.github.tvbox.osc.util.ScreenUtils
 import com.github.tvbox.osc.util.StringUtils
 import com.github.tvbox.osc.util.urlhttp.JumpUtils
 import com.lzy.okgo.OkGo
@@ -115,7 +117,11 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         mAdapter.setOnItemChildClickListener { adapter, view, position ->
             when (view.id) {
                 R.id.tvDel -> {
-                    deleteItem(position)
+                    AlertDialog.Builder(context, R.style.Theme_AppCompat_Light_Dialog_Alert)
+                        .setTitle("确定要删除?").setPositiveButton(
+                            "确定"
+                        ) { dialog, which -> deleteItem(position) }.setNegativeButton("点错了", null)
+                        .create().show()
                 }
                 R.id.tvName -> {
                     selectItem(position)
@@ -356,6 +362,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             holder.addOnClickListener(R.id.tvDel)
             holder.addOnClickListener(R.id.tvCopy)
             holder.setVisible(R.id.tvDel, true)
+            holder.setVisible(R.id.tvCopy, !ScreenUtils.isTv(view?.context))
             holder.addOnClickListener(R.id.tvName)
             return holder
         }
