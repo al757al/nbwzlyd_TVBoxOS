@@ -26,6 +26,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.CollectionUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -136,6 +137,7 @@ public class DetailActivity extends BaseActivity {
 
     private LinkedHashMap<VodInfo.VodSeriesFlag, List<VodInfo.VodSeries>> mapData = new LinkedHashMap<>();//分组
     private VodInfo.VodSeriesFlag mLastSelectedVodSeriesFlag = null;
+    private View downLoadBtn;
 
     @Override
     protected int getLayoutResID() {
@@ -179,7 +181,7 @@ public class DetailActivity extends BaseActivity {
         tvPlay = findViewById(R.id.tvPlay);
         tvSort = findViewById(R.id.tvSort);
         tvCollect = findViewById(R.id.tvCollect);
-        TextView downLoadBtn = findViewById(R.id.idm_download);
+        downLoadBtn = findViewById(R.id.idm_download);
         if (ScreenUtils.isTv(mContext)) {//电视不显示idm下载，无意义
             downLoadBtn.setVisibility(View.GONE);
         } else {
@@ -399,7 +401,7 @@ public class DetailActivity extends BaseActivity {
                     for (VodInfo.VodSeries allItem : allData) {
                         allItem.selected = false;
                     }
-                    seriesAdapter.notifyDataSetChanged();
+//                    seriesAdapter.notifyDataSetChanged();
                     VodInfo.VodSeries clickItem = seriesAdapter.getData().get(position);
                     int clickPlayIndex = allData.indexOf(clickItem);
                     //解决倒叙不刷新
@@ -903,6 +905,14 @@ public class DetailActivity extends BaseActivity {
                 return;
             }
         }
+        int focusId = getCurrentFocus().getId();
+        if (focusId == R.id.tvPlay || focusId == R.id.idm_download || focusId == R.id.tvQuickSearch ||
+                focusId == R.id.tvSort || focusId == R.id.tvCollect) {
+            super.onBackPressed();
+        } else {
+            tvPlay.requestFocus();
+            return;
+        }
         super.onBackPressed();
     }
 
@@ -1002,6 +1012,7 @@ public class DetailActivity extends BaseActivity {
         tvSort.setFocusable(!fullWindows);
         tvCollect.setFocusable(!fullWindows);
         tvQuickSearch.setFocusable(!fullWindows);
+        downLoadBtn.setFocusable(!fullWindows);
 
         if (playFragment.mController != null) {
             playFragment.mController.setIsFullScreen(fullWindows);
@@ -1022,6 +1033,8 @@ public class DetailActivity extends BaseActivity {
             mGridView.getLayoutManager().scrollToPosition(freshIndex);
             new Handler().postDelayed(() -> {
                 View requestView = mGridView.getLayoutManager().findViewByPosition(freshIndex);
+                LogUtils.dTag("derek110", "frehIndex->" + freshIndex
+                        + "  count " + mGridView.getLayoutManager().getChildCount());
                 if (requestView != null) {
                     requestView.requestFocus();
                 }
