@@ -907,7 +907,7 @@ public class DetailActivity extends BaseActivity {
         }
         int focusId = getCurrentFocus().getId();
         if (focusId == R.id.tvPlay || focusId == R.id.idm_download || focusId == R.id.tvQuickSearch ||
-                focusId == R.id.tvSort || focusId == R.id.tvCollect) {
+                focusId == R.id.tvSort || focusId == R.id.tvCollect || getCurrentFocus() instanceof TvRecyclerView) {
             super.onBackPressed();
         } else {
             tvPlay.requestFocus();
