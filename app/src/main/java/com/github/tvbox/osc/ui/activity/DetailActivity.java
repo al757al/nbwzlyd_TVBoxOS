@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,6 +28,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.CollectionUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -425,6 +427,14 @@ public class DetailActivity extends BaseActivity {
                         firstReverse = false;
                     }
                 }
+            }
+        });
+        seriesAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("准备下载，解析需要时间，请稍等，不一定能解析成功");
+                new IDMDownLoadUtil().startIDMDownLoad(DetailActivity.this, vodInfo, seriesAdapter.getData().get(position));
+                return true;
             }
         });
         mClassifyAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -904,6 +914,10 @@ public class DetailActivity extends BaseActivity {
                 seriesFlagFocus.requestFocus();
                 return;
             }
+        }
+        if (getCurrentFocus() == null) {
+            super.onBackPressed();
+            return;
         }
         int focusId = getCurrentFocus().getId();
         if (focusId == R.id.tvPlay || focusId == R.id.idm_download || focusId == R.id.tvQuickSearch ||
