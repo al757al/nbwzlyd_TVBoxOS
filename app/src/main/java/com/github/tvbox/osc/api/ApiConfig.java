@@ -406,7 +406,7 @@ public class ApiConfig {
             if (firstSite == null)
                 firstSite = sb;
             sourceBeanList.put(siteKey, sb);
-            if (siteKey.contains("Alist") || sb.getApi().contains("Alist")) {
+            if (siteKey.toLowerCase().contains("alist") || sb.getApi().toLowerCase().contains("Alist")) {
                 executorService.execute(() -> OkGo.<String>get(sb.getExt()).execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {

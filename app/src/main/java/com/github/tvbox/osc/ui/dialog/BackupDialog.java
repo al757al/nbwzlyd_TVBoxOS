@@ -39,7 +39,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 public class BackupDialog extends BaseDialog {
 
-    public static final String BACK_UP_DIR = "/tvboxStore_backup/";
+    public static final String BACK_UP_DIR = "/tvboxStore1_backup/";
     private static String root = Environment.getExternalStorageDirectory().getAbsolutePath();
     private static final String root0 = "/storage/emulated/0/";
 
