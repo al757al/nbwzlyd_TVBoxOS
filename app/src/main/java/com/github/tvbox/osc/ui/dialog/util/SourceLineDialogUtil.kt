@@ -48,7 +48,7 @@ class SourceLineDialogUtil(private val context: Context) {
             ToastUtils.showShort("请先选择一个仓库哦~")
             return
         }
-        if (DEFAULT_URL.startsWith("clan://")){
+        if (DEFAULT_URL.startsWith("clan://")) {
             DEFAULT_URL = ApiConfig.clanToAddress(DEFAULT_URL)
         }
 
@@ -104,18 +104,20 @@ class SourceLineDialogUtil(private val context: Context) {
                 }
                 data.add(moreSourceBean)
             }
-//            val history = Hawk.get(HawkConfig.API_HISTORY, java.util.ArrayList<String>())
-//            if (history.isNotEmpty()) {
-//                history.forEachIndexed { index, s ->
-//                    val configBean = MoreSourceBean().apply {
-//                        this.sourceUrl = s
-//                        this.sourceName = "自定义配置地址${index + 1}"
-//                    }
-//                    if (!data.contains(configBean)) {
-//                        data.add(configBean)
-//                    }
-//                }
-//            }
+
+            val dataMap = data.associateBy {
+                it.sourceUrl
+            }
+            val history = Hawk.get(HawkConfig.API_HISTORY, java.util.ArrayList<String>())
+            history.forEachIndexed { index, s ->
+                if (dataMap[s] == null) {//返回的数据中不包含历史配置，添加进去
+                    val configBean = MoreSourceBean().apply {
+                        this.sourceUrl = s
+                        this.sourceName = "自定义配置地址${index + 1}"
+                    }
+                    data.add(configBean)
+                }
+            }
             val selectUrl = Hawk.get(HawkConfig.API_URL, "")
             val findData = data.findFirst {
                 it.sourceUrl == selectUrl
