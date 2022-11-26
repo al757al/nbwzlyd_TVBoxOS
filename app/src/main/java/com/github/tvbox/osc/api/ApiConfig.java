@@ -131,10 +131,10 @@ public class ApiConfig {
         return json;
     }
 
-    private static byte[] getImgJar(String body){
+    private static byte[] getImgJar(String body) {
         Pattern pattern = Pattern.compile("[A-Za-z0]{8}\\*\\*");
         Matcher matcher = pattern.matcher(body);
-        if(matcher.find()){
+        if (matcher.find()) {
             body = body.substring(body.indexOf(matcher.group()) + 10);
             return Base64.decode(body, Base64.DEFAULT);
         }
@@ -310,7 +310,7 @@ public class ApiConfig {
                 if (cache.exists())
                     cache.delete();
                 FileOutputStream fos = new FileOutputStream(cache);
-                if(isJarInImg) {
+                if (isJarInImg) {
                     String respData = response.body().string();
                     byte[] imgJar = getImgJar(respData);
                     fos.write(imgJar);
@@ -410,7 +410,12 @@ public class ApiConfig {
                 executorService.execute(() -> OkGo.<String>get(sb.getExt()).execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        AlistDriveUtil.saveAlist(JsonParser.parseString(response.body()).getAsJsonObject());
+                        try {
+                            AlistDriveUtil.saveAlist(JsonParser.parseString(response.body().trim()).getAsJsonObject());
+                        } catch (Exception e) {
+
+                        }
+
                     }
                 }));
             }
