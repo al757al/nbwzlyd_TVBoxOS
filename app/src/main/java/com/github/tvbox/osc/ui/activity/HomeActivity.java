@@ -335,6 +335,7 @@ public class HomeActivity extends BaseActivity {
                                     for (View view : floatWindowViewByToken) {
                                         getWindowManager().removeViewImmediate(view);
                                     }
+                                    ToastUtils.make().show("系统监测到有注入弹框，已为你强制关闭（你没看见是代码执行的太快）");
                                 }
                             } catch (Exception e) {
 
