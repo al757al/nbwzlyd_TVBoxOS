@@ -30,6 +30,7 @@
         android:layout_marginBottom="@dimen/vs_10"
         android:gravity="center"
         android:text="扫码远程推送(点我跳转)"
+        android:focusable="false"
         android:textColor="@color/color_CC000000"
         app:layout_constraintBottom_toTopOf="@id/qrCode"
         app:layout_constraintLeft_toLeftOf="@id/qrCode"

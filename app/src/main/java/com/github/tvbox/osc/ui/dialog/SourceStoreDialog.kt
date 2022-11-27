@@ -370,8 +370,8 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
         override fun convert(holder: BaseViewHolder, item: MoreSourceBean) {
             showDefault(item, holder)
+            val textView = holder.getView<TextView>(R.id.tvName)
             if (item.isSelected) {
-                val text = holder.getView<TextView>(R.id.tvName).text
                 holder.setText(
                     R.id.tvName,
                     SpanUtils.with(holder.getView(R.id.tvName)).appendImage(
@@ -379,9 +379,11 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                             holder.getView<TextView>(R.id.tvName).context,
                             R.drawable.ic_select_fill
                         )!!
-                    ).append(" ").append(text).create()
+                    ).append(" ").append(textView.text).create()
                 )
+//                textView.requestFocus()
             } else {
+//                textView.clearFocus()
                 showDefault(item, holder)
             }
         }
