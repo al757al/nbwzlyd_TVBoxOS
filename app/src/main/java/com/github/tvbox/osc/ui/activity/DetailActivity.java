@@ -407,6 +407,7 @@ public class DetailActivity extends BaseActivity {
                     int clickPlayIndex = allData.indexOf(clickItem);
                     //解决倒叙不刷新
                     if (vodInfo.playIndex != clickPlayIndex) {
+                        seriesAdapter.notifyItemChanged(vodInfo.playIndex);
                         clickItem.selected = true;
                         seriesAdapter.notifyItemChanged(position);
                         vodInfo.playIndex = clickPlayIndex;
