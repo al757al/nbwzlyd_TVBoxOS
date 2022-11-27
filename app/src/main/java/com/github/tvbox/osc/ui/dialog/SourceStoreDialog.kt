@@ -70,7 +70,9 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     override fun dismiss() {
         EventBus.getDefault().unregister(this)
         //更新成最新的仓库排序
-        Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE_DATA, mAdapter.data)
+        if (mAdapter.data.isNotEmpty()) {
+            Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE_DATA, mAdapter.data)
+        }
         super.dismiss()
     }
 
