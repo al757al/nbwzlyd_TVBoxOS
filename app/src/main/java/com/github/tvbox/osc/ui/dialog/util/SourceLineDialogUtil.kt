@@ -170,12 +170,6 @@ class SourceLineDialogUtil(private val context: Context) {
             //更新源
             Hawk.put(HawkConfig.API_URL, moreSourceBea?.sourceUrl)
             Hawk.put(HawkConfig.API_URL_BEAN, moreSourceBea)
-//            val history = Hawk.get(HawkConfig.API_HISTORY, ArrayList<String>())
-//            if (!history.contains(moreSourceBea?.sourceUrl)) {
-//                history.add(0, moreSourceBea?.sourceUrl.toString())
-//            }
-//            if (history.size > 20) history.removeAt(20)
-//            Hawk.put(HawkConfig.API_HISTORY, history)
             EventBus.getDefault().post(
                 RefreshEvent(RefreshEvent.TYPE_API_URL_CHANGE,
                     moreSourceBea?.sourceName?.ifEmpty { moreSourceBea.sourceUrl })

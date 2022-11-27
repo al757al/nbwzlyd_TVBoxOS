@@ -228,6 +228,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                             if (moreSourceBean.sourceName.isEmpty()) {
                                 moreSourceBean.sourceName = "自定义配置线路${historySourceBeanList.size}"
                             }
+                            moreSourceBean.isServer = false
                             historySourceBeanList.add(it)
                         }
                         Hawk.put(HawkConfig.API_HISTORY_LIST, historySourceBeanList)

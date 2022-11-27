@@ -27,7 +27,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.CollectionUtils;
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -1047,8 +1046,6 @@ public class DetailActivity extends BaseActivity {
             mGridView.getLayoutManager().scrollToPosition(freshIndex);
             new Handler().postDelayed(() -> {
                 View requestView = mGridView.getLayoutManager().findViewByPosition(freshIndex);
-                LogUtils.dTag("derek110", "frehIndex->" + freshIndex
-                        + "  count " + mGridView.getLayoutManager().getChildCount());
                 if (requestView != null) {
                     requestView.requestFocus();
                 }
