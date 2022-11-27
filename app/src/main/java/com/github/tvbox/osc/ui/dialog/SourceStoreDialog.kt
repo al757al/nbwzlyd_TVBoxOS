@@ -225,6 +225,9 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                         Hawk.get(HawkConfig.API_HISTORY_LIST, ArrayList<MoreSourceBean>())
                     moreSourceBean?.let {
                         if (historySourceBeanList.indexOf(moreSourceBean) == -1) {
+                            if (moreSourceBean.sourceName.isEmpty()) {
+                                moreSourceBean.sourceName = "自定义配置线路${historySourceBeanList.size}"
+                            }
                             historySourceBeanList.add(it)
                         }
                         Hawk.put(HawkConfig.API_HISTORY_LIST, historySourceBeanList)
