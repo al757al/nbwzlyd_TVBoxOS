@@ -31,29 +31,26 @@ class SourceLineDialogUtil(private val context: Context) {
     private val mSelectDialogAdapterInterface by lazy {
         SelectDialogAdapterInterface()
     }
-    private var select: (() -> Unit)? = null
-    private val history: ArrayList<String> =
-        Hawk.get(HawkConfig.API_HISTORY, java.util.ArrayList<String>())
+    private val historySourceBeanList =
+        Hawk.get(HawkConfig.API_HISTORY_LIST, ArrayList<MoreSourceBean>())
     private val defaultBean: MoreSourceBean =
         Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, MoreSourceBean())
 
     fun getData(onSelect: () -> Unit) {
-        if (history.isEmpty() && defaultBean.sourceUrl.isEmpty()) {
+        if (historySourceBeanList.isEmpty() && defaultBean.sourceUrl.isEmpty()) {
             ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("当前没有线路链接")
             return
         }
         if (defaultBean.sourceUrl.isEmpty()) {//加载本地存储的线路
-            val localData = history.mapIndexed { index, s ->
-                MoreSourceBean().apply {
-                    sourceUrl = s
-                    sourceName = "自定义配置地址${index + 1}"
-                }
-            }
             val selectUrl = Hawk.get(HawkConfig.API_URL, "")
-            val findData = localData.find {
+            val findData = historySourceBeanList.find {
                 it.sourceUrl == selectUrl
             }
-            showDialog(localData, localData.indexOf(findData), onSelect = onSelect)
+            showDialog(
+                historySourceBeanList,
+                historySourceBeanList.indexOf(findData),
+                onSelect = onSelect
+            )
             return
         }
         if (defaultBean.sourceUrl.startsWith("clan://")) {
@@ -108,17 +105,29 @@ class SourceLineDialogUtil(private val context: Context) {
                 data.add(moreSourceBean)
             }
 
-            val dataMap = data.associateBy {
+//            val dataMap = data.associateBy {
+//                it.sourceUrl
+//            }
+//
+//            history.forEachIndexed { index, s ->
+//                if (dataMap[s] == null) {//返回的数据中不包含历史配置，添加进去
+//                    val configBean = MoreSourceBean().apply {
+//                        this.sourceUrl = s
+//                        this.sourceName = "自定义配置地址${index + 1}"
+//                    }
+//                    data.add(configBean)
+//                }
+//            }
+
+            val dataMap2 = data.associateBy {
                 it.sourceUrl
             }
-
-            history.forEachIndexed { index, s ->
-                if (dataMap[s] == null) {//返回的数据中不包含历史配置，添加进去
-                    val configBean = MoreSourceBean().apply {
-                        this.sourceUrl = s
-                        this.sourceName = "自定义配置地址${index + 1}"
+            historySourceBeanList.forEachIndexed { index, moreSourceBean ->
+                if (dataMap2[moreSourceBean.sourceUrl] == null) {
+                    if (moreSourceBean.sourceName.isEmpty()) {
+                        moreSourceBean.sourceName = "自定义配置地址${index + 1}"
                     }
-                    data.add(configBean)
+                    data.add(moreSourceBean)
                 }
             }
             val selectUrl = Hawk.get(HawkConfig.API_URL, "")
