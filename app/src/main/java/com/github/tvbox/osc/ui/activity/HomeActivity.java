@@ -27,6 +27,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.codelang.window.FloatingWindowManager;
 import com.github.megatronking.stringfog.annotation.StringFogIgnore;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -326,6 +327,19 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void success() {
                         jarInitOk = true;
+                        //关闭jar注入的弹框
+                        new Handler().postDelayed(() -> {
+                            try {
+                                List<View> floatWindowViewByToken = FloatingWindowManager.INSTANCE.getFloatWindowViewByToken(HomeActivity.this);
+                                if (!floatWindowViewByToken.isEmpty()) {
+                                    for (View view : floatWindowViewByToken) {
+                                        getWindowManager().removeViewImmediate(view);
+                                    }
+                                }
+                            } catch (Exception e) {
+
+                            }
+                        }, 200);
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
