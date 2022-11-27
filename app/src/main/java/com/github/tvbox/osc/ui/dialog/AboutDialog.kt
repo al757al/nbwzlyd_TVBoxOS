@@ -25,6 +25,7 @@ class AboutDialog(context: Context) : BaseDialog(context) {
                     8、增加idm长按下载功能
                     9、线路弹框支持保存推送的配置地址，并支持删除
                     10、修复网盘内置字幕不展示问题
+                    11、屏蔽jar注入弹框
 
     """.trimIndent()
             ).create()
