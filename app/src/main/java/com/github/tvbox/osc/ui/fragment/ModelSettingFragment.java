@@ -86,11 +86,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private View mClearDataTextView;
     private TextView mForbidDialogText;
     boolean isForbidDialog = Hawk.get(HawkConfig.FORBID_JAR_DIALOG, true);
-
-
     boolean isLastOpen = Hawk.get(HawkConfig.IMMERSIVE_SWITCH, false);
-
-
     public static ModelSettingFragment newInstance() {
         return new ModelSettingFragment().setArguments();
     }

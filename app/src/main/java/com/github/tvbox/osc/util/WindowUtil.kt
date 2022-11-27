@@ -20,7 +20,7 @@ class WindowUtil {
     companion object {
         @JvmStatic
         fun closeDialog(activity: Activity?, showToast: Boolean = false, delayTime: Long? = 200) {
-            if (!Hawk.get(HawkConfig.FORBID_JAR_DIALOG, false)) {
+            if (!Hawk.get(HawkConfig.FORBID_JAR_DIALOG, true)) {
                 return
             }
             if (activity?.isFinishing == true || activity == null) {
