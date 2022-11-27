@@ -610,6 +610,7 @@ public class PlayActivity extends BaseActivity {
         sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
             @Override
             public void onChanged(JSONObject info) {
+//                WindowUtil.closeDialog(PlayActivity.this, false,0L);
                 if (info != null) {
                     try {
                         progressKey = info.optString("proKey", null);

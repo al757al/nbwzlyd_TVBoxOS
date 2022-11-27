@@ -619,6 +619,7 @@ public class PlayFragment extends BaseLazyFragment {
         sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
             @Override
             public void onChanged(JSONObject info) {
+//                WindowUtil.closeDialog(getActivity(),false,0L);
                 if (info != null) {
                     try {
                         progressKey = info.optString("proKey", null);

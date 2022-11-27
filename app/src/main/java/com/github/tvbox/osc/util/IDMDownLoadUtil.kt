@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.view.Gravity
+import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.github.UA
 import com.github.tvbox.osc.api.ApiConfig
@@ -116,10 +117,12 @@ class IDMDownLoadUtil {
                 spThreadPool.execute {
                     val sp = ApiConfig.get().getCSP(sourceBean)
                     val json = sp.playerContent(playFlag, url, ApiConfig.get().vipParseFlags)
+                    WindowUtil.closeDialog(ActivityUtils.getTopActivity(), false, 0L);
                     try {
                         val result = JSONObject(json)
                         val url = result.get("url").toString()
                         mHandler.post {
+//                            WindowUtil.closeDialog(context as?Activity,false,0L)
                             realStartIDMDownLoad(context, name, url)
                         }
                     } catch (th: Throwable) {
@@ -143,6 +146,7 @@ class IDMDownLoadUtil {
                     result.put("playUrl", playUrl)
                     val url = result.get("url").toString()
                     mHandler.post {
+//                        WindowUtil.closeDialog(context as?Activity,false,0L)
                         realStartIDMDownLoad(context, name, url)
                     }
                 } catch (th: Throwable) {
@@ -174,6 +178,7 @@ class IDMDownLoadUtil {
                                 if (!result.has("flag")) result.put("flag", playFlag)
                                 val url = result.get("url").toString()
                                 mHandler.post {
+//                                    WindowUtil.closeDialog(context as?Activity,false,0L)
                                     realStartIDMDownLoad(context, name, url)
                                 }
                             } catch (th: Throwable) {

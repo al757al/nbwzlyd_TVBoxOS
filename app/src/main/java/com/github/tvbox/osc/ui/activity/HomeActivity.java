@@ -27,7 +27,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.codelang.window.FloatingWindowManager;
 import com.github.megatronking.stringfog.annotation.StringFogIgnore;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -52,6 +51,7 @@ import com.github.tvbox.osc.ui.tv.widget.ViewObj;
 import com.github.tvbox.osc.util.AppManager;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.WindowUtil;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
@@ -328,19 +328,7 @@ public class HomeActivity extends BaseActivity {
                     public void success() {
                         jarInitOk = true;
                         //关闭jar注入的弹框
-                        new Handler().postDelayed(() -> {
-                            try {
-                                List<View> floatWindowViewByToken = FloatingWindowManager.INSTANCE.getFloatWindowViewByToken(HomeActivity.this);
-                                if (!floatWindowViewByToken.isEmpty()) {
-                                    for (View view : floatWindowViewByToken) {
-                                        getWindowManager().removeViewImmediate(view);
-                                    }
-                                    ToastUtils.make().show("系统监测到有注入弹框，已为你强制关闭（你没看见是代码执行的太快）");
-                                }
-                            } catch (Exception e) {
-
-                            }
-                        }, 200);
+                        WindowUtil.closeDialog(HomeActivity.this, true, 200L);
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
