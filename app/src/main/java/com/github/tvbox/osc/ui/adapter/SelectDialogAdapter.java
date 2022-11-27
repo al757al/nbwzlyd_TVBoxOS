@@ -95,12 +95,11 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
         if (position == select) {
             textView.setText(SpanUtils.with(textView).
                     appendImage(ContextCompat.getDrawable(textView.getContext(), R.drawable.ic_select_fill)).append(" ").append(name).create());
-            holder.itemView.requestFocus();
+            textView.requestFocus();
         } else {
             textView.setText(name);
-            holder.itemView.clearFocus();
+            textView.clearFocus();
         }
-        holder.itemView.setFocusable(true);
         textView.setOnClickListener(v -> {
             if (position == select)
                 return;
