@@ -1,9 +1,10 @@
 package com.github.tvbox.osc.player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrackInfo {
+public class TrackInfo implements Serializable {
     private List<TrackInfoBean> audio;
     private List<TrackInfoBean> subtitle;
 

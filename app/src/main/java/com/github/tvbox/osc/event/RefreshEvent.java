@@ -1,11 +1,13 @@
 package com.github.tvbox.osc.event;
 
+import java.io.Serializable;
+
 /**
  * @author pj567
  * @date :2021/1/6
  * @description:
  */
-public class RefreshEvent {
+public class RefreshEvent implements Serializable {
     public static final int TYPE_REFRESH = 0;
     public static final int TYPE_HISTORY_REFRESH = 1;
     public static final int TYPE_QUICK_SEARCH = 2;

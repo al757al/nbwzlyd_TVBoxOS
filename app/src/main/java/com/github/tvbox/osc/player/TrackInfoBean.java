@@ -1,6 +1,8 @@
 package com.github.tvbox.osc.player;
 
-public class TrackInfoBean {
+import java.io.Serializable;
+
+public class TrackInfoBean implements Serializable {
     public String name;
     public String language;
     public int index;

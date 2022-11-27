@@ -27,15 +27,16 @@
 
 package com.github.tvbox.osc.subtitle.model;
 
-public class Style {
+import java.io.Serializable;
+
+public class Style implements Serializable {
 
 	private static int styleCounter;
 
 	/**
 	 * Constructor that receives a String to use a its identifier
-	 * 
-	 * @param styleName
-	 *            = identifier of this style
+	 *
+	 * @param styleName = identifier of this style
 	 */
 	public Style(String styleName) {
 		this.iD = styleName;

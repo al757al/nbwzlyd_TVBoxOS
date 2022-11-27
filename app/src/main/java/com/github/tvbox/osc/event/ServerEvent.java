@@ -1,11 +1,13 @@
 package com.github.tvbox.osc.event;
 
+import java.io.Serializable;
+
 /**
  * @author pj567
  * @date :2021/1/5
  * @description:
  */
-public class ServerEvent {
+public class ServerEvent implements Serializable {
     public static final int SERVER_SUCCESS = 0;
     public static final int SERVER_CONNECTION = 1;
     public static final int SERVER_SEARCH = 2;

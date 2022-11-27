@@ -27,16 +27,18 @@
 
 package com.github.tvbox.osc.subtitle.model;
 
-public class Time {
-	
+import java.io.Serializable;
+
+public class Time implements Serializable {
+
 	/**
 	 * Constructor to create a time object.
-	 * 
+	 *
 	 * @param format supported formats: "hh:mm:ss,ms", "h:mm:ss.cs" and "h:m:s:f/fps"
 	 * @param value  string in the correct format
 	 */
 	public Time(String format, String value) {
-		if (format.equalsIgnoreCase("hh:mm:ss,ms")){
+		if (format.equalsIgnoreCase("hh:mm:ss,ms")) {
 			// this type of format:  01:02:22,501 (used in .SRT)
 			int h, m, s, ms;
 			h = Integer.parseInt(value.substring(0, 2));

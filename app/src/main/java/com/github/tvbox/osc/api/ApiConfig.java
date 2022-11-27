@@ -48,6 +48,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,7 +65,7 @@ import java.util.regex.Pattern;
  * @date :2020/12/18
  * @description:
  */
-public class ApiConfig {
+public class ApiConfig implements Serializable {
     private static ApiConfig instance;
     private LinkedHashMap<String, SourceBean> sourceBeanList;
     private SourceBean mHomeSource;
