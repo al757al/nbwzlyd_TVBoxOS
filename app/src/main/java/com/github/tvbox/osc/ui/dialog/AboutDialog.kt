@@ -23,8 +23,8 @@ class AboutDialog(context: Context) : BaseDialog(context) {
                     6、增加仓库和线路拷贝功能
                     7、优化播放页的焦点选中态，默认会选中当前播放的条目
                     8、增加idm长按下载功能
-                    9、线路弹框支持保存推送的配置地址
-                    10、其他bug修复
+                    9、线路弹框支持保存推送的配置地址，并支持删除
+                    10、修复网盘内置字幕不展示问题
 
     """.trimIndent()
             ).create()
