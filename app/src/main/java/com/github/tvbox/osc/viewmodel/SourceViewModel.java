@@ -274,6 +274,8 @@ public class SourceViewModel extends ViewModel {
                     .params("ac", type == 0 ? "videolist" : "detail")
                     .params("t", sortData == null ? "" : sortData.id)
                     .params("pg", page)
+                    .params(sortData.filterSelect)
+                    .params("f", (sortData.filterSelect == null || sortData.filterSelect.size() <= 0) ? "" : new JSONObject(sortData.filterSelect).toString())
                     .execute(new AbsCallback<String>() {
 
                         @Override
@@ -536,7 +538,7 @@ public class SourceViewModel extends ViewModel {
             try {
                 Spider sp = ApiConfig.get().getCSP(sourceBean);
                 String search = sp.searchContent(wd, false);
-                if (!search.isEmpty()) {
+                if (!TextUtils.isEmpty(search)) {
                     json(searchResult, search, sourceBean.getKey());
                 }
             } catch (Throwable th) {

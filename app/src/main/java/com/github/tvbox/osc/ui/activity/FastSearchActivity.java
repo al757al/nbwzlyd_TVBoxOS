@@ -20,7 +20,6 @@ import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.event.ServerEvent;
-import com.github.tvbox.osc.js.JSEngine;
 import com.github.tvbox.osc.ui.adapter.FastListAdapter;
 import com.github.tvbox.osc.ui.adapter.FastSearchAdapter;
 import com.github.tvbox.osc.ui.adapter.SearchWordAdapter;
@@ -195,7 +194,6 @@ public class FastSearchActivity extends BaseActivity {
                     try {
                         if (searchExecutorService != null) {
                             pauseRunnable = searchExecutorService.shutdownNow();
-                            JSEngine.getInstance().stopAll();
                             searchExecutorService = null;
                         }
                     } catch (Throwable th) {
@@ -222,7 +220,6 @@ public class FastSearchActivity extends BaseActivity {
                     try {
                         if (searchExecutorService != null) {
                             pauseRunnable = searchExecutorService.shutdownNow();
-                            JSEngine.getInstance().stopAll();
                             searchExecutorService = null;
                         }
                     } catch (Throwable th) {
@@ -381,7 +378,6 @@ public class FastSearchActivity extends BaseActivity {
         try {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
-                JSEngine.getInstance().stopAll();
                 searchExecutorService = null;
             }
         } catch (Throwable th) {
@@ -503,7 +499,6 @@ public class FastSearchActivity extends BaseActivity {
         try {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
-                JSEngine.getInstance().stopAll();
                 searchExecutorService = null;
             }
         } catch (Throwable th) {
