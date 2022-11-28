@@ -130,7 +130,6 @@ dependencies {
 //    implementation 'com.github.princekin-f:EasyFloat:2.0.4'
 
     implementation project(":player")
-    implementation project(":quickjs")
     implementation project(":tv-recyclerview")
     implementation project(":tvbus")
     implementation project(":forcetech")
@@ -162,4 +161,6 @@ dependencies {
             exclude group: 'xpp3', module: 'xpp3'
         }
     }
+    implementation 'io.github.taoweiji.quickjs:quickjs-android:1.+'
+
 }

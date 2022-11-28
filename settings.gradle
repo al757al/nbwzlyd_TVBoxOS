@@ -1,7 +1,6 @@
 rootProject.name = "TVBox"
 include ':app'
 include ':player'
-include ':quickjs'
 include ':tv-recyclerview'
 include ':tvbus'
 include ':easyfloat'

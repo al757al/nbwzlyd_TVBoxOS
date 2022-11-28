@@ -18,6 +18,7 @@ import com.github.tvbox.osc.bean.LiveSourceBean;
 import com.github.tvbox.osc.bean.MoreSourceBean;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.SourceBean;
+import com.github.tvbox.osc.js.JSEngine;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.AES;
 import com.github.tvbox.osc.util.AdBlocker;
@@ -427,6 +428,7 @@ public class ApiConfig implements Serializable {
             executorService.execute(() -> PythonLoader.getInstance().setConfig(jsonStr));
         }
 
+        JSEngine.getInstance().clear();
         // 需要使用vip解析的flag
         vipParseFlags = DefaultConfig.safeJsonStringList(infoJson, "flags");
         // 解析地址
@@ -610,6 +612,8 @@ public class ApiConfig implements Serializable {
                 return new SpiderNull();
             }
         }
+        boolean js = sourceBean.getApi().startsWith("js_") || sourceBean.getApi().endsWith(".js") || sourceBean.getApi().contains(".js?");
+        if (js) return JSEngine.getInstance().getSpider(sourceBean);
         return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
     }
 
