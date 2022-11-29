@@ -209,7 +209,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private fun serverString2Json(moreSourceBean: MoreSourceBean?, response: Response<String>?) {
         try {
             mLoading.letGone()
-            val jsonObj = JSONObject(response?.body() ?: return)
+            var tempKey: String? = null
+            if (moreSourceBean?.sourceUrl?.contains(";pk;") == true) {
+                tempKey = moreSourceBean.sourceUrl.split(";pk;")[1]
+            }
+            val findResult = ApiConfig.FindResult(response?.body(), tempKey)
+            val jsonObj = JSONObject(findResult ?: return)
             var jsonArray: JSONArray? = null
             if (!jsonObj.has("storeHouse")) {
                 if (jsonObj.has("urls")) {//可能是单仓库
@@ -219,10 +224,6 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                     )
                 } else if (jsonObj.has("sites")) {//可能是线路
                     Hawk.put(HawkConfig.API_URL, moreSourceBean?.sourceUrl)
-//                    val history = Hawk.get(HawkConfig.API_HISTORY, ArrayList<String>())
-//                    if (!history.contains(moreSourceBean?.sourceUrl)) {
-//                        history.add(0, moreSourceBean?.sourceUrl.toString())
-//                    }
                     val historySourceBeanList =
                         Hawk.get(HawkConfig.API_HISTORY_LIST, ArrayList<MoreSourceBean>())
                     moreSourceBean?.let {
