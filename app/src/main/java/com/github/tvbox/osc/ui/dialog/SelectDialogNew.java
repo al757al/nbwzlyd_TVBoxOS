@@ -49,7 +49,7 @@ public class SelectDialogNew<T> extends BaseDialog {
         adapter.getData().addAll(data);
         diffResult.dispatchUpdatesTo(adapter);
         tvRecyclerView.post(() -> {
-            tvRecyclerView.scrollToPosition(select);
+            tvRecyclerView.scrollToPositionWithOffset(select, 0, true);
         });
     }
 

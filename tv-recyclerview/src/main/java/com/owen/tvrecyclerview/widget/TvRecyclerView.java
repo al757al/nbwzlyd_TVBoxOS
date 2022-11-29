@@ -1147,6 +1147,11 @@ public class TvRecyclerView extends RecyclerView implements View.OnClickListener
         }
 
         @Override
+        protected void updateActionForInterimTarget(Action action) {
+            action.jumpTo(mSelectedPosition);
+        }
+
+        @Override
         protected int calculateTimeForScrolling(int dx) {
             return mIsSmooth ? super.calculateTimeForScrolling(dx) :
                     ((int) Math.ceil(Math.abs(dx) * (4f / getContext().getResources().getDisplayMetrics().densityDpi)));
@@ -1154,7 +1159,7 @@ public class TvRecyclerView extends RecyclerView implements View.OnClickListener
 
         @Override
         protected void onTargetFound(View targetView, State state, Action action) {
-            if(mSelectedItemCentered && null != getLayoutManager()) {
+            if (mSelectedItemCentered && null != getLayoutManager()) {
                 getDecoratedBoundsWithMargins(targetView, mTempRect);
                 mOffset = (getLayoutManager().canScrollHorizontally() ? (getFreeWidth() - mTempRect.width())
                         : (getFreeHeight() - mTempRect.height())) / 2;
