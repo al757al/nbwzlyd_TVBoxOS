@@ -268,7 +268,7 @@ public class SourceViewModel extends ViewModel {
             OkGo.<String>get(homeSourceBean.getApi())
                     .tag(homeSourceBean.getApi())
                     .params("ac", type == 0 ? "videolist" : "detail")
-                    .params("t", sortData.id)
+                    .params("t", sortData == null ? "" : sortData.id)
                     .params("pg", page)
                     .execute(new AbsCallback<String>() {
 
@@ -693,9 +693,9 @@ public class SourceViewModel extends ViewModel {
                 @Override
                 public void run() {
                     Spider sp = ApiConfig.get().getCSP(sourceBean);
-                    String json = sp.playerContent(playFlag, url, ApiConfig.get().getVipParseFlags());
-                    WindowUtil.closeDialog(ActivityUtils.getTopActivity(), false, 0L);
                     try {
+                        String json = sp.playerContent(playFlag, url, ApiConfig.get().getVipParseFlags());
+                        WindowUtil.closeDialog(ActivityUtils.getTopActivity(), false, 0L);
                         JSONObject result = new JSONObject(json);
                         result.put("key", url);
                         result.put("proKey", progressKey);
