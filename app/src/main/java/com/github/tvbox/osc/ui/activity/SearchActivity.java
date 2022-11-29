@@ -27,7 +27,6 @@ import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.event.ServerEvent;
-import com.github.tvbox.osc.js.JSEngine;
 import com.github.tvbox.osc.ui.adapter.PinyinAdapter;
 import com.github.tvbox.osc.ui.adapter.SearchAdapter;
 import com.github.tvbox.osc.ui.dialog.RemoteDialog;
@@ -194,7 +193,6 @@ public class SearchActivity extends BaseActivity {
                 if (video != null) {
                     try {
                         if (searchExecutorService != null) {
-                            JSEngine.getInstance().stopAll();
                             pauseRunnable = searchExecutorService.shutdownNow();
                             searchExecutorService = null;
                         }
