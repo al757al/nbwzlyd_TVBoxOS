@@ -262,12 +262,9 @@ public class DriveActivity extends BaseActivity {
                                 @Override
                                 public void fail(String msg) {
                                     showEmpty();
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast toast = Toast.makeText(mContext, msg, Toast.LENGTH_SHORT);
-                                            toast.show();
-                                        }
+                                    mHandler.post(() -> {
+                                        Toast toast = Toast.makeText(mContext, msg, Toast.LENGTH_SHORT);
+                                        toast.show();
                                     });
                                 }
                             });

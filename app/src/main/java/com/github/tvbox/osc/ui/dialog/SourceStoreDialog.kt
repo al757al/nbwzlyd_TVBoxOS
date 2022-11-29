@@ -377,7 +377,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             holder.addOnClickListener(R.id.tvDel)
             holder.addOnClickListener(R.id.tvCopy)
             holder.setVisible(R.id.tvDel, true)
-            holder.setGone(R.id.tvCopy, ScreenUtils.isTv(view?.context))
+            holder.setGone(R.id.tvCopy, !ScreenUtils.isTv(view?.context))
             holder.addOnClickListener(R.id.tvName)
             return holder
         }
