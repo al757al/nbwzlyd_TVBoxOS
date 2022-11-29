@@ -58,7 +58,7 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                 requestBody.put("page_num", 1);
                 requestBody.put("page_size", 30);
                 PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
-                request.cacheTime(2 * 60 * 60 * 1000).cacheKey(request.getUrl() + requestBody.get("path"))
+                request.cacheTime(2 * 60 * 1000).cacheKey(request.getUrl() + requestBody.get("path"))
                         .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST);
                 request.upJson(requestBody);
                 setRequestHeader(request, webLink);
@@ -224,7 +224,7 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                 requestBody.put("page_size", 30);
                 PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
                 request.cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheKey(request.getUrl() + requestBody.get("path"))
-                        .cacheTime(2 * 60 * 60 * 1000);
+                        .cacheTime(2 * 60 * 1000);
                 request.upJson(requestBody);
                 setRequestHeader(request, webLink);
                 request.execute(new AbsCallback<String>() {

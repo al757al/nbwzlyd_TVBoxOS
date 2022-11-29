@@ -53,7 +53,7 @@ class AlistWebParse(val alistDriveViewModel: AlistDriveViewModel) {
         requestBody.put("page_num", 1)
         requestBody.put("page_size", 30)
         val request =
-            OkGo.post<String>(webLink).tag("drive").cacheTime(2 * 60 * 60 * 1000);
+            OkGo.post<String>(webLink).tag("drive").cacheTime(2 * 60 * 1000);
         request.cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
         request.cacheKey(request.url + requestBody.get("path"))
         request.upJson(requestBody)
@@ -70,7 +70,7 @@ class AlistWebParse(val alistDriveViewModel: AlistDriveViewModel) {
 
             override fun onError(response: Response<String>?) {
                 super.onError(response)
-                callback.fail("当前网盘内容不支持")
+                callback.fail("当前网盘内容不支持|或清除缓存后重试")
             }
 
         })
@@ -87,35 +87,40 @@ class AlistWebParse(val alistDriveViewModel: AlistDriveViewModel) {
             val items: MutableList<DriveFolderFile> = mutableListOf()
             val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             try {
-                val jsonArray = respData.getAsJsonObject("data").getAsJsonArray("content")
-                for (i in 0 until jsonArray.size()) {
-                    val jsonObject = jsonArray.get(i).asJsonObject
-                    val name = jsonObject.get("name").asString
-                    val fileType = jsonObject.get("type").asInt.toString()//1的话是文件夹。2是视频
-                    val isDir = jsonObject.get("is_dir").asBoolean
-                    val updateTime = jsonObject.get("modified").asString
+                var jsonArray = respData.getAsJsonObject("data").get("content")
+                if (jsonArray.isJsonNull) {
+                    callback.fail("当前目录是空")
+                } else {
+                    jsonArray = jsonArray.asJsonArray
+                    for (i in 0 until jsonArray.size()) {
+                        val jsonObject = jsonArray.get(i).asJsonObject
+                        val name = jsonObject.get("name").asString
+                        val fileType = jsonObject.get("type").asInt.toString()//1的话是文件夹。2是视频
+                        val isDir = jsonObject.get("is_dir").asBoolean
+                        val updateTime = jsonObject.get("modified").asString
 
-                    val extNameStartIndex: Int = name.lastIndexOf(".")
-                    val driveFile = DriveFolderFile(
-                        alistDriveViewModel.currentDriveNote,
-                        name,
-                        !isDir,
-                        if (fileType == "2") name.substring(extNameStartIndex + 1) else fileType,
-                        dateFormat.parse(updateTime).time
+                        val extNameStartIndex: Int = name.lastIndexOf(".")
+                        val driveFile = DriveFolderFile(
+                            alistDriveViewModel.currentDriveNote,
+                            name,
+                            !isDir,
+                            if (fileType == "2") name.substring(extNameStartIndex + 1) else fileType,
+                            dateFormat.parse(updateTime).time
+                        )
+                        items.add(driveFile)
+                    }
+                    alistDriveViewModel.sortData(items)
+                    val backItem = DriveFolderFile(null, null, false, null, null)
+                    backItem.parentFolder = backItem
+                    items.add(0, backItem)
+                    alistDriveViewModel.currentDriveNote.children = items
+                    callback.callback(
+                        alistDriveViewModel.currentDriveNote.children,
+                        false
                     )
-                    items.add(driveFile)
                 }
-                alistDriveViewModel.sortData(items)
-                val backItem = DriveFolderFile(null, null, false, null, null)
-                backItem.parentFolder = backItem
-                items.add(0, backItem)
-                alistDriveViewModel.currentDriveNote.children = items
-                callback.callback(
-                    alistDriveViewModel.currentDriveNote.children,
-                    false
-                )
             } catch (e: Exception) {
-                callback.fail("当前网盘内容不支持")
+                callback.fail("当前网盘内容不支持|或清除缓存后重试")
             }
 
 

@@ -73,7 +73,7 @@ public class ApiConfig implements Serializable {
     private List<LiveChannelGroup> liveChannelGroupList;
     private List<ParseBean> parseBeanList;
     private List<String> vipParseFlags;
-    private List<IJKCode> ijkCodes;
+    private List<IJKCode> ijkCodes = new ArrayList<>();
     private String spider = null;
     public String wallpaper = "";
     private SourceBean emptyHome = new SourceBean();
@@ -508,8 +508,7 @@ public class ApiConfig implements Serializable {
         }
         // IJK解码配置
 
-        if (ijkCodes == null) {
-            ijkCodes = new ArrayList<>();
+        if (ijkCodes.isEmpty()) {
             boolean foundOldSelect = false;
             String ijkCodec = Hawk.get(HawkConfig.IJK_CODEC, "");
             for (JsonElement opt : AdBlocker.defaultJsonObject.get("ijk").getAsJsonArray()) {
@@ -803,7 +802,7 @@ public class ApiConfig implements Serializable {
     }
 
     public IJKCode getIJKCodec(String name) {
-        if (ijkCodes == null) {
+        if (ijkCodes == null || ijkCodes.isEmpty()) {
             return null;
         }
         for (IJKCode code : ijkCodes) {
