@@ -133,11 +133,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
         }
         findViewById(R.id.forbidJarDialog).setOnClickListener(v -> {
             isForbidDialog = !isForbidDialog;
-            mForbidDialogText.setText(isForbidDialog ? "开" : "关");
+            mForbidDialogText.setText(isForbidDialog ? "已打开" : "已关闭");
             Hawk.put(HawkConfig.FORBID_JAR_DIALOG, isForbidDialog);
         });
         mForbidDialogText = findViewById(R.id.forbidJarDialogText);
-        mForbidDialogText.setText(isForbidDialog ? "开" : "关");
+        mForbidDialogText.setText(isForbidDialog ? "已打开" : "已关闭");
 //        tvEpgApi.setText("EPG地址已隐藏");
         tvDns.setText(OkGoHelper.dnsHttpsList.get(Hawk.get(HawkConfig.DOH_URL, 0)));
         tvHomeRec.setText(getHomeRecName(Hawk.get(HawkConfig.HOME_REC, 0)));

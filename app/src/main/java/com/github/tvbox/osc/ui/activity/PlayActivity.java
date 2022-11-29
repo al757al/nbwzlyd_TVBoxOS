@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.github.catvod.crawler.Spider;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -448,18 +450,15 @@ public class PlayActivity extends BaseActivity {
                         mController.mSubtitleView.clearSubtitleCache();
                         mController.mSubtitleView.isInternal = true;
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.index);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                                mediaPlayer.start();
-                            }
+                        new Handler().postDelayed(() -> {
+                            mediaPlayer.seekTo(progress);
+                            mediaPlayer.start();
                         }, 800);
                     }
 
                     dialog.dismiss();
                 } catch (Exception e) {
-                    LOG.e("切换内置字幕出错");
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("内置字幕出错" + e.getMessage());
                 }
             }
 

@@ -1027,7 +1027,7 @@
                     android:id="@+id/forbidJarDialogText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="关闭"
+                    android:text="已打开"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 

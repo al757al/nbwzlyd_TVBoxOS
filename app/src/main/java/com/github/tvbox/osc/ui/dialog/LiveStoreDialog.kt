@@ -25,12 +25,14 @@ import com.github.tvbox.osc.ui.dialog.util.AdapterDiffCallBack
 import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
+import com.github.tvbox.osc.util.StringUtils
 import com.orhanobut.hawk.Hawk
 import com.owen.tvrecyclerview.widget.TvRecyclerView
 import me.jessyan.autosize.utils.AutoSizeUtils
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.nio.charset.Charset
 
 //直播多源地址
 class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
@@ -103,6 +105,27 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 R.id.tvName -> {//重启liveactivity
                     selectNewLiveSource(mAdapter.data[position])
 
+                }
+                R.id.tvCopy -> {
+                    val data = mAdapter.data[position]
+                    var url = data.sourceUrl
+                    if (!url.startsWith("http") || !url.startsWith("https")) {
+                        try {
+                            url = String(
+                                Base64.decode(
+                                    url,
+                                    Base64.DEFAULT or Base64.URL_SAFE or Base64.NO_WRAP
+                                ), Charset.forName("UTF-8")
+                            );
+                        } catch (e: Exception) {
+
+                        }
+                    }
+                    val copyText = """
+                        ${data.sourceName}
+                        $url
+                        """.trimIndent()
+                    StringUtils.copyText(view.context, copyText)
                 }
             }
         }
@@ -216,6 +239,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             val holder = super.createBaseViewHolder(view)
             holder.addOnClickListener(R.id.tvDel)
             holder.addOnClickListener(R.id.tvName)
+            holder.addOnClickListener(R.id.tvCopy)
             return holder
         }
 

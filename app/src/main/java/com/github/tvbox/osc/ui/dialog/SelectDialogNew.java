@@ -2,7 +2,6 @@ package com.github.tvbox.osc.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -52,12 +51,6 @@ public class SelectDialogNew<T> extends BaseDialog {
         tvRecyclerView.post(() -> {
             tvRecyclerView.scrollToPosition(select);
         });
-        tvRecyclerView.postDelayed(() -> {
-            final View itemView = tvRecyclerView.getLayoutManager().findViewByPosition(select);
-            if (itemView != null) {
-                itemView.requestFocus();
-            }
-        }, 150);
     }
 
     public List<T> getOldItems() {

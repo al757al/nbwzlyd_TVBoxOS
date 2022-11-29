@@ -27,8 +27,6 @@ package com.github.tvbox.osc.subtitle.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import androidx.annotation.Nullable;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -38,6 +36,8 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.github.tvbox.osc.cache.CacheManager;
 import com.github.tvbox.osc.subtitle.DefaultSubtitleEngine;
@@ -67,6 +67,7 @@ public class SimpleSubtitleView extends TextView
     public boolean hasInternal = false;
 
     private TextView backGroundText = null;//用于描边的TextView
+
 
     public SimpleSubtitleView(final Context context) {
         super(context);
@@ -104,13 +105,17 @@ public class SimpleSubtitleView extends TextView
             setText(EMPTY_TEXT);
             return;
         }
+        //        {\blur3}我先聲明 誰要先放手誰就輸了{\r}
         String text = subtitle.content;
         text = text.replaceAll("(?:\\r\\n)", "<br />");
         text = text.replaceAll("(?:\\r)", "<br />");
         text = text.replaceAll("(?:\\n)", "<br />");
+        text = text.replaceAll("\\{\\blur3\\}", "");
+        text = text.replaceAll("\\{\\r\\}", "");
         text = text.replaceAll("\\{[\\s\\S]*\\}", "");
         setText(Html.fromHtml(text));
     }
+
 
     @Override
     public void setSubtitlePath(final String path) {
