@@ -256,13 +256,7 @@ public class DriveActivity extends BaseActivity {
                             boxedViewModel.loadFile(selectedItem, new AlistDriveViewModel.LoadFileCallback() {
                                 @Override
                                 public void callback(String fileUrl) {
-                                    showSuccess();
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            playFile(fileUrl, selectedItem.name);
-                                        }
-                                    });
+                                    mHandler.post(() -> playFile(fileUrl, selectedItem.name));
                                 }
 
                                 @Override
@@ -317,6 +311,7 @@ public class DriveActivity extends BaseActivity {
         bundle.putSerializable("VodInfo", vodInfo);
         // takagen99 - to play file here zzzzzzzzzzzzzzz
         jumpActivity(PlayActivity.class, bundle);
+        mHandler.postDelayed(() -> showSuccess(), 300);
     }
 
     private void openSortDialog() {
