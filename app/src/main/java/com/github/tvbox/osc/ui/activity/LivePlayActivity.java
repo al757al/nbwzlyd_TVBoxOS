@@ -751,13 +751,15 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.post(mHideChannelListRun);
         }
         if (tvRightSettingLayout.getVisibility() == View.INVISIBLE) {
-            if (!isCurrentLiveChannelValid()) return;
+//            if (!isCurrentLiveChannelValid()) return;
             //重新载入默认状态
             loadCurrentSourceList();
             liveSettingGroupAdapter.setNewData(liveSettingGroupList);
             selectSettingGroup(0, false);
             mSettingGroupView.scrollToPosition(0);
-            mSettingItemView.scrollToPosition(currentLiveChannelItem.getSourceIndex());
+            if (currentLiveChannelItem != null) {
+                mSettingItemView.scrollToPosition(currentLiveChannelItem.getSourceIndex());
+            }
             mHandler.postDelayed(mFocusAndShowSettingGroup, 200);
         } else {
             mHandler.removeCallbacks(mHideSettingLayoutRun);
@@ -1381,7 +1383,7 @@ public class LivePlayActivity extends BaseActivity {
 
 
     private void selectSettingGroup(int position, boolean focus) {
-        if (!isCurrentLiveChannelValid()) return;
+//        if (!isCurrentLiveChannelValid()) return;
         if (focus) {
             liveSettingGroupAdapter.setFocusedGroupIndex(position);
             liveSettingItemAdapter.setFocusedItemIndex(-1);
@@ -1401,7 +1403,9 @@ public class LivePlayActivity extends BaseActivity {
 
         switch (position) {
             case 0:
-                liveSettingItemAdapter.selectItem(currentLiveChannelItem.getSourceIndex(), true, false);
+                if (currentLiveChannelItem != null) {
+                    liveSettingItemAdapter.selectItem(currentLiveChannelItem.getSourceIndex(), true, false);
+                }
                 break;
             case 1:
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerScale(), true, true);
@@ -1670,6 +1674,9 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void loadCurrentSourceList() {
+        if (currentLiveChannelItem == null) {
+            return;
+        }
         ArrayList<String> currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
         ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
         for (int j = 0; j < currentSourceNames.size(); j++) {
