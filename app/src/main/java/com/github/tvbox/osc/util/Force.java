@@ -11,8 +11,8 @@ import android.os.SystemClock;
 import com.forcetech.Port;
 import com.github.tvbox.osc.base.App;
 import com.gsoft.mitv.MainActivity;
+import com.gsoft.mitv.P2PService;
 import com.lzy.okgo.OkGo;
-import com.service.P2PService;
 
 import java.io.File;
 
@@ -42,6 +42,7 @@ public class Force {
     private void start() {
         App.getInstance().bindService(new Intent(App.getInstance(), MainActivity.class), mConn, Context.BIND_AUTO_CREATE);
         App.getInstance().bindService(new Intent(App.getInstance(), P2PService.class), mConn, Context.BIND_AUTO_CREATE);
+//        App.getInstance().bindService(new Intent(App.getInstance(), P9PService.class), mConn, Context.BIND_AUTO_CREATE);
     }
 
     public String fetch(String url) {

@@ -36,7 +36,7 @@ public class TxtSubscribe {
                             String trim2 = split[0].trim();
                             for (String str2 : split[1].trim().split("#")) {
                                 String trim3 = str2.trim();
-                                if (!trim3.isEmpty() && (trim3.startsWith("http") || trim3.startsWith("rtsp") || trim3.startsWith("rtmp") || trim3.startsWith("P") || trim3.startsWith("mitv"))) {
+                                if (!trim3.isEmpty() && (trim3.startsWith("http") || trim3.startsWith("rtsp") || trim3.startsWith("rtmp") || trim3.toLowerCase().startsWith("p") || trim3.startsWith("mitv"))) {
                                     if (!linkedHashMap3.containsKey(trim2)) {
                                         arrayList = new ArrayList<>();
                                         linkedHashMap3.put(trim2, arrayList);
