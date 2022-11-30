@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.tvbox.osc.R;
@@ -23,6 +24,7 @@ import java.util.List;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 public class SelectDialog<T> extends BaseDialog {
+
     public SelectDialog(@NonNull @NotNull Context context) {
         super(context);
         setContentView(R.layout.dialog_select);
@@ -40,8 +42,20 @@ public class SelectDialog<T> extends BaseDialog {
     }
 
     public void setLayoutManger(RecyclerView.LayoutManager layoutManger) {
-        findViewById(R.id.rootLayout).setLayoutParams(new FrameLayout.LayoutParams(AutoSizeUtils.mm2px(getContext(), 650), ViewGroup.LayoutParams.WRAP_CONTENT));
-        TvRecyclerView recyclerView = (TvRecyclerView) findViewById(R.id.list);
+        int count = ((GridLayoutManager) layoutManger).getSpanCount();
+        int width = AutoSizeUtils.mm2px(getContext(), 650);
+        if (count == 1) {
+            width = AutoSizeUtils.mm2px(getContext(), 480);
+        } else if (count == 2) {
+
+        } else if (count == 3) {
+            width = AutoSizeUtils.mm2px(getContext(), 820);
+
+        } else if (count == 4) {
+            width = AutoSizeUtils.mm2px(getContext(), 980);
+        }
+        findViewById(R.id.rootLayout).setLayoutParams(new FrameLayout.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT));
+        TvRecyclerView recyclerView = findViewById(R.id.list);
         int padding = AutoSizeUtils.mm2px(getContext(), 8);
         recyclerView.setPadding(padding, 0, padding, 0);
         recyclerView.setLayoutManager(layoutManger);

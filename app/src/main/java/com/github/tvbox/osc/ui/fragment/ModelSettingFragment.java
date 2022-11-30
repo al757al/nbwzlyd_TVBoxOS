@@ -85,8 +85,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvFastSearchText;
     private View mClearDataTextView;
     private TextView mForbidDialogText;
+    private TextView mHomeCellText;
     boolean isForbidDialog = Hawk.get(HawkConfig.FORBID_JAR_DIALOG, true);
+    private int homeCellsCount = Hawk.get(HawkConfig.HOME_CELLS_COUNT, 2);
     boolean isLastOpen = Hawk.get(HawkConfig.IMMERSIVE_SWITCH, false);
+
     public static ModelSettingFragment newInstance() {
         return new ModelSettingFragment().setArguments();
     }
@@ -121,6 +124,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvHomeRec = findViewById(R.id.tvHomeRec);
         tvHistoryNum = findViewById(R.id.tvHistoryNum);
         tvSearchView = findViewById(R.id.tvSearchView);
+        mHomeCellText = findViewById(R.id.home_cell_text);
         tvMediaCodec.setText(Hawk.get(HawkConfig.IJK_CODEC, ""));
 //        tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
         tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
@@ -136,9 +140,19 @@ public class ModelSettingFragment extends BaseLazyFragment {
             mForbidDialogText.setText(isForbidDialog ? "已打开" : "已关闭");
             Hawk.put(HawkConfig.FORBID_JAR_DIALOG, isForbidDialog);
         });
+
         mForbidDialogText = findViewById(R.id.forbidJarDialogText);
         mForbidDialogText.setText(isForbidDialog ? "已打开" : "已关闭");
 //        tvEpgApi.setText("EPG地址已隐藏");
+        String showCells = String.format("%d%s", homeCellsCount, "列");
+        mHomeCellText.setText(showCells);
+
+        findViewById(R.id.home_cells).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showHomeCellsDialog(showCells);
+            }
+        });
         tvDns.setText(OkGoHelper.dnsHttpsList.get(Hawk.get(HawkConfig.DOH_URL, 0)));
         tvHomeRec.setText(getHomeRecName(Hawk.get(HawkConfig.HOME_REC, 0)));
         tvHistoryNum.setText(HistoryHelper.getHistoryNumName(Hawk.get(HawkConfig.HISTORY_NUM, 0)));
@@ -227,8 +241,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
-                if (wp.exists())
-                    wp.delete();
+                if (wp.exists()) wp.delete();
                 ((BaseActivity) requireActivity()).changeWallpaper(true);
             }
         });
@@ -330,8 +343,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 List<IJKCode> ijkCodes = ApiConfig.get().getIjkCodes();
-                if (ijkCodes == null || ijkCodes.size() == 0)
-                    return;
+                if (ijkCodes == null || ijkCodes.size() == 0) return;
                 FastClickCheckUtil.check(v);
 
                 int defaultPos = 0;
@@ -622,13 +634,12 @@ public class ModelSettingFragment extends BaseLazyFragment {
             }
         });
         findViewById(R.id.more_source).setOnClickListener(v -> {
-            new SourceLineDialogUtil(mActivity).
-                    getData(() -> {
-                        if (getActivity() != null) {
-                            getActivity().onBackPressed();
-                        }
-                        return null;
-                    });
+            new SourceLineDialogUtil(mActivity).getData(() -> {
+                if (getActivity() != null) {
+                    getActivity().onBackPressed();
+                }
+                return null;
+            });
 
         });
         findViewById(R.id.default_more_store).setOnClickListener(v -> {
@@ -687,29 +698,26 @@ public class ModelSettingFragment extends BaseLazyFragment {
         });
     }
 
+
     private void showThreadCountDialog() {
         EditText editText = new EditText(getContext());
         editText.setLayoutParams(new ViewGroup.LayoutParams(AutoSizeUtils.mm2px(getContext(), 10f), AutoSizeUtils.mm2px(getContext(), 30f)));
         editText.setInputType(TYPE_CLASS_NUMBER);
-        AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setTitle("设置搜索线程")
-                .setMessage("因机器设备性能问题，搜索线程不是越大越好，线程太多可能会闪退（不超30）")
-                .setView(editText)
-                .setNegativeButton("取消", (dialog1, which) -> {
-                }).setPositiveButton("确定", (dialog12, which) -> {
-                    int count = 8;
-                    try {
-                        count = Integer.parseInt(editText.getText().toString().trim());
-                        if (count >= 30) {
-                            ToastUtils.showShort("线程数量不要超过30,没卵用");
-                            return;
-                        }
-                    } catch (Exception e) {
-                        count = 8;
-                    }
-                    Hawk.put(HawkConfig.THREAD_COUNT, count);
-                    showThreadCountText(count);
-                }).create();
+        AlertDialog dialog = new AlertDialog.Builder(getContext()).setTitle("设置搜索线程").setMessage("因机器设备性能问题，搜索线程不是越大越好，线程太多可能会闪退（不超30）").setView(editText).setNegativeButton("取消", (dialog1, which) -> {
+        }).setPositiveButton("确定", (dialog12, which) -> {
+            int count = 8;
+            try {
+                count = Integer.parseInt(editText.getText().toString().trim());
+                if (count >= 30) {
+                    ToastUtils.showShort("线程数量不要超过30,没卵用");
+                    return;
+                }
+            } catch (Exception e) {
+                count = 8;
+            }
+            Hawk.put(HawkConfig.THREAD_COUNT, count);
+            showThreadCountText(count);
+        }).create();
         dialog.show();
     }
 
@@ -756,6 +764,30 @@ public class ModelSettingFragment extends BaseLazyFragment {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    private void showHomeCellsDialog(String showCells) {
+        SelectDialog<String> dialog = new SelectDialog<>(getContext());
+        dialog.setTip("请选择首页数据源列数");
+        ArrayList<String> data = new ArrayList<>();
+        data.add("1列");
+        data.add("2列");
+        data.add("3列");
+        data.add("4列");
+        dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
+            @Override
+            public void click(String value, int pos) {
+                Hawk.put(HawkConfig.HOME_CELLS_COUNT, pos + 1);
+                mHomeCellText.setText(data.get(pos));
+                dialog.dismiss();
+            }
+
+            @Override
+            public String getDisplay(String val) {
+                return val;
+            }
+        }, null, data, data.indexOf(showCells));
+        dialog.show();
     }
 
     String getSearchView(int type) {
