@@ -55,6 +55,9 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private var mSourceUrlEdit: EditText? = null
     private var mQrCode: ImageView? = null
     private var mLoading: ProgressBar? = null
+
+    private val userAgent = "https://gitcode"
+    private val prefix = "clan://"
     private val address by lazy {
         ControlManager.get().getAddress(false)
     }
@@ -145,7 +148,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             return
         }
         var lineSource = sourceUrl0
-        if (lineSource?.startsWith("clan://") == true) {
+        if (lineSource?.startsWith(prefix) == true) {
             lineSource = ApiConfig.clanToAddress(lineSource)
         }
         val saveList =
@@ -168,13 +171,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     private fun getMutiSource(moreSourceBean: MoreSourceBean? = null) {
         mLoading.letVisible()
-        var requestURL = moreSourceBean?.sourceUrl
-        if (moreSourceBean?.sourceUrl?.startsWith("clan://") == true) {
-            requestURL = ApiConfig.clanToAddress(requestURL)
+        if (moreSourceBean?.sourceUrl?.startsWith(prefix) == true) {
+            moreSourceBean.sourceUrl = ApiConfig.clanToAddress(moreSourceBean.sourceUrl)
         }
-        val req = OkGo.get<String>(requestURL)
+        val req = OkGo.get<String>(moreSourceBean?.sourceUrl)
             .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
-        if (requestURL?.startsWith("https://gitcode") == true) {
+        if (moreSourceBean?.sourceUrl?.startsWith(userAgent) == true) {
             req.headers(
                 "User-Agent",
                 UA.randomOne()
