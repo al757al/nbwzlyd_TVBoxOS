@@ -31,7 +31,7 @@ public class LiveViewModel extends ViewModel {
     public void getUrl(String url) {
         execute(() -> {
             String tmpUrl = url;
-            if (tmpUrl.startsWith("P") || tmpUrl.equals("mitv")) {
+            if (tmpUrl.toLowerCase().startsWith("p") || tmpUrl.equals("mitv")) {
                 tmpUrl = Force.get().fetch(tmpUrl);
             }
             return tmpUrl;

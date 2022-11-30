@@ -96,7 +96,7 @@ public class LiveChannelItem implements Serializable, Cloneable {
     }
 
     public boolean isForceTv() {
-        return getUrl().startsWith("P") || getUrl().equals("mitv");
+        return getUrl().toLowerCase().startsWith("p") || getUrl().equals("mitv");
     }
 
     public int getSourceNum() {

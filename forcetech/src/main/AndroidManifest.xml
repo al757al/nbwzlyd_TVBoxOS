@@ -8,6 +8,10 @@
             android:name="com.gsoft.mitv.MainActivity"
             android:exported="false"
             android:process=":mitv" />
+        <service
+            android:name="com.service.P2PService"
+            android:exported="false"
+            android:process=":p2p" />
 
     </application>
 </manifest>
