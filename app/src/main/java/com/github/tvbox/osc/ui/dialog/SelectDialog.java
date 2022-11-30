@@ -49,10 +49,10 @@ public class SelectDialog<T> extends BaseDialog {
         } else if (count == 2) {
 
         } else if (count == 3) {
-            width = AutoSizeUtils.mm2px(getContext(), 820);
+            width = AutoSizeUtils.mm2px(getContext(), 890);
 
         } else if (count == 4) {
-            width = AutoSizeUtils.mm2px(getContext(), 980);
+            width = AutoSizeUtils.mm2px(getContext(), 1000);
         }
         findViewById(R.id.rootLayout).setLayoutParams(new FrameLayout.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT));
         TvRecyclerView recyclerView = findViewById(R.id.list);
