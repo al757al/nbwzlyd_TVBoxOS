@@ -53,6 +53,9 @@ public class M3uLiveParser {
                     liveChannelItem.setChannelIndex(liveChannelGroup.getLiveChannels().size());
                     liveChannelGroup.getLiveChannels().add(liveChannelItem);
                     liveChannelItem.setChannelNum(liveChannelGroup.getLiveChannels().size());
+                    ArrayList<String> sourceNames = new ArrayList<>();
+                    sourceNames.add("源1");
+                    liveChannelItem.setChannelSourceNames(sourceNames);
                 }
                 linkedHashMap.put(groupName, liveChannelGroup);
             } else if (line.contains("://")) {
