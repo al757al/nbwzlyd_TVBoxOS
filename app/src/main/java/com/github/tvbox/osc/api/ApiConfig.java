@@ -8,6 +8,7 @@ import android.util.Base64;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.UA;
 import com.github.catvod.crawler.JarLoader;
+import com.github.catvod.crawler.JsLoader;
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.crawler.SpiderNull;
 import com.github.tvbox.osc.base.App;
@@ -18,7 +19,6 @@ import com.github.tvbox.osc.bean.LiveSourceBean;
 import com.github.tvbox.osc.bean.MoreSourceBean;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.SourceBean;
-import com.github.tvbox.osc.js.JSEngine;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.AES;
 import com.github.tvbox.osc.util.AdBlocker;
@@ -79,6 +79,7 @@ public class ApiConfig implements Serializable {
     private SourceBean emptyHome = new SourceBean();
 
     private JarLoader jarLoader = new JarLoader();
+    private JsLoader jsLoader = new JsLoader();
 
     public static String userAgent = "okhttp/3.15";
 
@@ -603,6 +604,9 @@ public class ApiConfig implements Serializable {
     }
 
     public Spider getCSP(SourceBean sourceBean) {
+        boolean js = sourceBean.getApi().endsWith(".js") || sourceBean.getApi().contains(".js?");
+        if (js)
+            return jsLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
         //pyramid-add-start
         if (sourceBean.getApi().startsWith("py_")) {
             try {
@@ -612,8 +616,6 @@ public class ApiConfig implements Serializable {
                 return new SpiderNull();
             }
         }
-        boolean js = sourceBean.getApi().startsWith("js_") || sourceBean.getApi().endsWith(".js") || sourceBean.getApi().contains(".js?");
-        if (js) return JSEngine.getInstance().getSpider(sourceBean);
         return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
     }
 
