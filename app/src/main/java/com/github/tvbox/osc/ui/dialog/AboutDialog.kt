@@ -23,6 +23,7 @@ class AboutDialog(context: Context) : BaseDialog(context) {
                     6、支持alistV3网盘
                     7、支持直播地址复制
                     8、jar弹框文案提示优化
+                    9、修复直播有密码时无法进行线路切换操作问题
 
     """.trimIndent()
             ).create()
