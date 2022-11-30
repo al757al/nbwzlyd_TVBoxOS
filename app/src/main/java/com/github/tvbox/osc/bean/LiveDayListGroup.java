@@ -1,6 +1,8 @@
 package com.github.tvbox.osc.bean;
 
-public class LiveDayListGroup {
+import java.io.Serializable;
+
+public class LiveDayListGroup implements Serializable {
     private int groupIndex;
     private String groupName;
 

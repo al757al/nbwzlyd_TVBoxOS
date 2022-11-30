@@ -1,8 +1,9 @@
 package com.github.tvbox.osc.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SourceBean {
+public class SourceBean implements Serializable {
     private String key;
     private String name;
     private String api;

@@ -6,6 +6,7 @@ import android.util.Base64;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.catvod.crawler.Spider;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -21,6 +22,7 @@ import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LOG;
+import com.github.tvbox.osc.util.WindowUtil;
 import com.github.tvbox.osc.util.thunder.Thunder;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -266,7 +268,7 @@ public class SourceViewModel extends ViewModel {
             OkGo.<String>get(homeSourceBean.getApi())
                     .tag(homeSourceBean.getApi())
                     .params("ac", type == 0 ? "videolist" : "detail")
-                    .params("t", sortData.id)
+                    .params("t", sortData == null ? "" : sortData.id)
                     .params("pg", page)
                     .execute(new AbsCallback<String>() {
 
@@ -473,6 +475,7 @@ public class SourceViewModel extends ViewModel {
                 public void run() {
                     try {
                         Spider sp = ApiConfig.get().getCSP(sourceBean);
+                        WindowUtil.closeDialog(ActivityUtils.getTopActivity(), false, 0L);
                         List<String> ids = new ArrayList<>();
                         ids.add(id);
                         json(detailResult, sp.detailContent(ids), sourceBean.getKey());
@@ -690,8 +693,9 @@ public class SourceViewModel extends ViewModel {
                 @Override
                 public void run() {
                     Spider sp = ApiConfig.get().getCSP(sourceBean);
-                    String json = sp.playerContent(playFlag, url, ApiConfig.get().getVipParseFlags());
                     try {
+                        String json = sp.playerContent(playFlag, url, ApiConfig.get().getVipParseFlags());
+                        WindowUtil.closeDialog(ActivityUtils.getTopActivity(), false, 0L);
                         JSONObject result = new JSONObject(json);
                         result.put("key", url);
                         result.put("proKey", progressKey);

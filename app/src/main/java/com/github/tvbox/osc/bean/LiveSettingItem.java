@@ -1,11 +1,13 @@
 package com.github.tvbox.osc.bean;
 
+import java.io.Serializable;
+
 /**
  * @author pj567
  * @date :2021/1/12
  * @description:
  */
-public class LiveSettingItem {
+public class LiveSettingItem implements Serializable {
     private int itemIndex;
     private String itemName;
     private boolean itemSelected = false;

@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.base
 
 import androidx.multidex.MultiDexApplication
+import com.codelang.window.FloatingWindowManager.init
 import com.github.tvbox.osc.bean.VodInfo
 import com.github.tvbox.osc.startup.*
 import com.github.tvbox.osc.util.js.JSEngine
@@ -15,6 +16,7 @@ class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        init(this)
         StartupManager.Builder()
             .addStartup(UITask())
             .addStartup(HawkTask())

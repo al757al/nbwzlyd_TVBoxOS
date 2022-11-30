@@ -256,24 +256,15 @@ public class DriveActivity extends BaseActivity {
                             boxedViewModel.loadFile(selectedItem, new AlistDriveViewModel.LoadFileCallback() {
                                 @Override
                                 public void callback(String fileUrl) {
-                                    showSuccess();
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            playFile(fileUrl, selectedItem.name);
-                                        }
-                                    });
+                                    mHandler.post(() -> playFile(fileUrl, selectedItem.name));
                                 }
 
                                 @Override
                                 public void fail(String msg) {
                                     showEmpty();
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast toast = Toast.makeText(mContext, msg, Toast.LENGTH_SHORT);
-                                            toast.show();
-                                        }
+                                    mHandler.post(() -> {
+                                        Toast toast = Toast.makeText(mContext, msg, Toast.LENGTH_SHORT);
+                                        toast.show();
                                     });
                                 }
                             });
@@ -317,6 +308,7 @@ public class DriveActivity extends BaseActivity {
         bundle.putSerializable("VodInfo", vodInfo);
         // takagen99 - to play file here zzzzzzzzzzzzzzz
         jumpActivity(PlayActivity.class, bundle);
+        mHandler.postDelayed(() -> showSuccess(), 300);
     }
 
     private void openSortDialog() {
@@ -402,6 +394,7 @@ public class DriveActivity extends BaseActivity {
             this.btnRemoveServer.setColorFilter(ContextCompat.getColor(mContext, R.color.color_FFFFFF));
         }
         adapter.toggleDelMode(delMode);
+        adapter.notifyDataSetChanged();
     }
 
     private void initData() {

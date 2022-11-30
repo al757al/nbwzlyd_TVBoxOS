@@ -49,15 +49,14 @@ public class SelectDialogNew<T> extends BaseDialog {
         adapter.getData().addAll(data);
         diffResult.dispatchUpdatesTo(adapter);
         tvRecyclerView.post(() -> {
-            tvRecyclerView.setSelectedPosition(select);
-            tvRecyclerView.scrollToPosition(select);
+            tvRecyclerView.scrollToPositionWithOffset(select, 0, true);
         });
     }
 
-    public List<T> getOldItems(){
+    public List<T> getOldItems() {
         TvRecyclerView tvRecyclerView = findViewById(R.id.list);
         RecyclerView.Adapter adapter = tvRecyclerView.getAdapter();
-        if (adapter==null){
+        if (adapter == null) {
             return new ArrayList<>();
         }
         SelectDialogAdapter selectDialogAdapter = (SelectDialogAdapter) adapter;

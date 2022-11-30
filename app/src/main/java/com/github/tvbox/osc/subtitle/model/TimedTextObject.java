@@ -33,15 +33,16 @@ import com.github.tvbox.osc.subtitle.format.FormatSRT;
 import com.github.tvbox.osc.subtitle.format.FormatSTL;
 import com.github.tvbox.osc.subtitle.format.FormatTTML;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-public class TimedTextObject {
-	
+public class TimedTextObject implements Serializable {
+
 	/*
 	 * Attributes
-	 * 
+	 *
 	 */
 	//meta info
 	public String title = "";

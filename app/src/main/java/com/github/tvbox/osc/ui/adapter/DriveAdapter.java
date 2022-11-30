@@ -32,16 +32,19 @@ public class DriveAdapter extends BaseQuickAdapter<DriveFolderFile, BaseViewHold
 
     public void toggleDelMode(boolean isDelMode) {
         for (int pos = 0; pos < this.getItemCount(); pos++) {
-            View delView = this.getViewByPosition(pos, R.id.delDrive);
-            if (delView != null) {
-                delView.setVisibility(isDelMode ? View.VISIBLE : View.GONE);
-            }
-            DriveFolderFile item = this.getItem(pos);
+//            View delView = this.getViewByPosition(pos, R.id.delDrive);
+//            if (delView != null) {
+//                delView.setVisibility(isDelMode ? View.VISIBLE : View.GONE);
+//            }
+            DriveFolderFile item = getItem(pos);
             item.isDelMode = isDelMode;
-            if (item.getDriveType() == StorageDriveType.TYPE.WEBDAV
-                    || item.getDriveType() == StorageDriveType.TYPE.ALISTWEB) {
-                this.getViewByPosition(pos, R.id.imgConfig).setVisibility(isDelMode ? View.GONE : View.VISIBLE);
-            }
+//            if (item.getDriveType() == StorageDriveType.TYPE.WEBDAV
+//                    || item.getDriveType() == StorageDriveType.TYPE.ALISTWEB) {
+//                View imgConfigView = this.getViewByPosition(pos, R.id.imgConfig);
+//                if (imgConfigView != null) {
+//                    imgConfigView.setVisibility(isDelMode ? View.GONE : View.VISIBLE);
+//                }
+//            }
         }
     }
 

@@ -11,6 +11,9 @@ public class HawkConfig {
     public static final String EPG_URL = "epg_url";
     public static final String SHOW_PREVIEW = "show_preview";
     public static final String API_HISTORY = "api_history";
+    public static final String API_HISTORY_LIST = "api_history_list";
+    public static final String FORBID_JAR_DIALOG = "FORBID_JAR_DIALOG";
+    public static final String HOME_CELLS_COUNT = "HOME_CELLS_COUNT";
     public static final String EPG_HISTORY = "epg_history";
     public static final String HOME_API = "home_api";
     public static final String MINI_PROGRESS = "mini_progress";

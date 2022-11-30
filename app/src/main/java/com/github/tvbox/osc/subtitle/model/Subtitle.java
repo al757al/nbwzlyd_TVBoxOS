@@ -27,14 +27,16 @@
 
 package com.github.tvbox.osc.subtitle.model;
 
-public class Subtitle {
-	
+import java.io.Serializable;
+
+public class Subtitle implements Serializable {
+
 	public Style style;
 	public Region region;
-	
+
 	public Time start;
 	public Time end;
-	
-	public String content="";
+
+	public String content = "";
 
 }

@@ -52,17 +52,13 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
         if (currentDriveNote.getChildren() == null) {
             try {
                 String webLink = config.get("url").getAsString();
-                if (webLink.contains("https://drive.9t.ee")) {//解析方式不同，换解析
-                    alistWebParse.parseAlistList(webLink, callback);
-                    return targetPath;
-                }
                 JSONObject requestBody = new JSONObject();
                 requestBody.put("path", targetPath.isEmpty() ? "/" : targetPath);
                 requestBody.put("password", currentDrive.getConfig().get("password").getAsString());
                 requestBody.put("page_num", 1);
                 requestBody.put("page_size", 30);
                 PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
-                request.cacheTime(2 * 60 * 60 * 1000).cacheKey(request.getUrl() + requestBody.get("path"))
+                request.cacheTime(2 * 60 * 1000).cacheKey(request.getUrl() + requestBody.get("path"))
                         .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST);
                 request.upJson(requestBody);
                 setRequestHeader(request, webLink);
@@ -140,8 +136,8 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
             if (callback != null)
                 callback.callback(currentDriveNote.getChildren(), false);
         } catch (Exception ex) {
-            if (callback != null)
-                callback.fail("无法访问，请注意地址格式");
+            //尝试另一种格式的解析
+            alistWebParse.parseAlistList(currentDrive.getConfig().get("url").getAsString(), callback);
         }
     }
 
@@ -217,16 +213,9 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
             if (callback != null)
                 callback.callback(targetFile.fileUrl);
         } else {
-
             JsonObject config = currentDrive.getConfig();
             String targetPath = targetFile.getAccessingPathStr() + targetFile.name;
             String webLink = config.get("url").getAsString();
-
-            if (webLink.contains("https://drive.9t.ee")) {//解析方式不同，换解析
-                alistWebParse.loadFile(targetFile, callback);
-                return;
-            }
-
             try {
                 JSONObject requestBody = new JSONObject();
                 requestBody.put("path", targetPath);
@@ -235,7 +224,7 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                 requestBody.put("page_size", 30);
                 PostRequest request = OkGo.post(webLink + "api/public/path").tag("drive");
                 request.cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheKey(request.getUrl() + requestBody.get("path"))
-                        .cacheTime(2 * 60 * 60 * 1000);
+                        .cacheTime(2 * 60 * 1000);
                 request.upJson(requestBody);
                 setRequestHeader(request, webLink);
                 request.execute(new AbsCallback<String>() {
@@ -248,16 +237,17 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                     @Override
                     public void onSuccess(Response<String> response) {
                         String respBody = response.body();
-                        JsonObject respData = JsonParser.parseString(respBody).getAsJsonObject();
-                        if (respData.get("code").getAsInt() == 200) {
-                            JsonArray files = respData.get("data").getAsJsonObject().get("files").getAsJsonArray();
-                            if (files.size() > 0 && callback != null) {
-                                callback.callback(files.get(0).getAsJsonObject().get("url").getAsString());
-                                return;
+                        try {
+                            JsonObject respData = JsonParser.parseString(respBody).getAsJsonObject();
+                            if (respData.get("code").getAsInt() == 200) {
+                                JsonArray files = respData.get("data").getAsJsonObject().get("files").getAsJsonArray();
+                                if (files.size() > 0 && callback != null) {
+                                    callback.callback(files.get(0).getAsJsonObject().get("url").getAsString());
+                                }
                             }
+                        } catch (Exception e) {
+                            alistWebParse.loadFile(targetFile, callback);
                         }
-                        if (callback != null)
-                            callback.fail("不能获取该视频地址");
 
                     }
 
@@ -265,16 +255,17 @@ public class AlistDriveViewModel extends AbstractDriveViewModel {
                     public void onCacheSuccess(Response<String> response) {
                         super.onCacheSuccess(response);
                         String respBody = response.body();
-                        JsonObject respData = JsonParser.parseString(respBody).getAsJsonObject();
-                        if (respData.get("code").getAsInt() == 200) {
-                            JsonArray files = respData.get("data").getAsJsonObject().get("files").getAsJsonArray();
-                            if (files.size() > 0 && callback != null) {
-                                callback.callback(files.get(0).getAsJsonObject().get("url").getAsString());
-                                return;
+                        try {
+                            JsonObject respData = JsonParser.parseString(respBody).getAsJsonObject();
+                            if (respData.get("code").getAsInt() == 200) {
+                                JsonArray files = respData.get("data").getAsJsonObject().get("files").getAsJsonArray();
+                                if (files.size() > 0 && callback != null) {
+                                    callback.callback(files.get(0).getAsJsonObject().get("url").getAsString());
+                                }
                             }
+                        } catch (Exception e) {
+                            alistWebParse.loadFile(targetFile, callback);
                         }
-                        if (callback != null)
-                            callback.fail("不能获取该视频地址");
                     }
                 });
             } catch (Exception ex) {

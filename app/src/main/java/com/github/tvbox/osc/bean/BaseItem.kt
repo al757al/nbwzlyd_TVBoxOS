@@ -13,22 +13,23 @@ import java.io.Serializable
 open class BaseItem : Serializable {
     open val uniKey: String? get() = ""
 
-    override fun equals(obj: Any?): Boolean {
+    override fun equals(other: Any?): Boolean {
         // 首先判断传进来的obj是否是调用equals方法对象的this本身，提高判断效率
-        if (obj === this) {
+        if (other === this) {
             return true
         }
         // 判断传进来的obj是否是null，提高判断效率
-        if (obj == null) {
+        if (other == null) {
             return false
         }
-        // 判断传进来的obj是否是User对象，防止出现类型转换的异常
-        if (obj is LiveSourceBean) {
-            val liveSourceBean: LiveSourceBean = obj as LiveSourceBean
-            return liveSourceBean.uniKey == uniKey
+        if (other is BaseItem) {
+            return other.uniKey == uniKey
         }
         // 如果没有走类型判断语句说明两个比较的对象它们的类型都不一样，结果就是false了
         return false
+    }
 
+    override fun hashCode(): Int {
+        return uniKey?.hashCode() ?: 0
     }
 }

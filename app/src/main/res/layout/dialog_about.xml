@@ -4,13 +4,14 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/shape_dialog_bg_main"
-    android:paddingVertical="@dimen/vs_30"
-    android:paddingRight="@dimen/vs_30">
+    android:paddingRight="@dimen/vs_30"
+    android:paddingBottom="@dimen/vs_10">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/vs_300"
-        android:layout_gravity="center">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/vs_10">
 
         <TextView
             android:id="@+id/title1"
@@ -29,12 +30,12 @@
             android:id="@+id/text2"
             android:layout_width="@dimen/vs_600"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/vs_20"
             android:lineSpacingExtra="@dimen/ts_30"
             android:lineSpacingMultiplier="0"
             android:text="本软件只提供聚合展示功能所有资源来自网上,软件不参与任何制作, 上传, 储存, 下载等内容. 软件仅供学习参考, 请于安装后24小时内删除。\n打包分发请保留出处\nhttps://github.com/CatVodTVOfficial/TVBoxOSC"
             android:textColor="@color/color_CC000000"
             android:textSize="@dimen/ts_16"
+            app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@id/title1"
             app:layout_constraintTop_toBottomOf="@id/title1" />

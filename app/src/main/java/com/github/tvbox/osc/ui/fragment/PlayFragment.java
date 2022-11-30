@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
@@ -618,6 +619,7 @@ public class PlayFragment extends BaseLazyFragment {
         sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
             @Override
             public void onChanged(JSONObject info) {
+//                WindowUtil.closeDialog(getActivity(),false,0L);
                 if (info != null) {
                     try {
                         progressKey = info.optString("proKey", null);
@@ -663,7 +665,7 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                     } catch (Throwable th) {
 //                        errorWithRetry("获取播放信息错误", true);
-//                        Toast.makeText(mContext, "获取播放信息错误1", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     errorWithRetry("获取播放信息错误", true);
@@ -1158,7 +1160,11 @@ public class PlayFragment extends BaseLazyFragment {
                             if (rs.has("ua")) {
                                 webUserAgent = rs.optString("ua").trim();
                             }
-                            requireActivity().runOnUiThread(new Runnable() {
+                            FragmentActivity fragmentActivity = getActivity();
+                            if (fragmentActivity == null || PlayFragment.this.isDetached() || fragmentActivity.isFinishing()) {
+                                return;
+                            }
+                            fragmentActivity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     String mixParseUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));

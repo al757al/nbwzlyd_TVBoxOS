@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -29,6 +30,8 @@ import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.dialog.util.SourceLineDialogUtil
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
+import com.github.tvbox.osc.util.ScreenUtils
+import com.github.tvbox.osc.util.StringUtils
 import com.github.tvbox.osc.util.urlhttp.JumpUtils
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.cache.CacheMode
@@ -67,7 +70,9 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     override fun dismiss() {
         EventBus.getDefault().unregister(this)
         //更新成最新的仓库排序
-        Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE_DATA, mAdapter.data)
+        if (mAdapter.data.isNotEmpty()) {
+            Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE_DATA, mAdapter.data)
+        }
         super.dismiss()
     }
 
@@ -114,11 +119,20 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         mAdapter.setOnItemChildClickListener { adapter, view, position ->
             when (view.id) {
                 R.id.tvDel -> {
-                    deleteItem(position)
+                    AlertDialog.Builder(context, R.style.Theme_AppCompat_Light_Dialog_Alert)
+                        .setTitle("确定要删除?").setPositiveButton(
+                            "确定"
+                        ) { dialog, which -> deleteItem(position) }.setNegativeButton("点错了", null)
+                        .create().show()
                 }
                 R.id.tvName -> {
                     selectItem(position)
 
+                }
+                R.id.tvCopy -> {
+                    val item = mAdapter.getItem(position)
+                    val text = "${item?.sourceName}\n${item?.sourceUrl}"
+                    StringUtils.copyText(context, text)
                 }
             }
         }
@@ -195,7 +209,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private fun serverString2Json(moreSourceBean: MoreSourceBean?, response: Response<String>?) {
         try {
             mLoading.letGone()
-            val jsonObj = JSONObject(response?.body() ?: return)
+            var tempKey: String? = null
+            if (moreSourceBean?.sourceUrl?.contains(";pk;") == true) {
+                tempKey = moreSourceBean.sourceUrl.split(";pk;")[1]
+            }
+            val findResult = ApiConfig.FindResult(response?.body(), tempKey)
+            val jsonObj = JSONObject(findResult ?: return)
             var jsonArray: JSONArray? = null
             if (!jsonObj.has("storeHouse")) {
                 if (jsonObj.has("urls")) {//可能是单仓库
@@ -205,13 +224,22 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                     )
                 } else if (jsonObj.has("sites")) {//可能是线路
                     Hawk.put(HawkConfig.API_URL, moreSourceBean?.sourceUrl)
-                    val history = Hawk.get(HawkConfig.API_HISTORY, ArrayList<String>())
-                    if (!history.contains(moreSourceBean?.sourceUrl)) {
-                        history.add(0, moreSourceBean?.sourceUrl.toString())
+                    val historySourceBeanList =
+                        Hawk.get(HawkConfig.API_HISTORY_LIST, ArrayList<MoreSourceBean>())
+                    moreSourceBean?.let {
+                        if (historySourceBeanList.indexOf(moreSourceBean) == -1) {
+                            if (moreSourceBean.sourceName.isEmpty()) {
+                                moreSourceBean.sourceName = "自定义配置线路${historySourceBeanList.size}"
+                            }
+                            moreSourceBean.isServer = false
+                            historySourceBeanList.add(it)
+                        }
+                        Hawk.put(HawkConfig.API_HISTORY_LIST, historySourceBeanList)
                     }
-                    if (history.size > 20) history.removeAt(20)
-                    Hawk.put(HawkConfig.API_HISTORY, history)
+//                    if (history.size > 20) history.removeAt(20)
+//                    Hawk.put(HawkConfig.API_HISTORY, history)
                     ToastUtils.showShort("系统识别到你推送的可能是线路，已经帮你保存并重启首页")
+
                     JumpUtils.forceRestartHomeActivity(context)
                     this.dismiss()
                 } else {//无法识别了
@@ -348,15 +376,17 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         override fun createBaseViewHolder(view: View?): BaseViewHolder {
             val holder = super.createBaseViewHolder(view)
             holder.addOnClickListener(R.id.tvDel)
+            holder.addOnClickListener(R.id.tvCopy)
             holder.setVisible(R.id.tvDel, true)
+            holder.setGone(R.id.tvCopy, !ScreenUtils.isTv(view?.context))
             holder.addOnClickListener(R.id.tvName)
             return holder
         }
 
         override fun convert(holder: BaseViewHolder, item: MoreSourceBean) {
             showDefault(item, holder)
+            val textView = holder.getView<TextView>(R.id.tvName)
             if (item.isSelected) {
-                val text = holder.getView<TextView>(R.id.tvName).text
                 holder.setText(
                     R.id.tvName,
                     SpanUtils.with(holder.getView(R.id.tvName)).appendImage(
@@ -364,9 +394,11 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                             holder.getView<TextView>(R.id.tvName).context,
                             R.drawable.ic_select_fill
                         )!!
-                    ).append(" ").append(text).create()
+                    ).append(" ").append(textView.text).create()
                 )
+//                textView.requestFocus()
             } else {
+//                textView.clearFocus()
                 showDefault(item, holder)
             }
         }

@@ -27,6 +27,8 @@
 
 package com.github.tvbox.osc.subtitle.model;
 
-public class Region {
+import java.io.Serializable;
+
+public class Region implements Serializable {
 
 }

@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +27,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.CollectionUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -46,6 +49,7 @@ import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.IDMDownLoadUtil;
 import com.github.tvbox.osc.util.MD5;
+import com.github.tvbox.osc.util.ScreenUtils;
 import com.github.tvbox.osc.util.SearchHelper;
 import com.github.tvbox.osc.util.SubtitleHelper;
 import com.github.tvbox.osc.util.VodInfoClassifyUtil;
@@ -134,6 +138,7 @@ public class DetailActivity extends BaseActivity {
 
     private LinkedHashMap<VodInfo.VodSeriesFlag, List<VodInfo.VodSeries>> mapData = new LinkedHashMap<>();//分组
     private VodInfo.VodSeriesFlag mLastSelectedVodSeriesFlag = null;
+    private View downLoadBtn;
 
     @Override
     protected int getLayoutResID() {
@@ -177,13 +182,13 @@ public class DetailActivity extends BaseActivity {
         tvPlay = findViewById(R.id.tvPlay);
         tvSort = findViewById(R.id.tvSort);
         tvCollect = findViewById(R.id.tvCollect);
-        TextView downLoadBtn = findViewById(R.id.idm_download);
-        downLoadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new IDMDownLoadUtil().startIDMDownLoad(DetailActivity.this);
-            }
-        });
+        downLoadBtn = findViewById(R.id.idm_download);
+        if (ScreenUtils.isTv(mContext)) {//电视不显示idm下载，无意义
+            downLoadBtn.setVisibility(View.GONE);
+        } else {
+            downLoadBtn.setVisibility(View.VISIBLE);
+        }
+        downLoadBtn.setOnClickListener(v -> new IDMDownLoadUtil().startIDMDownLoad(DetailActivity.this));
         tvQuickSearch = findViewById(R.id.tvQuickSearch);
         mEmptyPlayList = findViewById(R.id.mEmptyPlaylist);
         mGridView = findViewById(R.id.mGridView);
@@ -397,14 +402,15 @@ public class DetailActivity extends BaseActivity {
                     for (VodInfo.VodSeries allItem : allData) {
                         allItem.selected = false;
                     }
-                    seriesAdapter.notifyDataSetChanged();
+//                    seriesAdapter.notifyDataSetChanged();
                     VodInfo.VodSeries clickItem = seriesAdapter.getData().get(position);
                     int clickPlayIndex = allData.indexOf(clickItem);
                     //解决倒叙不刷新
                     if (vodInfo.playIndex != clickPlayIndex) {
+                        seriesAdapter.notifyItemChanged(vodInfo.playIndex);
                         clickItem.selected = true;
                         seriesAdapter.notifyItemChanged(position);
-                        vodInfo.playIndex = allData.indexOf(clickItem);
+                        vodInfo.playIndex = clickPlayIndex;
                         reload = true;
                     }
                     //解决当前集不刷新的BUG
@@ -421,6 +427,14 @@ public class DetailActivity extends BaseActivity {
                         firstReverse = false;
                     }
                 }
+            }
+        });
+        seriesAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("准备下载，解析需要时间，请稍等，不一定能解析成功");
+                new IDMDownLoadUtil().startIDMDownLoad(DetailActivity.this, vodInfo, seriesAdapter.getData().get(position));
+                return true;
             }
         });
         mClassifyAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -557,12 +571,13 @@ public class DetailActivity extends BaseActivity {
 
         loadVodInfo();
 
-        mGridView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mGridView.scrollToPosition(vodInfo.playIndex);
-            }
-        }, 100);
+//        mGridView.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                LogUtils.dTag("derek119",vodInfo.playIndex);
+//                mGridView.scrollToPosition(vodInfo.playIndex);
+//            }
+//        }, 100);
     }
 
     private void loadVodInfo() {
@@ -637,7 +652,7 @@ public class DetailActivity extends BaseActivity {
 //                    }
                     seriesAdapter.getData().get(freshIndex).selected = true;
                     seriesAdapter.notifyItemChanged(freshIndex);
-                    mGridView.setSelection(freshIndex);
+                    scrollToPlayPosAndRequestFoucuse(freshIndex);
                     vodInfo.playIndex = (int) event.obj;
                     //保存历史
                     insertVod(sourceKey, vodInfo);
@@ -900,6 +915,18 @@ public class DetailActivity extends BaseActivity {
                 return;
             }
         }
+        if (getCurrentFocus() == null) {
+            super.onBackPressed();
+            return;
+        }
+        int focusId = getCurrentFocus().getId();
+        if (focusId == R.id.tvPlay || focusId == R.id.idm_download || focusId == R.id.tvQuickSearch ||
+                focusId == R.id.tvSort || focusId == R.id.tvCollect || getCurrentFocus() instanceof TvRecyclerView) {
+            super.onBackPressed();
+        } else {
+            tvPlay.requestFocus();
+            return;
+        }
         super.onBackPressed();
     }
 
@@ -999,9 +1026,13 @@ public class DetailActivity extends BaseActivity {
         tvSort.setFocusable(!fullWindows);
         tvCollect.setFocusable(!fullWindows);
         tvQuickSearch.setFocusable(!fullWindows);
+        downLoadBtn.setFocusable(!fullWindows);
 
         if (playFragment.mController != null) {
             playFragment.mController.setIsFullScreen(fullWindows);
+        }
+        if (!fullWindows && vodInfo != null) {//恢复焦点
+            scrollToPlayPosAndRequestFoucuse(vodInfo.playIndex);
         }
 //        if (fullWindows) {
 //            playFragment.initDefaultBright(this, 0.43f);
@@ -1011,8 +1042,21 @@ public class DetailActivity extends BaseActivity {
         toggleSubtitleTextSize();
     }
 
+    private void scrollToPlayPosAndRequestFoucuse(int freshIndex) {
+        if (mGridView != null && mGridView.getLayoutManager() != null) {
+            mGridView.getLayoutManager().scrollToPosition(freshIndex);
+            new Handler().postDelayed(() -> {
+                View requestView = mGridView.getLayoutManager().findViewByPosition(freshIndex);
+                if (requestView != null) {
+                    requestView.requestFocus();
+                }
+            }, 300);
+
+        }
+    }
+
     void toggleSubtitleTextSize() {
-        int subtitleTextSize  = SubtitleHelper.getTextSize(this);
+        int subtitleTextSize = SubtitleHelper.getTextSize(this);
         if (!fullWindows) {
             subtitleTextSize *= 0.6;
         }

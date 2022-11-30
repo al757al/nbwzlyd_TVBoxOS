@@ -30,6 +30,10 @@ class HawkTask : AndroidStartup<String>() {
         if (!Hawk.contains(HawkConfig.IMMERSIVE_SWITCH)) {
             Hawk.put(HawkConfig.IMMERSIVE_SWITCH, true)
         }
+        if (!Hawk.contains(HawkConfig.FORBID_JAR_DIALOG)) {
+            Hawk.put(HawkConfig.FORBID_JAR_DIALOG, true)
+        }
+
 //        val homeUrl = Hawk.get(HawkConfig.API_URL, "")
 //        if (TextUtils.isEmpty(homeUrl)) {
 //            Hawk.put(

@@ -21,6 +21,7 @@ import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.AES;
 import com.github.tvbox.osc.util.AdBlocker;
+import com.github.tvbox.osc.util.AlistDriveUtil;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.MD5;
@@ -29,9 +30,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.AbsCallback;
+import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.GetRequest;
 import com.orhanobut.hawk.Hawk;
@@ -45,6 +48,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -61,7 +65,7 @@ import java.util.regex.Pattern;
  * @date :2020/12/18
  * @description:
  */
-public class ApiConfig {
+public class ApiConfig implements Serializable {
     private static ApiConfig instance;
     private LinkedHashMap<String, SourceBean> sourceBeanList;
     private SourceBean mHomeSource;
@@ -69,7 +73,7 @@ public class ApiConfig {
     private List<LiveChannelGroup> liveChannelGroupList;
     private List<ParseBean> parseBeanList;
     private List<String> vipParseFlags;
-    private List<IJKCode> ijkCodes;
+    private List<IJKCode> ijkCodes = new ArrayList<>();
     private String spider = null;
     public String wallpaper = "";
     private SourceBean emptyHome = new SourceBean();
@@ -128,10 +132,10 @@ public class ApiConfig {
         return json;
     }
 
-    private static byte[] getImgJar(String body){
+    private static byte[] getImgJar(String body) {
         Pattern pattern = Pattern.compile("[A-Za-z0]{8}\\*\\*");
         Matcher matcher = pattern.matcher(body);
-        if(matcher.find()){
+        if (matcher.find()) {
             body = body.substring(body.indexOf(matcher.group()) + 10);
             return Base64.decode(body, Base64.DEFAULT);
         }
@@ -307,7 +311,7 @@ public class ApiConfig {
                 if (cache.exists())
                     cache.delete();
                 FileOutputStream fos = new FileOutputStream(cache);
-                if(isJarInImg) {
+                if (isJarInImg) {
                     String respData = response.body().string();
                     byte[] imgJar = getImgJar(respData);
                     fos.write(imgJar);
@@ -403,14 +407,28 @@ public class ApiConfig {
             if (firstSite == null)
                 firstSite = sb;
             sourceBeanList.put(siteKey, sb);
+            if (siteKey.toLowerCase().contains("alist") || sb.getApi().toLowerCase().contains("alist")) {
+                executorService.execute(() -> OkGo.<String>get(sb.getExt()).execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        try {
+                            AlistDriveUtil.saveAlist(JsonParser.parseString(response.body().trim()).getAsJsonObject());
+                        } catch (Exception e) {
+
+                        }
+
+                    }
+                }));
+            }
         }
         if (sourceBeanList != null && sourceBeanList.size() > 0) {
             String home = Hawk.get(HawkConfig.HOME_API, "");
             SourceBean sh = getSource(home);
-            if (sh == null)
+            if (sh == null) {
                 setSourceBean(firstSite);
-            else
+            } else {
                 setSourceBean(sh);
+            }
         }
         //只有加载了py的情况下才开始解析py站点
         if (App.getInstance().getPyLoadSuccess()) {
@@ -490,8 +508,7 @@ public class ApiConfig {
         }
         // IJK解码配置
 
-        if (ijkCodes == null) {
-            ijkCodes = new ArrayList<>();
+        if (ijkCodes.isEmpty()) {
             boolean foundOldSelect = false;
             String ijkCodec = Hawk.get(HawkConfig.IJK_CODEC, "");
             for (JsonElement opt : AdBlocker.defaultJsonObject.get("ijk").getAsJsonArray()) {
@@ -785,7 +802,7 @@ public class ApiConfig {
     }
 
     public IJKCode getIJKCodec(String name) {
-        if (ijkCodes == null) {
+        if (ijkCodes == null || ijkCodes.isEmpty()) {
             return null;
         }
         for (IJKCode code : ijkCodes) {

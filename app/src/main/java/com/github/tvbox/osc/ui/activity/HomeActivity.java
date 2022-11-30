@@ -51,6 +51,7 @@ import com.github.tvbox.osc.ui.tv.widget.ViewObj;
 import com.github.tvbox.osc.util.AppManager;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.WindowUtil;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
@@ -326,6 +327,8 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void success() {
                         jarInitOk = true;
+                        //关闭jar注入的弹框
+                        WindowUtil.closeDialog(HomeActivity.this, true, 200L);
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -674,7 +677,7 @@ public class HomeActivity extends BaseActivity {
             String homeSourceKey = ApiConfig.get().getHomeSourceBean().getKey();
             SelectDialog<SourceBean> dialog = new SelectDialog<>(HomeActivity.this);
             dialog.setTip("请选择首页数据源");
-            dialog.setLayoutManger(new V7GridLayoutManager(HomeActivity.this, 2));
+            dialog.setLayoutManger(new V7GridLayoutManager(HomeActivity.this, Hawk.get(HawkConfig.HOME_CELLS_COUNT, 2)));
             dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
                 @Override
                 public void click(SourceBean value, int pos) {
