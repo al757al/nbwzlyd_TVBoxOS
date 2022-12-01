@@ -37,6 +37,7 @@ import com.github.tvbox.osc.ui.view.PlayerMoreFucPop;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.PlayerHelper;
+import com.github.tvbox.osc.util.ScreenUtils;
 import com.github.tvbox.osc.util.SubtitleHelper;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
@@ -73,8 +74,10 @@ public class VodController extends BaseController {
     //    TextView mPlayTitle;
     TextView mPlayTitle1;
     TextView mTvSpeedPlay;
+    ImageView mLockView;
     TextView mNextBtn;
     TextView mPreBtn;
+    LockRunnable lockRunnable = new LockRunnable();
     //    TextView mPlayerScaleBtn;
     public TextView mPlayerSpeedBtn;
     TextView mPlayerBtn;
@@ -95,6 +98,7 @@ public class VodController extends BaseController {
     private HorizontalScrollView mHorizontalScrollView;
 
     private boolean mIsFullScreen = false;
+    private boolean isLock = false;
     public SimpleSubtitleView mSubtitleView;
     TextView mZimuBtn;
     private TextView mMiniProgressTextView;
@@ -122,6 +126,12 @@ public class VodController extends BaseController {
         }
     };
 
+    private void showLockView() {
+        mLockView.setVisibility(ScreenUtils.isTv(getContext()) ? INVISIBLE : VISIBLE);
+        mHandler.removeCallbacks(lockRunnable);
+        mHandler.postDelayed(lockRunnable, 3000);
+    }
+
     public VodController(@NonNull @NotNull Context context) {
         super(context);
         mHandlerCallback = new HandlerCallback() {
@@ -147,7 +157,8 @@ public class VodController extends BaseController {
                         new Handler().postDelayed(() -> {
                             mBottomRoot.requestFocus();
                         }, 20);
-                        backBtn.setVisibility(VISIBLE);
+                        backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
+                        showLockView();
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
@@ -285,6 +296,32 @@ public class VodController extends BaseController {
         mTotalTime = findViewById(R.id.total_time);
 //        mPlayTitle = findViewById(R.id.tv_info_name);
         mHorizontalScrollView = findViewById(R.id.horizontalScrollView);
+        mLockView = findViewById(R.id.tv_lock);
+        mLockView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isLock = !isLock;
+                mLockView.setImageResource(isLock ? R.drawable.icon_lock : R.drawable.icon_unlock);
+                if (isLock) {
+                    Message obtain = Message.obtain();
+                    obtain.what = 1003;//隐藏底部菜单
+                    mHandler.sendMessage(obtain);
+                }
+                showLockView();
+            }
+        });
+        View rootView = findViewById(R.id.rootView);
+        rootView.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (isLock) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        showLockView();
+                    }
+                }
+                return isLock;
+            }
+        });
         mPlayTitle1 = findViewById(R.id.tv_info_name1);
         mTvSpeedPlay = findViewById(R.id.tv_speed_play);
         mSeekBar = findViewById(R.id.seekBar);
@@ -1104,6 +1141,15 @@ public class VodController extends BaseController {
             hideBottom();
         }
         return true;
+    }
+
+    private class LockRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            mLockView.setVisibility(INVISIBLE);
+
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
