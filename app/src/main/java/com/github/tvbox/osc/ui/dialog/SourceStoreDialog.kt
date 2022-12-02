@@ -79,9 +79,6 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         super.dismiss()
     }
 
-    //    private var DEFAULT_STORE_URL = "https://gitcode.net/wzlyd1/00/-/raw/master/000.txt"
-    private var DEFAULT_STORE_URL = ""
-
     private val DEFAULT_DATA = LinkedHashMap<String, MoreSourceBean>()
 
     init {
@@ -241,15 +238,10 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 //                    if (history.size > 20) history.removeAt(20)
 //                    Hawk.put(HawkConfig.API_HISTORY, history)
                     ToastUtils.showShort("系统识别到你推送的可能是线路，已经帮你保存并重启首页")
-
                     JumpUtils.forceRestartHomeActivity(context)
                     this.dismiss()
                 } else {//无法识别了
-                    val text =
-                        SpanUtils().append("你的仓库格式不对\n请参考公众号").append(" <仓库定义规则> ")
-                            .setBold()
-                            .setForegroundColor(Color.RED).append("文章").create()
-                    ToastUtils.showShort(text)
+                    ToastUtils.showShort("你的仓库格式不对")
                     return
                 }
             } else {
