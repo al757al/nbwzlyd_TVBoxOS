@@ -27,6 +27,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -64,7 +65,7 @@ import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
-import com.github.tvbox.osc.util.FloatViewUtil;
+import com.github.tvbox.osc.util.FloatViewUtil2;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.MD5;
@@ -123,6 +124,8 @@ public class PlayFragment extends BaseLazyFragment {
     private Handler mHandler;
 
     private long videoDuration = -1;
+    private FrameLayout mPlayRoot;
+    private ProgressManager progressManager;
 
     @Override
     protected int getLayoutResID() {
@@ -165,6 +168,7 @@ public class PlayFragment extends BaseLazyFragment {
             return false;
         });
         mVideoView = findViewById(R.id.mVideoView);
+        mPlayRoot = findViewById(R.id.play_root);
         mPlayLoadTip = findViewById(R.id.play_load_tip);
         mPlayLoading = findViewById(R.id.play_loading);
         mPlayLoadErr = findViewById(R.id.play_load_error);
@@ -172,10 +176,10 @@ public class PlayFragment extends BaseLazyFragment {
         mController.setCanChangePosition(true);
         mController.setEnableInNormal(true);
         mController.setGestureEnabled(true);
-        ProgressManager progressManager = new ProgressManager() {
+        progressManager = new ProgressManager() {
             @Override
             public void saveProgress(String url, long progress) {
-                if (videoDuration ==0) return;
+                if (videoDuration == 0) return;
                 CacheManager.save(MD5.string2MD5(url), progress);
             }
 
@@ -738,8 +742,8 @@ public class PlayFragment extends BaseLazyFragment {
                     ToastUtils.showShort("等待视频开始播放才能小窗");
                     return;
                 }
-                new FloatViewUtil().openFloat(mVideoView.getPlayUrl(), progressKey, mVideoView.getCurrentPosition(), mVodPlayerCfg);
-                mVideoView.release();
+                new FloatViewUtil2().openFloat(mVideoView, progressKey, mVodPlayerCfg);
+//                mVideoView.release();
             }
         });
     }
@@ -776,7 +780,15 @@ public class PlayFragment extends BaseLazyFragment {
     public void onResume() {
         super.onResume();
         if (mVideoView != null) {
-            mVideoView.resume();
+            ViewGroup parent = (ViewGroup) (mVideoView.getParent());
+            if (parent.getId() != R.id.play_root) {
+                parent.removeView(mVideoView);
+                mPlayRoot.addView(mVideoView, 0);
+                mVideoView.setVideoController(mController);
+                mVideoView.setProgressManager(progressManager);
+            } else {
+                mVideoView.resume();
+            }
         }
     }
 

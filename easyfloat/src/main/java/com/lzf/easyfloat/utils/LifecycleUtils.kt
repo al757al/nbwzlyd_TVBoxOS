@@ -38,6 +38,7 @@ internal object LifecycleUtils {
                     mTopActivity = WeakReference<Activity>(it)
                     // 每次都要判断当前页面是否需要显示
                     checkShow(it)
+
                 }
             }
 

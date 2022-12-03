@@ -6,10 +6,10 @@
     android:orientation="vertical">
 
 
-    <com.github.tvbox.osc.player.MyVideoView
-        android:id="@+id/mVideoView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!--    <com.github.tvbox.osc.player.MyVideoView-->
+    <!--        android:id="@+id/mVideoView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent" />-->
 
     <com.github.tvbox.osc.ui.view.ScaleImage
         android:id="@+id/ivScale"

@@ -136,9 +136,9 @@ public class FloatVodController extends BaseController {
 
     public FloatVodController(@NonNull @NotNull Context context) {
         super(context);
-        setCanChangePosition(true);
-        setEnableInNormal(true);
-        setGestureEnabled(true);
+        setCanChangePosition(false);
+        setEnableInNormal(false);
+        setGestureEnabled(false);
         mHandlerCallback = new HandlerCallback() {
             @Override
             public void callback(Message msg) {

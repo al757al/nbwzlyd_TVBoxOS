@@ -50,8 +50,7 @@ public class FloatViewUtil {
     private MyVideoView myVideoView;
 
     public void openFloat(String url, String progressKey, long playPosition, JSONObject playConfig) {
-
-
+        EasyFloat.dismiss("float_view");
         ProgressManager progressManager = new ProgressManager() {
             @Override
             public void saveProgress(String url, long progress) {
@@ -78,9 +77,8 @@ public class FloatViewUtil {
             }
         };
 
-
         EasyFloat.with(App.getInstance().getApplicationContext()).setTag("float_view")
-                .setShowPattern(ShowPattern.ALL_TIME)
+                .setShowPattern(ShowPattern.BACKGROUND)
                 .setLocation(100, 100)
                 .registerCallbacks(new OnFloatCallbacks() {
                     @Override
@@ -210,7 +208,7 @@ public class FloatViewUtil {
                                 } else {//当宽度达到最大的时候，高度不再变化
                                     params.height = (int) Math.max(params.height + x, 300);
                                 }
-                                params.width = (int) Math.max(params.width + x, 400);
+                        params.width = (int) Math.max(params.width + x, 400);
                         EasyFloat.updateFloat("float_view", -1, -1, params.width, params.height);
                             }
                     );

@@ -474,7 +474,6 @@ public class DetailActivity extends BaseActivity {
         super.onNewIntent(intent);
         if (intent.getBooleanExtra("isFromFloat", false)) {
             vodInfo = (VodInfo) intent.getSerializableExtra("vodInfo");
-            jumpToPlay();
         }
     }
 
