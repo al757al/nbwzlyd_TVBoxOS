@@ -17,6 +17,7 @@ class AboutDialog(context: Context) : BaseDialog(context) {
                 """  
                     1、支持mitv P2p直播格式
                     2、支持m3u直播格式
+                    3、视频支持悬浮窗
 
     """.trimIndent()
             ).create()

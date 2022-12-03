@@ -28,7 +28,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 26
         versionCode 12
-        versionName '2.0.6'
+        versionName '3.0'
         multiDexEnabled true
         ndk {
             // 设置支持的SO库架构
@@ -127,13 +127,14 @@ dependencies {
     implementation 'com.github.megatronking.stringfog:xor:4.0.1'
     implementation 'org.greenrobot:eventbus:3.2.0'
     implementation 'com.orhanobut:hawk:2.0.1'
-    implementation 'com.github.princekin-f:EasyFloat:2.0.4'
+//    implementation 'com.github.princekin-f:EasyFloat:2.0.4'
 
     implementation project(":player")
     implementation project(":quickjs")
     implementation project(":tv-recyclerview")
     implementation project(":tvbus")
     implementation project(":forcetech")
+    implementation project(":easyfloat")
 
     implementation('org.xwalk:xwalk_shared_library:23.53.589.4') {
         exclude group: 'com.android.support'

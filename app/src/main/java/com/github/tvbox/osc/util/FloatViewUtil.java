@@ -211,7 +211,7 @@ public class FloatViewUtil {
                                     params.height = (int) Math.max(params.height + x, 300);
                                 }
                                 params.width = (int) Math.max(params.width + x, 400);
-                                EasyFloat.updateFloat("float_view", 0, 0, params.width, params.height);
+                        EasyFloat.updateFloat("float_view", -1, -1, params.width, params.height);
                             }
                     );
                     fullScreenImage = view.findViewById(R.id.ivClose);
