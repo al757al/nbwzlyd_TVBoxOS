@@ -322,6 +322,18 @@ public class VodController extends BaseController {
                 return isLock;
             }
         });
+        View floatView = findViewById(R.id.float_view);
+        if (ScreenUtils.isTv(getContext())) {
+            floatView.setVisibility(GONE);
+        } else {
+            floatView.setVisibility(VISIBLE);
+        }
+        floatView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floatListener.onFloatClick(true);
+            }
+        });
         mPlayTitle1 = findViewById(R.id.tv_info_name1);
         mTvSpeedPlay = findViewById(R.id.tv_speed_play);
         mSeekBar = findViewById(R.id.seekBar);
@@ -1178,4 +1190,6 @@ public class VodController extends BaseController {
         }
         return false;
     }
+
+
 }

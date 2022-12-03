@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rlContent"
+    android:layout_width="280dp"
+    android:layout_height="155dp"
+    android:orientation="vertical">
+
+
+    <com.github.tvbox.osc.player.MyVideoView
+        android:id="@+id/mVideoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.github.tvbox.osc.ui.view.ScaleImage
+        android:id="@+id/ivScale"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:padding="8dp"
+        android:src="@drawable/icon_scale" />
+
+    <ImageView
+        android:id="@+id/ivClose"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/vs_10"
+        android:layout_marginRight="@dimen/vs_10"
+        android:src="@drawable/open_activity" />
+
+</RelativeLayout>

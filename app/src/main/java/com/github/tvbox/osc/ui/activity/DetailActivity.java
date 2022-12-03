@@ -469,6 +469,14 @@ public class DetailActivity extends BaseActivity {
         setLoadSir(llLayout);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra("isFromFloat", false)) {
+            vodInfo = (VodInfo) intent.getSerializableExtra("vodInfo");
+            jumpToPlay();
+        }
+    }
 
     private void jumpToPlay() {
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {

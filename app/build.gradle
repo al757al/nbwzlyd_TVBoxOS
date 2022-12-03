@@ -25,7 +25,7 @@ android {
     defaultConfig {
         //applicationId 'com.mygithub0.tvbox0.osd_1111'
         applicationId 'com.mygithub0.tvbox0.osdX'
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 26
         versionCode 12
         versionName '2.0.6'
@@ -127,6 +127,7 @@ dependencies {
     implementation 'com.github.megatronking.stringfog:xor:4.0.1'
     implementation 'org.greenrobot:eventbus:3.2.0'
     implementation 'com.orhanobut:hawk:2.0.1'
+    implementation 'com.github.princekin-f:EasyFloat:2.0.4'
 
     implementation project(":player")
     implementation project(":quickjs")
