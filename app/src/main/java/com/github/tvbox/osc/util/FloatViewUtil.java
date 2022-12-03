@@ -16,9 +16,7 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.R;
-import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.App;
-import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.CacheManager;
@@ -32,9 +30,6 @@ import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import xyz.doikki.videoplayer.player.ProgressManager;
 
@@ -242,57 +237,6 @@ public class FloatViewUtil {
             if (fullScreenImage != null) {
                 fullScreenImage.setVisibility(View.GONE);
             }
-        }
-    }
-
-    private void changePlayer(JSONObject mPlayerConfig) {
-        try {
-            int playerType = mPlayerConfig.getInt("pl");
-            ArrayList<Integer> exsitPlayerTypes = PlayerHelper.getExistPlayerTypes();
-            int playerTypeIdx = 0;
-            int playerTypeSize = exsitPlayerTypes.size();
-            for (int i = 0; i < playerTypeSize; i++) {
-                if (playerType == exsitPlayerTypes.get(i)) {
-                    if (i == playerTypeSize - 1) {
-                        playerTypeIdx = 0;
-                    } else {
-                        playerTypeIdx = i + 1;
-                    }
-                }
-            }
-            playerType = exsitPlayerTypes.get(playerTypeIdx);
-            mPlayerConfig.put("pl", playerType);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void changePlayCode(JSONObject mPlayerConfig) {
-        try {
-            String ijk = mPlayerConfig.getString("ijk");
-            List<IJKCode> codecs = ApiConfig.get().getIjkCodes();
-            for (int i = 0; i < codecs.size(); i++) {
-                if (ijk.equals(codecs.get(i).getName())) {
-                    if (i >= codecs.size() - 1)
-                        ijk = codecs.get(0).getName();
-                    else {
-                        ijk = codecs.get(i + 1).getName();
-                    }
-                    break;
-                }
-            }
-            mPlayerConfig.put("ijk", ijk);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void replay() {
-        if (myVideoView != null) {
-            String url = myVideoView.getPlayUrl();
-            myVideoView.release();
-            myVideoView.setUrl(url);
-            myVideoView.start();
         }
     }
 
