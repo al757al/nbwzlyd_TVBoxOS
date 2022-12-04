@@ -29,6 +29,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -56,6 +57,7 @@ import com.github.tvbox.osc.player.IjkMediaPlayer;
 import com.github.tvbox.osc.player.MyVideoView;
 import com.github.tvbox.osc.player.TrackInfo;
 import com.github.tvbox.osc.player.TrackInfoBean;
+import com.github.tvbox.osc.player.controller.OnFloatListener;
 import com.github.tvbox.osc.player.controller.VodController;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SearchSubtitleDialog;
@@ -63,6 +65,8 @@ import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
+import com.github.tvbox.osc.util.FastClickCheckUtil;
+import com.github.tvbox.osc.util.FloatViewUtil2;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.MD5;
@@ -120,6 +124,8 @@ public class PlayActivity extends BaseActivity {
     private VodController mController;
     private SourceViewModel sourceViewModel;
     private Handler mHandler;
+    private FrameLayout mPlayRoot;
+    private ProgressManager progressManager;
 
     private long videoDuration = -1;
 
@@ -133,6 +139,14 @@ public class PlayActivity extends BaseActivity {
         initView();
         initViewModel();
         initData();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra("isFromFloat", false)) {
+            mVodInfo = (VodInfo) intent.getSerializableExtra("vodInfo");
+        }
     }
 
     private void initView() {
@@ -149,6 +163,7 @@ public class PlayActivity extends BaseActivity {
             }
         });
         mVideoView = findViewById(R.id.mVideoView);
+        mPlayRoot = findViewById(R.id.play_root);
         mPlayLoadTip = findViewById(R.id.play_load_tip);
         mPlayLoading = findViewById(R.id.play_loading);
         mPlayLoadErr = findViewById(R.id.play_load_error);
@@ -156,7 +171,7 @@ public class PlayActivity extends BaseActivity {
         mController.setCanChangePosition(true);
         mController.setEnableInNormal(true);
         mController.setGestureEnabled(true);
-        ProgressManager progressManager = new ProgressManager() {
+        progressManager = new ProgressManager() {
             @Override
             public void saveProgress(String url, long progress) {
                 if (videoDuration == 0) return;
@@ -712,6 +727,18 @@ public class PlayActivity extends BaseActivity {
 
         }
         mController.setPlayerConfig(mVodPlayerCfg);
+        mController.setOnFloatListener(new OnFloatListener() {
+            @Override
+            public void onFloatClick(boolean isShow) {
+                FastClickCheckUtil.check(mController);
+                if (videoDuration <= 0) {
+                    ToastUtils.showShort("等待视频开始播放才能小窗");
+                    return;
+                }
+                new FloatViewUtil2().openFloat(mVideoView, progressKey, mVodPlayerCfg);
+//                mVideoView.release();
+            }
+        });
     }
 
     @Override
@@ -766,7 +793,15 @@ public class PlayActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (mVideoView != null) {
-            mVideoView.resume();
+            ViewGroup parent = (ViewGroup) (mVideoView.getParent());
+            if (parent.getId() != R.id.play_root) {
+                parent.removeView(mVideoView);
+                mPlayRoot.addView(mVideoView, 0);
+                mVideoView.setVideoController(mController);
+                mVideoView.setProgressManager(progressManager);
+            } else {
+                mVideoView.resume();
+            }
         }
     }
 

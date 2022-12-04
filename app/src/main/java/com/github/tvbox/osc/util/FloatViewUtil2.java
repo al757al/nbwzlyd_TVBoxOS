@@ -24,14 +24,17 @@ import com.github.tvbox.osc.cache.CacheManager;
 import com.github.tvbox.osc.player.MyVideoView;
 import com.github.tvbox.osc.player.controller.FloatVodController;
 import com.github.tvbox.osc.ui.activity.DetailActivity;
+import com.github.tvbox.osc.ui.activity.PlayActivity;
 import com.github.tvbox.osc.ui.view.ScaleImage;
 import com.lzf.easyfloat.EasyFloat;
 import com.lzf.easyfloat.enums.ShowPattern;
 import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
+import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import xyz.doikki.videoplayer.player.ProgressManager;
 
 /**
@@ -178,7 +181,11 @@ public class FloatViewUtil2 {
                 intent.putExtra("isFromFloat", true);
                 intent.putExtra("vodInfo", App.getInstance().getVodInfo());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setClass(App.getInstance(), DetailActivity.class);
+                if (Hawk.get(HawkConfig.SHOW_PREVIEW, true)) {
+                    intent.setClass(App.getInstance(), DetailActivity.class);
+                } else {
+                    intent.setClass(App.getInstance(), PlayActivity.class);
+                }
                 App.getInstance().startActivity(intent);
             });
         }).show();
@@ -216,7 +223,7 @@ public class FloatViewUtil2 {
         @Override
         public void playPre() {
 //                            PlayFragment.this.playPrevious();
-            ToastUtils.make().setGravity(Gravity.TOP, 0, 0).show("功能还在开发中");
+            ToastUtils.make().setGravity(Gravity.TOP, 0, AutoSizeUtils.dp2px(myVideoView.getContext(), 100)).show("功能还在开发中");
         }
 
         @Override

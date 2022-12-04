@@ -66,7 +66,8 @@
         <activity
             android:name=".ui.activity.PlayActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.activity.PushActivity"
             android:screenOrientation="sensorLandscape" />
