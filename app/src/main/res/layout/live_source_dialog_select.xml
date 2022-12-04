@@ -4,6 +4,7 @@
     android:layout_width="@dimen/vs_720"
     android:layout_height="@dimen/vs_440"
     android:layout_gravity="center"
+    android:id="@+id/content_view"
     android:background="@drawable/shape_dialog_bg_main"
     android:paddingLeft="@dimen/vs_10">
 

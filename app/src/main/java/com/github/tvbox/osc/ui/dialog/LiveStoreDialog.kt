@@ -25,6 +25,7 @@ import com.github.tvbox.osc.ui.dialog.util.AdapterDiffCallBack
 import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
+import com.github.tvbox.osc.util.ScreenUtils
 import com.github.tvbox.osc.util.StringUtils
 import com.orhanobut.hawk.Hawk
 import com.owen.tvrecyclerview.widget.TvRecyclerView
@@ -63,6 +64,12 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     init {
         setContentView(R.layout.live_source_dialog_select)
+        val contentView = findViewById<View>(R.id.content_view)
+        if (ScreenUtils.isTv(context)) {
+            contentView.layoutParams.width = AutoSizeUtils.mm2px(context, 720f)
+        } else {
+            contentView.layoutParams.width = AutoSizeUtils.mm2px(context, 760f)
+        }
         mRecyclerView = findViewById(R.id.list)
         mAddMoreBtn = findViewById(R.id.inputSubmit)
         mSourceNameEdit = findViewById(R.id.input_sourceName)
@@ -240,6 +247,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             holder.addOnClickListener(R.id.tvDel)
             holder.addOnClickListener(R.id.tvName)
             holder.addOnClickListener(R.id.tvCopy)
+            holder.setGone(R.id.tvCopy, !ScreenUtils.isTv(mContext))
             return holder
         }
 
