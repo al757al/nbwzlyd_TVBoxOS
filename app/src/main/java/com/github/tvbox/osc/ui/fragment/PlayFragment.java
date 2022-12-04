@@ -742,7 +742,7 @@ public class PlayFragment extends BaseLazyFragment {
                     ToastUtils.showShort("等待视频开始播放才能小窗");
                     return;
                 }
-                new FloatViewUtil2().openFloat(mVideoView, progressKey, mVodPlayerCfg);
+                new FloatViewUtil2().openFloat(mVideoView, progressKey, mVodPlayerCfg, mVodInfo);
 //                mVideoView.release();
             }
         });

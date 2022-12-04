@@ -58,7 +58,7 @@ public class FloatViewUtil2 {
 
 //    private MyVideoView myVideoView;
 
-    public void openFloat(MyVideoView videoView, String progressKey, JSONObject playConfig) {
+    public void openFloat(MyVideoView videoView, String progressKey, JSONObject playConfig, VodInfo vodInfo) {
 //        this.myVideoView = videoView;
         EasyFloat.dismiss(FLOAT_TAG);
         ProgressManager progressManager = new ProgressManager() {
@@ -149,9 +149,12 @@ public class FloatViewUtil2 {
             RelativeLayout content = view.findViewById(R.id.rlContent);
 //                    myVideoView = view.findViewById(R.id.mVideoView);
             floatVodController = new FloatVodController(App.getInstance());
-            VodInfo vodInfo = App.getInstance().getVodInfo();
-            VodInfo.VodSeries vs = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex);
-            floatVodController.setTitle(vodInfo.name + " " + vs.name);
+            String title = vodInfo.name;
+            if (vodInfo.seriesMap != null && !vodInfo.seriesMap.isEmpty()) {
+                VodInfo.VodSeries vs = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex);
+                title += vs.name;
+            }
+            floatVodController.setTitle(title);
             videoView.setVideoController(floatVodController);
             videoView.setProgressManager(progressManager);
             ((ViewGroup) videoView.getParent()).removeView(videoView);
@@ -179,7 +182,7 @@ public class FloatViewUtil2 {
                 EasyFloat.dismiss(FLOAT_TAG);
                 Intent intent = new Intent();
                 intent.putExtra("isFromFloat", true);
-                intent.putExtra("vodInfo", App.getInstance().getVodInfo());
+                intent.putExtra("vodInfo", vodInfo);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 if (Hawk.get(HawkConfig.SHOW_PREVIEW, true)) {
                     intent.setClass(App.getInstance(), DetailActivity.class);
