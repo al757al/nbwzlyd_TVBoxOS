@@ -79,6 +79,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     init {
         setContentView(R.layout.more_source_dialog_select)
+        val contentView = findViewById<View>(R.id.content_view)
+        if (ScreenUtils.isTv(context)) {
+            contentView.layoutParams.width = AutoSizeUtils.mm2px(context, 720f)
+        } else {
+            contentView.layoutParams.width = AutoSizeUtils.mm2px(context, 760f)
+        }
         mRecyclerView = findViewById(R.id.list)
         mAddMoreBtn = findViewById(R.id.inputSubmit)
         mSourceNameEdit = findViewById(R.id.input_sourceName)
