@@ -66,7 +66,7 @@ import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
-import com.github.tvbox.osc.util.FloatViewUtil2;
+import com.github.tvbox.osc.util.FloatViewUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.MD5;
@@ -735,7 +735,7 @@ public class PlayActivity extends BaseActivity {
                     ToastUtils.showShort("等待视频开始播放才能小窗");
                     return;
                 }
-                new FloatViewUtil2().openFloat(mVideoView, progressKey, mVodPlayerCfg, mVodInfo);
+                new FloatViewUtil().openFloat(mVideoView, progressKey, mVodPlayerCfg, mVodInfo);
 //                mVideoView.release();
             }
         });
