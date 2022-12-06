@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -664,7 +663,9 @@ public class DetailActivity extends BaseActivity {
 //                    }
                     seriesAdapter.getData().get(freshIndex).selected = true;
                     seriesAdapter.notifyItemChanged(freshIndex);
-                    scrollToPlayPosAndRequestFoucuse(freshIndex);
+                    if (!fullWindows) {
+                        mGridView.scrollToPositionWithOffset(freshIndex, 0, true);
+                    }
                     vodInfo.playIndex = (int) event.obj;
                     //保存历史
                     insertVod(sourceKey, vodInfo);
@@ -1044,27 +1045,9 @@ public class DetailActivity extends BaseActivity {
             playFragment.mController.setIsFullScreen(fullWindows);
         }
         if (!fullWindows && vodInfo != null) {//恢复焦点
-            scrollToPlayPosAndRequestFoucuse(vodInfo.playIndex);
+            mGridView.scrollToPositionWithOffset(vodInfo.playIndex, 0, true);
         }
-//        if (fullWindows) {
-//            playFragment.initDefaultBright(this, 0.43f);
-//        } else {
-//            playFragment.initDefaultBright(this, WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE);
-//        }
         toggleSubtitleTextSize();
-    }
-
-    private void scrollToPlayPosAndRequestFoucuse(int freshIndex) {
-        if (mGridView != null && mGridView.getLayoutManager() != null) {
-            mGridView.getLayoutManager().scrollToPosition(freshIndex);
-            new Handler().postDelayed(() -> {
-                View requestView = mGridView.getLayoutManager().findViewByPosition(freshIndex);
-                if (requestView != null) {
-                    requestView.requestFocus();
-                }
-            }, 300);
-
-        }
     }
 
     private void showDownLoadTips() {
