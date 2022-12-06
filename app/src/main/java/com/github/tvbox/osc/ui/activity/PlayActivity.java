@@ -252,6 +252,18 @@ public class PlayActivity extends BaseActivity {
             public void prepared() {
                 initSubtitleView();
                 initVideoDurationSomeThing();
+//                if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
+//                    ExoPlayerSubTitleUtil.getTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
+//                    ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(new SubtitleChangeListener() {
+//                        @Override
+//                        public void onSubTitleChange(String text) {
+//                            mController.mSubtitleView.isInternal = true;
+//                            com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+//                            subtitle.content = text;
+//                            mController.mSubtitleView.onSubtitleChanged(subtitle);
+//                        }
+//                    });
+//                }
             }
         });
         mVideoView.setVideoController(mController);
@@ -530,8 +542,8 @@ public class PlayActivity extends BaseActivity {
     }
 
     void playUrl(String url, HashMap<String, String> headers) {
-        if(autoRetryCount>0 && url.contains(".m3u8")){
-            url="http://home.jundie.top:666/unBom.php?m3u8="+url;
+        if (autoRetryCount > 0 && url.contains(".m3u8")) {
+            url = "http://home.jundie.top:666/unBom.php?m3u8=" + url;
         }
         String finalUrl = url;
         runOnUiThread(new Runnable() {
@@ -1553,7 +1565,7 @@ public class PlayActivity extends BaseActivity {
 
             boolean isFilter = VideoParseRuler.isFilter(webUrl, url);
             if (isFilter) {
-                LOG.i( "shouldInterceptLoadRequest filter:" + url);
+                LOG.i("shouldInterceptLoadRequest filter:" + url);
                 return null;
             }
 
@@ -1574,7 +1586,8 @@ public class PlayActivity extends BaseActivity {
                         url = loadFoundVideoUrls.poll();
                         mHandler.removeMessages(100);
                         String cookie = CookieManager.getInstance().getCookie(url);
-                        if(!TextUtils.isEmpty(cookie))headers.put("Cookie", " " + cookie);//携带cookie
+                        if (!TextUtils.isEmpty(cookie))
+                            headers.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, headers);
                         stopLoadWebView(false);
                     }
@@ -1605,7 +1618,7 @@ public class PlayActivity extends BaseActivity {
                     if (k.equalsIgnoreCase("user-agent")
                             || k.equalsIgnoreCase("referer")
                             || k.equalsIgnoreCase("origin")) {
-                        webHeaders.put(k," " + hds.get(k));
+                        webHeaders.put(k, " " + hds.get(k));
                     }
                 }
             }
@@ -1726,7 +1739,7 @@ public class PlayActivity extends BaseActivity {
 
             boolean isFilter = VideoParseRuler.isFilter(webUrl, url);
             if (isFilter) {
-                LOG.i( "shouldInterceptLoadRequest filter:" + url);
+                LOG.i("shouldInterceptLoadRequest filter:" + url);
                 return null;
             }
 
@@ -1746,7 +1759,7 @@ public class PlayActivity extends BaseActivity {
                             if (k.equalsIgnoreCase("user-agent")
                                     || k.equalsIgnoreCase("referer")
                                     || k.equalsIgnoreCase("origin")) {
-                                webHeaders.put(k," " + hds.get(k));
+                                webHeaders.put(k, " " + hds.get(k));
                             }
                         }
                     }
@@ -1757,7 +1770,8 @@ public class PlayActivity extends BaseActivity {
                         mHandler.removeMessages(100);
                         url = loadFoundVideoUrls.poll();
                         String cookie = CookieManager.getInstance().getCookie(url);
-                        if(!TextUtils.isEmpty(cookie))webHeaders.put("Cookie", " " + cookie);//携带cookie
+                        if (!TextUtils.isEmpty(cookie))
+                            webHeaders.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, webHeaders);
                         stopLoadWebView(false);
                     }
