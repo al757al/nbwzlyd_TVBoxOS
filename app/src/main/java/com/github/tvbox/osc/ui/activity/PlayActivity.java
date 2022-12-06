@@ -731,7 +731,7 @@ public class PlayActivity extends BaseActivity {
             @Override
             public void onFloatClick(boolean isShow) {
                 FastClickCheckUtil.check(mController);
-                if (videoDuration <= 0) {
+                if (!mVideoView.isPlaying()) {
                     ToastUtils.showShort("等待视频开始播放才能小窗");
                     return;
                 }
