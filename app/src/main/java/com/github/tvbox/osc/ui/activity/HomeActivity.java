@@ -57,7 +57,9 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.db.CacheManager;
 import com.orhanobut.hawk.Hawk;
+import com.owen.tvrecyclerview.widget.OnItemLongListener;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
@@ -217,6 +219,17 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         });
+        this.mGridView.setOnItemLongListener(new OnItemLongListener() {
+            @Override
+            public void onLongClick(int position) {
+                if (position == 0) {
+                    dataInitOk = false;
+                    jarInitOk = false;
+                    CacheManager.getInstance().clear();//清空接口缓存
+                    initData();
+                }
+            }
+        });
         this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
             public final boolean onInBorderKeyEvent(int direction, View view) {
                 if (direction != View.FOCUS_DOWN) {
@@ -233,6 +246,7 @@ public class HomeActivity extends BaseActivity {
                 return false;
             }
         });
+
         setLoadSir(this.contentLayout);
         pageAdapter = new HomePageAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setPageTransformer(true, new DefaultTransformer());
