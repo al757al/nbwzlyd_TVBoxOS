@@ -134,8 +134,8 @@ public class FloatViewUtil {
                     if (fullScreenImage != null) {
                         fullScreenImage.setVisibility(View.VISIBLE);
                     }
-                    mHandler.postDelayed(runnable, 6000);
                 }
+                mHandler.postDelayed(runnable, 6000);
 
             }
 
