@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,6 +98,7 @@ public class HomeActivity extends BaseActivity {
     private int currentSelected = 0;
     private int sortFocused = 0;
     public View sortFocusView = null;
+    private boolean isLoadNewData = false;
     private Handler mHandler = new Handler();
     private long mExitTime = 0;
     View lastView = null;
@@ -223,6 +225,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onLongClick(int position) {
                 if (position == 0) {
+                    isLoadNewData = true;
                     dataInitOk = false;
                     jarInitOk = false;
                     CacheManager.getInstance().clear();//清空接口缓存
@@ -313,6 +316,9 @@ public class HomeActivity extends BaseActivity {
         sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
             @Override
             public void onChanged(AbsSortXml absXml) {
+                if (isLoadNewData) {
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("接口刷新完毕");
+                }
                 showSuccess();
                 isLoadingShow = false;
                 if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
