@@ -21,20 +21,21 @@ import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.CacheManager;
+import com.github.tvbox.osc.player.IjkMediaPlayer;
 import com.github.tvbox.osc.player.MyVideoView;
+import com.github.tvbox.osc.player.TrackInfo;
 import com.github.tvbox.osc.player.controller.FloatVodController;
-import com.github.tvbox.osc.ui.activity.DetailActivity;
-import com.github.tvbox.osc.ui.activity.PlayActivity;
 import com.github.tvbox.osc.ui.view.ScaleImage;
 import com.lzf.easyfloat.EasyFloat;
 import com.lzf.easyfloat.enums.ShowPattern;
 import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
-import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkTimedText;
 import xyz.doikki.videoplayer.player.ProgressManager;
 
 /**
@@ -58,7 +59,8 @@ public class FloatViewUtil {
 
 //    private MyVideoView myVideoView;
 
-    public void openFloat(MyVideoView videoView, String progressKey, JSONObject playConfig, VodInfo vodInfo) {
+    public void openFloat(MyVideoView videoView, String progressKey,
+                          JSONObject playConfig, VodInfo vodInfo, boolean isInternalSubTitle) {
 //        this.myVideoView = videoView;
         EasyFloat.dismiss(FLOAT_TAG);
         ProgressManager progressManager = new ProgressManager() {
@@ -100,6 +102,7 @@ public class FloatViewUtil {
                     listener.setMyVideoView(videoView);
                     floatVodController.setListener(listener);
                 }
+                updateSubTitle(videoView, floatVodController);
             }
 
             @Override
@@ -138,17 +141,20 @@ public class FloatViewUtil {
 
             @Override
             public void drag(@NonNull View view, @NonNull MotionEvent motionEvent) {
+                mHandler.removeCallbacks(runnable);
 
             }
 
             @Override
             public void dragEnd(@NonNull View view) {
+                mHandler.postDelayed(runnable, 6000);
 
             }
         }).setLayout(R.layout.float_app_scale, view -> {
             RelativeLayout content = view.findViewById(R.id.rlContent);
 //                    myVideoView = view.findViewById(R.id.mVideoView);
             floatVodController = new FloatVodController(App.getInstance());
+            floatVodController.mSubtitleView.isInternal = isInternalSubTitle;
             String title = vodInfo.name;
             if (vodInfo.seriesMap != null && !vodInfo.seriesMap.isEmpty()) {
                 VodInfo.VodSeries vs = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex);
@@ -176,6 +182,7 @@ public class FloatViewUtil {
                 }
                 params.width = (int) Math.max(params.width + x, 400);
                 EasyFloat.updateFloat(FLOAT_TAG, -1, -1, params.width, params.height);
+                floatVodController.updateSubInfoTextSize(params.width / 50);
             });
             fullScreenImage = view.findViewById(R.id.ivClose);
             view.findViewById(R.id.ivClose).setOnClickListener(v -> {
@@ -184,11 +191,7 @@ public class FloatViewUtil {
                 intent.putExtra("isFromFloat", true);
                 intent.putExtra("vodInfo", vodInfo);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                if (Hawk.get(HawkConfig.SHOW_PREVIEW, true)) {
-                    intent.setClass(App.getInstance(), DetailActivity.class);
-                } else {
-                    intent.setClass(App.getInstance(), PlayActivity.class);
-                }
+                intent.setClass(App.getInstance(), ActivityUtils.getTopActivity().getClass());
                 App.getInstance().startActivity(intent);
             });
         }).show();
@@ -283,5 +286,25 @@ public class FloatViewUtil {
             mVodInfo.playIndex++;
         }
 //        play(false);
+    }
+
+    void updateSubTitle(MyVideoView mVideoView, FloatVodController floatVodController) {
+        if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer) {
+            TrackInfo trackInfo = ((IjkMediaPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
+            if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
+                floatVodController.mSubtitleView.hasInternal = true;
+            }
+            ((IjkMediaPlayer) (mVideoView.getMediaPlayer())).setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
+                @Override
+                public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
+                    if (floatVodController.mSubtitleView.isInternal) {
+                        com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+                        subtitle.content = text.getText();
+                        floatVodController.mSubtitleView.onSubtitleChanged(subtitle);
+                    }
+                }
+            });
+        }
+
     }
 }

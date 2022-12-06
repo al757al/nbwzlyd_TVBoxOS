@@ -42,7 +42,6 @@ import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.ScreenUtils;
-import com.github.tvbox.osc.util.SubtitleHelper;
 import com.orhanobut.hawk.Hawk;
 
 import org.jetbrains.annotations.NotNull;
@@ -404,7 +403,7 @@ public class FloatVodController extends BaseController {
 //                        .setPopupGravity(Gravity.END)
 //                        .showPopupWindow());
 
-//        initSubtitleInfo();
+        updateSubInfoTextSize(8);
 
         myHandle = new Handler();
         myRunnable = new Runnable() {
@@ -803,9 +802,10 @@ public class FloatVodController extends BaseController {
 
     }
 
-    void initSubtitleInfo() {
-        int subtitleTextSize = SubtitleHelper.getTextSize(mActivity);
-        mSubtitleView.setTextSize(subtitleTextSize);
+    public void updateSubInfoTextSize(int size) {
+//        int subtitleTextSize = SubtitleHelper.getTextSize(getRootView());
+        int textSize = Math.min(Math.max(size, 3), 14);
+        mSubtitleView.setTextSize(textSize);
     }
 
     @Override
