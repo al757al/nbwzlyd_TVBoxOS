@@ -27,6 +27,7 @@ import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
 import com.github.tvbox.osc.util.ScreenUtils
 import com.github.tvbox.osc.util.StringUtils
+import com.lzy.okgo.db.CacheManager
 import com.orhanobut.hawk.Hawk
 import com.owen.tvrecyclerview.widget.TvRecyclerView
 import me.jessyan.autosize.utils.AutoSizeUtils
@@ -116,18 +117,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                 R.id.tvCopy -> {
                     val data = mAdapter.data[position]
                     var url = data.sourceUrl
-                    if (!url.startsWith("http") || !url.startsWith("https")) {
-                        try {
-                            url = String(
-                                Base64.decode(
-                                    url,
-                                    Base64.DEFAULT or Base64.URL_SAFE or Base64.NO_WRAP
-                                ), Charset.forName("UTF-8")
-                            );
-                        } catch (e: Exception) {
-
-                        }
-                    }
+                    url = getHttpUrl(url)
                     val copyText = """
                         ${data.sourceName}
                         $url
@@ -142,6 +132,26 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             ArrayList<LiveSourceBean>()
         )
         inflateCustomSource(list)
+    }
+
+    private fun getHttpUrl(url: String): String {
+        var url1 = url
+        if (!url1.startsWith("http") || !url1.startsWith("https")) {
+            try {
+                url1 = String(
+                    Base64.decode(
+                        url1,
+                        Base64.DEFAULT or Base64.URL_SAFE or Base64.NO_WRAP
+                    ), Charset.forName("UTF-8")
+                );
+            } catch (e: Exception) {
+
+            }
+        }
+        if (url1.startsWith("clan://")) {
+            url1 = ApiConfig.clanToAddress(url1)
+        }
+        return url1
     }
 
     private fun selectNewLiveSource(liveSourceBean: LiveSourceBean) {
@@ -236,6 +246,7 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             Hawk.delete(HawkConfig.LIVE_SOURCE_URL_CURRENT)
         }
         Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, custom)
+        CacheManager.getInstance().remove(getHttpUrl(deleteData.sourceUrl))
         mAdapter.remove(position)
     }
 
