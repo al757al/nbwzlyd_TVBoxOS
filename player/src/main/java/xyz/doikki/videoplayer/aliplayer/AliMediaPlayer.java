@@ -73,18 +73,20 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void start() {
         aliPlayer.start();
-
+        isAliPlayerStart = true;
     }
 
     @Override
     public void pause() {
         aliPlayer.pause();
+        isAliPlayerStart = false;
 
     }
 
     @Override
     public void stop() {
         aliPlayer.stop();
+        isAliPlayerStart = false;
 
     }
 

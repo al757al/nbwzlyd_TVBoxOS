@@ -52,7 +52,7 @@ public class FloatViewUtil {
     private View fullScreenImage;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private final Runnable runnable = new DismissRunnable();
-    private final VodControllerListener listener = new VodControllerListener();
+    private VodControllerListener listener = new VodControllerListener();
 
     public static final String FLOAT_TAG = "float_view";
     private FloatVodController floatVodController;
@@ -118,6 +118,7 @@ public class FloatViewUtil {
                 }
 //                videoView.release();
                 if (floatVodController != null) {
+                    listener = null;
                     floatVodController.setListener(null);
                 }
                 mHandler.removeCallbacksAndMessages(null);
