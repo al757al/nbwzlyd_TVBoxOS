@@ -305,6 +305,7 @@ public class FloatVodController extends BaseController {
             @Override
             public void onClick(View v) {
                 isLock = !isLock;
+                mControlWrapper.setLocked(isLock);
                 mLockView.setImageResource(isLock ? R.drawable.icon_lock : R.drawable.icon_unlock);
                 if (isLock) {
                     Message obtain = Message.obtain();
@@ -315,17 +316,6 @@ public class FloatVodController extends BaseController {
             }
         });
         View rootView = findViewById(R.id.rootView);
-        rootView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (isLock) {
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        showLockView();
-                    }
-                }
-                return isLock;
-            }
-        });
 
 //        findViewById(R.id.float_view).setOnClickListener(new OnClickListener() {
 //            @Override
