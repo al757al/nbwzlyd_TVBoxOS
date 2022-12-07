@@ -89,9 +89,8 @@
         android:text="横竖屏"
         android:textColor="@android:color/white"
         android:textSize="@dimen/ts_24"
-        android:layout_marginStart="@dimen/vs_90"
-        app:layout_constraintLeft_toRightOf="@id/play_scale"
-        app:layout_constraintTop_toTopOf="@id/play_scale" />
+        app:layout_constraintLeft_toRightOf="@id/audio_track_select"
+        app:layout_constraintBottom_toBottomOf="@id/play_scale" />
 
     <TextView
         android:id="@+id/title2"
