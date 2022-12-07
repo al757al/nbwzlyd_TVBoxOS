@@ -25,7 +25,7 @@ class HawkTask : AndroidStartup<String>() {
         // Hawk
         Hawk.init(context).build()
         if (!Hawk.contains(HawkConfig.PLAY_TYPE)) {
-            Hawk.put(HawkConfig.PLAY_TYPE, 1)
+            Hawk.put(HawkConfig.PLAY_TYPE, 3)
         }
         if (!Hawk.contains(HawkConfig.IMMERSIVE_SWITCH)) {
             Hawk.put(HawkConfig.IMMERSIVE_SWITCH, true)

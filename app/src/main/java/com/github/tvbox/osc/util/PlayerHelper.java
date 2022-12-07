@@ -30,7 +30,7 @@ import xyz.doikki.videoplayer.render.TextureRenderViewFactory;
 
 public class PlayerHelper {
     public static void updateCfg(VideoView videoView, JSONObject playerCfg) {
-        int playerType = Hawk.get(HawkConfig.PLAY_TYPE, 0);
+        int playerType = Hawk.get(HawkConfig.PLAY_TYPE, 3);
         int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 2);
         String ijkCode = Hawk.get(HawkConfig.IJK_CODEC, "硬解码");
         int scale = Hawk.get(HawkConfig.PLAY_SCALE, 0);
@@ -42,7 +42,6 @@ public class PlayerHelper {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        playerType = 3;
         IJKCode codec = ApiConfig.get().getIJKCodec(ijkCode);
         if (codec == null) {
             return;
@@ -95,7 +94,7 @@ public class PlayerHelper {
     }
 
     public static void updateCfg(VideoView videoView) {
-        int playType = Hawk.get(HawkConfig.PLAY_TYPE, 0);
+        int playType = Hawk.get(HawkConfig.PLAY_TYPE, 3);
         PlayerFactory playerFactory;
         if (playType == 1) {
             playerFactory = new PlayerFactory<IjkMediaPlayer>() {
@@ -173,6 +172,7 @@ public class PlayerHelper {
             playersInfo.put(0, "系统播放器");
             playersInfo.put(1, "IJK播放器");
             playersInfo.put(2, "Exo播放器");
+            playersInfo.put(3, "阿里播放器");
             playersInfo.put(10, "MX播放器");
             playersInfo.put(11, "Reex播放器");
             playersInfo.put(12, "Kodi播放器");
@@ -190,6 +190,7 @@ public class PlayerHelper {
             playersExist.put(0, true);
             playersExist.put(1, true);
             playersExist.put(2, true);
+            playersExist.put(3, true);
             playersExist.put(10, MXPlayer.getPackageInfo() != null);
             playersExist.put(11, ReexPlayer.getPackageInfo() != null);
             playersExist.put(12, Kodi.getPackageInfo() != null);

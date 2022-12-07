@@ -17,7 +17,7 @@ public class LivePlayerManager {
 
     public void init(VideoView videoView) {
         try {
-            defaultPlayerConfig.put("pl", Hawk.get(HawkConfig.PLAY_TYPE, 2));//直播用exo更优秀
+            defaultPlayerConfig.put("pl", Hawk.get(HawkConfig.PLAY_TYPE, 3));//Aliplayer
             defaultPlayerConfig.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, "硬解码"));
             defaultPlayerConfig.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 2));
             defaultPlayerConfig.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
@@ -79,6 +79,8 @@ public class LivePlayerManager {
                 case 2:
                     playerTypeIndex = 3;
                     break;
+                case 3:
+                    playerTypeIndex = 4;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -114,6 +116,9 @@ public class LivePlayerManager {
                 case 3:
                     playerConfig.put("pl", 2);
                     playerConfig.put("ijk", "软解码");
+                    break;
+                case 4:
+                    playerConfig.put("pl", 3);
                     break;
             }
         } catch (JSONException e) {
