@@ -2,6 +2,7 @@ package xyz.doikki.videoplayer.aliplayer;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -53,6 +54,7 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
         aliPlayer.setOnInfoListener(onInfoListener);
         aliPlayer.setOnStateChangedListener(onStateChangedListener);
         aliPlayer.setOnLoadingStatusListener(onLoadingStatusListener);
+        aliPlayer.setOnSeekCompleteListener(onSeekCompleteListener);
     }
 
     @Override
@@ -106,6 +108,7 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void seekTo(long time) {
         aliPlayer.seekTo(time);
+        currentPos = time;
         isWaitOnSeekComplete = true;
 
     }
@@ -276,10 +279,10 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
             InfoCode code = infoBean.getCode(); //信息码。
             String msg = infoBean.getExtraMsg();//信息内容。
             long value = infoBean.getExtraValue(); //信息值。
-            currentPos = InfoCode.CurrentPosition.getValue();
             if (isWaitOnSeekComplete) {
                 return;
             }
+            Log.d("derek110", "onInfo: " + code + " msg " + msg + "value " + value);
             if (infoBean.getCode() == InfoCode.CurrentDownloadSpeed) {
                 //当前下载速度
                 netSpeedLong = infoBean.getExtraValue();
