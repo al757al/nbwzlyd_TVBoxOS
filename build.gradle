@@ -12,6 +12,7 @@ buildscript {
             allowInsecureProtocol = true
             url 'http://home.jundie.top:81/xwalk/maven2'
         }
+        maven { url "https://maven.aliyun.com/repository/releases" }
 //        maven { url 'http://9xi4o.tk/maven2' }
     }
     dependencies {
@@ -40,6 +41,7 @@ allprojects {
         maven {
             allowInsecureProtocol = true
             url 'http://home.jundie.top:81/xwalk/maven2' }
+        maven { url "https://maven.aliyun.com/repository/releases" }
     }
 }
 

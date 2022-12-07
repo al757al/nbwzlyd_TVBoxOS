@@ -6,7 +6,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -43,4 +43,6 @@ dependencies {
     api "com.google.android.exoplayer:extension-okhttp:2.14.2"
     api 'xyz.doikki.android.dkplayer:dkplayer-ui:3.3.5'
     implementation 'androidx.lifecycle:lifecycle-common:2.3.1'
+    api 'com.aliyun.sdk.android:AliyunPlayer:5.4.9.2-full'
+
 }

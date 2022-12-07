@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import tv.danmaku.ijk.media.player.IjkLibLoader;
+import xyz.doikki.videoplayer.aliplayer.AliyunMediaPlayerFactory;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
 import xyz.doikki.videoplayer.player.AndroidMediaPlayerFactory;
 import xyz.doikki.videoplayer.player.PlayerFactory;
@@ -41,6 +42,7 @@ public class PlayerHelper {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        playerType = 3;
         IJKCode codec = ApiConfig.get().getIJKCodec(ijkCode);
         if (codec == null) {
             return;
@@ -69,6 +71,8 @@ public class PlayerHelper {
             }
         } else if (playerType == 2) {
             playerFactory = ExoMediaPlayerFactory.create();
+        } else if (playerType == 3) {
+            playerFactory = AliyunMediaPlayerFactory.create();
         } else {
             playerFactory = AndroidMediaPlayerFactory.create();
         }
@@ -162,6 +166,7 @@ public class PlayerHelper {
     }
 
     private static HashMap<Integer, String> mPlayersInfo = null;
+
     public static HashMap<Integer, String> getPlayersInfo() {
         if (mPlayersInfo == null) {
             HashMap<Integer, String> playersInfo = new HashMap<>();
@@ -178,6 +183,7 @@ public class PlayerHelper {
     }
 
     private static HashMap<Integer, Boolean> mPlayersExistInfo = null;
+
     public static HashMap<Integer, Boolean> getPlayersExistInfo() {
         if (mPlayersExistInfo == null) {
             HashMap<Integer, Boolean> playersExist = new HashMap<>();
@@ -205,7 +211,7 @@ public class PlayerHelper {
     public static ArrayList<Integer> getExistPlayerTypes() {
         HashMap<Integer, Boolean> playersExistInfo = getPlayersExistInfo();
         ArrayList<Integer> existPlayers = new ArrayList<>();
-        for(Integer playerType : playersExistInfo.keySet()) {
+        for (Integer playerType : playersExistInfo.keySet()) {
             if (playersExistInfo.get(playerType)) {
                 existPlayers.add(playerType);
             }
@@ -270,11 +276,11 @@ public class PlayerHelper {
     }
 
     public static String getDisplaySpeed(long speed) {
-        if(speed > 1048576)
+        if (speed > 1048576)
             return (speed / 1048576) + "Mb/s";
-        else if(speed > 1024)
+        else if (speed > 1024)
             return (speed / 1024) + "Kb/s";
         else
-            return speed > 0?speed + "B/s":"";
+            return speed > 0 ? speed + "B/s" : "";
     }
 }

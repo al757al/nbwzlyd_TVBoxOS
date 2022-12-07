@@ -44,6 +44,13 @@
             </intent-filter>
         </activity>
 
+        <meta-data
+            android:name="com.aliyun.alivc_license.licensekey"
+            android:value="xoG0hyUHps0ZaBNHY89778961ef36414b9bef8af488ff8ed3" />
+        <meta-data
+            android:name="com.aliyun.alivc_license.licensefile"
+            android:value="assets/license.crt" />
+
         <!--        <activity-->
         <!--            android:name=".ui.activity.SplashActivity"-->
         <!--            android:screenOrientation="sensorLandscape"-->
