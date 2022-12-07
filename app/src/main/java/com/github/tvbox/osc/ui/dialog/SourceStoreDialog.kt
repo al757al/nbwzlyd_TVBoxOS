@@ -2,6 +2,7 @@ package com.github.tvbox.osc.ui.dialog
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.view.View
 import android.widget.*
@@ -54,6 +55,9 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private var mSourceUrlEdit: EditText? = null
     private var mQrCode: ImageView? = null
     private var mLoading: ProgressBar? = null
+
+    private val userAgent = "https://gitcode"
+    private val prefix = "clan://"
     private val address by lazy {
         ControlManager.get().getAddress(false)
     }
@@ -147,8 +151,8 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
             return
         }
         var lineSource = sourceUrl0
-        if (sourceUrl0?.startsWith("clan://") == true) {
-            lineSource = ApiConfig.clanToAddress(sourceUrl0)
+        if (lineSource?.startsWith(prefix) == true) {
+            lineSource = ApiConfig.clanToAddress(lineSource)
         }
         val saveList =
             Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_DATA, ArrayList<MoreSourceBean>())
@@ -170,12 +174,12 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
     private fun getMutiSource(moreSourceBean: MoreSourceBean? = null) {
         mLoading.letVisible()
-        if (moreSourceBean?.sourceUrl?.startsWith("clan://") == true) {
+        if (moreSourceBean?.sourceUrl?.startsWith(prefix) == true) {
             moreSourceBean.sourceUrl = ApiConfig.clanToAddress(moreSourceBean.sourceUrl)
         }
         val req = OkGo.get<String>(moreSourceBean?.sourceUrl)
             .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
-        if (moreSourceBean?.sourceUrl?.startsWith("https://gitcode") == true) {
+        if (moreSourceBean?.sourceUrl?.startsWith(userAgent) == true) {
             req.headers(
                 "User-Agent",
                 UA.randomOne()

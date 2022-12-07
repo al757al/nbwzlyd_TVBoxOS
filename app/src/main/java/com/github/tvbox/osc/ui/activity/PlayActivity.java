@@ -29,6 +29,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -56,6 +57,7 @@ import com.github.tvbox.osc.player.IjkMediaPlayer;
 import com.github.tvbox.osc.player.MyVideoView;
 import com.github.tvbox.osc.player.TrackInfo;
 import com.github.tvbox.osc.player.TrackInfoBean;
+import com.github.tvbox.osc.player.controller.OnFloatListener;
 import com.github.tvbox.osc.player.controller.VodController;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SearchSubtitleDialog;
@@ -63,6 +65,8 @@ import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
+import com.github.tvbox.osc.util.FastClickCheckUtil;
+import com.github.tvbox.osc.util.FloatViewUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.MD5;
@@ -120,6 +124,8 @@ public class PlayActivity extends BaseActivity {
     private VodController mController;
     private SourceViewModel sourceViewModel;
     private Handler mHandler;
+    private FrameLayout mPlayRoot;
+    private ProgressManager progressManager;
 
     private long videoDuration = -1;
 
@@ -133,6 +139,14 @@ public class PlayActivity extends BaseActivity {
         initView();
         initViewModel();
         initData();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra("isFromFloat", false)) {
+            mVodInfo = (VodInfo) intent.getSerializableExtra("vodInfo");
+        }
     }
 
     private void initView() {
@@ -149,6 +163,7 @@ public class PlayActivity extends BaseActivity {
             }
         });
         mVideoView = findViewById(R.id.mVideoView);
+        mPlayRoot = findViewById(R.id.play_root);
         mPlayLoadTip = findViewById(R.id.play_load_tip);
         mPlayLoading = findViewById(R.id.play_loading);
         mPlayLoadErr = findViewById(R.id.play_load_error);
@@ -156,7 +171,7 @@ public class PlayActivity extends BaseActivity {
         mController.setCanChangePosition(true);
         mController.setEnableInNormal(true);
         mController.setGestureEnabled(true);
-        ProgressManager progressManager = new ProgressManager() {
+        progressManager = new ProgressManager() {
             @Override
             public void saveProgress(String url, long progress) {
                 if (videoDuration == 0) return;
@@ -237,6 +252,18 @@ public class PlayActivity extends BaseActivity {
             public void prepared() {
                 initSubtitleView();
                 initVideoDurationSomeThing();
+//                if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
+//                    ExoPlayerSubTitleUtil.getTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
+//                    ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(new SubtitleChangeListener() {
+//                        @Override
+//                        public void onSubTitleChange(String text) {
+//                            mController.mSubtitleView.isInternal = true;
+//                            com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+//                            subtitle.content = text;
+//                            mController.mSubtitleView.onSubtitleChanged(subtitle);
+//                        }
+//                    });
+//                }
             }
         });
         mVideoView.setVideoController(mController);
@@ -515,8 +542,8 @@ public class PlayActivity extends BaseActivity {
     }
 
     void playUrl(String url, HashMap<String, String> headers) {
-        if(autoRetryCount>0 && url.contains(".m3u8")){
-            url="http://home.jundie.top:666/unBom.php?m3u8="+url;
+        if (autoRetryCount > 0 && url.contains(".m3u8")) {
+            url = "http://home.jundie.top:666/unBom.php?m3u8=" + url;
         }
         String finalUrl = url;
         runOnUiThread(new Runnable() {
@@ -712,6 +739,18 @@ public class PlayActivity extends BaseActivity {
 
         }
         mController.setPlayerConfig(mVodPlayerCfg);
+        mController.setOnFloatListener(new OnFloatListener() {
+            @Override
+            public void onFloatClick(boolean isShow) {
+                FastClickCheckUtil.check(mController);
+                if (!mVideoView.isPlaying()) {
+                    ToastUtils.showShort("等待视频开始播放才能小窗");
+                    return;
+                }
+                new FloatViewUtil().openFloat(mVideoView, progressKey, mVodPlayerCfg, mVodInfo, mController.mSubtitleView.isInternal);
+//                mVideoView.release();
+            }
+        });
     }
 
     @Override
@@ -766,7 +805,15 @@ public class PlayActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (mVideoView != null) {
-            mVideoView.resume();
+            ViewGroup parent = (ViewGroup) (mVideoView.getParent());
+            if (parent.getId() != R.id.play_root) {
+                parent.removeView(mVideoView);
+                mPlayRoot.addView(mVideoView, 0);
+                mVideoView.setVideoController(mController);
+                mVideoView.setProgressManager(progressManager);
+            } else {
+                mVideoView.resume();
+            }
         }
     }
 
@@ -1518,7 +1565,7 @@ public class PlayActivity extends BaseActivity {
 
             boolean isFilter = VideoParseRuler.isFilter(webUrl, url);
             if (isFilter) {
-                LOG.i( "shouldInterceptLoadRequest filter:" + url);
+                LOG.i("shouldInterceptLoadRequest filter:" + url);
                 return null;
             }
 
@@ -1539,7 +1586,8 @@ public class PlayActivity extends BaseActivity {
                         url = loadFoundVideoUrls.poll();
                         mHandler.removeMessages(100);
                         String cookie = CookieManager.getInstance().getCookie(url);
-                        if(!TextUtils.isEmpty(cookie))headers.put("Cookie", " " + cookie);//携带cookie
+                        if (!TextUtils.isEmpty(cookie))
+                            headers.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, headers);
                         stopLoadWebView(false);
                     }
@@ -1570,7 +1618,7 @@ public class PlayActivity extends BaseActivity {
                     if (k.equalsIgnoreCase("user-agent")
                             || k.equalsIgnoreCase("referer")
                             || k.equalsIgnoreCase("origin")) {
-                        webHeaders.put(k," " + hds.get(k));
+                        webHeaders.put(k, " " + hds.get(k));
                     }
                 }
             }
@@ -1691,7 +1739,7 @@ public class PlayActivity extends BaseActivity {
 
             boolean isFilter = VideoParseRuler.isFilter(webUrl, url);
             if (isFilter) {
-                LOG.i( "shouldInterceptLoadRequest filter:" + url);
+                LOG.i("shouldInterceptLoadRequest filter:" + url);
                 return null;
             }
 
@@ -1711,7 +1759,7 @@ public class PlayActivity extends BaseActivity {
                             if (k.equalsIgnoreCase("user-agent")
                                     || k.equalsIgnoreCase("referer")
                                     || k.equalsIgnoreCase("origin")) {
-                                webHeaders.put(k," " + hds.get(k));
+                                webHeaders.put(k, " " + hds.get(k));
                             }
                         }
                     }
@@ -1722,7 +1770,8 @@ public class PlayActivity extends BaseActivity {
                         mHandler.removeMessages(100);
                         url = loadFoundVideoUrls.poll();
                         String cookie = CookieManager.getInstance().getCookie(url);
-                        if(!TextUtils.isEmpty(cookie))webHeaders.put("Cookie", " " + cookie);//携带cookie
+                        if (!TextUtils.isEmpty(cookie))
+                            webHeaders.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, webHeaders);
                         stopLoadWebView(false);
                     }

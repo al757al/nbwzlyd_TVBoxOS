@@ -73,6 +73,7 @@ public class TvRecyclerView extends RecyclerView implements View.OnClickListener
     private boolean mHasFocusWithPrevious = false;
 
     private OnItemListener mOnItemListener;
+    private OnItemLongListener mLongClickListener;
     private OnInBorderKeyEventListener mOnInBorderKeyEventListener;
     private OnLoadMoreListener mOnLoadMoreListener;
 
@@ -963,6 +964,12 @@ public class TvRecyclerView extends RecyclerView implements View.OnClickListener
     public void onChildAttachedToWindow(View child) {
         if(child.isClickable() && !ViewCompat.hasOnClickListeners(child)) {
             child.setOnClickListener(this);
+            child.setOnLongClickListener(v -> {
+                if (mLongClickListener != null) {
+                    mLongClickListener.onLongClick(getChildAdapterPosition(v));
+                }
+                return true;
+            });
         }
         if(child.isFocusable() && null == child.getOnFocusChangeListener()) {
             child.setOnFocusChangeListener(this);
@@ -979,15 +986,20 @@ public class TvRecyclerView extends RecyclerView implements View.OnClickListener
             mSelectedPosition = position;
         }
         holder = findViewHolderForLayoutPosition(position);
-        if(null != holder && !holder.itemView.isActivated()) {
+        if (null != holder && !holder.itemView.isActivated()) {
             holder.itemView.setActivated(true);
         }
     }
-    
+
     public void setOnItemListener(OnItemListener onItemListener) {
         mOnItemListener = onItemListener;
     }
-    public OnItemListener getmOnItemListener(){
+
+    public void setOnItemLongListener(OnItemLongListener onItemLongListener) {
+        this.mLongClickListener = onItemLongListener;
+    }
+
+    public OnItemListener getmOnItemListener() {
         return mOnItemListener;
     }
 

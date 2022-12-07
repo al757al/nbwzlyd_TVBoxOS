@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/common_tips"
+    android:layout_width="@dimen/vs_320"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginTop="@dimen/vs_10"
+    android:background="@drawable/shape_dialog_bg_main"
+    android:padding="@dimen/vs_10"
+    android:tag="common_tips">
+
+    <TextView
+        android:id="@+id/title1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="功能提示"
+        android:textColor="#FF0057"
+        android:textSize="@dimen/ts_20"
+        android:textStyle="bold"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/text2"
+        android:layout_marginTop="@dimen/vs_20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="@dimen/ts_30"
+        android:lineSpacingMultiplier="0"
+        android:text="11222122"
+        android:textColor="@color/color_CC000000"
+        android:textSize="@dimen/ts_20"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintLeft_toLeftOf="@id/title1"
+        app:layout_constraintTop_toBottomOf="@id/title1" />
+
+
+    <TextView
+        android:id="@+id/button_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="40mm"
+        android:background="@drawable/shape_thumb_year"
+        android:gravity="center"
+        android:lineSpacingMultiplier="0"
+        android:paddingHorizontal="8mm"
+        android:paddingVertical="4mm"
+        android:text="我知道了"
+        android:textColor="@color/white"
+        android:textSize="@dimen/ts_16"
+        app:layout_constrainedHeight="true"
+        android:focusable="true"
+        app:layout_constraintTop_toBottomOf="@id/text2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

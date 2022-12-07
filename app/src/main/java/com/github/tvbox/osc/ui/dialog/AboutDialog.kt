@@ -15,16 +15,12 @@ class AboutDialog(context: Context) : BaseDialog(context) {
             .append(BuildConfig.VERSION_NAME + "更新日志:")
             .append("\n").append(
                 """  
-                    1、首页数据源增加动态列数
-                    2、首页数据源推送适配刚刚接口
-                    3、焦点问题优化
-                    4、网盘内置字幕格式兼容，解决部分字幕无法加载问题
-                    5、网盘缓存时间改为2min
-                    6、支持alistV3网盘
-                    7、支持直播地址复制
-                    8、jar弹框文案提示优化
-                    9、修复直播有密码时无法进行线路切换操作问题
-                    10、支持锁屏
+                    1、支持mitv P2p直播格式
+                    2、支持m3u直播格式
+                    3、视频支持悬浮窗
+                    4、增加主页长按可以刷新接口和缓存逻辑
+                    5、直播缓存10L,提升加载速度
+                    6、修复切换播放器会导致焦点丢失的问题
 
     """.trimIndent()
             ).create()

@@ -42,6 +42,7 @@ import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.picasso.RoundTransformation;
 import com.github.tvbox.osc.ui.adapter.SeriesAdapter;
 import com.github.tvbox.osc.ui.adapter.SeriesFlagAdapter;
+import com.github.tvbox.osc.ui.dialog.DownloadTipsDialog;
 import com.github.tvbox.osc.ui.dialog.QuickSearchDialog;
 import com.github.tvbox.osc.ui.fragment.PlayFragment;
 import com.github.tvbox.osc.util.DefaultConfig;
@@ -151,6 +152,7 @@ public class DetailActivity extends BaseActivity {
         initView();
         initViewModel();
         initData();
+
     }
 
     private String preFlag = "";
@@ -469,6 +471,13 @@ public class DetailActivity extends BaseActivity {
         setLoadSir(llLayout);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra("isFromFloat", false)) {
+            vodInfo = (VodInfo) intent.getSerializableExtra("vodInfo");
+        }
+    }
 
     private void jumpToPlay() {
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
@@ -605,6 +614,9 @@ public class DetailActivity extends BaseActivity {
         } else {
             mNumberClassification.setVisibility(View.GONE);
             seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
+        }
+        if (!Hawk.get(HawkConfig.Had_show_download_tips, false)) {
+            showDownLoadTips();
         }
     }
 
@@ -1053,6 +1065,10 @@ public class DetailActivity extends BaseActivity {
             }, 300);
 
         }
+    }
+
+    private void showDownLoadTips() {
+        new DownloadTipsDialog(this).show();
     }
 
     void toggleSubtitleTextSize() {

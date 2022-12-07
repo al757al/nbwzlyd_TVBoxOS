@@ -42,6 +42,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     private boolean mEnableInNormal;
     private boolean mCanSlide;
     private int mCurPlayState;
+    protected OnFloatListener floatListener;
 
     protected Handler mHandler;
 
@@ -50,6 +51,10 @@ public abstract class BaseController extends BaseVideoController implements Gest
 
     protected interface HandlerCallback {
         void callback(Message msg);
+    }
+
+    public void setOnFloatListener(OnFloatListener listener) {
+        this.floatListener = listener;
     }
 
     private boolean mIsDoubleTapTogglePlayEnabled = true;

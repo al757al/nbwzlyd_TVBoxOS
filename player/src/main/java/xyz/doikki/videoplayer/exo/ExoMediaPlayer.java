@@ -13,17 +13,22 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 
+import java.util.List;
 import java.util.Map;
 
 import xyz.doikki.videoplayer.player.AbstractPlayer;
@@ -44,6 +49,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private LoadControl mLoadControl;
     private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
+    private SubtitleChangeListener subTitleChangeListener;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -73,6 +79,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     public void setTrackSelector(TrackSelector trackSelector) {
         mTrackSelector = trackSelector;
+    }
+
+    public TrackSelector getTrackSelector() {
+        return mTrackSelector;
     }
 
     public void setRenderersFactory(RenderersFactory renderersFactory) {
@@ -105,6 +115,37 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         if (mInternalPlayer == null)
             return;
         mInternalPlayer.setPlayWhenReady(false);
+    }
+
+    @Override
+    public void onEvents(Player player, Player.Events events) {
+        Player.Listener.super.onEvents(player, events);
+    }
+
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+        Player.Listener.super.onTracksChanged(trackGroups, trackSelections);
+    }
+
+    @Override
+    public void onTimelineChanged(Timeline timeline, int reason) {
+        Player.Listener.super.onTimelineChanged(timeline, reason);
+    }
+
+    @Override
+    public void onCues(List<Cue> cues) {
+        Player.Listener.super.onCues(cues);
+        if (cues.isEmpty()) {
+            return;
+        }
+        if (subTitleChangeListener != null) {
+            String text = cues.get(0).text + "";
+            subTitleChangeListener.onSubTitleChange(text);
+        }
+    }
+
+    public void setOnSubTitleChangeListener(SubtitleChangeListener subTitleChangeListener) {
+        this.subTitleChangeListener = subTitleChangeListener;
     }
 
     @Override

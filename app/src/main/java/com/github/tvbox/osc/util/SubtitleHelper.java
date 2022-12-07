@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.util;
 
 import android.app.Activity;
+import android.view.View;
 
 import com.orhanobut.hawk.Hawk;
 
@@ -21,6 +22,12 @@ public class SubtitleHelper {
 
     public static int getTextSize(Activity activity) {
         int autoSize = getSubtitleTextAutoSize(activity);
+        int subtitleConfigSize = Hawk.get(HawkConfig.SUBTITLE_TEXT_SIZE, autoSize);
+        return subtitleConfigSize;
+    }
+
+    public static int getTextSize(View view) {
+        int autoSize = (view.getLayoutParams().width / 100) * 3;
         int subtitleConfigSize = Hawk.get(HawkConfig.SUBTITLE_TEXT_SIZE, autoSize);
         return subtitleConfigSize;
     }

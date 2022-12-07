@@ -680,7 +680,7 @@ public class ApiConfig implements Serializable {
         }
         if (!liveChannelGroupList.isEmpty()) {
             LiveChannelGroup collectedGroup = Hawk.get(HawkConfig.LIVE_CHANELE_COLLECTD, new LiveChannelGroup());
-            collectedGroup.setGroupName("(♥ω♥)我的收藏");
+            collectedGroup.setGroupName("收藏频道");
             collectedGroup.isCollected = true;
             liveChannelGroupList.add(0, collectedGroup);
         }

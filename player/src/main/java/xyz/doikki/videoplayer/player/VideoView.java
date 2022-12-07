@@ -642,6 +642,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         this.mAssetFileDescriptor = fd;
     }
 
+    public String getPlayUrl() {
+        return mUrl;
+    }
+
     public void setProgressKey(String key) {
         mProgressKey = key;
     }

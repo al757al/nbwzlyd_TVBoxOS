@@ -38,6 +38,7 @@ import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.ScreenUtils;
+import com.github.tvbox.osc.util.StringUtils;
 import com.github.tvbox.osc.util.SubtitleHelper;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
@@ -320,6 +321,18 @@ public class VodController extends BaseController {
                     }
                 }
                 return isLock;
+            }
+        });
+        View floatView = findViewById(R.id.float_view);
+        if (ScreenUtils.isTv(getContext())) {
+            floatView.setVisibility(GONE);
+        } else {
+            floatView.setVisibility(VISIBLE);
+        }
+        floatView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floatListener.onFloatClick(true);
             }
         });
         mPlayTitle1 = findViewById(R.id.tv_info_name1);
@@ -848,6 +861,13 @@ public class VodController extends BaseController {
     public void setTitle(String playTitleInfo) {
 //        mPlayTitle.setText(playTitleInfo);
         mPlayTitle1.setText(playTitleInfo);
+        mPlayTitle1.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                StringUtils.copyText(v.getContext(), playTitleInfo);
+                return false;
+            }
+        });
     }
 
     public void setUrlTitle(String playTitleInfo) {
@@ -1178,4 +1198,6 @@ public class VodController extends BaseController {
         }
         return false;
     }
+
+
 }

@@ -23,13 +23,12 @@ public class LiveChannelItem implements Serializable, Cloneable {
     private int channelIndex;
     private int channelNum;
     private String channelName;
-    private ArrayList<String> channelSourceNames;
-    private ArrayList<String> channelUrls;
+    private ArrayList<String> channelSourceNames = new ArrayList<>();
+    private ArrayList<String> channelUrls = new ArrayList<>();
     public int sourceIndex = 0;
     public int sourceNum = 0;
     public boolean include_back = false;
     public boolean isCollected;
-
 
     public void setinclude_back(boolean include_back) {
         this.include_back = include_back;
@@ -77,6 +76,9 @@ public class LiveChannelItem implements Serializable, Cloneable {
     }
     public void nextSource() {
         sourceIndex++;
+        if (sourceIndex > channelUrls.size()) {
+            sourceIndex = 0;
+        }
         if (sourceIndex == sourceNum) sourceIndex = 0;
     }
 
@@ -89,7 +91,12 @@ public class LiveChannelItem implements Serializable, Cloneable {
     }
 
     public String getUrl() {
+
         return channelUrls.get(sourceIndex);
+    }
+
+    public boolean isForceTv() {
+        return getUrl().toLowerCase().startsWith("p") || getUrl().equals("mitv");
     }
 
     public int getSourceNum() {
