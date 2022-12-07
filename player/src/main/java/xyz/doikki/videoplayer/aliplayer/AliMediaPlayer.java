@@ -31,9 +31,12 @@ import xyz.doikki.videoplayer.player.AbstractPlayer;
  */
 public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
 
-    private AliPlayer aliPlayer;
+    private final AliPlayer aliPlayer;
     private boolean isAliPlayerStart;
     private long currentPos;
+    private int bufferPercent;
+    private long netSpeedLong;
+
 
     public AliMediaPlayer(Context context) {
         aliPlayer = AliPlayerFactory.createAliPlayer(context);
@@ -43,109 +46,13 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-        aliPlayer.setOnErrorListener(new IPlayer.OnErrorListener() {
-            //此回调会在使用播放器的过程中，出现了任何错误，都会回调此接口。
-
-            @Override
-            public void onError(ErrorInfo errorInfo) {
-                ErrorCode errorCode = errorInfo.getCode(); //错误码。
-                String errorMsg = errorInfo.getMsg(); //错误描述。
-                //出错后需要停止掉播放器。
-                aliPlayer.stop();
-            }
-        });
-        aliPlayer.setOnPreparedListener(new IPlayer.OnPreparedListener() {
-            // 调用aliPlayer.prepare()方法后，播放器开始读取并解析数据。成功后，会回调此接口。
-
-            @Override
-            public void onPrepared() {
-                //一般调用start开始播放视频。
-                aliPlayer.start();
-                isAliPlayerStart = true;
-                mPlayerEventListener.onPrepared();
-                // 修复播放纯音频时状态出错问题
-//                if (!isVideo()) {
-//                    mPlayerEventListener.onInfo(AbstractPlayer.MEDIA_INFO_RENDERING_START, 0);
-//                }
-            }
-        });
-        aliPlayer.setOnCompletionListener(new IPlayer.OnCompletionListener() {
-            //播放完成之后，就会回调到此接口。
-            @Override
-            public void onCompletion() {
-                //一般调用stop停止播放视频。
-                aliPlayer.stop();
-            }
-        });
-        aliPlayer.setOnInfoListener(new IPlayer.OnInfoListener() {
-            //播放器中的一些信息，包括：当前进度、缓存位置等等。
-            @Override
-            public void onInfo(InfoBean infoBean) {
-                InfoCode code = infoBean.getCode(); //信息码。
-                String msg = infoBean.getExtraMsg();//信息内容。
-                long value = infoBean.getExtraValue(); //信息值。
-                currentPos = InfoCode.CurrentPosition.getValue();
-
-
-                //当前进度：InfoCode.CurrentPosition
-                //当前缓存位置：InfoCode.BufferedPosition
-            }
-        });
-        aliPlayer.setOnStateChangedListener(new IPlayer.OnStateChangedListener() {
-            @Override
-            public void onStateChanged(int i) {
-                //          int idle = 0;
-                //          int initalized = 1;
-                //          int prepared = 2;
-                //          int started = 3;
-                //          int paused = 4;
-                //          int stopped = 5;
-                //          int completion = 6;
-
-                switch (i) {
-                    case 0:
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        mPlayerEventListener.onPrepared();
-                        break;
-                    case 3:
-                        mPlayerEventListener.onInfo(AbstractPlayer.MEDIA_INFO_RENDERING_START, 0);
-                        break;
-                    case 4:
-                        break;
-                    case 5:
-                        break;
-                    case 6:
-                        mPlayerEventListener.onCompletion();
-                        break;
-                }
-
-
-            }
-        });
-        aliPlayer.setOnLoadingStatusListener(new IPlayer.OnLoadingStatusListener() {
-            //播放器的加载状态, 网络不佳时，用于展示加载画面。
-
-            @Override
-            public void onLoadingBegin() {
-                //开始加载。画面和声音不足以播放。
-                //一般在此处显示圆形加载。
-            }
-
-            @Override
-            public void onLoadingProgress(int percent, float netSpeed) {
-                //加载进度。百分比和网速。
-            }
-
-            @Override
-            public void onLoadingEnd() {
-                //结束加载。画面和声音可以播放。
-                //一般在此处隐藏圆形加载。
-            }
-        });
-
+        aliPlayer.setOnErrorListener(onErrorListener);
+        aliPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+        aliPlayer.setOnCompletionListener(onCompletionListener);
+        aliPlayer.setOnPreparedListener(onPreparedListener);
+        aliPlayer.setOnInfoListener(onInfoListener);
+        aliPlayer.setOnStateChangedListener(onStateChangedListener);
+        aliPlayer.setOnLoadingStatusListener(onLoadingStatusListener);
     }
 
     @Override
@@ -199,6 +106,7 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void seekTo(long time) {
         aliPlayer.seekTo(time);
+        isWaitOnSeekComplete = true;
 
     }
 
@@ -219,7 +127,7 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public int getBufferedPercentage() {
-        return 0;
+        return bufferPercent;
     }
 
     @Override
@@ -261,7 +169,7 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public long getTcpSpeed() {
-        return 0;
+        return netSpeedLong;
     }
 
     @Override
@@ -272,4 +180,140 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
             mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
         }
     }
+
+    private final IPlayer.OnLoadingStatusListener onLoadingStatusListener = new IPlayer.OnLoadingStatusListener() {
+        @Override
+        public void onLoadingBegin() {
+            //Log.e(TAG, "onLoadingStatusListener onLoadingBegin ");
+//            notifyOnInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_START, 0);
+        }
+
+        @Override
+        public void onLoadingProgress(int percent, float netSpeed) {
+            //Log.e(TAG, "onLoadingStatusListener onLoadingProgress percent = " + percent + " netSpeed = " + netSpeed);
+            bufferPercent = percent;
+        }
+
+        @Override
+        public void onLoadingEnd() {
+            //Log.e(TAG, "onLoadingStatusListener onLoadingEnd ");
+//            notifyOnInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_END, 0);
+        }
+    };
+
+    //视频播放状态
+    private int mPlayState = IPlayer.unknow;
+
+    private final IPlayer.OnStateChangedListener onStateChangedListener = new IPlayer.OnStateChangedListener() {
+        @Override
+        public void onStateChanged(int i) {
+            mPlayState = i;
+            //          int idle = 0;
+            //          int initalized = 1;
+            //          int prepared = 2;
+            //          int started = 3;
+            //          int paused = 4;
+            //          int stopped = 5;
+            //          int completion = 6;
+
+            switch (i) {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    mPlayerEventListener.onPrepared();
+                    break;
+                case 3:
+                    mPlayerEventListener.onInfo(AbstractPlayer.MEDIA_INFO_RENDERING_START, 0);
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    mPlayerEventListener.onCompletion();
+                    break;
+            }
+
+            //Log.e(TAG, "onStateChangedListener onStateChanged " + i);
+        }
+    };
+
+
+    private final IPlayer.OnCompletionListener onCompletionListener = new IPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion() {
+//            notifyOnCompletion();
+            aliPlayer.stop();
+            //Log.e(TAG, "onCompletionListener onCompletion ");
+        }
+    };
+
+    private final IPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = new IPlayer.OnVideoSizeChangedListener() {
+        @Override
+        public void onVideoSizeChanged(int width, int height) {
+//            mVideoWidth = width;
+//            mVideoHeight = height;
+//            notifyOnVideoSizeChanged(width, height, 1, 1);
+            mPlayerEventListener.onVideoSizeChanged(width, height);
+
+            //Log.e(TAG, "onVideoSizeChangedListener " + width + " " + height);
+        }
+    };
+
+    private final IPlayer.OnSeekCompleteListener onSeekCompleteListener = new IPlayer.OnSeekCompleteListener() {
+        @Override
+        public void onSeekComplete() {
+            isWaitOnSeekComplete = false;
+            //Log.e(TAG, "onSeekCompleteListener onSeekComplete ");
+        }
+    };
+    private boolean isWaitOnSeekComplete = false;
+    private final IPlayer.OnInfoListener onInfoListener = new IPlayer.OnInfoListener() {
+        @Override
+        public void onInfo(InfoBean infoBean) {
+            InfoCode code = infoBean.getCode(); //信息码。
+            String msg = infoBean.getExtraMsg();//信息内容。
+            long value = infoBean.getExtraValue(); //信息值。
+            currentPos = InfoCode.CurrentPosition.getValue();
+            if (isWaitOnSeekComplete) {
+                return;
+            }
+            if (infoBean.getCode() == InfoCode.CurrentDownloadSpeed) {
+                //当前下载速度
+                netSpeedLong = infoBean.getExtraValue();
+                //Log.e(TAG, "sourceVideoPlayerInfo CurrentDownloadSpeed = " + netSpeedLong);
+            } else if (infoBean.getCode() == InfoCode.BufferedPosition) {
+//                //更新bufferedPosition
+//                mVideoBufferedPosition = infoBean.getExtraValue();
+            } else if (infoBean.getCode() == InfoCode.CurrentPosition) {
+                //更新currentPosition
+                currentPos = infoBean.getExtraValue();
+            }
+
+            //当前进度：InfoCode.CurrentPosition
+            //当前缓存位置：InfoCode.BufferedPosition
+        }
+    };
+    private final IPlayer.OnPreparedListener onPreparedListener = new IPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared() {
+            aliPlayer.start();
+            isAliPlayerStart = true;
+            mPlayerEventListener.onPrepared();
+        }
+    };
+
+    private final IPlayer.OnErrorListener onErrorListener = new IPlayer.OnErrorListener() {
+        @Override
+        public void onError(ErrorInfo errorInfo) {
+            ErrorCode errorCode = errorInfo.getCode(); //错误码。
+            String errorMsg = errorInfo.getMsg(); //错误描述。
+            //出错后需要停止掉播放器。
+            aliPlayer.stop();
+            mPlayerEventListener.onError();
+        }
+    };
 }
+
