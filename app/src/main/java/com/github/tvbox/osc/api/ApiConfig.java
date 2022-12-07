@@ -68,7 +68,7 @@ import java.util.regex.Pattern;
 public class ApiConfig implements Serializable {
     private static ApiConfig instance;
     private LinkedHashMap<String, SourceBean> sourceBeanList;
-    private SourceBean mHomeSource;
+    private SourceBean mHomeSource = new SourceBean();
     private ParseBean mDefaultParse;
     private List<LiveChannelGroup> liveChannelGroupList;
     private List<ParseBean> parseBeanList;
