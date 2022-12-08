@@ -30,7 +30,7 @@ import xyz.doikki.videoplayer.render.TextureRenderViewFactory;
 
 public class PlayerHelper {
     public static void updateCfg(VideoView videoView, JSONObject playerCfg) {
-        int playerType = Hawk.get(HawkConfig.PLAY_TYPE, 3);
+        int playerType = Hawk.get(HawkConfig.PLAY_TYPE, 1);
         int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 2);
         String ijkCode = Hawk.get(HawkConfig.IJK_CODEC, "硬解码");
         int scale = Hawk.get(HawkConfig.PLAY_SCALE, 0);
@@ -94,7 +94,7 @@ public class PlayerHelper {
     }
 
     public static void updateCfg(VideoView videoView) {
-        int playType = Hawk.get(HawkConfig.PLAY_TYPE, 3);
+        int playType = Hawk.get(HawkConfig.PLAY_TYPE, 1);
         PlayerFactory playerFactory;
         if (playType == 1) {
             playerFactory = new PlayerFactory<IjkMediaPlayer>() {
@@ -171,8 +171,8 @@ public class PlayerHelper {
             HashMap<Integer, String> playersInfo = new HashMap<>();
             playersInfo.put(0, "系统播放器");
             playersInfo.put(1, "IJK播放器");
-            playersInfo.put(2, "Exo播放器");
-            playersInfo.put(3, "阿里播放器");
+            playersInfo.put(2, "阿里播放器");
+            playersInfo.put(3, "Exo播放器");
             playersInfo.put(10, "MX播放器");
             playersInfo.put(11, "Reex播放器");
             playersInfo.put(12, "Kodi播放器");
