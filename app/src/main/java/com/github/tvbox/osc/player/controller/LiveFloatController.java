@@ -1,5 +1,14 @@
 package com.github.tvbox.osc.player.controller;
 
+/**
+ * <pre>
+ *     author : derek
+ *     time   : 2022/12/03
+ *     desc   :
+ *     version:
+ * </pre>
+ */
+
 import android.content.Context;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -17,19 +26,17 @@ import org.jetbrains.annotations.NotNull;
 
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
-/**
- * 直播控制器
- */
+public class LiveFloatController extends BaseController {
 
-public class LiveController extends BaseController {
     protected ProgressBar mLoading;
     private int minFlingDistance = 100;             //最小识别距离
     private int minFlingVelocity = 10;              //最小识别速度
     private ImageView mProgressIcon;
     private TextView mProgressText;
     private View mProgressContainer;
+    private View mChangeChanelContainer;
 
-    public LiveController(@NotNull Context context) {
+    public LiveFloatController(@NotNull Context context) {
         super(context);
     }
 
@@ -44,7 +51,25 @@ public class LiveController extends BaseController {
         mLoading = findViewById(R.id.loading);
         mProgressIcon = findViewById(R.id.tv_progress_icon);
         mProgressText = findViewById(R.id.tv_progress_text);
+        mChangeChanelContainer = findViewById(R.id.changeChanelContainer);
+        mChangeChanelContainer.setVisibility(View.VISIBLE);
         mProgressContainer = findViewById(R.id.tv_progress_container);
+        findViewById(R.id.play_next).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.nextChanel();
+                }
+            }
+        });
+        findViewById(R.id.play_pre).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.preChanel();
+                }
+            }
+        });
         setForceImmersive(Hawk.get(HawkConfig.IMMERSIVE_SWITCH, false));
     }
 
@@ -69,10 +94,6 @@ public class LiveController extends BaseController {
         void playStateChanged(int playState);
 
         void changeSource(int direction);
-
-        void nextChanel();
-
-        void preChanel();
     }
 
     @Override
@@ -120,6 +141,10 @@ public class LiveController extends BaseController {
         }
     }
 
+    public void setPreNextBtnVisibility(boolean visible) {
+        mChangeChanelContainer.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+    }
+
     @Override
     public void updateSeekUI(int curr, int seekTo, int duration) {
         if (mProgressContainer.getVisibility() != VISIBLE) {
@@ -147,4 +172,7 @@ public class LiveController extends BaseController {
         }
         return false;
     }
+
+
 }
+

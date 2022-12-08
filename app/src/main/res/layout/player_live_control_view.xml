@@ -37,9 +37,9 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:tag="vod_control_pause_t"
-                android:visibility="gone"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/ts_30"
+                android:visibility="gone"
                 tools:text="100" />
         </LinearLayout>
 
@@ -54,8 +54,8 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:gravity="center"
-        android:padding="@dimen/vs_10"
         android:orientation="horizontal"
+        android:padding="@dimen/vs_10"
         android:visibility="invisible"
         tools:visibility="visible">
 
@@ -104,5 +104,45 @@
         android:indeterminateOnly="true"
         android:tag="vod_control_loading"
         android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/changeChanelContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/vs_50"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/vs_20"
+        android:paddingLeft="@dimen/vs_10"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/play_pre"
+            android:layout_width="@dimen/vs_40"
+            android:layout_height="@dimen/vs_40"
+            android:layout_gravity="left"
+            android:layout_marginLeft="@dimen/vs_10"
+            android:layout_marginEnd="@dimen/vs_5"
+            android:layout_marginRight="@dimen/vs_5"
+            android:background="@drawable/xiayiji"
+            android:rotation="180" />
+
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/play_next"
+            android:layout_width="@dimen/vs_40"
+            android:layout_height="@dimen/vs_40"
+            android:layout_gravity="right"
+            android:layout_marginEnd="@dimen/vs_5"
+            android:layout_marginRight="@dimen/vs_10"
+            android:background="@drawable/xiayiji" />
+
+    </LinearLayout>
+
 
 </FrameLayout>
