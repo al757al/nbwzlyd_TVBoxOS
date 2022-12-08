@@ -184,9 +184,9 @@ public class FloatViewUtil {
                 if (params.width > ScreenUtils.getScreenWidth()) {
                     params.width = ScreenUtils.getScreenWidth();
                 } else {//当宽度达到最大的时候，高度不再变化
-                    params.height = (int) Math.max(params.height + x, 300);
+                    params.height = (int) Math.max(params.height + x, 270);
                 }
-                params.width = (int) Math.max(params.width + x, 400);
+                params.width = (int) Math.max(params.width + x, 480);
                 EasyFloat.updateFloat(FLOAT_TAG, -1, -1, params.width, params.height);
                 floatVodController.updateSubInfoTextSize(params.width / 50);
             });
