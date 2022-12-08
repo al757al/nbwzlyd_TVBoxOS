@@ -2,6 +2,7 @@ package xyz.doikki.videoplayer.aliplayer;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -14,10 +15,14 @@ import com.aliyun.player.bean.ErrorCode;
 import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.bean.InfoBean;
 import com.aliyun.player.bean.InfoCode;
+import com.aliyun.player.nativeclass.MediaInfo;
+import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.UrlSource;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.video.VideoSize;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import xyz.doikki.videoplayer.player.AbstractPlayer;
@@ -37,12 +42,16 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
     private long currentPos;
     private int bufferPercent;
     private long netSpeedLong;
+    private MediaInfo mAliyunMediaInfo;
+    private List<TrackInfo> mAudioTrackInfoList;//音频
+    private List<TrackInfo> mSubtitleTrackInfoList;//字幕
 
 
     public AliMediaPlayer(Context context) {
         aliPlayer = AliPlayerFactory.createAliPlayer(context);
 //        Android播放器SDK支持使用HTTP/2协议，该协议通过多路复用，避免队头阻塞，以改善播放性能。示例如下：
         AliPlayerGlobalSettings.setUseHttp2(true);
+//        aliPlayer.enableHardwareDecoder(false);
     }
 
     @Override
@@ -55,6 +64,7 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
         aliPlayer.setOnStateChangedListener(onStateChangedListener);
         aliPlayer.setOnLoadingStatusListener(onLoadingStatusListener);
         aliPlayer.setOnSeekCompleteListener(onSeekCompleteListener);
+        aliPlayer.setOnSubtitleDisplayListener(onSubtitleDisplayListener);
     }
 
     @Override
@@ -246,6 +256,49 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
     };
 
 
+    /**
+     * 根据TrackInfo.Type 获取对应的TrackInfo集合
+     */
+    private List<TrackInfo> getTrackInfoListWithTrackInfoType(TrackInfo.Type trackInfoType) {
+        List<TrackInfo> trackInfoList = new ArrayList<>();
+        if (mAliyunMediaInfo != null && mAliyunMediaInfo.getTrackInfos() != null) {
+            for (TrackInfo trackInfo : mAliyunMediaInfo.getTrackInfos()) {
+                TrackInfo.Type type = trackInfo.getType();
+                if (type == trackInfoType) {
+
+                    if (trackInfoType == TrackInfo.Type.TYPE_SUBTITLE) {
+                        //字幕
+                        if (!TextUtils.isEmpty(trackInfo.getSubtitleLang())) {
+                            trackInfoList.add(trackInfo);
+                        }
+                    } else if (trackInfoType == TrackInfo.Type.TYPE_AUDIO) {
+                        //音轨
+                        if (!TextUtils.isEmpty(trackInfo.getAudioLang())) {
+                            trackInfoList.add(trackInfo);
+                        }
+                    } else if (trackInfoType == TrackInfo.Type.TYPE_VIDEO) {
+                        //码率
+                        if (trackInfo.getVideoBitrate() > 0) {
+                            if (trackInfoList.size() == 0) {
+                                //添加自动码率
+                                trackInfoList.add(trackInfo);
+                            }
+                            trackInfoList.add(trackInfo);
+                        }
+                    } else if (trackInfoType == TrackInfo.Type.TYPE_VOD) {
+                        //清晰度
+                        if (!TextUtils.isEmpty(trackInfo.getVodDefinition())) {
+                            trackInfoList.add(trackInfo);
+                        }
+                    }
+
+                }
+            }
+        }
+        return trackInfoList;
+    }
+
+
     private final IPlayer.OnCompletionListener onCompletionListener = new IPlayer.OnCompletionListener() {
         @Override
         public void onCompletion() {
@@ -301,12 +354,51 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
             //当前缓存位置：InfoCode.BufferedPosition
         }
     };
+
+
     private final IPlayer.OnPreparedListener onPreparedListener = new IPlayer.OnPreparedListener() {
+
         @Override
         public void onPrepared() {
             aliPlayer.start();
             isAliPlayerStart = true;
+            mAliyunMediaInfo = aliPlayer.getMediaInfo();
             mPlayerEventListener.onPrepared();
+
+            mAudioTrackInfoList = getTrackInfoListWithTrackInfoType(TrackInfo.Type.TYPE_AUDIO);
+//            mBitrateTrackInfoList = getTrackInfoListWithTrackInfoType(TrackInfo.Type.TYPE_VIDEO);
+//            mDefinitionTrackInfoList = getTrackInfoListWithTrackInfoType(TrackInfo.Type.TYPE_VOD);
+            mSubtitleTrackInfoList = getTrackInfoListWithTrackInfoType(TrackInfo.Type.TYPE_SUBTITLE);
+
+
+            for (int i = 0; i < mSubtitleTrackInfoList.size(); i++) {
+                Log.d("derek110", "mSubtitleTrackInfoList: " + mSubtitleTrackInfoList.get(i).getSubtitleLang());
+            }
+
+
+        }
+    };
+
+    private final IPlayer.OnSubtitleDisplayListener onSubtitleDisplayListener = new IPlayer.OnSubtitleDisplayListener() {
+        @Override
+        public void onSubtitleExtAdded(int i, String s) {
+            Log.d("derek110", "onSubtitleExtAdded: " + s);
+        }
+
+        @Override
+        public void onSubtitleShow(int i, long l, String s) {
+            Log.d("derek110", "onSubtitleShow: " + s);
+
+        }
+
+        @Override
+        public void onSubtitleHide(int i, long l) {
+            Log.d("derek110", "onSubtitleHide: ");
+        }
+
+        @Override
+        public void onSubtitleHeader(int i, String s) {
+            Log.d("derek110", "onSubtitleHeader: " + s);
         }
     };
 
