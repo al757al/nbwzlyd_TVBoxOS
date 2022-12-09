@@ -9,7 +9,6 @@ import android.view.SurfaceHolder;
 
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
-import com.aliyun.player.AliPlayerGlobalSettings;
 import com.aliyun.player.IPlayer;
 import com.aliyun.player.bean.ErrorCode;
 import com.aliyun.player.bean.ErrorInfo;
@@ -50,8 +49,7 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
     public AliMediaPlayer(Context context) {
         aliPlayer = AliPlayerFactory.createAliPlayer(context);
 //        Android播放器SDK支持使用HTTP/2协议，该协议通过多路复用，避免队头阻塞，以改善播放性能。示例如下：
-        AliPlayerGlobalSettings.setUseHttp2(true);
-//        aliPlayer.enableHardwareDecoder(false);
+//        AliPlayerGlobalSettings.setUseHttp2(true);
     }
 
     @Override
@@ -121,7 +119,6 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void seekTo(long time) {
         aliPlayer.seekTo(time);
         currentPos = time;
-        isWaitOnSeekComplete = true;
 
     }
 
@@ -323,20 +320,15 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
     private final IPlayer.OnSeekCompleteListener onSeekCompleteListener = new IPlayer.OnSeekCompleteListener() {
         @Override
         public void onSeekComplete() {
-            isWaitOnSeekComplete = false;
             //Log.e(TAG, "onSeekCompleteListener onSeekComplete ");
         }
     };
-    private boolean isWaitOnSeekComplete = false;
     private final IPlayer.OnInfoListener onInfoListener = new IPlayer.OnInfoListener() {
         @Override
         public void onInfo(InfoBean infoBean) {
             InfoCode code = infoBean.getCode(); //信息码。
             String msg = infoBean.getExtraMsg();//信息内容。
             long value = infoBean.getExtraValue(); //信息值。
-            if (isWaitOnSeekComplete) {
-                return;
-            }
             Log.d("derek110", "onInfo: " + code + " msg " + msg + "value " + value);
             if (infoBean.getCode() == InfoCode.CurrentDownloadSpeed) {
                 //当前下载速度

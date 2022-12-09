@@ -93,49 +93,49 @@ public class PlayerHelper {
         videoView.setScreenScaleType(scale);
     }
 
-    public static void updateCfg(VideoView videoView) {
-        int playType = Hawk.get(HawkConfig.PLAY_TYPE, 1);
-        PlayerFactory playerFactory;
-        if (playType == 1) {
-            playerFactory = new PlayerFactory<IjkMediaPlayer>() {
-                @Override
-                public IjkMediaPlayer createPlayer(Context context) {
-                    return new IjkMediaPlayer(context, null);
-                }
-            };
-            try {
-                tv.danmaku.ijk.media.player.IjkMediaPlayer.loadLibrariesOnce(new IjkLibLoader() {
-                    @Override
-                    public void loadLibrary(String s) throws UnsatisfiedLinkError, SecurityException {
-                        try {
-                            System.loadLibrary(s);
-                        } catch (Throwable th) {
-                            th.printStackTrace();
-                        }
-                    }
-                });
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-        } else if (playType == 2) {
-            playerFactory = ExoMediaPlayerFactory.create();
-        } else {
-            playerFactory = AndroidMediaPlayerFactory.create();
-        }
-        int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 2);
-        RenderViewFactory renderViewFactory = null;
-        switch (renderType) {
-            case 0:
-            default:
-                renderViewFactory = TextureRenderViewFactory.create();
-                break;
-            case 1:
-                renderViewFactory = SurfaceRenderViewFactory.create();
-                break;
-        }
-        videoView.setPlayerFactory(playerFactory);
-        videoView.setRenderViewFactory(renderViewFactory);
-    }
+//    public static void updateCfg(VideoView videoView) {
+//        int playType = Hawk.get(HawkConfig.PLAY_TYPE, 1);
+//        PlayerFactory playerFactory;
+//        if (playType == 1) {
+//            playerFactory = new PlayerFactory<IjkMediaPlayer>() {
+//                @Override
+//                public IjkMediaPlayer createPlayer(Context context) {
+//                    return new IjkMediaPlayer(context, null);
+//                }
+//            };
+//            try {
+//                tv.danmaku.ijk.media.player.IjkMediaPlayer.loadLibrariesOnce(new IjkLibLoader() {
+//                    @Override
+//                    public void loadLibrary(String s) throws UnsatisfiedLinkError, SecurityException {
+//                        try {
+//                            System.loadLibrary(s);
+//                        } catch (Throwable th) {
+//                            th.printStackTrace();
+//                        }
+//                    }
+//                });
+//            } catch (Throwable th) {
+//                th.printStackTrace();
+//            }
+//        } else if (playType == 2) {
+//            playerFactory = ExoMediaPlayerFactory.create();
+//        } else {
+//            playerFactory = AndroidMediaPlayerFactory.create();
+//        }
+//        int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 2);
+//        RenderViewFactory renderViewFactory = null;
+//        switch (renderType) {
+//            case 0:
+//            default:
+//                renderViewFactory = TextureRenderViewFactory.create();
+//                break;
+//            case 1:
+//                renderViewFactory = SurfaceRenderViewFactory.create();
+//                break;
+//        }
+//        videoView.setPlayerFactory(playerFactory);
+//        videoView.setRenderViewFactory(renderViewFactory);
+//    }
 
 
     public static void init() {
@@ -171,8 +171,8 @@ public class PlayerHelper {
             HashMap<Integer, String> playersInfo = new HashMap<>();
             playersInfo.put(0, "系统播放器");
             playersInfo.put(1, "IJK播放器");
-            playersInfo.put(2, "阿里播放器");
-            playersInfo.put(3, "Exo播放器");
+            playersInfo.put(2, "Exo播放器");
+            playersInfo.put(3, "阿里播放器");
             playersInfo.put(10, "MX播放器");
             playersInfo.put(11, "Reex播放器");
             playersInfo.put(12, "Kodi播放器");
