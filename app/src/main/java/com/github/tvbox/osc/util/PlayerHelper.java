@@ -73,15 +73,16 @@ public class PlayerHelper {
             playerFactory = AndroidMediaPlayerFactory.create();
         }
         RenderViewFactory renderViewFactory = null;
-        switch (renderType) {
-            case 0:
-            default:
-                renderViewFactory = TextureRenderViewFactory.create();
-                break;
-            case 1:
-                renderViewFactory = SurfaceRenderViewFactory.create();
-                break;
-        }
+//        switch (renderType) {
+//            case 0:
+//            default:
+//                renderViewFactory = TextureRenderViewFactory.create();
+//                break;
+//            case 1:
+//                renderViewFactory = SurfaceRenderViewFactory.create();
+//                break;
+//        }
+        renderViewFactory = TextureRenderViewFactory.create();
         if (videoView == null) {
             return;
         }
