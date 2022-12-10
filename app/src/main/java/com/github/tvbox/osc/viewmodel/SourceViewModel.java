@@ -265,6 +265,9 @@ public class SourceViewModel extends ViewModel {
                 }
             });
         } else if (type == 0 || type == 1) {
+            if (TextUtils.isEmpty(homeSourceBean.getApi())) {
+                return;
+            }
             OkGo.<String>get(homeSourceBean.getApi())
                     .tag(homeSourceBean.getApi())
                     .params("ac", type == 0 ? "videolist" : "detail")
