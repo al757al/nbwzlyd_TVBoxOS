@@ -15,7 +15,7 @@ class AboutDialog(context: Context) : BaseDialog(context) {
             .append(BuildConfig.VERSION_NAME + "更新日志:")
             .append("\n").append(
                 """  
-                    1、支持mitv P2p 直播格式
+                    1、支持mitv P2p p2p直播格式
                     2、支持m3u直播列表
                     3、视频支持悬浮窗,双击暂停，自由拖动，放大缩小
                     4、增加主页长按可以刷新接口和缓存逻辑
