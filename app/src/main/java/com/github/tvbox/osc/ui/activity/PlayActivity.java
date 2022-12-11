@@ -65,6 +65,7 @@ import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
+import com.github.tvbox.osc.util.ExoPlayerSubTitleUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FloatViewUtil;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -113,6 +114,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import me.jessyan.autosize.AutoSize;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
+import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
+import xyz.doikki.videoplayer.exo.SubtitleChangeListener;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
 
@@ -252,18 +255,18 @@ public class PlayActivity extends BaseActivity {
             public void prepared() {
                 initSubtitleView();
                 initVideoDurationSomeThing();
-//                if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
-//                    ExoPlayerSubTitleUtil.getTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
-//                    ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(new SubtitleChangeListener() {
-//                        @Override
-//                        public void onSubTitleChange(String text) {
-//                            mController.mSubtitleView.isInternal = true;
-//                            com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
-//                            subtitle.content = text;
-//                            mController.mSubtitleView.onSubtitleChanged(subtitle);
-//                        }
-//                    });
-//                }
+                if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
+                    ExoPlayerSubTitleUtil.getTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
+                    ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(new SubtitleChangeListener() {
+                        @Override
+                        public void onSubTitleChange(String text) {
+                            mController.mSubtitleView.isInternal = true;
+                            com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+                            subtitle.content = text;
+                            mController.mSubtitleView.onSubtitleChanged(subtitle);
+                        }
+                    });
+                }
             }
         });
         mVideoView.setVideoController(mController);
