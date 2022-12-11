@@ -2,6 +2,7 @@ package com.github.tvbox.osc.player.render;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
@@ -18,6 +19,9 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     private MeasureHelper mMeasureHelper;
 
     private AbstractPlayer mMediaPlayer;
+
+    public String url;
+    public long position = 0;
 
     public SurfaceRenderView(Context context) {
         super(context);
@@ -86,7 +90,22 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+//        if (mMediaPlayer != null) {
+//            if (!TextUtils.isEmpty(url)) {
+//                mMediaPlayer.release();
+//                mMediaPlayer.setDataSource(url, new HashMap<>());
+//                mMediaPlayer.seekTo(position);
+//                mMediaPlayer.start();
+//            }
+//        }
 
+        //解决黑屏问题
+        Canvas canvas = holder.lockCanvas();
+        if (canvas == null) {
+            return;
+        }
+        //绘制黑色
+        holder.unlockCanvasAndPost(canvas);
     }
 
     @Override
@@ -98,6 +117,12 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+//        ToastUtils.showShort("surfaceDestroyed");
+//        if (mMediaPlayer != null) {
+//            ToastUtils.showShort("surfaceDestroyed");
+//            url = mMediaPlayer.getPlayUrl();
+//            position = mMediaPlayer.getCurrentPosition();
+////            mMediaPlayer.release();
+//        }
     }
 }

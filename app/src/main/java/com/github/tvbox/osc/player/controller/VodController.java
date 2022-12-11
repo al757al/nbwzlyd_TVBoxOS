@@ -332,6 +332,15 @@ public class VodController extends BaseController {
         floatView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    if (Hawk.get(HawkConfig.PLAY_RENDER, 2) == 1
+                            || mPlayerConfig.getInt("pr") == 1) {
+                        ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("surface渲染不支持悬浮窗");
+                        return;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 floatListener.onFloatClick(true);
             }
         });

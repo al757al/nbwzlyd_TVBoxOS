@@ -30,7 +30,7 @@ import xyz.doikki.videoplayer.render.TextureRenderViewFactory;
 public class PlayerHelper {
     public static void updateCfg(VideoView videoView, JSONObject playerCfg) {
         int playerType = Hawk.get(HawkConfig.PLAY_TYPE, 0);
-        int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 2);
+        int renderType;
         String ijkCode = Hawk.get(HawkConfig.IJK_CODEC, "硬解码");
         int scale = Hawk.get(HawkConfig.PLAY_SCALE, 0);
         try {
@@ -41,6 +41,7 @@ public class PlayerHelper {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        renderType = Hawk.get(HawkConfig.PLAY_RENDER, 2);
         IJKCode codec = ApiConfig.get().getIJKCodec(ijkCode);
         if (codec == null) {
             return;
@@ -73,16 +74,15 @@ public class PlayerHelper {
             playerFactory = AndroidMediaPlayerFactory.create();
         }
         RenderViewFactory renderViewFactory = null;
-//        switch (renderType) {
-//            case 0:
-//            default:
-//                renderViewFactory = TextureRenderViewFactory.create();
-//                break;
-//            case 1:
-//                renderViewFactory = SurfaceRenderViewFactory.create();
-//                break;
-//        }
-        renderViewFactory = TextureRenderViewFactory.create();
+        switch (renderType) {
+            case 0:
+            default:
+                renderViewFactory = TextureRenderViewFactory.create();
+                break;
+            case 1:
+                renderViewFactory = SurfaceRenderViewFactory.create();
+                break;
+        }
         if (videoView == null) {
             return;
         }
