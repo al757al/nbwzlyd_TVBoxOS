@@ -181,6 +181,9 @@ class EasyFloat {
          */
         fun setSidePattern(sidePattern: SidePattern) = apply { config.sidePattern = sidePattern }
 
+        //是否是横屏
+        fun setLandScape(isLandScape: Boolean) = apply { config.forceLandscape = isLandScape }
+
         /**
          * 设置浮窗的显示模式
          * @param showPattern   浮窗显示模式

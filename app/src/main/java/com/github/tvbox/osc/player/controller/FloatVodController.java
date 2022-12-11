@@ -18,7 +18,6 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -79,7 +78,7 @@ public class FloatVodController extends BaseController {
     TextView mNextBtn;
     TextView mPreBtn;
     LockRunnable lockRunnable = new LockRunnable();
-    //    TextView mPlayerScaleBtn;
+    TextView mPlayerScaleBtn;
     public TextView mPlayerSpeedBtn;
     TextView mPlayerBtn;
     TextView mPlayerIJKBtn;
@@ -96,7 +95,7 @@ public class FloatVodController extends BaseController {
 //    TextView mVideoSize;
 //    private View backBtn;//返回键
 //    private boolean isClickBackBtn;
-    private HorizontalScrollView mHorizontalScrollView;
+//    private HorizontalScrollView mHorizontalScrollView;
 
     private boolean mIsFullScreen = false;
     private boolean isLock = false;
@@ -152,7 +151,7 @@ public class FloatVodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
-                        mHorizontalScrollView.scrollTo(0, 0);
+//                        mHorizontalScrollView.scrollTo(0, 0);
                         mTopRoot1.setVisibility(VISIBLE);
                         showNowTime(true);
                         mPlayPauseTime.setVisibility(VISIBLE);
@@ -233,8 +232,11 @@ public class FloatVodController extends BaseController {
             return;
         }
         isFastSpeed = true;
+        Message obtain = Message.obtain();
+        obtain.what = 1003;//隐藏底部菜单
+        mHandler.sendMessage(obtain);
         mControlWrapper.setSpeed(3.0f);
-        mTvSpeedPlay.setText("当前3倍速播放中 " + mCurrentTime.getText() + "/" + mTotalTime.getText());
+        mTvSpeedPlay.setText("3倍速 " + mCurrentTime.getText() + "/" + mTotalTime.getText());
         if (mTvSpeedPlay.getVisibility() != View.VISIBLE) {
             mTvSpeedPlay.setVisibility(VISIBLE);
         }
@@ -299,7 +301,7 @@ public class FloatVodController extends BaseController {
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
 //        mPlayTitle = findViewById(R.id.tv_info_name);
-        mHorizontalScrollView = findViewById(R.id.horizontalScrollView);
+//        mHorizontalScrollView = findViewById(R.id.horizontalScrollView);
         mLockView = findViewById(R.id.tv_lock);
         mLockView.setOnClickListener(new OnClickListener() {
             @Override
@@ -357,7 +359,7 @@ public class FloatVodController extends BaseController {
 //                choosePlay(v);
 //            }
 //        });
-//        mPlayerScaleBtn = findViewById(R.id.play_scale);
+        mPlayerScaleBtn = findViewById(R.id.play_scale);
         mPlayerSpeedBtn = findViewById(R.id.play_speed);
         mPlayerBtn = findViewById(R.id.play_player);
         mPlayerIJKBtn = findViewById(R.id.play_ijk);
@@ -493,12 +495,12 @@ public class FloatVodController extends BaseController {
                 hideBottom();
             }
         });
-//        mPlayerScaleBtn.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                scaleVideoView();
-//            }
-//        });
+        mPlayerScaleBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scaleVideoView((TextView) view);
+            }
+        });
 
         // takagen99: Add long press to reset speed
         mPlayerSpeedBtn.setOnLongClickListener(new OnLongClickListener() {
@@ -819,10 +821,9 @@ public class FloatVodController extends BaseController {
         try {
             int playerType = mPlayerConfig.getInt("pl");
             mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
-//            mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
+            mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
             mPlayerIJKBtn.setText(mPlayerConfig.getString("ijk"));
             mPlayerIJKBtn.setVisibility(playerType == 1 ? VISIBLE : GONE);
-//            mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
             mPlayerSpeedBtn.setText("x" + mPlayerConfig.getDouble("sp"));
 //            updateStartAndEndTime();
 //            mPlayerTimeStepBtn.setText(Hawk.get(HawkConfig.PLAY_TIME_STEP, 5) + "s");
@@ -929,7 +930,7 @@ public class FloatVodController extends BaseController {
             }
         }
         if (isFastSpeed) {
-            mTvSpeedPlay.setText("当前3倍速播放中 " + mCurrentTime.getText() + "/" + mTotalTime.getText());
+            mTvSpeedPlay.setText("3倍速 " + mCurrentTime.getText() + "/" + mTotalTime.getText());
         }
         if (duration > 0) {
             mSeekBar.setEnabled(true);

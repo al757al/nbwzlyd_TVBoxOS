@@ -92,6 +92,11 @@ public class IjkMediaPlayer extends IjkPlayer {
         return data;
     }
 
+    @Override
+    public String getPlayUrl() {
+        return mMediaPlayer.getDataSource();
+    }
+
     public void setTrack(int trackIndex) {
         mMediaPlayer.selectTrack(trackIndex);
     }

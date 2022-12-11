@@ -97,6 +97,11 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
     }
 
     @Override
+    public String getPlayUrl() {
+        return mMediaPlayer.getDataSource();
+    }
+
+    @Override
     public void setDataSource(AssetFileDescriptor fd) {
         try {
             mMediaPlayer.setDataSource(new RawDataSourceProvider(fd));

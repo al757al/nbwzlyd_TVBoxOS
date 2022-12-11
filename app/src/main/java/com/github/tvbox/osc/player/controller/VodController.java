@@ -332,6 +332,15 @@ public class VodController extends BaseController {
         floatView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    if (Hawk.get(HawkConfig.PLAY_RENDER, 2) == 1
+                            || mPlayerConfig.getInt("pr") == 1) {
+                        ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("surface渲染不支持悬浮窗");
+                        return;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 floatListener.onFloatClick(true);
             }
         });
@@ -745,12 +754,17 @@ public class VodController extends BaseController {
         mZimuBtn.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                mSubtitleView.setVisibility(View.GONE);
-                mSubtitleView.destroy();
-                mSubtitleView.clearSubtitleCache();
-                mSubtitleView.isInternal = false;
-                hideBottom();
-                Toast.makeText(getContext(), "字幕已关闭", Toast.LENGTH_SHORT).show();
+                if (mSubtitleView.getVisibility() == VISIBLE) {
+                    mSubtitleView.setVisibility(View.GONE);
+//                    mSubtitleView.destroy();
+//                    mSubtitleView.clearSubtitleCache();
+//                    mSubtitleView.isInternal = false;
+                    hideBottom();
+                    Toast.makeText(getContext(), "字幕已关闭", Toast.LENGTH_SHORT).show();
+                } else {
+                    mSubtitleView.setVisibility(View.VISIBLE);
+                    Toast.makeText(getContext(), "字幕已开启", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             }
         });

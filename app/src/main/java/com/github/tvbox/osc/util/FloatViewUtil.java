@@ -1,6 +1,8 @@
 package com.github.tvbox.osc.util;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
@@ -62,6 +64,7 @@ public class FloatViewUtil {
     public void openFloat(MyVideoView videoView, String progressKey,
                           JSONObject playConfig, VodInfo vodInfo, boolean isInternalSubTitle) {
 //        this.myVideoView = videoView;
+        Activity topActivity = ActivityUtils.getTopActivity();
         EasyFloat.dismiss(FLOAT_TAG);
         ProgressManager progressManager = new ProgressManager() {
             @Override
@@ -87,6 +90,9 @@ public class FloatViewUtil {
                 return rec;
             }
         };
+
+        EasyFloat.Builder builder = new EasyFloat.Builder(topActivity);
+        builder.setLandScape(topActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
 
         EasyFloat.with(App.getInstance().getApplicationContext()).setTag(FLOAT_TAG).setShowPattern(ShowPattern.BACKGROUND).setLocation(100, 100).registerCallbacks(new OnFloatCallbacks() {
             @Override
@@ -172,16 +178,16 @@ public class FloatViewUtil {
 //                    PlayerHelper.updateCfg(myVideoView, playConfig);
 //                    myVideoView.setUrl(url);
             videoView.setProgressManager(progressManager);
-            ActivityUtils.getTopActivity().moveTaskToBack(true);//将应用推到后台
+            topActivity.moveTaskToBack(true);//将应用推到后台
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) content.getLayoutParams();
             scaleImage = view.findViewById(R.id.ivScale);
             scaleImage.setOnScaledListener((x, y, event) -> {
                 if (params.width > ScreenUtils.getScreenWidth()) {
                     params.width = ScreenUtils.getScreenWidth();
                 } else {//当宽度达到最大的时候，高度不再变化
-                    params.height = (int) Math.max(params.height + x, 300);
+                    params.height = (int) Math.max(params.height + x, 270);
                 }
-                params.width = (int) Math.max(params.width + x, 400);
+                params.width = (int) Math.max(params.width + x, 480);
                 EasyFloat.updateFloat(FLOAT_TAG, -1, -1, params.width, params.height);
                 floatVodController.updateSubInfoTextSize(params.width / 50);
             });
@@ -192,7 +198,7 @@ public class FloatViewUtil {
                 intent.putExtra("isFromFloat", true);
                 intent.putExtra("vodInfo", vodInfo);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setClass(App.getInstance(), ActivityUtils.getTopActivity().getClass());
+                intent.setClass(App.getInstance(), topActivity.getClass());
                 App.getInstance().startActivity(intent);
             });
         }).show();

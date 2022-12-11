@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.IntEvaluator;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -166,6 +167,7 @@ public class LivePlayActivity extends BaseActivity {
     private SeekBar sBar;
     private View iv_playpause;
     private LiveController liveController;
+    private ViewGroup mPlayRoot;
 
     @Override
     protected int getLayoutResID() {
@@ -208,6 +210,7 @@ public class LivePlayActivity extends BaseActivity {
         tv_curepg_left = findViewById(R.id.tv_current_program);//当前节目
         tv_nextepg_left = findViewById(R.id.tv_next_program);//下一节目
         ll_epg = findViewById(R.id.ll_epg);
+        mPlayRoot = findViewById(R.id.live_root);
         divLoadEpg = findViewById(R.id.divLoadEpg);
         divLoadEpgleft = findViewById(R.id.divLoadEpgleft);
         //laodao 7day replay
@@ -307,6 +310,16 @@ public class LivePlayActivity extends BaseActivity {
         initSettingItemView();
         initLiveChannelList();
         initLiveSettingGroupList();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra("isFromFloat", false)) {
+            currentLiveChannelItem = (LiveChannelItem) intent.getSerializableExtra("currentLiveChannelItem");
+            currentChannelGroupIndex = intent.getIntExtra("currentChannelGroupIndex", 1);
+        }
+        initLiveChannelList();
     }
 
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
@@ -618,7 +631,14 @@ public class LivePlayActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (mVideoView != null) {
-            mVideoView.resume();
+            ViewGroup parent = (ViewGroup) (mVideoView.getParent());
+            if (parent.getId() != R.id.play_root) {
+                parent.removeView(mVideoView);
+                mPlayRoot.addView(mVideoView, 0);
+                mVideoView.setVideoController(liveController);
+            } else {
+                mVideoView.resume();
+            }
         }
     }
 
@@ -1154,6 +1174,16 @@ public class LivePlayActivity extends BaseActivity {
                 if (direction > 0) playNextSource();
                 else playPreSource();
             }
+
+            @Override
+            public void nextChanel() {
+
+            }
+
+            @Override
+            public void preChanel() {
+
+            }
         });
         liveController.setCanChangePosition(true);
         liveController.setEnableInNormal(true);
@@ -1396,6 +1426,10 @@ public class LivePlayActivity extends BaseActivity {
             showLiveSourceDialog();
         }
         if (position == 6) {
+            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("还在开发中~");
+//            new LiveFloatViewUtil().openFloat(mVideoView, currentLiveChannelItem, currentChannelGroupIndex);
+        }
+        if (position == 7) {
             onBackPressed();
             finish();
         }
@@ -1651,7 +1685,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveSettingGroupList() {
-        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "直播地址", "退出直播"));
+        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "直播地址", "悬浮播放", "退出直播"));
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
         ArrayList<String> sourceItems = new ArrayList<>();
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
@@ -1663,6 +1697,7 @@ public class LivePlayActivity extends BaseActivity {
         itemsArrayList.add(playerDecoderItems);
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
+        itemsArrayList.add(new ArrayList<>());
         itemsArrayList.add(new ArrayList<>());
         itemsArrayList.add(new ArrayList<>());
 
