@@ -479,6 +479,7 @@ public class PlayActivity extends BaseActivity {
                         mController.mSubtitleView.destroy();
                         mController.mSubtitleView.clearSubtitleCache();
                         mController.mSubtitleView.isInternal = true;
+                        mController.mSubtitleView.setVisibility(View.VISIBLE);
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.index);
                         new Handler().postDelayed(() -> {
                             mediaPlayer.seekTo(progress);
