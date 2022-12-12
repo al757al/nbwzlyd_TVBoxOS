@@ -632,7 +632,7 @@ public class LivePlayActivity extends BaseActivity {
         super.onResume();
         if (mVideoView != null) {
             ViewGroup parent = (ViewGroup) (mVideoView.getParent());
-            if (parent.getId() != R.id.play_root) {
+            if (parent.getId() != R.id.live_root) {
                 parent.removeView(mVideoView);
                 mPlayRoot.addView(mVideoView, 0);
                 mVideoView.setVideoController(liveController);
