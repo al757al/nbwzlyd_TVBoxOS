@@ -22,7 +22,6 @@ class AboutDialog(context: Context) : BaseDialog(context) {
                     5、直播缓存10H,提升加载速度
                     6、修复切换播放器会导致焦点丢失的问题
                     7、尝试解决surfaceView渲染切后台再切前台导致的黑屏问题
-                    8、升级exo播放器到2.18.1
 
     """.trimIndent()
             ).create()
