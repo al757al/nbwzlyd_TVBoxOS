@@ -11,6 +11,8 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.github.tvbox.osc.util.ScreenUtils;
+
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.MeasureHelper;
@@ -100,12 +102,14 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 //        }
 
         //解决黑屏问题
-        Canvas canvas = holder.lockCanvas();
-        if (canvas == null) {
-            return;
+        if (!ScreenUtils.isTv(getContext())) {
+            Canvas canvas = holder.lockCanvas();
+            if (canvas == null) {
+                return;
+            }
+            //绘制黑色
+            holder.unlockCanvasAndPost(canvas);
         }
-        //绘制黑色
-        holder.unlockCanvasAndPost(canvas);
     }
 
     @Override
