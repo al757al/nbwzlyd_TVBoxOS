@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,9 +124,12 @@ public class PlayFragment extends BaseLazyFragment {
     private SourceViewModel sourceViewModel;
     private Handler mHandler;
 
+    public static final int ParseFailCode = 100;
+
     private long videoDuration = -1;
     private FrameLayout mPlayRoot;
     private ProgressManager progressManager;
+    private ParseBean mCurrentParseBean;
 
     @Override
     protected int getLayoutResID() {
@@ -159,11 +163,23 @@ public class PlayFragment extends BaseLazyFragment {
     private void initView() {
         EventBus.getDefault().register(this);
         mHandler = new Handler(msg -> {
-            switch (msg.what) {
-                case 100:
-                    stopParse();
-                    errorWithRetry("嗅探错误", false);
-                    break;
+            if (msg.what == ParseFailCode) {
+                stopParse();
+                errorWithRetry("嗅探错误", false);
+                mHandler.removeMessages(ParseFailCode);
+                List<ParseBean> parseBeanList = ApiConfig.get().getParseBeanList();
+                if (parseBeanList == null || parseBeanList.isEmpty()) {
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("嗅探已经完毕");
+                    return false;
+                }
+                int currentIndex = parseBeanList.indexOf(mCurrentParseBean);
+                currentIndex++;
+                if (currentIndex >= parseBeanList.size()) {
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("嗅探已经完毕");
+                    return false;
+                }
+                mCurrentParseBean = parseBeanList.get(currentIndex);
+                doParse(mCurrentParseBean);
             }
             return false;
         });
@@ -270,14 +286,14 @@ public class PlayFragment extends BaseLazyFragment {
             mController.mPlayerTimeStartBtn.setVisibility(View.GONE);
             mController.mPlayerTimeSkipBtn.setVisibility(View.GONE);
 //            mController.mPlayerTimeStepBtn.setVisibility(View.GONE);
-            mController.mPlayerTimeResetBtn.setVisibility(View.GONE);
+//            mController.mPlayerTimeResetBtn.setVisibility(View.GONE);
         } else {
 //            mController.mPlayerSpeedBtn.setVisibility(View.VISIBLE);
 //            mController.mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
             mController.mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
             mController.mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
 //            mController.mPlayerTimeStepBtn.setVisibility(View.VISIBLE);
-            mController.mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
+//            mController.mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
         }
     }
 
@@ -1000,7 +1016,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     void stopParse() {
-        mHandler.removeMessages(100);
+        mHandler.removeMessages(ParseFailCode);
         stopLoadWebView(false);
         OkGo.getInstance().cancelTag("json_jx");
         if (parseThreadPool != null) {
@@ -1016,12 +1032,13 @@ public class PlayFragment extends BaseLazyFragment {
     ExecutorService parseThreadPool;
 
     private void doParse(ParseBean pb) {
+        mCurrentParseBean = pb;
         stopParse();
         initParseLoadFound();
         if (pb.getType() == 0) {
             setTip("正在嗅探播放地址", true, false);
-            mHandler.removeMessages(100);
-            mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
+            mHandler.removeMessages(ParseFailCode);
+            mHandler.sendEmptyMessageDelayed(ParseFailCode, 20 * 1000);
             if (pb.getExt() != null) {
                 // 解析ext
                 try {
@@ -1201,8 +1218,8 @@ public class PlayFragment extends BaseLazyFragment {
                                     String mixParseUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));
                                     stopParse();
                                     setTip("正在嗅探播放地址", true, false);
-                                    mHandler.removeMessages(100);
-                                    mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
+                                    mHandler.removeMessages(ParseFailCode);
+                                    mHandler.sendEmptyMessageDelayed(ParseFailCode, 20 * 1000);
                                     loadWebView(mixParseUrl);
                                 }
                             });
@@ -1571,7 +1588,7 @@ public class PlayFragment extends BaseLazyFragment {
                     LOG.i("loadFoundVideoUrl:" + url);
                     if (loadFoundCount.incrementAndGet() == 1) {
                         url = loadFoundVideoUrls.poll();
-                        mHandler.removeMessages(100);
+                        mHandler.removeMessages(ParseFailCode);
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if (!TextUtils.isEmpty(cookie))
                             headers.put("Cookie", " " + cookie);//携带cookie
@@ -1756,7 +1773,7 @@ public class PlayFragment extends BaseLazyFragment {
                     loadFoundVideoUrlsHeader.put(url, webHeaders);
                     LOG.i("loadFoundVideoUrl:" + url);
                     if (loadFoundCount.incrementAndGet() == 1) {
-                        mHandler.removeMessages(100);
+                        mHandler.removeMessages(ParseFailCode);
                         url = loadFoundVideoUrls.poll();
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if (!TextUtils.isEmpty(cookie))
