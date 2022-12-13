@@ -351,7 +351,7 @@ public class LiveFloatViewUtil {
 
     private void execute(Callable<?> callable) {
         if (executor != null) executor.shutdownNow();
-        executor = Executors.newFixedThreadPool(2);
+        executor = Executors.newFixedThreadPool(1);
         executor.execute(() -> {
             try {
                 if (!Thread.interrupted()) {
