@@ -60,8 +60,6 @@ public class LiveFloatViewUtil {
     private int chanelGroupIndex;
     private ArrayList<LiveChannelGroup> liveChannelGroupList;
 
-//    private MyVideoView myVideoView;
-
     public void openFloat(VideoView videoView, LiveChannelItem currentLiveChannelItem, ArrayList<LiveChannelGroup> liveChannelGroupList) {
         this.videoView = videoView;
         this.liveChannelGroupList = liveChannelGroupList;
@@ -76,13 +74,11 @@ public class LiveFloatViewUtil {
             public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
 
             }
-
             @Override
             public void show(@NonNull View view) {
                 videoView.requestLayout();
                 videoView.resume();
                 if (floatVodController != null) {
-                    listener.setMyVideoView(videoView, liveChannelGroupList);
                     floatVodController.setListener(listener);
                 }
 
@@ -136,16 +132,11 @@ public class LiveFloatViewUtil {
             }
         }).setLayout(R.layout.float_app_scale, view -> {
             RelativeLayout content = view.findViewById(R.id.rlContent);
-//                    myVideoView = view.findViewById(R.id.mVideoView);
             floatVodController = new LiveFloatController(App.getInstance());
             videoView.setVideoController(floatVodController);
             ((ViewGroup) videoView.getParent()).removeView(videoView);
             content.addView(videoView, 0);
-            listener.setMyVideoView(videoView, liveChannelGroupList);
             floatVodController.setListener(listener);
-//            floatVodController.setPlayerConfig(playConfig);
-//                    PlayerHelper.updateCfg(myVideoView, playConfig);
-//                    myVideoView.setUrl(url);
             topActivity.moveTaskToBack(true);//将应用推到后台
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) content.getLayoutParams();
             scaleImage = view.findViewById(R.id.ivScale);
@@ -189,13 +180,6 @@ public class LiveFloatViewUtil {
     }
 
     private class VodControllerListener implements LiveController.LiveControlListener {
-
-        private VideoView myVideoView;
-
-        public void setMyVideoView(VideoView videoView, ArrayList<LiveChannelGroup> liveChannelGroupList) {
-            this.myVideoView = videoView;
-        }
-
         @Override
         public boolean singleTap(MotionEvent e) {
             return false;
@@ -216,12 +200,7 @@ public class LiveFloatViewUtil {
                 case VideoView.STATE_PREPARED:
                 case VideoView.STATE_BUFFERED:
                 case VideoView.STATE_PLAYING:
-//                    currentLiveChangeSourceTimes = 0;
                     mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
-//                    sBar.setMax((int) mVideoView.getDuration());
-//                    tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-//                    tv_duration.setText(durationToString((int) mVideoView.getDuration()));
-//                    liveController.hideProgressContainer();
                     break;
                 case VideoView.STATE_ERROR:
                 case VideoView.STATE_PLAYBACK_COMPLETED:
@@ -291,11 +270,6 @@ public class LiveFloatViewUtil {
         currentLiveChannelItem = liveChannels.get(nextPlayPos);
         this.chanelGroupIndex = curGroupIndex;
         playUrl(currentLiveChannelItem);
-//        if (curGroupIndex < channelGroupList.size() && nextPlayPos < channelGroupList.get(curGroupIndex).getLiveChannels().size()) {
-//
-//        } else {
-//            ToastUtils.make().setGravity(Gravity.CENTER, 100, 100).show("没有频道了");
-//        }
     }
 
 
