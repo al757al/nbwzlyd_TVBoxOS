@@ -47,7 +47,6 @@ import xyz.doikki.videoplayer.player.VideoView;
  * </pre>
  */
 public class LiveFloatViewUtil {
-    private long videoDuration = 0;
     private ScaleImage scaleImage;
     private View fullScreenImage;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -96,10 +95,9 @@ public class LiveFloatViewUtil {
 
             @Override
             public void dismiss() {
-                if (videoDuration > 0 && videoView != null) {
+                if (videoView != null) {
                     videoView.setVideoController(null);
                 }
-//                videoView.release();
                 if (floatVodController != null) {
                     floatVodController.setListener(null);
                 }
