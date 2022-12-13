@@ -94,7 +94,7 @@ public class FloatViewUtil {
         EasyFloat.Builder builder = new EasyFloat.Builder(topActivity);
         builder.setLandScape(topActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
 
-        EasyFloat.with(App.getInstance().getApplicationContext()).setTag(FLOAT_TAG).setShowPattern(ShowPattern.BACKGROUND).setLocation(100, 100).registerCallbacks(new OnFloatCallbacks() {
+        EasyFloat.with(App.getInstance().getApplicationContext()).setTag(FLOAT_TAG).setShowPattern(ShowPattern.BACKGROUND).setLocation(0, 0).registerCallbacks(new OnFloatCallbacks() {
             @Override
             public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
 

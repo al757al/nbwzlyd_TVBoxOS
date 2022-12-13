@@ -54,6 +54,7 @@ import com.github.tvbox.osc.ui.tv.widget.ViewObj;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.Force;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.LiveFloatViewUtil;
 import com.github.tvbox.osc.util.M3uLiveParser;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
@@ -101,7 +102,7 @@ public class LivePlayActivity extends BaseActivity {
     private TvRecyclerView mChannelGroupView;
     private TvRecyclerView mLiveChannelView;
     private LiveChannelGroupAdapter liveChannelGroupAdapter;
-    private LiveChannelItemAdapter liveChannelItemAdapter;
+    private LiveChannelItemAdapter liveChannelItemAdapter = new LiveChannelItemAdapter();
 
     private LiveViewModel mLiveViewModel;
 
@@ -318,8 +319,8 @@ public class LivePlayActivity extends BaseActivity {
         if (intent.getBooleanExtra("isFromFloat", false)) {
             currentLiveChannelItem = (LiveChannelItem) intent.getSerializableExtra("currentLiveChannelItem");
             currentChannelGroupIndex = intent.getIntExtra("currentChannelGroupIndex", 1);
+            currentLiveChannelIndex = liveChannelItemAdapter.getData().indexOf(currentLiveChannelItem);
         }
-        initLiveChannelList();
     }
 
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
@@ -683,8 +684,8 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-    private Runnable mHideChannelListRun = () -> hideChanelList();
-    private Runnable mFocusCurrentChannelAndShowChannelList = new Runnable() {
+    private final Runnable mHideChannelListRun = this::hideChanelList;
+    private final Runnable mFocusCurrentChannelAndShowChannelList = new Runnable() {
         @Override
         public void run() {
             if (mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
@@ -1426,8 +1427,7 @@ public class LivePlayActivity extends BaseActivity {
             showLiveSourceDialog();
         }
         if (position == 6) {
-            ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("还在开发中~");
-//            new LiveFloatViewUtil().openFloat(mVideoView, currentLiveChannelItem, currentChannelGroupIndex);
+            new LiveFloatViewUtil().openFloat(mVideoView, currentLiveChannelItem, (ArrayList<LiveChannelGroup>) liveChannelGroupList);
         }
         if (position == 7) {
             onBackPressed();
