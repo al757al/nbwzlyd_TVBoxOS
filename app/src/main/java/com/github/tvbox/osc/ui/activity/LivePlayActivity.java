@@ -61,6 +61,7 @@ import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
 import com.github.tvbox.osc.viewmodel.LiveViewModel;
 import com.google.gson.JsonArray;
+import com.lzf.easyfloat.EasyFloat;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.StringCallback;
@@ -634,6 +635,7 @@ public class LivePlayActivity extends BaseActivity {
         if (mVideoView != null) {
             ViewGroup parent = (ViewGroup) (mVideoView.getParent());
             if (parent.getId() != R.id.live_root) {
+                EasyFloat.dismiss(LiveFloatViewUtil.FLOAT_TAG);
                 parent.removeView(mVideoView);
                 mPlayRoot.addView(mVideoView, 0);
                 mVideoView.setVideoController(liveController);

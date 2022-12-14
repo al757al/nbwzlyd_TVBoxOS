@@ -162,6 +162,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected void initView() {
         mPlayerContainer = new FrameLayout(getContext());
+        mPlayerContainer.setTag("common_tips");
         mPlayerContainer.setBackgroundColor(mPlayerBackgroundColor);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,

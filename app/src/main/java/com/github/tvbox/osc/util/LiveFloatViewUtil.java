@@ -61,19 +61,20 @@ public class LiveFloatViewUtil {
     private ArrayList<LiveChannelGroup> liveChannelGroupList;
 
     public void openFloat(VideoView videoView, LiveChannelItem currentLiveChannelItem, ArrayList<LiveChannelGroup> liveChannelGroupList) {
+        EasyFloat.dismiss(FLOAT_TAG);
         this.videoView = videoView;
         this.liveChannelGroupList = liveChannelGroupList;
-        Activity topActivity = ActivityUtils.getTopActivity();
-        EasyFloat.dismiss(FLOAT_TAG);
         this.currentLiveChannelItem = currentLiveChannelItem;
+
+        Activity topActivity = ActivityUtils.getTopActivity();
         EasyFloat.Builder builder = new EasyFloat.Builder(topActivity);
         builder.setLandScape(topActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
-
         EasyFloat.with(App.getInstance().getApplicationContext()).setTag(FLOAT_TAG).setShowPattern(ShowPattern.BACKGROUND).setLocation(0, 0).registerCallbacks(new OnFloatCallbacks() {
             @Override
             public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
 
             }
+
             @Override
             public void show(@NonNull View view) {
                 videoView.requestLayout();

@@ -79,6 +79,7 @@ public class SourceViewModel extends ViewModel {
 
     // homeContent
     private boolean isHomeTabCacheInit = false;
+
     public void getSort(String sourceKey) {
         if (sourceKey == null) {
             sortResult.postValue(null);
@@ -355,6 +356,7 @@ public class SourceViewModel extends ViewModel {
 
     //    homeVideoContent
     private boolean isHomeRecCache;
+
     void getHomeRecList(SourceBean sourceBean, ArrayList<String> ids, HomeRecCallback callback) {
         int type = sourceBean.getType();
         if (type == 3) {

@@ -79,6 +79,7 @@ import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.lzf.easyfloat.EasyFloat;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.HttpHeaders;
@@ -115,7 +116,6 @@ import me.jessyan.autosize.AutoSize;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
-import xyz.doikki.videoplayer.exo.SubtitleChangeListener;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
 
@@ -256,16 +256,18 @@ public class PlayActivity extends BaseActivity {
                 initSubtitleView();
                 initVideoDurationSomeThing();
                 if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
-                    ExoPlayerSubTitleUtil.getTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
-                    ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(new SubtitleChangeListener() {
-                        @Override
-                        public void onSubTitleChange(String text) {
+                    try {
+                        ExoPlayerSubTitleUtil.getTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
+                        ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(text -> {
                             mController.mSubtitleView.isInternal = true;
                             com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
                             subtitle.content = text;
                             mController.mSubtitleView.onSubtitleChanged(subtitle);
-                        }
-                    });
+                        });
+                    } catch (Exception e) {
+
+                    }
+
                 }
             }
         });
@@ -811,6 +813,7 @@ public class PlayActivity extends BaseActivity {
         if (mVideoView != null) {
             ViewGroup parent = (ViewGroup) (mVideoView.getParent());
             if (parent.getId() != R.id.play_root) {
+                EasyFloat.dismiss(FloatViewUtil.FLOAT_TAG);
                 parent.removeView(mVideoView);
                 mPlayRoot.addView(mVideoView, 0);
                 mVideoView.setVideoController(mController);
