@@ -1165,6 +1165,12 @@ public class VodController extends BaseController {
     }
 
     @Override
+    public void hideLoading() {
+        super.hideLoading();
+        mPlayLoadNetSpeed.setVisibility(View.GONE);
+    }
+
+    @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         myHandle.removeCallbacks(myRunnable);
         if (!isBottomVisible()) {

@@ -674,10 +674,7 @@ public class LivePlayActivity extends BaseActivity {
         if (tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
-            if (currentLiveChannelIndex > -1)
-                mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
             mLiveChannelView.setSelection(currentLiveChannelIndex);
-            mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
             mChannelGroupView.setSelection(currentChannelGroupIndex);
             mHandler.postDelayed(mFocusCurrentChannelAndShowChannelList, 200);
         } else {
@@ -1429,7 +1426,7 @@ public class LivePlayActivity extends BaseActivity {
             showLiveSourceDialog();
         }
         if (position == 6) {
-            new LiveFloatViewUtil().openFloat(mVideoView, currentLiveChannelItem, (ArrayList<LiveChannelGroup>) liveChannelGroupList);
+            new LiveFloatViewUtil().openFloat(mVideoView, currentLiveChannelItem, (ArrayList<LiveChannelGroup>) liveChannelGroupList, currentChannelGroupIndex);
         }
         if (position == 7) {
             onBackPressed();

@@ -570,7 +570,8 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:tag="play_load_net_speed"
-        android:text="0"
+        android:text="11111110"
+        tools:visibility="visible"
         android:textColor="@color/color_FFFFFF"
         android:textSize="@dimen/ts_24" />
 

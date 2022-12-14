@@ -60,11 +60,12 @@ public class LiveFloatViewUtil {
     private int chanelGroupIndex;
     private ArrayList<LiveChannelGroup> liveChannelGroupList;
 
-    public void openFloat(VideoView videoView, LiveChannelItem currentLiveChannelItem, ArrayList<LiveChannelGroup> liveChannelGroupList) {
+    public void openFloat(VideoView videoView, LiveChannelItem curLiveChannelItem, ArrayList<LiveChannelGroup> liveChannelGroupList, int chanelGroupIndex) {
         EasyFloat.dismiss(FLOAT_TAG);
         this.videoView = videoView;
         this.liveChannelGroupList = liveChannelGroupList;
-        this.currentLiveChannelItem = currentLiveChannelItem;
+        this.currentLiveChannelItem = curLiveChannelItem;
+        this.chanelGroupIndex = chanelGroupIndex;
 
         Activity topActivity = ActivityUtils.getTopActivity();
         EasyFloat.Builder builder = new EasyFloat.Builder(topActivity);
@@ -92,9 +93,6 @@ public class LiveFloatViewUtil {
 
             @Override
             public void dismiss() {
-                if (videoView != null) {
-                    videoView.setVideoController(null);
-                }
                 if (floatVodController != null) {
                     floatVodController.setListener(null);
                 }
@@ -155,8 +153,8 @@ public class LiveFloatViewUtil {
                 EasyFloat.dismiss(FLOAT_TAG);
                 Intent intent = new Intent();
                 intent.putExtra("isFromFloat", true);
-                intent.putExtra("currentLiveChannelItem", currentLiveChannelItem);
-                intent.putExtra("currentChannelGroupIndex", chanelGroupIndex);
+                intent.putExtra("currentLiveChannelItem", this.currentLiveChannelItem);
+                intent.putExtra("currentChannelGroupIndex", this.chanelGroupIndex);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setClass(App.getInstance(), topActivity.getClass());
                 App.getInstance().startActivity(intent);
@@ -268,7 +266,7 @@ public class LiveFloatViewUtil {
             return;
         }
         ArrayList<LiveChannelItem> liveChannels = liveChannelGroupList.get(curGroupIndex).getLiveChannels();
-        currentLiveChannelItem = liveChannels.get(nextPlayPos);
+        this.currentLiveChannelItem = liveChannels.get(nextPlayPos);
         this.chanelGroupIndex = curGroupIndex;
         playUrl(currentLiveChannelItem);
     }
@@ -326,7 +324,7 @@ public class LiveFloatViewUtil {
 
     private void execute(Callable<?> callable) {
         if (executor != null) executor.shutdownNow();
-        executor = Executors.newFixedThreadPool(1);
+        executor = Executors.newFixedThreadPool(2);
         executor.execute(() -> {
             try {
                 if (!Thread.interrupted()) {

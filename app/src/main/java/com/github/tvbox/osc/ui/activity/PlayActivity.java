@@ -88,6 +88,7 @@ import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -149,6 +150,16 @@ public class PlayActivity extends BaseActivity {
         super.onNewIntent(intent);
         if (intent.getBooleanExtra("isFromFloat", false)) {
             mVodInfo = (VodInfo) intent.getSerializableExtra("vodInfo");
+        }
+    }
+
+    @Subscribe
+    public void playChangeEvent(FloatViewUtil.PlayChangeEvent event) {
+        if (FloatViewUtil.PlayChangeEvent.NEXT.equals(event.mType)) {
+            playNext(false);
+        }
+        if (FloatViewUtil.PlayChangeEvent.PREVIOUS.equals(event.mType)) {
+            playPrevious();
         }
     }
 
@@ -749,10 +760,6 @@ public class PlayActivity extends BaseActivity {
             @Override
             public void onFloatClick(boolean isShow) {
                 FastClickCheckUtil.check(mController);
-                if (!mVideoView.isPlaying()) {
-                    ToastUtils.showShort("等待视频开始播放才能小窗");
-                    return;
-                }
                 new FloatViewUtil().openFloat(mVideoView, progressKey, mVodPlayerCfg, mVodInfo, mController.mSubtitleView.isInternal);
 //                mVideoView.release();
             }
@@ -818,6 +825,9 @@ public class PlayActivity extends BaseActivity {
                 mPlayRoot.addView(mVideoView, 0);
                 mVideoView.setVideoController(mController);
                 mVideoView.setProgressManager(progressManager);
+                if (mVideoView.isPlaying()) {
+                    mController.hideLoading();
+                }
             } else {
                 mVideoView.resume();
             }

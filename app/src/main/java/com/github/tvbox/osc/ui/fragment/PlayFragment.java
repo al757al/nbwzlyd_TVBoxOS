@@ -768,10 +768,6 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void onFloatClick(boolean isShow) {
                 FastClickCheckUtil.check(mController);
-                if (!mVideoView.isPlaying()) {
-                    ToastUtils.showShort("等待视频开始播放才能小窗");
-                    return;
-                }
                 new FloatViewUtil().openFloat(mVideoView, progressKey, mVodPlayerCfg, mVodInfo, mController.mSubtitleView.isInternal);
 //                mVideoView.release();
             }
@@ -817,6 +813,9 @@ public class PlayFragment extends BaseLazyFragment {
                 mPlayRoot.addView(mVideoView, 0);
                 mVideoView.setVideoController(mController);
                 mVideoView.setProgressManager(progressManager);
+                if (mVideoView.isPlaying()) {
+                    mController.hideLoading();
+                }
             } else {
                 mVideoView.resume();
             }
