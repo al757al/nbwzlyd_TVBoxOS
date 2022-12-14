@@ -227,7 +227,7 @@ public class FloatViewUtil {
 
         @Override
         public void playPre() {
-            EventBus.getDefault().post(new PlayChangeEvent("", PlayChangeEvent.NEXT));
+            EventBus.getDefault().post(new PlayChangeEvent("", PlayChangeEvent.PREVIOUS));
         }
 
         @Override
