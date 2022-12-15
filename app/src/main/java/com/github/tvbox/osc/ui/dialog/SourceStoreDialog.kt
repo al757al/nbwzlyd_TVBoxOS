@@ -2,7 +2,6 @@ package com.github.tvbox.osc.ui.dialog
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.view.View
 import android.widget.*
@@ -243,6 +242,7 @@ class SourceStoreDialog(private val activity: Activity) : BaseDialog(activity) {
                     }
 //                    if (history.size > 20) history.removeAt(20)
 //                    Hawk.put(HawkConfig.API_HISTORY, history)
+                    Hawk.put(HawkConfig.API_URL_BEAN, moreSourceBean)
                     ToastUtils.showShort("系统识别到你推送的可能是线路，已经帮你保存并重启首页")
                     JumpUtils.forceRestartHomeActivity(context)
                     this.dismiss()

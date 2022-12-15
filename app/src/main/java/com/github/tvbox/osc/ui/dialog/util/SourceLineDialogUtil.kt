@@ -104,21 +104,6 @@ class SourceLineDialogUtil(private val context: Context) {
                 }
                 data.add(moreSourceBean)
             }
-
-//            val dataMap = data.associateBy {
-//                it.sourceUrl
-//            }
-//
-//            history.forEachIndexed { index, s ->
-//                if (dataMap[s] == null) {//返回的数据中不包含历史配置，添加进去
-//                    val configBean = MoreSourceBean().apply {
-//                        this.sourceUrl = s
-//                        this.sourceName = "自定义配置地址${index + 1}"
-//                    }
-//                    data.add(configBean)
-//                }
-//            }
-
             val dataMap2 = data.associateBy {
                 it.sourceUrl
             }
