@@ -36,7 +36,6 @@ import com.github.tvbox.osc.subtitle.widget.SimpleSubtitleView;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.view.ChoosePlayPopUp;
-import com.github.tvbox.osc.ui.view.PlayerMoreFucPop;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.PlayerHelper;
@@ -84,7 +83,7 @@ public class FloatVodController extends BaseController {
     TextView mPlayerIJKBtn;
     TextView mPlayerRetry;
     TextView mPlayrefresh;
-    private PlayerMoreFucPop mPlayerMoreFuc;
+//    private PlayerMoreFucPop mPlayerMoreFuc;
 
     //    public TextView mPlayerTimeStartBtn;
 //    public TextView mPlayerTimeSkipBtn;
@@ -824,7 +823,7 @@ public class FloatVodController extends BaseController {
     public void setPlayerConfig(JSONObject playerCfg) {
         this.mPlayerConfig = playerCfg;
         updatePlayerCfgView();
-        mPlayerMoreFuc = new PlayerMoreFucPop(getContext(), mPlayerConfig);
+//        mPlayerMoreFuc = new PlayerMoreFucPop(getContext(), mPlayerConfig);
     }
 
     void updatePlayerCfgView() {

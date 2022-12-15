@@ -132,6 +132,7 @@ public class PlayActivity extends BaseActivity {
     private ProgressManager progressManager;
 
     private long videoDuration = -1;
+    private PlayResultObserve mPlayResultObserve = new PlayResultObserve();
 
     @Override
     protected int getLayoutResID() {
@@ -650,63 +651,7 @@ public class PlayActivity extends BaseActivity {
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
-        sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
-            @Override
-            public void onChanged(JSONObject info) {
-//                WindowUtil.closeDialog(PlayActivity.this, false,0L);
-                if (info != null) {
-                    try {
-                        progressKey = info.optString("proKey", null);
-                        boolean parse = info.optString("parse", "1").equals("1");
-                        boolean jx = info.optString("jx", "0").equals("1");
-                        playSubtitle = info.optString("subt", /*"https://dash.akamaized.net/akamai/test/caption_test/ElephantsDream/ElephantsDream_en.vtt"*/"");
-                        subtitleCacheKey = info.optString("subtKey", null);
-                        String playUrl = info.optString("playUrl", "");
-                        String flag = info.optString("flag");
-                        String url = info.getString("url");
-                        VodInfo vodInfo = App.getInstance().getVodInfo();
-                        if (vodInfo != null) {
-                            vodInfo.downLoadUrl = url;
-                        }
-                        HashMap<String, String> headers = null;
-                        webUserAgent = null;
-                        webHeaderMap = null;
-                        if (info.has("header")) {
-                            try {
-                                JSONObject hds = new JSONObject(info.getString("header"));
-                                Iterator<String> keys = hds.keys();
-                                while (keys.hasNext()) {
-                                    String key = keys.next();
-                                    if (headers == null) {
-                                        headers = new HashMap<>();
-                                    }
-                                    headers.put(key, hds.getString(key));
-                                    if (key.equalsIgnoreCase("user-agent")) {
-                                        webUserAgent = hds.getString(key).trim();
-                                    }
-                                }
-                                webHeaderMap = headers;
-                            } catch (Throwable th) {
-
-                            }
-                        }
-                        if (parse || jx) {
-                            boolean userJxList = (playUrl.isEmpty() && ApiConfig.get().getVipParseFlags().contains(flag)) || jx;
-                            initParse(flag, userJxList, playUrl, url);
-                        } else {
-                            mController.showParse(false);
-                            playUrl(playUrl + url, headers);
-                        }
-                    } catch (Throwable th) {
-//                        errorWithRetry("获取播放信息错误", true);
-//                        Toast.makeText(mContext, "获取播放信息错误1", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    errorWithRetry("获取播放信息错误", true);
-//                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        sourceViewModel.playResult.observeForever(mPlayResultObserve);
     }
 
     private void initData() {
@@ -850,6 +795,7 @@ public class PlayActivity extends BaseActivity {
             mVideoView.release();
             mVideoView = null;
         }
+        sourceViewModel.playResult.removeObserver(mPlayResultObserve);
         stopLoadWebView(true);
         stopParse();
     }
@@ -1807,6 +1753,64 @@ public class PlayActivity extends BaseActivity {
         @Override
         public void onReceivedSslError(XWalkView view, ValueCallback<Boolean> callback, SslError error) {
             callback.onReceiveValue(true);
+        }
+    }
+
+    public class PlayResultObserve implements Observer<JSONObject> {
+
+        @Override
+        public void onChanged(JSONObject info) {
+            if (info != null) {
+                try {
+                    progressKey = info.optString("proKey", null);
+                    boolean parse = info.optString("parse", "1").equals("1");
+                    boolean jx = info.optString("jx", "0").equals("1");
+                    playSubtitle = info.optString("subt", /*"https://dash.akamaized.net/akamai/test/caption_test/ElephantsDream/ElephantsDream_en.vtt"*/"");
+                    subtitleCacheKey = info.optString("subtKey", null);
+                    String playUrl = info.optString("playUrl", "");
+                    String flag = info.optString("flag");
+                    String url = info.getString("url");
+                    VodInfo vodInfo = App.getInstance().getVodInfo();
+                    if (vodInfo != null) {
+                        vodInfo.downLoadUrl = url;
+                    }
+                    HashMap<String, String> headers = null;
+                    webUserAgent = null;
+                    webHeaderMap = null;
+                    if (info.has("header")) {
+                        try {
+                            JSONObject hds = new JSONObject(info.getString("header"));
+                            Iterator<String> keys = hds.keys();
+                            while (keys.hasNext()) {
+                                String key = keys.next();
+                                if (headers == null) {
+                                    headers = new HashMap<>();
+                                }
+                                headers.put(key, hds.getString(key));
+                                if (key.equalsIgnoreCase("user-agent")) {
+                                    webUserAgent = hds.getString(key).trim();
+                                }
+                            }
+                            webHeaderMap = headers;
+                        } catch (Throwable th) {
+
+                        }
+                    }
+                    if (parse || jx) {
+                        boolean userJxList = (playUrl.isEmpty() && ApiConfig.get().getVipParseFlags().contains(flag)) || jx;
+                        initParse(flag, userJxList, playUrl, url);
+                    } else {
+                        mController.showParse(false);
+                        playUrl(playUrl + url, headers);
+                    }
+                } catch (Throwable th) {
+//                        errorWithRetry("获取播放信息错误", true);
+//                        Toast.makeText(mContext, "获取播放信息错误1", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                errorWithRetry("获取播放信息错误", true);
+//                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
