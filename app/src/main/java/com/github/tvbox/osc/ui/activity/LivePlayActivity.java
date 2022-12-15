@@ -1596,7 +1596,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         showLoading();
         OkGo.<String>get(url).cacheKey(url).
-                cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(10 * 60 * 60 * 1000).execute(new StringCallback() {
+                cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3 * 24 * 60 * 60 * 1000).execute(new StringCallback() {
                     @Override
                     public void onError(Response<String> response) {
                         ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("直播地址加载失败" + response.getException().getMessage());
