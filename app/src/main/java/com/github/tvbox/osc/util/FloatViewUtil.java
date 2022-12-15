@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ScreenUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.bean.ParseBean;
@@ -32,10 +30,10 @@ import com.lzf.easyfloat.EasyFloat;
 import com.lzf.easyfloat.enums.ShowPattern;
 import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import me.jessyan.autosize.utils.AutoSizeUtils;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 import xyz.doikki.videoplayer.player.ProgressManager;
@@ -59,11 +57,13 @@ public class FloatViewUtil {
     public static final String FLOAT_TAG = "float_view";
     private FloatVodController floatVodController;
 
-//    private MyVideoView myVideoView;
+    private MyVideoView myVideoView;
+    private VodInfo vodInfo;
 
     public void openFloat(MyVideoView videoView, String progressKey,
                           JSONObject playConfig, VodInfo vodInfo, boolean isInternalSubTitle) {
-//        this.myVideoView = videoView;
+        this.myVideoView = videoView;
+        this.vodInfo = vodInfo;
         Activity topActivity = ActivityUtils.getTopActivity();
         EasyFloat.dismiss(FLOAT_TAG);
         ProgressManager progressManager = new ProgressManager() {
@@ -94,7 +94,7 @@ public class FloatViewUtil {
         EasyFloat.Builder builder = new EasyFloat.Builder(topActivity);
         builder.setLandScape(topActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
 
-        EasyFloat.with(App.getInstance().getApplicationContext()).setTag(FLOAT_TAG).setShowPattern(ShowPattern.BACKGROUND).setLocation(100, 100).registerCallbacks(new OnFloatCallbacks() {
+        EasyFloat.with(App.getInstance().getApplicationContext()).setTag(FLOAT_TAG).setShowPattern(ShowPattern.BACKGROUND).setLocation(0, 0).registerCallbacks(new OnFloatCallbacks() {
             @Override
             public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
 
@@ -120,9 +120,7 @@ public class FloatViewUtil {
             public void dismiss() {
                 if (videoDuration > 0 && videoView != null) {
                     progressManager.saveProgress(progressKey == null ? videoView.getPlayUrl() : progressKey, videoView.getCurrentPosition());
-                    videoView.setVideoController(null);
                 }
-//                videoView.release();
                 if (floatVodController != null) {
                     listener = null;
                     floatVodController.setListener(null);
@@ -175,8 +173,6 @@ public class FloatViewUtil {
             listener.setMyVideoView(videoView);
             floatVodController.setListener(listener);
             floatVodController.setPlayerConfig(playConfig);
-//                    PlayerHelper.updateCfg(myVideoView, playConfig);
-//                    myVideoView.setUrl(url);
             videoView.setProgressManager(progressManager);
             topActivity.moveTaskToBack(true);//将应用推到后台
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) content.getLayoutParams();
@@ -227,16 +223,12 @@ public class FloatViewUtil {
 
         @Override
         public void playNext(boolean rmProgress) {
-//                            PlayFragment.this.playNext(rmProgress);
-            ToastUtils.make().setGravity(Gravity.TOP, 0, AutoSizeUtils.dp2px(myVideoView.getContext(), 100)).show("功能还在开发中");
-//                            if (rmProgress && progressKey != null)
-//                                CacheManager.delete(MD5.string2MD5(progressKey), 0);
+            EventBus.getDefault().post(new PlayChangeEvent("", PlayChangeEvent.NEXT));
         }
 
         @Override
         public void playPre() {
-//                            PlayFragment.this.playPrevious();
-            ToastUtils.make().setGravity(Gravity.TOP, 0, AutoSizeUtils.dp2px(myVideoView.getContext(), 100)).show("功能还在开发中");
+            EventBus.getDefault().post(new PlayChangeEvent("", PlayChangeEvent.PREVIOUS));
         }
 
         @Override
@@ -252,12 +244,10 @@ public class FloatViewUtil {
 
         @Override
         public void replay(boolean replay) {
-//                            autoRetryCount = 0;
             String url = myVideoView.getPlayUrl();
             myVideoView.release();
             myVideoView.setUrl(url);
             myVideoView.start();
-//                            play(replay);
         }
 
         @Override
@@ -275,24 +265,11 @@ public class FloatViewUtil {
         @Override
         public void prepared() {
             videoDuration = myVideoView.getDuration();
+            if (vodInfo == null) return;
+            VodInfo.VodSeries vs = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex);
+            String playTitleInfo = vodInfo.name + " " + vs.name;
+            floatVodController.setTitle(playTitleInfo);
         }
-    }
-
-    private void playNext(boolean isProgress) {
-        VodInfo mVodInfo = App.getInstance().getVodInfo();
-        boolean hasNext;
-        if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
-            hasNext = false;
-        } else {
-            hasNext = mVodInfo.playIndex + 1 < mVodInfo.seriesMap.get(mVodInfo.playFlag).size();
-        }
-        if (!hasNext) {
-            ToastUtils.showShort("已经是最后一集了!");
-            return;
-        } else {
-            mVodInfo.playIndex++;
-        }
-//        play(false);
     }
 
     void updateSubTitle(MyVideoView mVideoView, FloatVodController floatVodController) {
@@ -313,5 +290,17 @@ public class FloatViewUtil {
             });
         }
 
+    }
+
+    public static class PlayChangeEvent {
+        public static final String PREVIOUS = "previous";
+        public static final String NEXT = "next";
+        public String mUrl;
+        public String mType;
+
+        public PlayChangeEvent(String url, String type) {
+            mUrl = url;
+            mType = type;
+        }
     }
 }

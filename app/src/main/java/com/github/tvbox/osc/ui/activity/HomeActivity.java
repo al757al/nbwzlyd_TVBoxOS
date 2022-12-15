@@ -318,6 +318,7 @@ public class HomeActivity extends BaseActivity {
             public void onChanged(AbsSortXml absXml) {
                 if (isLoadNewData) {
                     ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("接口刷新完毕");
+                    isLoadNewData = false;
                 }
                 showSuccess();
                 isLoadingShow = false;

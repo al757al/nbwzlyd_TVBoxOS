@@ -90,7 +90,7 @@ public class VodController extends BaseController {
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
     //    public TextView mPlayerTimeStepBtn;
-    public TextView mPlayerTimeResetBtn;
+//    public TextView mPlayerTimeResetBtn;
     TextView mPlayPauseTime;
     TextView mPlayLoadNetSpeed;
     TextView mVideoSize;
@@ -385,7 +385,7 @@ public class VodController extends BaseController {
         mPlayerTimeStartBtn = findViewById(R.id.play_time_start);
         mPlayerTimeSkipBtn = findViewById(R.id.play_time_end);
 //        mPlayerTimeStepBtn = findViewById(R.id.play_time_step);
-        mPlayerTimeResetBtn = findViewById(R.id.play_time_reset);
+//        mPlayerTimeResetBtn = findViewById(R.id.play_time_reset);
         mPlayPauseTime = findViewById(R.id.tv_sys_time);
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mNetSpeed = findViewById(R.id.tv_net_speed);
@@ -667,21 +667,21 @@ public class VodController extends BaseController {
             }
         });
 //        增加播放页面片头片尾时间重置
-        mPlayerTimeResetBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myHandle.removeCallbacks(myRunnable);
-                myHandle.postDelayed(myRunnable, myHandleSeconds);
-                try {
-                    mPlayerConfig.put("et", 0);
-                    mPlayerConfig.put("st", 0);
-                    updatePlayerCfgView();
-                    listener.updatePlayerCfg();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+//        mPlayerTimeResetBtn.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                myHandle.removeCallbacks(myRunnable);
+//                myHandle.postDelayed(myRunnable, myHandleSeconds);
+//                try {
+//                    mPlayerConfig.put("et", 0);
+//                    mPlayerConfig.put("st", 0);
+//                    updatePlayerCfgView();
+//                    listener.updatePlayerCfg();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
         mPlayerTimeStartBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1161,6 +1161,12 @@ public class VodController extends BaseController {
             }
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void hideLoading() {
+        super.hideLoading();
+        mPlayLoadNetSpeed.setVisibility(View.GONE);
     }
 
     @Override

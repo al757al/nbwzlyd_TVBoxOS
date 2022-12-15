@@ -124,6 +124,9 @@ public abstract class BaseController extends BaseVideoController implements Gest
         super.onPlayStateChanged(playState);
         switch (playState) {
             case VideoView.STATE_IDLE:
+            case VideoView.STATE_PREPARED:
+            case VideoView.STATE_ERROR:
+            case VideoView.STATE_BUFFERED:
                 mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYING:
@@ -132,11 +135,6 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 break;
             case VideoView.STATE_PAUSED:
                 mPauseRoot.setVisibility(VISIBLE);
-                mLoading.setVisibility(GONE);
-                break;
-            case VideoView.STATE_PREPARED:
-            case VideoView.STATE_ERROR:
-            case VideoView.STATE_BUFFERED:
                 mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PREPARING:
@@ -148,6 +146,10 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 mPauseRoot.setVisibility(GONE);
                 break;
         }
+    }
+
+    public void hideLoading() {
+        mLoading.setVisibility(GONE);
     }
 
     /**

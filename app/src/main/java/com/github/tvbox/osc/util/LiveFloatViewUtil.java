@@ -19,7 +19,6 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.R;
-import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.bean.LiveChannelGroup;
 import com.github.tvbox.osc.bean.LiveChannelItem;
@@ -32,7 +31,10 @@ import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import xyz.doikki.videoplayer.player.VideoView;
 
@@ -45,7 +47,6 @@ import xyz.doikki.videoplayer.player.VideoView;
  * </pre>
  */
 public class LiveFloatViewUtil {
-    private long videoDuration = 0;
     private ScaleImage scaleImage;
     private View fullScreenImage;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -57,19 +58,19 @@ public class LiveFloatViewUtil {
     private LiveChannelItem currentLiveChannelItem;
     private VideoView videoView;
     private int chanelGroupIndex;
+    private ArrayList<LiveChannelGroup> liveChannelGroupList;
 
-//    private MyVideoView myVideoView;
-
-    public void openFloat(VideoView videoView, LiveChannelItem currentLiveChannelItem, int chanelGroupIndex) {
-        this.videoView = videoView;
-        Activity topActivity = ActivityUtils.getTopActivity();
+    public void openFloat(VideoView videoView, LiveChannelItem curLiveChannelItem, ArrayList<LiveChannelGroup> liveChannelGroupList, int chanelGroupIndex) {
         EasyFloat.dismiss(FLOAT_TAG);
-        this.currentLiveChannelItem = currentLiveChannelItem;
+        this.videoView = videoView;
+        this.liveChannelGroupList = liveChannelGroupList;
+        this.currentLiveChannelItem = curLiveChannelItem;
         this.chanelGroupIndex = chanelGroupIndex;
+
+        Activity topActivity = ActivityUtils.getTopActivity();
         EasyFloat.Builder builder = new EasyFloat.Builder(topActivity);
         builder.setLandScape(topActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
-
-        EasyFloat.with(App.getInstance().getApplicationContext()).setTag(FLOAT_TAG).setShowPattern(ShowPattern.BACKGROUND).setLocation(100, 100).registerCallbacks(new OnFloatCallbacks() {
+        EasyFloat.with(App.getInstance().getApplicationContext()).setTag(FLOAT_TAG).setShowPattern(ShowPattern.BACKGROUND).setLocation(0, 0).registerCallbacks(new OnFloatCallbacks() {
             @Override
             public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
 
@@ -80,7 +81,6 @@ public class LiveFloatViewUtil {
                 videoView.requestLayout();
                 videoView.resume();
                 if (floatVodController != null) {
-                    listener.setMyVideoView(videoView);
                     floatVodController.setListener(listener);
                 }
 
@@ -93,10 +93,6 @@ public class LiveFloatViewUtil {
 
             @Override
             public void dismiss() {
-                if (videoDuration > 0 && videoView != null) {
-                    videoView.setVideoController(null);
-                }
-//                videoView.release();
                 if (floatVodController != null) {
                     floatVodController.setListener(null);
                 }
@@ -135,16 +131,11 @@ public class LiveFloatViewUtil {
             }
         }).setLayout(R.layout.float_app_scale, view -> {
             RelativeLayout content = view.findViewById(R.id.rlContent);
-//                    myVideoView = view.findViewById(R.id.mVideoView);
             floatVodController = new LiveFloatController(App.getInstance());
             videoView.setVideoController(floatVodController);
             ((ViewGroup) videoView.getParent()).removeView(videoView);
             content.addView(videoView, 0);
-            listener.setMyVideoView(videoView);
             floatVodController.setListener(listener);
-//            floatVodController.setPlayerConfig(playConfig);
-//                    PlayerHelper.updateCfg(myVideoView, playConfig);
-//                    myVideoView.setUrl(url);
             topActivity.moveTaskToBack(true);//将应用推到后台
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) content.getLayoutParams();
             scaleImage = view.findViewById(R.id.ivScale);
@@ -162,8 +153,8 @@ public class LiveFloatViewUtil {
                 EasyFloat.dismiss(FLOAT_TAG);
                 Intent intent = new Intent();
                 intent.putExtra("isFromFloat", true);
-                intent.putExtra("currentLiveChannelItem", currentLiveChannelItem);
-                intent.putExtra("currentChannelGroupIndex", chanelGroupIndex);
+                intent.putExtra("currentLiveChannelItem", this.currentLiveChannelItem);
+                intent.putExtra("currentChannelGroupIndex", this.chanelGroupIndex);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setClass(App.getInstance(), topActivity.getClass());
                 App.getInstance().startActivity(intent);
@@ -188,13 +179,6 @@ public class LiveFloatViewUtil {
     }
 
     private class VodControllerListener implements LiveController.LiveControlListener {
-
-        private VideoView myVideoView;
-
-        public void setMyVideoView(VideoView videoView) {
-            this.myVideoView = videoView;
-        }
-
         @Override
         public boolean singleTap(MotionEvent e) {
             return false;
@@ -215,12 +199,7 @@ public class LiveFloatViewUtil {
                 case VideoView.STATE_PREPARED:
                 case VideoView.STATE_BUFFERED:
                 case VideoView.STATE_PLAYING:
-//                    currentLiveChangeSourceTimes = 0;
                     mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
-//                    sBar.setMax((int) mVideoView.getDuration());
-//                    tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-//                    tv_duration.setText(durationToString((int) mVideoView.getDuration()));
-//                    liveController.hideProgressContainer();
                     break;
                 case VideoView.STATE_ERROR:
                 case VideoView.STATE_PLAYBACK_COMPLETED:
@@ -243,12 +222,12 @@ public class LiveFloatViewUtil {
 
         @Override
         public void nextChanel() {
-            playNextChanel(videoView);
+            playNextChanel(videoView, liveChannelGroupList);
         }
 
         @Override
         public void preChanel() {
-            playPreChanel(videoView);
+            playPreChanel(videoView, liveChannelGroupList);
 
         }
     }
@@ -256,19 +235,19 @@ public class LiveFloatViewUtil {
     private final Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
-            playNextChanel(videoView);
+            playNextChanel(videoView, liveChannelGroupList);
         }
     };
 
-    private void playNextChanel(VideoView videoView) {
+    private void playNextChanel(VideoView videoView, ArrayList<LiveChannelGroup> liveChannelGroupList) {
+        ToastUtils.make().setGravity(Gravity.TOP, 0, 100).show("切换下一个频道");
         videoView.release();
         int nextPlayPos = 0;
         int curGroupIndex = 0;
-        List<LiveChannelGroup> channelGroupList = ApiConfig.get().getChannelGroupList();
-        for (int i = 0; i < channelGroupList.size(); i++) {
-            ArrayList<LiveChannelItem> liveChannels = channelGroupList.get(i).getLiveChannels();
+        for (int i = 0; i < liveChannelGroupList.size(); i++) {
+            ArrayList<LiveChannelItem> liveChannels = liveChannelGroupList.get(i).getLiveChannels();
             for (int j = 0; j < liveChannels.size(); j++) {
-                if (currentLiveChannelItem == liveChannels.get(j)) {
+                if (currentLiveChannelItem.equals(liveChannels.get(j))) {
                     int curPos = j;
                     curGroupIndex = i;
                     curPos += 1;
@@ -281,28 +260,27 @@ public class LiveFloatViewUtil {
                 }
             }
         }
-        currentLiveChannelItem =
-                channelGroupList.get(curGroupIndex).getLiveChannels().get(nextPlayPos);
+
+        if (curGroupIndex >= liveChannelGroupList.size()) {
+            ToastUtils.make().setGravity(Gravity.CENTER, 0, 100).show("没有频道了");
+            return;
+        }
+        ArrayList<LiveChannelItem> liveChannels = liveChannelGroupList.get(curGroupIndex).getLiveChannels();
+        this.currentLiveChannelItem = liveChannels.get(nextPlayPos);
         this.chanelGroupIndex = curGroupIndex;
-        videoView.setUrl(currentLiveChannelItem.getUrl());
-        videoView.start();
-//        if (curGroupIndex < channelGroupList.size() && nextPlayPos < channelGroupList.get(curGroupIndex).getLiveChannels().size()) {
-//
-//        } else {
-//            ToastUtils.make().setGravity(Gravity.CENTER, 100, 100).show("没有频道了");
-//        }
+        playUrl(currentLiveChannelItem);
     }
 
 
-    private void playPreChanel(VideoView videoView) {
+    private void playPreChanel(VideoView videoView, ArrayList<LiveChannelGroup> liveChannelGroupList) {
+        ToastUtils.make().setGravity(Gravity.TOP, 0, 100).show("切换上一个频道");
         videoView.release();
         int nextPlayPos = 0;
         int curGroupIndex = 0;
-        List<LiveChannelGroup> channelGroupList = ApiConfig.get().getChannelGroupList();
-        for (int i = 0; i < channelGroupList.size(); i++) {
-            ArrayList<LiveChannelItem> liveChannels = channelGroupList.get(i).getLiveChannels();
+        for (int i = 0; i < liveChannelGroupList.size(); i++) {
+            ArrayList<LiveChannelItem> liveChannels = liveChannelGroupList.get(i).getLiveChannels();
             for (int j = 0; j < liveChannels.size(); j++) {
-                if (currentLiveChannelItem == liveChannels.get(j)) {
+                if (currentLiveChannelItem.equals(liveChannels.get(j))) {
                     int curPos = j;
                     curGroupIndex = i;
                     curPos -= 1;
@@ -310,7 +288,7 @@ public class LiveFloatViewUtil {
                         curGroupIndex--;
                         nextPlayPos = 0;
                         if (curGroupIndex < 0) {
-                            ToastUtils.make().setGravity(Gravity.CENTER, 100, 100).show("没有频道了");
+                            ToastUtils.make().setGravity(Gravity.CENTER, 0, 100).show("没有频道了");
                             return;
                         }
                     } else {
@@ -320,11 +298,49 @@ public class LiveFloatViewUtil {
             }
         }
 
-        currentLiveChannelItem =
-                channelGroupList.get(curGroupIndex).getLiveChannels().get(nextPlayPos);
+        ArrayList<LiveChannelItem> preLiveChannels = liveChannelGroupList.get(curGroupIndex).getLiveChannels();
+        if (preLiveChannels.isEmpty()) {
+            ToastUtils.make().setGravity(Gravity.CENTER, 0, 100).show("没有频道了");
+            return;
+        }
+        currentLiveChannelItem = preLiveChannels.get(nextPlayPos);
         this.chanelGroupIndex = curGroupIndex;
-        videoView.setUrl(currentLiveChannelItem.getUrl());
-        videoView.start();
+        playUrl(currentLiveChannelItem);
     }
+
+
+    public ExecutorService executor;
+
+    public void playUrl(LiveChannelItem item) {
+        execute(() -> {
+            String url = item.getUrl();
+            if (!item.isForceTv()) {
+                return url;
+            }
+            url = Force.get().fetch(url);
+            return url;
+        });
+    }
+
+    private void execute(Callable<?> callable) {
+        if (executor != null) executor.shutdownNow();
+        executor = Executors.newFixedThreadPool(2);
+        executor.execute(() -> {
+            try {
+                if (!Thread.interrupted()) {
+                    Object o = executor.submit(callable).get(30, TimeUnit.SECONDS);
+                    if (o instanceof String) {
+                        mHandler.post(() -> {
+                            videoView.setUrl((String) o);
+                            videoView.start();
+                        });
+                    }
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 
 }

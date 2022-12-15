@@ -79,6 +79,7 @@ import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.lzf.easyfloat.EasyFloat;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.HttpHeaders;
@@ -87,6 +88,7 @@ import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -115,7 +117,6 @@ import me.jessyan.autosize.AutoSize;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
-import xyz.doikki.videoplayer.exo.SubtitleChangeListener;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
 
@@ -149,6 +150,16 @@ public class PlayActivity extends BaseActivity {
         super.onNewIntent(intent);
         if (intent.getBooleanExtra("isFromFloat", false)) {
             mVodInfo = (VodInfo) intent.getSerializableExtra("vodInfo");
+        }
+    }
+
+    @Subscribe
+    public void playChangeEvent(FloatViewUtil.PlayChangeEvent event) {
+        if (FloatViewUtil.PlayChangeEvent.NEXT.equals(event.mType)) {
+            playNext(false);
+        }
+        if (FloatViewUtil.PlayChangeEvent.PREVIOUS.equals(event.mType)) {
+            playPrevious();
         }
     }
 
@@ -256,16 +267,18 @@ public class PlayActivity extends BaseActivity {
                 initSubtitleView();
                 initVideoDurationSomeThing();
                 if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
-                    ExoPlayerSubTitleUtil.getTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
-                    ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(new SubtitleChangeListener() {
-                        @Override
-                        public void onSubTitleChange(String text) {
+                    try {
+                        ExoPlayerSubTitleUtil.getTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
+                        ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(text -> {
                             mController.mSubtitleView.isInternal = true;
                             com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
                             subtitle.content = text;
                             mController.mSubtitleView.onSubtitleChanged(subtitle);
-                        }
-                    });
+                        });
+                    } catch (Exception e) {
+
+                    }
+
                 }
             }
         });
@@ -280,14 +293,14 @@ public class PlayActivity extends BaseActivity {
             mController.mPlayerTimeStartBtn.setVisibility(View.GONE);
             mController.mPlayerTimeSkipBtn.setVisibility(View.GONE);
 //            mController.mPlayerTimeStepBtn.setVisibility(View.GONE);
-            mController.mPlayerTimeResetBtn.setVisibility(View.GONE);
+//            mController.mPlayerTimeResetBtn.setVisibility(View.GONE);
         } else {
 //            mController.mPlayerSpeedBtn.setVisibility(View.VISIBLE);
 //            mController.mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
             mController.mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
             mController.mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
 //            mController.mPlayerTimeStepBtn.setVisibility(View.VISIBLE);
-            mController.mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
+//            mController.mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
         }
     }
 
@@ -747,10 +760,6 @@ public class PlayActivity extends BaseActivity {
             @Override
             public void onFloatClick(boolean isShow) {
                 FastClickCheckUtil.check(mController);
-                if (!mVideoView.isPlaying()) {
-                    ToastUtils.showShort("等待视频开始播放才能小窗");
-                    return;
-                }
                 new FloatViewUtil().openFloat(mVideoView, progressKey, mVodPlayerCfg, mVodInfo, mController.mSubtitleView.isInternal);
 //                mVideoView.release();
             }
@@ -811,10 +820,14 @@ public class PlayActivity extends BaseActivity {
         if (mVideoView != null) {
             ViewGroup parent = (ViewGroup) (mVideoView.getParent());
             if (parent.getId() != R.id.play_root) {
+                EasyFloat.dismiss(FloatViewUtil.FLOAT_TAG);
                 parent.removeView(mVideoView);
                 mPlayRoot.addView(mVideoView, 0);
                 mVideoView.setVideoController(mController);
                 mVideoView.setProgressManager(progressManager);
+                if (mVideoView.isPlaying()) {
+                    mController.hideLoading();
+                }
             } else {
                 mVideoView.resume();
             }

@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,7 @@ import com.github.tvbox.osc.util.VideoParseRuler;
 import com.github.tvbox.osc.util.XWalkUtils;
 import com.github.tvbox.osc.util.thunder.Thunder;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import com.lzf.easyfloat.EasyFloat;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.HttpHeaders;
@@ -123,9 +125,13 @@ public class PlayFragment extends BaseLazyFragment {
     private SourceViewModel sourceViewModel;
     private Handler mHandler;
 
+    public static final int ParseFailCode = 100;
+
     private long videoDuration = -1;
     private FrameLayout mPlayRoot;
     private ProgressManager progressManager;
+    private ParseBean mCurrentParseBean;
+    private PlayResultObserve mPlayResultObserve = new PlayResultObserve();
 
     @Override
     protected int getLayoutResID() {
@@ -136,6 +142,16 @@ public class PlayFragment extends BaseLazyFragment {
     public void refresh(RefreshEvent event) {
         if (event.type == RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE) {
             mController.mSubtitleView.setTextSize((int) event.obj);
+        }
+    }
+
+    @Subscribe
+    public void playChangeEvent(FloatViewUtil.PlayChangeEvent event) {
+        if (FloatViewUtil.PlayChangeEvent.NEXT.equals(event.mType)) {
+            playNext(false);
+        }
+        if (FloatViewUtil.PlayChangeEvent.PREVIOUS.equals(event.mType)) {
+            playPrevious();
         }
     }
 
@@ -159,11 +175,23 @@ public class PlayFragment extends BaseLazyFragment {
     private void initView() {
         EventBus.getDefault().register(this);
         mHandler = new Handler(msg -> {
-            switch (msg.what) {
-                case 100:
-                    stopParse();
-                    errorWithRetry("嗅探错误", false);
-                    break;
+            if (msg.what == ParseFailCode) {
+                stopParse();
+                errorWithRetry("嗅探错误", false);
+                mHandler.removeMessages(ParseFailCode);
+                List<ParseBean> parseBeanList = ApiConfig.get().getParseBeanList();
+                if (parseBeanList == null || parseBeanList.isEmpty()) {
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("嗅探已经完毕");
+                    return false;
+                }
+                int currentIndex = parseBeanList.indexOf(mCurrentParseBean);
+                currentIndex++;
+                if (currentIndex >= parseBeanList.size()) {
+                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("嗅探已经完毕");
+                    return false;
+                }
+                mCurrentParseBean = parseBeanList.get(currentIndex);
+                doParse(mCurrentParseBean);
             }
             return false;
         });
@@ -270,14 +298,14 @@ public class PlayFragment extends BaseLazyFragment {
             mController.mPlayerTimeStartBtn.setVisibility(View.GONE);
             mController.mPlayerTimeSkipBtn.setVisibility(View.GONE);
 //            mController.mPlayerTimeStepBtn.setVisibility(View.GONE);
-            mController.mPlayerTimeResetBtn.setVisibility(View.GONE);
+//            mController.mPlayerTimeResetBtn.setVisibility(View.GONE);
         } else {
 //            mController.mPlayerSpeedBtn.setVisibility(View.VISIBLE);
 //            mController.mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
             mController.mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
             mController.mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
 //            mController.mPlayerTimeStepBtn.setVisibility(View.VISIBLE);
-            mController.mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
+//            mController.mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
         }
     }
 
@@ -627,63 +655,65 @@ public class PlayFragment extends BaseLazyFragment {
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
-        sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
-            @Override
-            public void onChanged(JSONObject info) {
-//                WindowUtil.closeDialog(getActivity(),false,0L);
-                if (info != null) {
-                    try {
-                        progressKey = info.optString("proKey", null);
-                        boolean parse = info.optString("parse", "1").equals("1");
-                        boolean jx = info.optString("jx", "0").equals("1");
-                        playSubtitle = info.optString("subt", /*"https://dash.akamaized.net/akamai/test/caption_test/ElephantsDream/ElephantsDream_en.vtt"*/"");
-                        subtitleCacheKey = info.optString("subtKey", null);
-                        String playUrl = info.optString("playUrl", "");
-                        String flag = info.optString("flag");
-                        String url = info.getString("url");
-                        VodInfo vodInfo = App.getInstance().getVodInfo();
-                        if (vodInfo != null) {
-                            vodInfo.downLoadUrl = url;
-                        }
-                        HashMap<String, String> headers = null;
-                        webUserAgent = null;
-                        webHeaderMap = null;
-                        if (info.has("header")) {
-                            try {
-                                JSONObject hds = new JSONObject(info.getString("header"));
-                                Iterator<String> keys = hds.keys();
-                                while (keys.hasNext()) {
-                                    String key = keys.next();
-                                    if (headers == null) {
-                                        headers = new HashMap<>();
-                                    }
-                                    headers.put(key, hds.getString(key));
-                                    if (key.equalsIgnoreCase("user-agent")) {
-                                        webUserAgent = hds.getString(key).trim();
-                                    }
-                                }
-                                webHeaderMap = headers;
-                            } catch (Throwable th) {
+        sourceViewModel.playResult.observeForever(mPlayResultObserve);
+    }
 
-                            }
-                        }
-                        if (parse || jx) {
-                            boolean userJxList = (playUrl.isEmpty() && ApiConfig.get().getVipParseFlags().contains(flag)) || jx;
-                            initParse(flag, userJxList, playUrl, url);
-                        } else {
-                            mController.showParse(false);
-                            playUrl(playUrl + url, headers);
-                        }
-                    } catch (Throwable th) {
-//                        errorWithRetry("获取播放信息错误", true);
-                        Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
+    public class PlayResultObserve implements Observer<JSONObject> {
+
+        @Override
+        public void onChanged(JSONObject info) {
+            if (info != null) {
+                try {
+                    progressKey = info.optString("proKey", null);
+                    boolean parse = info.optString("parse", "1").equals("1");
+                    boolean jx = info.optString("jx", "0").equals("1");
+                    playSubtitle = info.optString("subt", /*"https://dash.akamaized.net/akamai/test/caption_test/ElephantsDream/ElephantsDream_en.vtt"*/"");
+                    subtitleCacheKey = info.optString("subtKey", null);
+                    String playUrl = info.optString("playUrl", "");
+                    String flag = info.optString("flag");
+                    String url = info.getString("url");
+                    VodInfo vodInfo = App.getInstance().getVodInfo();
+                    if (vodInfo != null) {
+                        vodInfo.downLoadUrl = url;
                     }
-                } else {
-                    errorWithRetry("获取播放信息错误", true);
-//                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
+                    HashMap<String, String> headers = null;
+                    webUserAgent = null;
+                    webHeaderMap = null;
+                    if (info.has("header")) {
+                        try {
+                            JSONObject hds = new JSONObject(info.getString("header"));
+                            Iterator<String> keys = hds.keys();
+                            while (keys.hasNext()) {
+                                String key = keys.next();
+                                if (headers == null) {
+                                    headers = new HashMap<>();
+                                }
+                                headers.put(key, hds.getString(key));
+                                if (key.equalsIgnoreCase("user-agent")) {
+                                    webUserAgent = hds.getString(key).trim();
+                                }
+                            }
+                            webHeaderMap = headers;
+                        } catch (Throwable th) {
+
+                        }
+                    }
+                    if (parse || jx) {
+                        boolean userJxList = (playUrl.isEmpty() && ApiConfig.get().getVipParseFlags().contains(flag)) || jx;
+                        initParse(flag, userJxList, playUrl, url);
+                    } else {
+                        mController.showParse(false);
+                        playUrl(playUrl + url, headers);
+                    }
+                } catch (Throwable th) {
+//                        errorWithRetry("获取播放信息错误", true);
+                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                errorWithRetry("获取播放信息错误", true);
+//                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
             }
-        });
+        }
     }
 
     public void setData(Bundle bundle) {
@@ -738,10 +768,6 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void onFloatClick(boolean isShow) {
                 FastClickCheckUtil.check(mController);
-                if (!mVideoView.isPlaying()) {
-                    ToastUtils.showShort("等待视频开始播放才能小窗");
-                    return;
-                }
                 new FloatViewUtil().openFloat(mVideoView, progressKey, mVodPlayerCfg, mVodInfo, mController.mSubtitleView.isInternal);
 //                mVideoView.release();
             }
@@ -782,10 +808,14 @@ public class PlayFragment extends BaseLazyFragment {
         if (mVideoView != null) {
             ViewGroup parent = (ViewGroup) (mVideoView.getParent());
             if (parent.getId() != R.id.play_root) {
+                EasyFloat.dismiss(FloatViewUtil.FLOAT_TAG);
                 parent.removeView(mVideoView);
                 mPlayRoot.addView(mVideoView, 0);
                 mVideoView.setVideoController(mController);
                 mVideoView.setProgressManager(progressManager);
+                if (mVideoView.isPlaying()) {
+                    mController.hideLoading();
+                }
             } else {
                 mVideoView.resume();
             }
@@ -820,6 +850,7 @@ public class PlayFragment extends BaseLazyFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        sourceViewModel.playResult.removeObserver(mPlayResultObserve);
         EventBus.getDefault().unregister(this);
     }
 
@@ -1000,7 +1031,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     void stopParse() {
-        mHandler.removeMessages(100);
+        mHandler.removeMessages(ParseFailCode);
         stopLoadWebView(false);
         OkGo.getInstance().cancelTag("json_jx");
         if (parseThreadPool != null) {
@@ -1016,12 +1047,13 @@ public class PlayFragment extends BaseLazyFragment {
     ExecutorService parseThreadPool;
 
     private void doParse(ParseBean pb) {
+        mCurrentParseBean = pb;
         stopParse();
         initParseLoadFound();
         if (pb.getType() == 0) {
             setTip("正在嗅探播放地址", true, false);
-            mHandler.removeMessages(100);
-            mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
+            mHandler.removeMessages(ParseFailCode);
+            mHandler.sendEmptyMessageDelayed(ParseFailCode, 20 * 1000);
             if (pb.getExt() != null) {
                 // 解析ext
                 try {
@@ -1201,8 +1233,8 @@ public class PlayFragment extends BaseLazyFragment {
                                     String mixParseUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));
                                     stopParse();
                                     setTip("正在嗅探播放地址", true, false);
-                                    mHandler.removeMessages(100);
-                                    mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
+                                    mHandler.removeMessages(ParseFailCode);
+                                    mHandler.sendEmptyMessageDelayed(ParseFailCode, 20 * 1000);
                                     loadWebView(mixParseUrl);
                                 }
                             });
@@ -1571,7 +1603,7 @@ public class PlayFragment extends BaseLazyFragment {
                     LOG.i("loadFoundVideoUrl:" + url);
                     if (loadFoundCount.incrementAndGet() == 1) {
                         url = loadFoundVideoUrls.poll();
-                        mHandler.removeMessages(100);
+                        mHandler.removeMessages(ParseFailCode);
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if (!TextUtils.isEmpty(cookie))
                             headers.put("Cookie", " " + cookie);//携带cookie
@@ -1756,7 +1788,7 @@ public class PlayFragment extends BaseLazyFragment {
                     loadFoundVideoUrlsHeader.put(url, webHeaders);
                     LOG.i("loadFoundVideoUrl:" + url);
                     if (loadFoundCount.incrementAndGet() == 1) {
-                        mHandler.removeMessages(100);
+                        mHandler.removeMessages(ParseFailCode);
                         url = loadFoundVideoUrls.poll();
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if (!TextUtils.isEmpty(cookie))
@@ -1781,5 +1813,9 @@ public class PlayFragment extends BaseLazyFragment {
             callback.onReceiveValue(true);
         }
     }
+
+
+    //悬浮相关
+
 
 }

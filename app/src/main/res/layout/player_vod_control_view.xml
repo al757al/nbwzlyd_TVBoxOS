@@ -186,16 +186,7 @@
                 android:focusedByDefault="false"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/vs_5"
-                    android:layout_marginRight="@dimen/vs_5"
-                    android:paddingRight="@dimen/vs_10"
-                    android:singleLine="true"
-                    android:text="播放"
-                    android:textColor="@color/color_FFFFFF"
-                    android:textSize="@dimen/ts_24" />
+
 
                 <TextView
                     android:id="@+id/play_next"
@@ -226,6 +217,19 @@
                     android:textSize="@dimen/ts_24" />
 
                 <TextView
+                    android:id="@+id/play_refresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/vs_5"
+                    android:layout_marginRight="@dimen/vs_5"
+                    android:background="@drawable/button_dialog_main"
+                    android:focusable="true"
+                    android:padding="@dimen/vs_10"
+                    android:text="刷新"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/ts_24" />
+
+                <TextView
                     android:id="@+id/choose_play"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -252,18 +256,6 @@
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 
-                <TextView
-                    android:id="@+id/play_refresh"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/vs_5"
-                    android:layout_marginRight="@dimen/vs_5"
-                    android:background="@drawable/button_dialog_main"
-                    android:focusable="true"
-                    android:padding="@dimen/vs_10"
-                    android:text="刷新"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/ts_24" />
 
                 <TextView
                     android:id="@+id/play_speed"
@@ -340,19 +332,19 @@
                     android:textSize="@dimen/ts_24" />
 
                 <!--添加片头片尾重置按钮-->
-                <TextView
-                    android:id="@+id/play_time_reset"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/vs_5"
-                    android:layout_marginRight="@dimen/vs_5"
-                    android:background="@drawable/button_dialog_main"
-                    android:focusable="true"
-                    android:padding="@dimen/vs_10"
-                    android:singleLine="true"
-                    android:text="重置"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/ts_24" />
+                <!--                <TextView-->
+                <!--                    android:id="@+id/play_time_reset"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginEnd="@dimen/vs_5"-->
+                <!--                    android:layout_marginRight="@dimen/vs_5"-->
+                <!--                    android:background="@drawable/button_dialog_main"-->
+                <!--                    android:focusable="true"-->
+                <!--                    android:padding="@dimen/vs_10"-->
+                <!--                    android:singleLine="true"-->
+                <!--                    android:text="重置"-->
+                <!--                    android:textColor="@android:color/white"-->
+                <!--                    android:textSize="@dimen/ts_24" />-->
 
                 <TextView
                     android:id="@+id/zimu_select"
@@ -407,16 +399,6 @@
             android:visibility="gone"
             tools:visibility="visible">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/vs_5"
-                android:layout_marginRight="@dimen/vs_5"
-                android:paddingRight="@dimen/vs_10"
-                android:text="解析"
-                android:textColor="@color/color_FFFFFF"
-                android:textSize="@dimen/ts_24" />
 
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:id="@+id/mGridView"
@@ -588,7 +570,8 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:tag="play_load_net_speed"
-        android:text="0"
+        android:text="11111110"
+        tools:visibility="visible"
         android:textColor="@color/color_FFFFFF"
         android:textSize="@dimen/ts_24" />
 
