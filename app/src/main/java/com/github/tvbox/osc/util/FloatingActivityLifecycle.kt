@@ -1,4 +1,4 @@
-package com.codelang.window
+package com.github.tvbox.osc.util
 
 import android.app.Activity
 import android.app.Application

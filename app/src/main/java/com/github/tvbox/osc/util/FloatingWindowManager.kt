@@ -3,6 +3,7 @@ package com.codelang.window
 import android.app.Activity
 import android.app.Application
 import android.view.View
+import com.github.tvbox.osc.util.FloatingActivityLifecycle
 
 /**
  * @author wangqi
