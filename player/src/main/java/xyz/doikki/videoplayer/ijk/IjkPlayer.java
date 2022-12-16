@@ -51,7 +51,6 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
 //        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 5);   //丢帧  是在视频帧处理不过来的时候丢弃一些帧达到同步的效果
 //        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 0);  //设置是否开启环路过滤: 0开启，画面质量高，解码开销大，48关闭，画面质量差点，解码开销小
 //        //播放延时的解决方案
-//        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "analyzeduration", 1);//设置播放前的探测时间 1,达到首屏秒开效果
 //        //如果是rtsp协议，可以优先用tcp(默认是用udp)
 ////        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
 //        mMediaPlayer.setOption(1, "analyzemaxduration", 100L);
@@ -88,7 +87,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
         mMediaPlayer.setOption(player, "enable-accurate-seek", 0);
         mMediaPlayer.setOption(player, "framedrop", 1);
         mMediaPlayer.setOption(player, "max-buffer-size", 15 * 1024 * 1024);
-
+        mMediaPlayer.setOption(format, "analyzeduration", 1);//设置播放前的探测时间 1,达到首屏秒开效果
         mMediaPlayer.setOption(player, "opensles", 0);
         mMediaPlayer.setOption(player, "overlay-format", tv.danmaku.ijk.media.player.IjkMediaPlayer.SDL_FCC_RV32);
         mMediaPlayer.setOption(player, "reconnect", 1);
