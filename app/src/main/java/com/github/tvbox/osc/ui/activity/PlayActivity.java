@@ -76,6 +76,7 @@ import com.github.tvbox.osc.util.VideoParseRuler;
 import com.github.tvbox.osc.util.XWalkUtils;
 import com.github.tvbox.osc.util.thunder.Thunder;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -118,6 +119,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
+import xyz.doikki.videoplayer.player.AndroidMediaPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
 
 public class PlayActivity extends BaseActivity {
@@ -206,8 +208,7 @@ public class PlayActivity extends BaseActivity {
                     return skip;
                 }
                 long rec = (long) CacheManager.getCache(MD5.string2MD5(url));
-                if (rec < skip)
-                    return skip;
+                if (rec < skip) return skip;
                 return rec;
             }
         };
@@ -267,20 +268,6 @@ public class PlayActivity extends BaseActivity {
             public void prepared() {
                 initSubtitleView();
                 initVideoDurationSomeThing();
-                if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
-                    try {
-                        ExoPlayerSubTitleUtil.getTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
-                        ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(text -> {
-                            mController.mSubtitleView.isInternal = true;
-                            com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
-                            subtitle.content = text;
-                            mController.mSubtitleView.onSubtitleChanged(subtitle);
-                        });
-                    } catch (Exception e) {
-
-                    }
-
-                }
             }
         });
         mVideoView.setVideoController(mController);
@@ -318,7 +305,7 @@ public class PlayActivity extends BaseActivity {
     void selectMySubtitle() throws Exception {
         SubtitleDialog subtitleDialog = new SubtitleDialog(PlayActivity.this);
         int playerType = mVodPlayerCfg.getInt("pl");
-        if (mController.mSubtitleView.hasInternal && playerType == 1) {
+        if (mController.mSubtitleView.hasInternal) {
             subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
         } else {
             subtitleDialog.selectInternal.setVisibility(View.GONE);
@@ -375,18 +362,13 @@ public class PlayActivity extends BaseActivity {
         subtitleDialog.setLocalFileChooserListener(new SubtitleDialog.LocalFileChooserListener() {
             @Override
             public void openLocalFileChooserDialog() {
-                new ChooserDialog(PlayActivity.this)
-                        .withFilter(false, false, "srt", "ass", "scc", "stl", "ttml")
-                        .withStartFile("/storage/emulated/0/Download")
-                        .withChosenListener(new ChooserDialog.Result() {
-                            @Override
-                            public void onChoosePath(String path, File pathFile) {
-                                LOG.i("Local Subtitle Path: " + path);
-                                setSubtitle(path);//设置字幕
-                            }
-                        })
-                        .build()
-                        .show();
+                new ChooserDialog(PlayActivity.this).withFilter(false, false, "srt", "ass", "scc", "stl", "ttml").withStartFile("/storage/emulated/0/Download").withChosenListener(new ChooserDialog.Result() {
+                    @Override
+                    public void onChoosePath(String path, File pathFile) {
+                        LOG.i("Local Subtitle Path: " + path);
+                        setSubtitle(path);//设置字幕
+                    }
+                }).build().show();
             }
         });
         subtitleDialog.show();
@@ -465,12 +447,15 @@ public class PlayActivity extends BaseActivity {
 
     void selectMyInternalSubtitle() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)) {
+        if (mediaPlayer instanceof AndroidMediaPlayer) {
             return;
         }
         TrackInfo trackInfo = null;
         if (mediaPlayer instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer) mediaPlayer).getTrackInfo();
+        }
+        if (mediaPlayer instanceof ExoMediaPlayer) {
+            trackInfo = ExoPlayerSubTitleUtil.getSubTitleTrackInfo();
         }
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
@@ -488,18 +473,25 @@ public class PlayActivity extends BaseActivity {
                         subtitle.selected = subtitle.index == value.index;
                     }
                     mediaPlayer.pause();
+                    mController.mSubtitleView.destroy();
+                    mController.mSubtitleView.clearSubtitleCache();
+                    mController.mSubtitleView.isInternal = true;
+                    mController.mSubtitleView.setVisibility(View.VISIBLE);
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
-                        mController.mSubtitleView.destroy();
-                        mController.mSubtitleView.clearSubtitleCache();
-                        mController.mSubtitleView.isInternal = true;
-                        mController.mSubtitleView.setVisibility(View.VISIBLE);
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.index);
-                        new Handler().postDelayed(() -> {
-                            mediaPlayer.seekTo(progress);
-                            mediaPlayer.start();
-                        }, 800);
                     }
+                    if (mediaPlayer instanceof ExoMediaPlayer) {
+                        DefaultTrackSelector trackSelector = (DefaultTrackSelector) ((ExoMediaPlayer) mediaPlayer).getTrackSelector();
+                        trackSelector.setParameters(trackSelector.getParameters().buildUpon().setPreferredTextLanguage(value.language).
+                                setSelectUndeterminedTextLanguage(true).
+                                build());//这个方法就是字幕轨道
+                    }
+
+                    new Handler().postDelayed(() -> {
+                        mediaPlayer.seekTo(progress);
+                        mediaPlayer.start();
+                    }, 800);
 
                     dialog.dismiss();
                 } catch (Exception e) {
@@ -509,7 +501,7 @@ public class PlayActivity extends BaseActivity {
 
             @Override
             public String getDisplay(TrackInfoBean val) {
-                return val.index + " : " + val.language;
+                return val.index + " : " + val.name;
             }
         }, new DiffUtil.ItemCallback<TrackInfoBean>() {
             @Override
@@ -620,6 +612,25 @@ public class PlayActivity extends BaseActivity {
                 }
             });
         }
+
+        if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
+            try {
+                ExoPlayerSubTitleUtil.initTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
+                if (ExoPlayerSubTitleUtil.getSubTitleTrackInfo() != null) {
+                    mController.mSubtitleView.isInternal = true;
+                }
+                if (mController.mSubtitleView.isInternal) {
+                    ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(text -> {
+                        com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+                        subtitle.content = text;
+                        mController.mSubtitleView.onSubtitleChanged(subtitle);
+                    });
+                }
+            } catch (Exception e) {
+
+            }
+
+        }
         mController.mSubtitleView.bindToMediaPlayer(mVideoView.getMediaPlayer());
         mController.mSubtitleView.setPlaySubtitleCacheKey(subtitleCacheKey);
         String subtitlePathCache = (String) CacheManager.getCache(MD5.string2MD5(subtitleCacheKey));
@@ -630,7 +641,6 @@ public class PlayActivity extends BaseActivity {
                 mController.mSubtitleView.setSubtitlePath(playSubtitle);
             } else {
                 if (mController.mSubtitleView.hasInternal) {
-                    mController.mSubtitleView.isInternal = true;
                     if (trackInfo != null) {
                         List<TrackInfoBean> subtitleTrackList = trackInfo.getSubtitle();
                         int selectedIndex = trackInfo.getSubtitleSelected(true);
@@ -638,7 +648,15 @@ public class PlayActivity extends BaseActivity {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
                             if (lowerLang.startsWith("zh") || lowerLang.startsWith("ch")) {
                                 if (selectedIndex != subtitleTrackInfoBean.index) {
-                                    ((IjkMediaPlayer) (mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.index);
+                                    AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
+                                    if (mediaPlayer instanceof ExoMediaPlayer) {//exo播放器
+                                        DefaultTrackSelector trackSelector = (DefaultTrackSelector) ((ExoMediaPlayer) mediaPlayer).getTrackSelector();
+                                        trackSelector.setParameters(trackSelector.getParameters().buildUpon().setPreferredTextLanguage(subtitleTrackInfoBean.language).setSelectUndeterminedTextLanguage(true)
+                                                .build());//这个方法就是字幕轨道
+                                    }
+                                    if (mediaPlayer instanceof IjkMediaPlayer) {//ijk播放器
+                                        ((IjkMediaPlayer) (mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.index);
+                                    }
                                     break;
                                 }
                             }
@@ -1067,55 +1085,52 @@ public class PlayActivity extends BaseActivity {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            OkGo.<String>get(pb.getUrl() + encodeUrl(webUrl))
-                    .tag("json_jx")
-                    .headers(reqHeaders)
-                    .execute(new AbsCallback<String>() {
-                        @Override
-                        public String convertResponse(okhttp3.Response response) throws Throwable {
-                            if (response.body() != null) {
-                                return response.body().string();
-                            } else {
-                                throw new IllegalStateException("网络请求错误");
-                            }
-                        }
+            OkGo.<String>get(pb.getUrl() + encodeUrl(webUrl)).tag("json_jx").headers(reqHeaders).execute(new AbsCallback<String>() {
+                @Override
+                public String convertResponse(okhttp3.Response response) throws Throwable {
+                    if (response.body() != null) {
+                        return response.body().string();
+                    } else {
+                        throw new IllegalStateException("网络请求错误");
+                    }
+                }
 
-                        @Override
-                        public void onSuccess(Response<String> response) {
-                            String json = response.body();
+                @Override
+                public void onSuccess(Response<String> response) {
+                    String json = response.body();
+                    try {
+                        JSONObject rs = jsonParse(webUrl, json);
+                        HashMap<String, String> headers = null;
+                        if (rs.has("header")) {
                             try {
-                                JSONObject rs = jsonParse(webUrl, json);
-                                HashMap<String, String> headers = null;
-                                if (rs.has("header")) {
-                                    try {
-                                        JSONObject hds = rs.getJSONObject("header");
-                                        Iterator<String> keys = hds.keys();
-                                        while (keys.hasNext()) {
-                                            String key = keys.next();
-                                            if (headers == null) {
-                                                headers = new HashMap<>();
-                                            }
-                                            headers.put(key, hds.getString(key));
-                                        }
-                                    } catch (Throwable th) {
-
+                                JSONObject hds = rs.getJSONObject("header");
+                                Iterator<String> keys = hds.keys();
+                                while (keys.hasNext()) {
+                                    String key = keys.next();
+                                    if (headers == null) {
+                                        headers = new HashMap<>();
                                     }
+                                    headers.put(key, hds.getString(key));
                                 }
-                                playUrl(rs.getString("url"), headers);
-                            } catch (Throwable e) {
-                                e.printStackTrace();
-                                errorWithRetry("解析错误", false);
-//                                setTip("解析错误", false, true);
+                            } catch (Throwable th) {
+
                             }
                         }
+                        playUrl(rs.getString("url"), headers);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        errorWithRetry("解析错误", false);
+//                                setTip("解析错误", false, true);
+                    }
+                }
 
-                        @Override
-                        public void onError(Response<String> response) {
-                            super.onError(response);
-                            errorWithRetry("解析错误", false);
+                @Override
+                public void onError(Response<String> response) {
+                    super.onError(response);
+                    errorWithRetry("解析错误", false);
 //                            setTip("解析错误", false, true);
-                        }
-                    });
+                }
+            });
         } else if (pb.getType() == 2) { // json 扩展
             setTip("正在解析播放地址", true, false);
             parseThreadPool = Executors.newSingleThreadExecutor();
@@ -1360,8 +1375,7 @@ public class PlayActivity extends BaseActivity {
         }
         if (sourceBean.getType() == 3) {
             Spider sp = ApiConfig.get().getCSP(sourceBean);
-            if (sp != null && sp.manualVideoCheck())
-                return sp.isVideoFormat(url);
+            if (sp != null && sp.manualVideoCheck()) return sp.isVideoFormat(url);
         }
         return VideoParseRuler.checkIsVideoForParse(webUrl, url);
     }
@@ -1407,9 +1421,7 @@ public class PlayActivity extends BaseActivity {
         if (webView == null) {
             return;
         }
-        ViewGroup.LayoutParams layoutParams = Hawk.get(HawkConfig.DEBUG_OPEN, false)
-                ? new ViewGroup.LayoutParams(800, 400) :
-                new ViewGroup.LayoutParams(1, 1);
+        ViewGroup.LayoutParams layoutParams = Hawk.get(HawkConfig.DEBUG_OPEN, false) ? new ViewGroup.LayoutParams(800, 400) : new ViewGroup.LayoutParams(1, 1);
         webView.setFocusable(false);
         webView.setFocusableInTouchMode(false);
         webView.clearFocus();
@@ -1557,9 +1569,7 @@ public class PlayActivity extends BaseActivity {
                 }
             }
 
-            return ad || loadFoundCount.get() > 0 ?
-                    AdBlocker.createEmptyResource() :
-                    null;
+            return ad || loadFoundCount.get() > 0 ? AdBlocker.createEmptyResource() : null;
         }
 
         @Nullable
@@ -1578,9 +1588,7 @@ public class PlayActivity extends BaseActivity {
             Map<String, String> hds = request.getRequestHeaders();
             if (hds != null && hds.keySet().size() > 0) {
                 for (String k : hds.keySet()) {
-                    if (k.equalsIgnoreCase("user-agent")
-                            || k.equalsIgnoreCase("referer")
-                            || k.equalsIgnoreCase("origin")) {
+                    if (k.equalsIgnoreCase("user-agent") || k.equalsIgnoreCase("referer") || k.equalsIgnoreCase("origin")) {
                         webHeaders.put(k, " " + hds.get(k));
                     }
                 }
@@ -1599,9 +1607,7 @@ public class PlayActivity extends BaseActivity {
         if (webView == null) {
             return;
         }
-        ViewGroup.LayoutParams layoutParams = Hawk.get(HawkConfig.DEBUG_OPEN, false)
-                ? new ViewGroup.LayoutParams(800, 400) :
-                new ViewGroup.LayoutParams(1, 1);
+        ViewGroup.LayoutParams layoutParams = Hawk.get(HawkConfig.DEBUG_OPEN, false) ? new ViewGroup.LayoutParams(800, 400) : new ViewGroup.LayoutParams(1, 1);
         webView.setFocusable(false);
         webView.setFocusableInTouchMode(false);
         webView.clearFocus();
@@ -1719,9 +1725,7 @@ public class PlayActivity extends BaseActivity {
                     Map<String, String> hds = request.getRequestHeaders();
                     if (hds != null && hds.keySet().size() > 0) {
                         for (String k : hds.keySet()) {
-                            if (k.equalsIgnoreCase("user-agent")
-                                    || k.equalsIgnoreCase("referer")
-                                    || k.equalsIgnoreCase("origin")) {
+                            if (k.equalsIgnoreCase("user-agent") || k.equalsIgnoreCase("referer") || k.equalsIgnoreCase("origin")) {
                                 webHeaders.put(k, " " + hds.get(k));
                             }
                         }
@@ -1740,9 +1744,7 @@ public class PlayActivity extends BaseActivity {
                     }
                 }
             }
-            return ad || loadFoundCount.get() > 0 ?
-                    createXWalkWebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream("".getBytes())) :
-                    null;
+            return ad || loadFoundCount.get() > 0 ? createXWalkWebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream("".getBytes())) : null;
         }
 
         @Override

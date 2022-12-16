@@ -65,6 +65,7 @@ import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
+import com.github.tvbox.osc.util.ExoPlayerSubTitleUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FloatViewUtil;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -75,6 +76,7 @@ import com.github.tvbox.osc.util.VideoParseRuler;
 import com.github.tvbox.osc.util.XWalkUtils;
 import com.github.tvbox.osc.util.thunder.Thunder;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.lzf.easyfloat.EasyFloat;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
@@ -113,7 +115,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import me.jessyan.autosize.AutoSize;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
+import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
+import xyz.doikki.videoplayer.player.AndroidMediaPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
 
 public class PlayFragment extends BaseLazyFragment {
@@ -321,8 +325,7 @@ public class PlayFragment extends BaseLazyFragment {
 
     void selectMySubtitle() throws Exception {
         SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
-        int playerType = mVodPlayerCfg.getInt("pl");
-        if (mController.mSubtitleView.hasInternal && playerType == 1) {
+        if (mController.mSubtitleView.hasInternal) {
             subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
         } else {
             subtitleDialog.selectInternal.setVisibility(View.GONE);
@@ -468,12 +471,15 @@ public class PlayFragment extends BaseLazyFragment {
 
     void selectMyInternalSubtitle() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)) {
+        if (mediaPlayer instanceof AndroidMediaPlayer) {
             return;
         }
         TrackInfo trackInfo = null;
         if (mediaPlayer instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer) mediaPlayer).getTrackInfo();
+        }
+        if (mediaPlayer instanceof ExoMediaPlayer) {
+            trackInfo = ExoPlayerSubTitleUtil.getSubTitleTrackInfo();
         }
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
@@ -493,18 +499,22 @@ public class PlayFragment extends BaseLazyFragment {
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
-                        mController.mSubtitleView.destroy();
-                        mController.mSubtitleView.clearSubtitleCache();
-                        mController.mSubtitleView.isInternal = true;
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.index);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                                mediaPlayer.start();
-                            }
-                        }, 800);
                     }
+                    if (mediaPlayer instanceof ExoMediaPlayer) {
+                        DefaultTrackSelector trackSelector = (DefaultTrackSelector) ((ExoMediaPlayer) mediaPlayer).getTrackSelector();
+                        trackSelector.setParameters(trackSelector.getParameters().buildUpon().setPreferredTextLanguage(value.language));//这个方法就是字幕轨道
+                    }
+                    mController.mSubtitleView.destroy();
+                    mController.mSubtitleView.clearSubtitleCache();
+                    mController.mSubtitleView.isInternal = true;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mediaPlayer.seekTo(progress);
+                            mediaPlayer.start();
+                        }
+                    }, 800);
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换内置字幕出错");
@@ -624,6 +634,26 @@ public class PlayFragment extends BaseLazyFragment {
                 }
             });
         }
+
+        if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
+            try {
+                ExoPlayerSubTitleUtil.initTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
+                if (ExoPlayerSubTitleUtil.getSubTitleTrackInfo() != null) {
+                    mController.mSubtitleView.isInternal = true;
+                }
+                if (mController.mSubtitleView.isInternal) {
+                    ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(text -> {
+                        com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+                        subtitle.content = text.replace("null", "");
+                        mController.mSubtitleView.onSubtitleChanged(subtitle);
+                    });
+                }
+            } catch (Exception e) {
+
+            }
+
+        }
+
         mController.mSubtitleView.bindToMediaPlayer(mVideoView.getMediaPlayer());
         mController.mSubtitleView.setPlaySubtitleCacheKey(subtitleCacheKey);
         String subtitlePathCache = (String) CacheManager.getCache(MD5.string2MD5(subtitleCacheKey));
@@ -642,7 +672,14 @@ public class PlayFragment extends BaseLazyFragment {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
                             if (lowerLang.startsWith("zh") || lowerLang.startsWith("ch")) {
                                 if (selectedIndex != subtitleTrackInfoBean.index) {
-                                    ((IjkMediaPlayer) (mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.index);
+                                    AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
+                                    if (mediaPlayer instanceof ExoMediaPlayer) {//exo播放器
+                                        DefaultTrackSelector trackSelector = (DefaultTrackSelector) ((ExoMediaPlayer) mediaPlayer).getTrackSelector();
+                                        trackSelector.setParameters(trackSelector.getParameters().buildUpon().setPreferredTextLanguage(subtitleTrackInfoBean.language).build());//这个方法就是字幕轨道
+                                    }
+                                    if (mediaPlayer instanceof IjkMediaPlayer) {//ijk播放器
+                                        ((IjkMediaPlayer) (mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.index);
+                                    }
                                     break;
                                 }
                             }
