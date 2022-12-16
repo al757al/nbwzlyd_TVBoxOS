@@ -34,18 +34,13 @@ public class ExoPlayerSubTitleUtil {
                                             .setPreferredAudioLanguage(trackGroup.getFormat(0).language));
                         }
                     } else if (C.TRACK_TYPE_TEXT == mappedTrackInfo.getRendererType(i)) { //判断是否是字幕
-                        TrackGroup trackGroup = null;
                         for (int groupIndex = 0; groupIndex < rendererTrackGroups.length; groupIndex++) {
-                            if (trackGroup == null) {
-                                trackGroup = rendererTrackGroups.get(groupIndex);
-                            }
-                            LogUtils.d("checkSubTitle", rendererTrackGroups.get(groupIndex).getFormat(0).toString());
-
-
+                            TrackGroup trackGroup = rendererTrackGroups.get(groupIndex);
+                            mapTrackSelector.setParameters(
+                                    mapTrackSelector.getParameters().buildUpon()
+                                            .setPreferredTextLanguage(trackGroup.getFormat(0).language));//这个方法就是字幕轨道
                         }
-                        mapTrackSelector.setParameters(
-                                mapTrackSelector.getParameters().buildUpon()
-                                        .setPreferredTextLanguage(trackGroup.getFormat(0).language));//这个方法就是字幕轨道
+
                     }
                 }
             }
