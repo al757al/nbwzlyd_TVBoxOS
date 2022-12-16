@@ -299,7 +299,7 @@
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
                     android:singleLine="true"
-                    android:text="硬解码"
+                    android:text="硬解"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_24" />
 

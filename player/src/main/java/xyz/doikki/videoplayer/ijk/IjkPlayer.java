@@ -27,6 +27,10 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
     private int mBufferedPercent;
     private final Context mAppContext;
 
+    private static final int codec = tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_CODEC;
+    private static final int format = tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT;
+    private static final int player = tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER;
+
     public IjkPlayer(Context context) {
         mAppContext = context;
     }
@@ -70,12 +74,45 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
 
     @Override
     public void setOptions() {
+
+        //开启内置字幕
+        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "subtitle", 1);
+        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1);
+        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_timeout", -1);
+
+        mMediaPlayer.setOption(codec, "skip_loop_filter", 48);
+        mMediaPlayer.setOption(format, "dns_cache_clear", 1);
+        mMediaPlayer.setOption(format, "dns_cache_timeout", -1);
+        mMediaPlayer.setOption(format, "fflags", "fastseek");
+        mMediaPlayer.setOption(format, "http-detect-range-support", 0);
+        mMediaPlayer.setOption(player, "enable-accurate-seek", 0);
+        mMediaPlayer.setOption(player, "framedrop", 1);
+        mMediaPlayer.setOption(player, "max-buffer-size", 15 * 1024 * 1024);
+
+        mMediaPlayer.setOption(player, "opensles", 0);
+        mMediaPlayer.setOption(player, "overlay-format", tv.danmaku.ijk.media.player.IjkMediaPlayer.SDL_FCC_RV32);
+        mMediaPlayer.setOption(player, "reconnect", 1);
+        mMediaPlayer.setOption(player, "soundtouch", 1);
+        mMediaPlayer.setOption(player, "start-on-prepared", 1);
+        mMediaPlayer.setOption(player, "subtitle", 1);
+    }
+
+    public void setIjkCode(int code) {
+        mMediaPlayer.setOption(player, "mediacodec", code);
+        mMediaPlayer.setOption(player, "mediacodec-auto-rotate", code);
+        mMediaPlayer.setOption(player, "mediacodec-handle-resolution-change", code);
+        mMediaPlayer.setOption(player, "mediacodec-hevc", code);
     }
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
         try {
             Uri uri = Uri.parse(path);
+            if (uri.getScheme() != null && uri.getScheme().startsWith("rtsp")) {
+                mMediaPlayer.setOption(format, "infbuf", 1);
+                mMediaPlayer.setOption(format, "rtsp_transport", "tcp");
+                mMediaPlayer.setOption(format, "rtsp_flags", "prefer_tcp");
+            }
             if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(uri.getScheme())) {
                 RawDataSourceProvider rawDataSourceProvider = RawDataSourceProvider.create(mAppContext, uri);
                 mMediaPlayer.setDataSource(rawDataSourceProvider);

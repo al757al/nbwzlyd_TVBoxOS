@@ -3,10 +3,8 @@ package com.github.tvbox.osc.player;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.bean.IJKCode;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -16,37 +14,39 @@ import xyz.doikki.videoplayer.ijk.IjkPlayer;
 
 public class IjkMediaPlayer extends IjkPlayer {
 
-    private IJKCode codec = null;
+    private IJKCode curDecodec = null;
 
     public IjkMediaPlayer(Context context, IJKCode codec) {
         super(context);
-        this.codec = codec;
+        this.curDecodec = codec;
     }
 
     @Override
     public void setOptions() {
         super.setOptions();
-        IJKCode codecTmp = this.codec == null ? ApiConfig.get().getCurrentIJKCode() : this.codec;
-        LinkedHashMap<String, String> options = codecTmp.getOption();
-        if (options != null) {
-            for (String key : options.keySet()) {
-                String value = options.get(key);
-                String[] opt = key.split("\\|");
-                int category = Integer.parseInt(opt[0].trim());
-                String name = opt[1].trim();
-                try {
-                    long valLong = Long.parseLong(value);
-                    mMediaPlayer.setOption(category, name, valLong);
-                } catch (Exception e) {
-                    mMediaPlayer.setOption(category, name, value);
-                }
+        int curCode = 0;//软解
+        if (curDecodec != null) {
+            if ("硬解码".equals(curDecodec.getName())) {
+                curCode = 1;
             }
         }
-        //开启内置字幕
-        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "subtitle", 1);
-
-        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1);
-        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_timeout", -1);
+        setIjkCode(curCode);
+//        IJKCode codecTmp = this.curDecodec == null ? ApiConfig.get().getCurrentIJKCode() : this.curDecodec;
+//        LinkedHashMap<String, String> options = codecTmp.getOption();
+//        if (options != null) {
+//            for (String key : options.keySet()) {
+//                String value = options.get(key);
+//                String[] opt = key.split("\\|");
+//                int category = Integer.parseInt(opt[0].trim());
+//                String name = opt[1].trim();
+//                try {
+//                    long valLong = Long.parseLong(value);
+//                    mMediaPlayer.setOption(category, name, valLong);
+//                } catch (Exception e) {
+//                    mMediaPlayer.setOption(category, name, value);
+//                }
+//            }
+//        }
     }
 
     @Override
