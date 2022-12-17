@@ -80,20 +80,16 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
         mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_timeout", -1);
 
         mMediaPlayer.setOption(codec, "skip_loop_filter", 48);
-        mMediaPlayer.setOption(format, "dns_cache_clear", 1);
-        mMediaPlayer.setOption(format, "dns_cache_timeout", -1);
         mMediaPlayer.setOption(format, "fflags", "fastseek");
         mMediaPlayer.setOption(format, "http-detect-range-support", 0);
         mMediaPlayer.setOption(player, "enable-accurate-seek", 0);
         mMediaPlayer.setOption(player, "framedrop", 1);
         mMediaPlayer.setOption(player, "max-buffer-size", 15 * 1024 * 1024);
-        mMediaPlayer.setOption(format, "analyzeduration", 1);//设置播放前的探测时间 1,达到首屏秒开效果
         mMediaPlayer.setOption(player, "opensles", 0);
         mMediaPlayer.setOption(player, "overlay-format", tv.danmaku.ijk.media.player.IjkMediaPlayer.SDL_FCC_RV32);
         mMediaPlayer.setOption(player, "reconnect", 1);
         mMediaPlayer.setOption(player, "soundtouch", 1);
         mMediaPlayer.setOption(player, "start-on-prepared", 1);
-        mMediaPlayer.setOption(player, "subtitle", 1);
     }
 
     public void setIjkCode(int code) {
