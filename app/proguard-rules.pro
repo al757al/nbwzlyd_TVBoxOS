@@ -241,3 +241,11 @@
 -keep class com.github.tvbox.quickjs.** {*;}
 # 支持影视的ali相关的jar
 -keep class com.google.gson.**{*;}
+
+#aliyunPlayer
+-keep class com.alivc.**{*;}
+-keep class com.aliyun.**{*;}
+-keep class com.cicada.**{*;}
+-dontwarn com.alivc.**
+-dontwarn com.aliyun.**
+-dontwarn com.cicada.**

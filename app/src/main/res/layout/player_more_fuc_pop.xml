@@ -90,7 +90,7 @@
         android:textColor="@android:color/white"
         android:textSize="@dimen/ts_24"
         app:layout_constraintLeft_toRightOf="@id/audio_track_select"
-        app:layout_constraintTop_toTopOf="@id/audio_track_select" />
+        app:layout_constraintBottom_toBottomOf="@id/play_scale" />
 
     <TextView
         android:id="@+id/title2"

@@ -483,7 +483,6 @@ public class VodController extends BaseController {
                 mControlWrapper.seekTo((int) newPosition);
                 mIsDragging = false;
                 mControlWrapper.startProgress();
-                mControlWrapper.startFadeOut();
             }
         });
         mPlayerRetry.setOnClickListener(new OnClickListener() {

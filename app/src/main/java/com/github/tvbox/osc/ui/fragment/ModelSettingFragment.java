@@ -425,7 +425,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
-                int playerType = Hawk.get(HawkConfig.PLAY_TYPE, 0);
+                int playerType = Hawk.get(HawkConfig.PLAY_TYPE, 1);
                 int defaultPos = 0;
                 ArrayList<Integer> players = PlayerHelper.getExistPlayerTypes();
                 ArrayList<Integer> renders = new ArrayList<>();
