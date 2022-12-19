@@ -2,6 +2,7 @@ package com.github.tvbox.osc.util;
 
 import com.github.tvbox.osc.cache.RoomDataManger;
 import com.github.tvbox.osc.cache.StorageDrive;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -40,16 +41,34 @@ public class AlistDriveUtil {
         }
         Set<Map.Entry<String, JsonElement>> entries = jsonObject.entrySet();
         for (Map.Entry<String, JsonElement> entry : entries) {
-            String newUrl = entry.getValue().getAsString();
-            if (!newUrl.endsWith("/"))
-                newUrl += "/";
-            StorageDrive driveItem = containsDrive.get(newUrl);
-            if (driveItem != null) {
-                driveItem.name = entry.getKey();
-                RoomDataManger.updateDriveRecord(driveItem);
-            } else {
-                saveAlist(entry.getKey(), entry.getValue().getAsString());
+            try {
+                String newUrl = entry.getValue().getAsString();
+                if (!newUrl.endsWith("/"))
+                    newUrl += "/";
+                StorageDrive driveItem = containsDrive.get(newUrl);
+                if (driveItem != null) {
+                    driveItem.name = entry.getKey();
+                    RoomDataManger.updateDriveRecord(driveItem);
+                } else {
+                    saveAlist(entry.getKey(), newUrl);
+                }
+            } catch (Exception e) {
+                JsonArray jsonArray = entry.getValue().getAsJsonArray();
+                for (JsonElement jsonElement : jsonArray) {
+                    JsonObject jsonObject1 = jsonElement.getAsJsonObject();
+                    String name = jsonObject1.get("name").getAsString();
+                    String url = jsonObject1.get("server").getAsString();
+                    StorageDrive driveItem = containsDrive.get(url);
+                    if (driveItem != null) {
+                        driveItem.name = name;
+                        RoomDataManger.updateDriveRecord(driveItem);
+                    } else {
+                        saveAlist(name, url);
+                    }
+                }
+
             }
+
         }
     }
 }
