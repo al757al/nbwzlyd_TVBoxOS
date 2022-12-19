@@ -579,6 +579,7 @@ public class StorageDriveType {
             "ZM2",
             "ZM3",
             "ZMV",
-            "ZOOM"
+            "ZOOM",
+            "ISO"
     };
 }

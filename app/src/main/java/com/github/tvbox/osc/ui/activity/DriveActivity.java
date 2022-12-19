@@ -331,7 +331,7 @@ public class DriveActivity extends BaseActivity {
         bundle.putSerializable("VodInfo", vodInfo);
         // takagen99 - to play file here zzzzzzzzzzzzzzz
         jumpActivity(PlayActivity.class, bundle);
-        mHandler.postDelayed(() -> showSuccess(), 300);
+        mHandler.postDelayed(this::showSuccess, 300);
     }
 
     private void openSortDialog() {
