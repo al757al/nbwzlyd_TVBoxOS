@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.base.BaseActivity;
@@ -142,8 +143,10 @@ public class DriveActivity extends BaseActivity {
             autoSaveDrive = !autoSaveDrive;
             Hawk.put(HawkConfig.DRIVE_AUTO_SAVE, autoSaveDrive);
             if (autoSaveDrive) {
+                ToastUtils.showShort("已开启自动保存网盘功能");
                 imageView.setImageResource(R.drawable.icon_unlock);
             } else {
+                ToastUtils.showShort("已关闭自动保存网盘功能");
                 imageView.setImageResource(R.drawable.icon_lock);
             }
         });
