@@ -29,6 +29,7 @@ public class HawkConfig {
     public static final String PLAY_TYPE = "play_type";//0 系统 1 ijk 2 Aliplayer 10 MXPlayer 3 exo
     public static final String LIVE_PLAY_TYPE = "live_play_type";//0 系统 1 ijk 2 exo 10 MXPlayer 直播默认的解码方式
     public static final String PLAY_RENDER = "play_render"; //0 texture 2
+    public static final String DRIVE_AUTO_SAVE = "drive_auto_save"; //是否自动保存网盘
     public static final String PLAY_SCALE = "play_scale"; //0 texture 2
     public static final String PLAY_TIME_STEP = "play_time_step"; //0 texture 2
     public static final String DOH_URL = "doh_url";

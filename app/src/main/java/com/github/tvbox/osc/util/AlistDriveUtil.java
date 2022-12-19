@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,10 @@ public class AlistDriveUtil {
     }
 
     public static void saveAlist(JsonObject jsonObject) {
+
+        if (!Hawk.get(HawkConfig.DRIVE_AUTO_SAVE, false)) {
+            return;
+        }
         List<StorageDrive> allDrives = RoomDataManger.getAllDrives();
         HashMap<String, StorageDrive> containsDrive = new HashMap<>();
         for (StorageDrive driveItem : allDrives) {

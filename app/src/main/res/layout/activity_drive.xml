@@ -45,6 +45,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
+        <ImageView
+            android:id="@+id/icon_lock"
+            android:layout_width="@dimen/vs_60"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/vs_2"
+            android:layout_marginLeft="@dimen/vs_2"
+            android:layout_marginEnd="@dimen/vs_2"
+            android:layout_marginRight="@dimen/vs_2"
+            android:paddingLeft="@dimen/vs_5"
+            android:paddingRight="@dimen/vs_5"
+            android:scaleType="center"
+            android:background="@drawable/shape_user_home"
+            android:src="@drawable/icon_unlock" />
+
         <ImageButton
             android:id="@+id/btnHome"
             android:layout_width="@dimen/vs_60"

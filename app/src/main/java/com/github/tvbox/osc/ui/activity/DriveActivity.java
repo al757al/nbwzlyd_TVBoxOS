@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,6 +84,8 @@ public class DriveActivity extends BaseActivity {
     private View footLoading;
     private boolean isInSearch = false;
 
+    private boolean autoSaveDrive = Hawk.get(HawkConfig.DRIVE_AUTO_SAVE, false);
+
     private boolean isRight;
     private boolean sortChange = false;
 
@@ -125,6 +128,23 @@ public class DriveActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 DriveActivity.super.onBackPressed();
+            }
+        });
+
+        ImageView imageView = findViewById(R.id.icon_lock);
+        if (autoSaveDrive) {
+            imageView.setImageResource(R.drawable.icon_unlock);
+        } else {
+            imageView.setImageResource(R.drawable.icon_lock);
+        }
+
+        findViewById(R.id.icon_lock).setOnClickListener(v -> {
+            autoSaveDrive = !autoSaveDrive;
+            Hawk.put(HawkConfig.DRIVE_AUTO_SAVE, autoSaveDrive);
+            if (autoSaveDrive) {
+                imageView.setImageResource(R.drawable.icon_unlock);
+            } else {
+                imageView.setImageResource(R.drawable.icon_lock);
             }
         });
         this.btnSort.setOnClickListener(new View.OnClickListener() {
@@ -389,7 +409,7 @@ public class DriveActivity extends BaseActivity {
     public void toggleDelMode() {
         delMode = !delMode;
         if (delMode) {
-            this.btnRemoveServer.setColorFilter(ContextCompat.getColor(mContext, R.color.color_FF0057));
+            this.btnRemoveServer.setColorFilter(ContextCompat.getColor(mContext, R.color.color_1890FF));
         } else {
             this.btnRemoveServer.setColorFilter(ContextCompat.getColor(mContext, R.color.color_FFFFFF));
         }
