@@ -175,7 +175,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 showThreadCountDialog();
             }
         });
-        showThreadCountText(Hawk.get(HawkConfig.THREAD_COUNT, 8));
+        showThreadCountText(Hawk.get(HawkConfig.THREAD_COUNT, 12));
         findViewById(R.id.llParseWebVew).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -705,15 +705,15 @@ public class ModelSettingFragment extends BaseLazyFragment {
         editText.setInputType(TYPE_CLASS_NUMBER);
         AlertDialog dialog = new AlertDialog.Builder(getContext()).setTitle("设置搜索线程").setMessage("因机器设备性能问题，搜索线程不是越大越好，线程太多可能会闪退（不超30）").setView(editText).setNegativeButton("取消", (dialog1, which) -> {
         }).setPositiveButton("确定", (dialog12, which) -> {
-            int count = 8;
+            int count = 12;
             try {
                 count = Integer.parseInt(editText.getText().toString().trim());
-                if (count >= 30) {
+                if (count > 30) {
                     ToastUtils.showShort("线程数量不要超过30,没卵用");
                     return;
                 }
             } catch (Exception e) {
-                count = 8;
+                count = 12;
             }
             Hawk.put(HawkConfig.THREAD_COUNT, count);
             showThreadCountText(count);
