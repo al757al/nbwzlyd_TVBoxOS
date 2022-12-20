@@ -181,7 +181,7 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public long getTcpSpeed() {
-        return netSpeedLong;
+        return netSpeedLong / 10L;
     }
 
     @Override

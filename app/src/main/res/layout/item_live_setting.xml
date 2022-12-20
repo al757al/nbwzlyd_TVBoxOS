@@ -17,6 +17,7 @@
         android:layout_weight="1"
         android:ellipsize="marquee"
         android:gravity="center"
+        android:textStyle="bold"
         android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
         android:textColor="@android:color/white"

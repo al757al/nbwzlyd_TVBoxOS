@@ -57,8 +57,6 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LiveFloatViewUtil;
 import com.github.tvbox.osc.util.M3uLiveParser;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
-import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
-import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
 import com.github.tvbox.osc.viewmodel.LiveViewModel;
 import com.google.gson.JsonArray;
 import com.lzf.easyfloat.EasyFloat;
@@ -366,38 +364,44 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     public void getEpg(Date date) {
+        OkGo.getInstance().cancelTag("epgAddress");
         String channelName = channel_Name.getChannelName();
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
-        UrlHttpUtil.get(epgStringAddress + "?ch=" + URLEncoder.encode(channelName) + "&date=" + timeFormat.format(date), new CallBackUtil.CallBackString() {
-            public void onFailure(int i, String str) {
-//                showEpg(date, new ArrayList());
-//                showBottomEpg();
-            }
+        OkGo.<String>get(epgStringAddress + "?ch=" + URLEncoder.encode(channelName) + "&date=" + timeFormat.format(date)).
+                tag("epgAddress").
+                execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        ArrayList<Epginfo> arrayList = new ArrayList<>();
+                        try {
+                            if (response.body().contains("epg_data")) {
+                                final JSONArray jSONArray = new JSONObject(response.body()).optJSONArray("epg_data");
+                                if (jSONArray != null)
+                                    for (int b = 0; b < jSONArray.length(); b++) {
+                                        JSONObject jSONObject = jSONArray.getJSONObject(b);
+                                        Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"), b);
+                                        arrayList.add(epgbcinfo);
+                                    }
+                            }
 
-            public void onResponse(String paramString) {
-
-                ArrayList arrayList = new ArrayList();
-
-                try {
-                    if (paramString.contains("epg_data")) {
-                        final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
-                        if (jSONArray != null) for (int b = 0; b < jSONArray.length(); b++) {
-                            JSONObject jSONObject = jSONArray.getJSONObject(b);
-                            Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"), b);
-                            arrayList.add(epgbcinfo);
+                        } catch (JSONException jSONException) {
                         }
+                        showEpg(date, arrayList);
+                        String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+                        if (!hsEpg.contains(savedEpgKey)) hsEpg.put(savedEpgKey, arrayList);
+                        showBottomEpg();
                     }
 
-                } catch (JSONException jSONException) {
-                }
-                showEpg(date, arrayList);
-                String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
-                if (!hsEpg.contains(savedEpgKey)) hsEpg.put(savedEpgKey, arrayList);
-                showBottomEpg();
-            }
-        });
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        OkGo.getInstance().cancelTag("epgAddress");
+                        showEpg(date, new ArrayList<>());
+                        showBottomEpg();
+                    }
+                });
     }
 
     //显示底部EPG
@@ -1687,7 +1691,7 @@ public class LivePlayActivity extends BaseActivity {
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
         ArrayList<String> sourceItems = new ArrayList<>();
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
-        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("系统", "ijk硬解", "ijk软解", "阿里播放器", "exo"));
+        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("系统", "ijk硬解", "ijk软解", "exo", "阿里播放器"));
         ArrayList<String> timeoutItems = new ArrayList<>(Arrays.asList("5s", "10s", "15s", "20s", "25s", "30s"));
         ArrayList<String> personalSettingItems = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
         itemsArrayList.add(sourceItems);

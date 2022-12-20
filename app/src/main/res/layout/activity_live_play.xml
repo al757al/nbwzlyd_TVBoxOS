@@ -367,6 +367,7 @@
         android:layout_height="@dimen/vs_140"
         android:layout_gravity="bottom|center"
         android:clipChildren="false"
+        android:visibility="gone"
         android:gravity="center_vertical"
         android:paddingBottom="5dp">
 

@@ -114,10 +114,10 @@ public class LivePlayerManager {
                     playerConfig.put("ijk", "软解码");
                     break;
                 case 3:
-                    playerConfig.put("pl", 3);
+                    playerConfig.put("pl", 2);
                     break;
                 case 4:
-                    playerConfig.put("pl", 2);
+                    playerConfig.put("pl", 3);
                     playerConfig.put("ijk", "软解码");
                     break;
             }

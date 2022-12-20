@@ -131,6 +131,8 @@ public class PlayFragment extends BaseLazyFragment {
 
     public static final int ParseFailCode = 100;
 
+    public int mLastPlayType = -1;//上次的播放器类型
+
     private long videoDuration = -1;
     private FrameLayout mPlayRoot;
     private ProgressManager progressManager;
@@ -584,24 +586,24 @@ public class PlayFragment extends BaseLazyFragment {
                 stopParse();
                 if (mVideoView != null) {
                     mVideoView.release();
+                    int playerType = mVodPlayerCfg.optInt("pl");
 
                     if (finalUrl != null) {
-                        try {
-                            int playerType = mVodPlayerCfg.getInt("pl");
-                            if (playerType >= 10) {
-                                VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
-                                String playTitle = mVodInfo.name + " " + vs.name;
-                                setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + "进行播放", true, false);
-                                boolean callResult = false;
-                                callResult = PlayerHelper.runExternalPlayer(playerType, requireActivity(), finalUrl, playTitle, playSubtitle, headers);
-                                setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + (callResult ? "成功" : "失败"), callResult, !callResult);
-                                return;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        if (playerType >= 10) {
+                            VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
+                            String playTitle = mVodInfo.name + " " + vs.name;
+                            setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + "进行播放", true, false);
+                            boolean callResult = false;
+                            callResult = PlayerHelper.runExternalPlayer(playerType, requireActivity(), finalUrl, playTitle, playSubtitle, headers);
+                            setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + (callResult ? "成功" : "失败"), callResult, !callResult);
+                            return;
                         }
+
                         hideTip();
-                        PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg);
+                        if (mLastPlayType != playerType) {
+                            PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg);
+                            mLastPlayType = playerType;
+                        }
                         mVideoView.setProgressKey(progressKey);
                         if (headers != null) {
                             mVideoView.setUrl(finalUrl, headers);

@@ -15,7 +15,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.github.tvbox.osc.R
 import com.github.tvbox.osc.api.ApiConfig
-import com.github.tvbox.osc.base.App
 import com.github.tvbox.osc.bean.LiveSourceBean
 import com.github.tvbox.osc.event.RefreshEvent
 import com.github.tvbox.osc.ext.removeFirstIf
@@ -158,9 +157,10 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
         Hawk.put(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean)
         this.dismiss()
         ApiConfig.get().loadLiveSourceUrl(Hawk.get(HawkConfig.API_URL, ""), null)
-        val intent = Intent(App.instance, LivePlayActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        ActivityUtils.startActivity(intent)
+        ActivityUtils.getTopActivity().finish()//结束掉直播页，不然会onNewIntent
+        val intent = Intent(context, LivePlayActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(intent)
     }
 
     private fun saveCustomSourceBean(liveSourceBean: LiveSourceBean) {
