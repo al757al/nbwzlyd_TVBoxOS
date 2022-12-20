@@ -372,8 +372,8 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
         UrlHttpUtil.get(epgStringAddress + "?ch=" + URLEncoder.encode(channelName) + "&date=" + timeFormat.format(date), new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
-                showEpg(date, new ArrayList());
-                showBottomEpg();
+//                showEpg(date, new ArrayList());
+//                showBottomEpg();
             }
 
             public void onResponse(String paramString) {
@@ -736,7 +736,6 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             currentLiveChannelItem.setinclude_back(false);
         }
-        showBottomEpg();
         getEpg(new Date());
         mLiveViewModel.getUrl(currentLiveChannelItem);
 //        mVideoView.setUrl(currentLiveChannelItem.getUrl());
