@@ -2,7 +2,6 @@ package com.github.tvbox.osc.player.render;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
@@ -10,8 +9,6 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-
-import com.github.tvbox.osc.util.ScreenUtils;
 
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.render.IRenderView;
@@ -101,15 +98,15 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 //            }
 //        }
 
-        //解决黑屏问题
-        if (!ScreenUtils.isTv(getContext())) {
-            Canvas canvas = holder.lockCanvas();
-            if (canvas == null) {
-                return;
-            }
-            //绘制黑色
-            holder.unlockCanvasAndPost(canvas);
-        }
+//        //解决黑屏问题
+//        if (!ScreenUtils.isTv(getContext())) {
+//            Canvas canvas = holder.lockCanvas();
+//            if (canvas == null) {
+//                return;
+//            }
+//            //绘制黑色
+//            holder.unlockCanvasAndPost(canvas);
+//        }
     }
 
     @Override
