@@ -262,7 +262,7 @@ public class LiveFloatViewUtil {
         }
 
         if (curGroupIndex >= liveChannelGroupList.size()) {
-            ToastUtils.make().setGravity(Gravity.CENTER, 0, 100).show("没有频道了");
+            ToastUtils.make().setGravity(Gravity.TOP, 0, 100).show("没有频道了");
             return;
         }
         ArrayList<LiveChannelItem> liveChannels = liveChannelGroupList.get(curGroupIndex).getLiveChannels();
@@ -288,7 +288,7 @@ public class LiveFloatViewUtil {
                         curGroupIndex--;
                         nextPlayPos = 0;
                         if (curGroupIndex < 0) {
-                            ToastUtils.make().setGravity(Gravity.CENTER, 0, 100).show("没有频道了");
+                            ToastUtils.make().setGravity(Gravity.TOP, 0, 100).show("没有频道了");
                             return;
                         }
                     } else {
@@ -300,7 +300,7 @@ public class LiveFloatViewUtil {
 
         ArrayList<LiveChannelItem> preLiveChannels = liveChannelGroupList.get(curGroupIndex).getLiveChannels();
         if (preLiveChannels.isEmpty()) {
-            ToastUtils.make().setGravity(Gravity.CENTER, 0, 100).show("没有频道了");
+            ToastUtils.make().setGravity(Gravity.TOP, 0, 100).show("没有频道了");
             return;
         }
         currentLiveChannelItem = preLiveChannels.get(nextPlayPos);
