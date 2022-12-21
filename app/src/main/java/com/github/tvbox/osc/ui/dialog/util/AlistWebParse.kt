@@ -53,7 +53,7 @@ class AlistWebParse(val alistDriveViewModel: AlistDriveViewModel) {
         requestBody.put("page_num", 1)
         requestBody.put("page_size", 30)
         val request =
-            OkGo.post<String>(webLink).tag("drive").cacheTime(2 * 60 * 60 * 1000);
+            OkGo.post<String>(webLink).tag("drive").cacheTime(10 * 60 * 1000);
         request.cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
         request.cacheKey(request.url + requestBody.get("path"))
         request.upJson(requestBody)
@@ -147,7 +147,7 @@ class AlistWebParse(val alistDriveViewModel: AlistDriveViewModel) {
                 requestBody.put("page_num", 1)
                 requestBody.put("page_size", 30)
                 requestBody.put("path", targetPath)
-                request.cacheTime(2 * 60 * 60 * 1000)
+                request.cacheTime(10 * 60 * 1000)
                     .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
                     .cacheKey(request.url + requestBody.get("path"))
                 request.upJson(requestBody)
