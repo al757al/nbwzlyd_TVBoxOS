@@ -180,7 +180,7 @@ public class LivePlayActivity extends BaseActivity {
     protected void init() {
         epgStringAddress = Hawk.get(HawkConfig.EPG_URL, "");
         if (epgStringAddress == null || epgStringAddress.length() < 5)
-            epgStringAddress = "http://epg.51zmt.top:8000/api/diyp/";
+            epgStringAddress = "http://epg.aishangtv.top/live_proxy_epg_diyp.php";
 
         setLoadSir(findViewById(R.id.live_root));
         mVideoView = findViewById(R.id.mVideoView);
