@@ -639,9 +639,8 @@ public class LivePlayActivity extends BaseActivity {
                 parent.removeView(mVideoView);
                 mPlayRoot.addView(mVideoView, 0);
                 mVideoView.setVideoController(liveController);
-            } else {
-                mVideoView.resume();
             }
+            mVideoView.resume();
         }
     }
 

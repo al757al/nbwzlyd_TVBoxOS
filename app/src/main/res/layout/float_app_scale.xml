@@ -20,13 +20,26 @@
         android:padding="8dp"
         android:src="@drawable/icon_scale" />
 
+
     <ImageView
         android:id="@+id/ivClose"
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:padding="2dp"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/vs_10"
         android:layout_marginRight="@dimen/vs_10"
+        android:src="@drawable/close_icon" />
+
+    <ImageView
+        android:id="@+id/ivBack"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignBottom="@id/ivScale"
+        android:layout_marginLeft="@dimen/vs_10"
+        android:layout_marginRight="@dimen/vs_10"
+        android:layout_marginBottom="2dp"
+        android:layout_toLeftOf="@id/ivScale"
         android:src="@drawable/open_activity" />
 
 </RelativeLayout>

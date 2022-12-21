@@ -59,6 +59,7 @@ public class LiveFloatViewUtil {
     private VideoView videoView;
     private int chanelGroupIndex;
     private ArrayList<LiveChannelGroup> liveChannelGroupList;
+    private View iconClose;
 
     public void openFloat(VideoView videoView, LiveChannelItem curLiveChannelItem, ArrayList<LiveChannelGroup> liveChannelGroupList, int chanelGroupIndex) {
         EasyFloat.dismiss(FLOAT_TAG);
@@ -110,6 +111,10 @@ public class LiveFloatViewUtil {
                     if (fullScreenImage != null) {
                         fullScreenImage.setVisibility(View.VISIBLE);
                     }
+
+                    if (iconClose != null) {
+                        iconClose.setVisibility(View.VISIBLE);
+                    }
                     if (floatVodController != null) {
                         floatVodController.setPreNextBtnVisibility(true);
                     }
@@ -148,8 +153,8 @@ public class LiveFloatViewUtil {
                 params.width = (int) Math.max(params.width + x, 480);
                 EasyFloat.updateFloat(FLOAT_TAG, -1, -1, params.width, params.height);
             });
-            fullScreenImage = view.findViewById(R.id.ivClose);
-            view.findViewById(R.id.ivClose).setOnClickListener(v -> {
+            fullScreenImage = view.findViewById(R.id.ivBack);
+            fullScreenImage.setOnClickListener(v -> {
                 EasyFloat.dismiss(FLOAT_TAG);
                 Intent intent = new Intent();
                 intent.putExtra("isFromFloat", true);
@@ -159,6 +164,14 @@ public class LiveFloatViewUtil {
                 intent.setClass(App.getInstance(), topActivity.getClass());
                 App.getInstance().startActivity(intent);
             });
+            iconClose = view.findViewById(R.id.ivClose);
+            iconClose.setOnClickListener(v -> {
+                EasyFloat.dismiss(FLOAT_TAG);
+                if (videoView != null) {
+                    videoView.pause();
+                }
+            });
+
         }).show();
     }
 
@@ -171,6 +184,9 @@ public class LiveFloatViewUtil {
             }
             if (fullScreenImage != null) {
                 fullScreenImage.setVisibility(View.GONE);
+            }
+            if (iconClose != null) {
+                iconClose.setVisibility(View.GONE);
             }
             if (floatVodController != null) {
                 floatVodController.setPreNextBtnVisibility(false);

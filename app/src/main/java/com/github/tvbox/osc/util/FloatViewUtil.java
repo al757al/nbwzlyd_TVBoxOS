@@ -50,6 +50,7 @@ public class FloatViewUtil {
     private long videoDuration = 0;
     private ScaleImage scaleImage;
     private View fullScreenImage;
+    private View iconClose;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private final Runnable runnable = new DismissRunnable();
     private VodControllerListener listener = new VodControllerListener();
@@ -139,6 +140,9 @@ public class FloatViewUtil {
                     if (fullScreenImage != null) {
                         fullScreenImage.setVisibility(View.VISIBLE);
                     }
+                    if (iconClose != null) {
+                        iconClose.setVisibility(View.VISIBLE);
+                    }
                 }
                 mHandler.postDelayed(runnable, 6000);
 
@@ -187,8 +191,8 @@ public class FloatViewUtil {
                 EasyFloat.updateFloat(FLOAT_TAG, -1, -1, params.width, params.height);
                 floatVodController.updateSubInfoTextSize(params.width / 50);
             });
-            fullScreenImage = view.findViewById(R.id.ivClose);
-            view.findViewById(R.id.ivClose).setOnClickListener(v -> {
+            fullScreenImage = view.findViewById(R.id.ivBack);
+            fullScreenImage.setOnClickListener(v -> {
                 EasyFloat.dismiss(FLOAT_TAG);
                 Intent intent = new Intent();
                 intent.putExtra("isFromFloat", true);
@@ -196,6 +200,13 @@ public class FloatViewUtil {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setClass(App.getInstance(), topActivity.getClass());
                 App.getInstance().startActivity(intent);
+            });
+            iconClose = view.findViewById(R.id.ivClose);
+            iconClose.setOnClickListener(v -> {
+                EasyFloat.dismiss(FLOAT_TAG);
+                if (myVideoView != null) {
+                    myVideoView.pause();
+                }
             });
         }).show();
     }
@@ -209,6 +220,9 @@ public class FloatViewUtil {
             }
             if (fullScreenImage != null) {
                 fullScreenImage.setVisibility(View.GONE);
+            }
+            if (iconClose != null) {
+                iconClose.setVisibility(View.GONE);
             }
         }
     }

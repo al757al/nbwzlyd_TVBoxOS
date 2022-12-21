@@ -791,9 +791,8 @@ public class PlayActivity extends BaseActivity {
                 if (mVideoView.isPlaying()) {
                     mController.hideLoading();
                 }
-            } else {
-                mVideoView.resume();
             }
+            mVideoView.resume();
         }
     }
 

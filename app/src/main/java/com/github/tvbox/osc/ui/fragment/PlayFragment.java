@@ -853,9 +853,8 @@ public class PlayFragment extends BaseLazyFragment {
                 if (mVideoView.isPlaying()) {
                     mController.hideLoading();
                 }
-            } else {
-                mVideoView.resume();
             }
+            mVideoView.resume();
         }
     }
 
