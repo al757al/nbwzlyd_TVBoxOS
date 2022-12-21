@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.ui.adapter;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.SelectViewHolder> {
 
@@ -104,8 +107,10 @@ public class SelectDialogAdapter<T> extends ListAdapter<T, SelectDialogAdapter.S
         }
 
         if (position == select) {
+            Drawable drawable = ContextCompat.getDrawable(textView.getContext(), R.drawable.ic_select_fill);
+            drawable.setBounds(0, 0, AutoSizeUtils.mm2px(textView.getContext(), 20), AutoSizeUtils.mm2px(textView.getContext(), 20));
             textView.setText(SpanUtils.with(textView).
-                    appendImage(ContextCompat.getDrawable(textView.getContext(), R.drawable.ic_select_fill)).append(" ").append(name).create());
+                    appendImage(drawable).append(" ").append(name).create());
         } else {
             textView.setText(name);
         }
