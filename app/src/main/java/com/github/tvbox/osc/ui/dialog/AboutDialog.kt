@@ -21,9 +21,9 @@ class AboutDialog(context: Context) : BaseDialog(context) {
                     4、exo播放器增加ffmpeg扩展，解决部分视频exo播放无声问题
                     5、exo字幕支持，有bug，暂时不修
                     6、增加阿里云播放器支持
-                    6、修复长按主页按钮清除缓存后提示一直存在问题
-                    7、部分UI优化
-                    8、理论支持安卓4.3及以上版本，以下版本不再支持
+                    7、修复长按主页按钮清除缓存后提示一直存在问题
+                    8、部分UI优化
+                    9、理论支持安卓4.3及以上版本，以下版本不再支持
 
     """.trimIndent()
             ).create()
