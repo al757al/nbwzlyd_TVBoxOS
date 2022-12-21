@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.github.catvod.crawler.Spider;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -136,7 +134,7 @@ public class PlayFragment extends BaseLazyFragment {
     private long videoDuration = -1;
     private FrameLayout mPlayRoot;
     private ProgressManager progressManager;
-    private ParseBean mCurrentParseBean;
+//    private ParseBean mCurrentParseBean;
     private PlayResultObserve mPlayResultObserve = new PlayResultObserve();
 
     @Override
@@ -184,20 +182,20 @@ public class PlayFragment extends BaseLazyFragment {
             if (msg.what == ParseFailCode) {
                 stopParse();
                 errorWithRetry("嗅探错误", false);
-                mHandler.removeMessages(ParseFailCode);
-                List<ParseBean> parseBeanList = ApiConfig.get().getParseBeanList();
-                if (parseBeanList == null || parseBeanList.isEmpty()) {
-                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("嗅探已经完毕");
-                    return false;
-                }
-                int currentIndex = parseBeanList.indexOf(mCurrentParseBean);
-                currentIndex++;
-                if (currentIndex >= parseBeanList.size()) {
-                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("嗅探已经完毕");
-                    return false;
-                }
-                mCurrentParseBean = parseBeanList.get(currentIndex);
-                doParse(mCurrentParseBean);
+//                mHandler.removeMessages(ParseFailCode);
+//                List<ParseBean> parseBeanList = ApiConfig.get().getParseBeanList();
+//                if (parseBeanList == null || parseBeanList.isEmpty()) {
+//                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("嗅探已经完毕");
+//                    return false;
+//                }
+////                int currentIndex = parseBeanList.indexOf(mCurrentParseBean);
+//                currentIndex++;
+//                if (currentIndex >= parseBeanList.size()) {
+//                    ToastUtils.make().setGravity(Gravity.CENTER, 0, 0).show("嗅探已经完毕");
+//                    return false;
+//                }
+//                mCurrentParseBean = parseBeanList.get(currentIndex);
+//                doParse(mCurrentParseBean);
             }
             return false;
         });
@@ -1086,7 +1084,7 @@ public class PlayFragment extends BaseLazyFragment {
     ExecutorService parseThreadPool;
 
     private void doParse(ParseBean pb) {
-        mCurrentParseBean = pb;
+//        mCurrentParseBean = pb;
         stopParse();
         initParseLoadFound();
         if (pb.getType() == 0) {
