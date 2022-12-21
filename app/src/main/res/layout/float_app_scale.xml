@@ -36,8 +36,7 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_alignBottom="@id/ivScale"
-        android:layout_marginLeft="@dimen/vs_10"
-        android:layout_marginRight="@dimen/vs_10"
+        android:layout_marginRight="@dimen/vs_5"
         android:layout_marginBottom="2dp"
         android:layout_toLeftOf="@id/ivScale"
         android:src="@drawable/open_activity" />

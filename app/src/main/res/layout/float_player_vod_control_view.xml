@@ -469,7 +469,7 @@
                 android:paddingStart="@dimen/vs_10"
                 android:paddingLeft="@dimen/vs_10"
                 android:text="00:00"
-                android:layout_marginRight="@dimen/vs_30"
+                android:layout_marginRight="@dimen/vs_80"
                 android:textColor="@color/color_FFFFFF"
                 android:textSize="@dimen/ts_20" />
         </LinearLayout>
