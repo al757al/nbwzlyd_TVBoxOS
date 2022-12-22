@@ -44,9 +44,6 @@ public class PlayerHelper {
         }
         renderType = Hawk.get(HawkConfig.PLAY_RENDER, 2);
         IJKCode codec = ApiConfig.get().getIJKCodec(ijkCode);
-        if (codec == null) {
-            return;
-        }
         PlayerFactory playerFactory;
         if (playerType == 1) {
             playerFactory = new PlayerFactory<IjkMediaPlayer>() {

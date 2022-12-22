@@ -15,6 +15,7 @@ import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.bean.InfoBean;
 import com.aliyun.player.bean.InfoCode;
 import com.aliyun.player.nativeclass.MediaInfo;
+import com.aliyun.player.nativeclass.PlayerConfig;
 import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.UrlSource;
 import com.google.android.exoplayer2.Player;
@@ -23,6 +24,7 @@ import com.google.android.exoplayer2.video.VideoSize;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 
@@ -69,6 +71,18 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void setDataSource(String path, Map<String, String> headers) {
         UrlSource urlSource = new UrlSource();
         urlSource.setUri(path);//播放地址，可以是第三方点播地址，或阿里云点播服务中的播放地址，也可以是本地视频地址。
+        if (headers != null && !headers.isEmpty()) {
+            String[] itemArray = new String[headers.size()];
+            Set<Map.Entry<String, String>> entries = headers.entrySet();
+            int i = 0;
+            for (Map.Entry<String, String> entry : entries) {
+                itemArray[i] = entry.getKey() + ":" + entry.getValue();
+                i++;
+            }
+            PlayerConfig config = aliPlayer.getConfig();
+            config.setCustomHeaders(itemArray);
+            aliPlayer.setConfig(config);
+        }
         aliPlayer.setDataSource(urlSource);
     }
 
