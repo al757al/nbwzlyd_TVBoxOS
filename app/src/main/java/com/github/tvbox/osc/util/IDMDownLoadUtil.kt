@@ -162,8 +162,8 @@ class IDMDownLoadUtil {
                     .execute(object : AbsCallback<String?>() {
                         @Throws(Throwable::class)
                         override fun convertResponse(response: Response): String {
-                            return if (response.body() != null) {
-                                response.body()!!.string()
+                            return if (response.body != null) {
+                                response.body!!.string()
                             } else {
                                 throw IllegalStateException("网络请求错误")
                             }

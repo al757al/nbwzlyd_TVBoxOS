@@ -25,10 +25,10 @@ android {
     defaultConfig {
         //applicationId 'com.mygithub0.tvbox0.osd_1111'
         applicationId 'com.mygithub0.tvbox0.osdX'
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 26
-        versionCode 18
-        versionName '3.0.6'
+        versionCode 20
+        versionName '4.0'
         multiDexEnabled true
         ndk {
             // 设置支持的SO库架构
