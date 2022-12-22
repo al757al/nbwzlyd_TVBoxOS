@@ -27,8 +27,8 @@ android {
         applicationId 'com.mygithub0.tvbox0.osdX'
         minSdkVersion 18
         targetSdkVersion 26
-        versionCode 16
-        versionName '3.0.4'
+        versionCode 17
+        versionName '3.0.5'
         multiDexEnabled true
         ndk {
             // 设置支持的SO库架构

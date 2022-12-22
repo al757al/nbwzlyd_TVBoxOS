@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/icon_lock"
             android:layout_width="@dimen/vs_60"
             android:layout_height="match_parent"

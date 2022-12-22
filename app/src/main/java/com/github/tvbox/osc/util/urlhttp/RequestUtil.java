@@ -52,9 +52,9 @@ class RequestUtil{
             @Override
             public void run() {
                 RealResponse response = new RealRequest().getData(getUrl(url,paramsMap),headerMap);
-                if(response.code == HttpURLConnection.HTTP_OK){
+                if (response.code == HttpURLConnection.HTTP_OK || response.code == HttpURLConnection.HTTP_PARTIAL) {
                     callBack.onSeccess(response);
-                }else {
+                } else {
                     callBack.onError(response);
                 }
             }
