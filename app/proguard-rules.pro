@@ -99,6 +99,8 @@
 -keep class com.obsez.android.lib.filechooser.** { *; }
 -dontwarn com.obsez.android.lib.filechooser.**
 
+-keepattributes SourceFile,LineNumberTable
+
 # jcifs (smb)
 -keep class jcifs.** { *; }
 -dontwarn jcifs.**
