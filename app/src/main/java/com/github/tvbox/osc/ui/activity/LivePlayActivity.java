@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -133,14 +132,10 @@ public class LivePlayActivity extends BaseActivity {
     private View divLoadEpg;
     private View divLoadEpgleft;
     //    private LinearLayout lv_epg;
-    RelativeLayout ll_epg;
+    LinearLayout ll_epg;
     TextView tv_channelnum;
     TextView tip_chname;
-    TextView tip_epg1;
-    TextView tip_epg2;
     TextView tv_srcinfo;
-    TextView tv_curepg_left;
-    TextView tv_nextepg_left;
     public String epgStringAddress = "";
 
     private TvRecyclerView mEpgDateGridView;
@@ -204,11 +199,7 @@ public class LivePlayActivity extends BaseActivity {
         //EPG  findViewById  by 龍
         tip_chname = findViewById(R.id.tv_channel_bar_name);//底部名称
         tv_channelnum = findViewById(R.id.tv_channel_bottom_number); //底部数字
-        tip_epg1 = findViewById(R.id.tv_current_program_time);//底部EPG当前节目信息
-        tip_epg2 = findViewById(R.id.tv_next_program_time);//底部EPG当下个节目信息
         tv_srcinfo = findViewById(R.id.tv_source);//线路状态
-        tv_curepg_left = findViewById(R.id.tv_current_program);//当前节目
-        tv_nextepg_left = findViewById(R.id.tv_next_program);//下一节目
         ll_epg = findViewById(R.id.ll_epg);
         mPlayRoot = findViewById(R.id.live_root);
         divLoadEpg = findViewById(R.id.divLoadEpg);
@@ -422,37 +413,7 @@ public class LivePlayActivity extends BaseActivity {
 
             tip_chname.setText(channel_Name.getChannelName());
             tv_channelnum.setText("" + channel_Name.getChannelNum());
-            tip_epg1.setText("暂无信息");
-            ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
-            tip_epg2.setText("开源测试软件,请勿商用以及播放违法内容");
-            ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
             String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
-            if (hsEpg.containsKey(savedEpgKey)) {
-                ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
-                if (arrayList != null && arrayList.size() > 0) {
-                    int size = arrayList.size() - 1;
-                    while (size >= 0) {
-                        if (new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
-                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
-                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
-                            if (size != arrayList.size() - 1) {
-                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size)).end);
-                                ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
-                            }
-                            break;
-                        } else {
-                            size--;
-                        }
-                    }
-                }
-                epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
-                epgListAdapter.setNewData(arrayList);
-            } else {
-//                int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
-//                if (selectedIndex < 0) getEpg(new Date());
-//                else getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
-            }
-
             if (countDownTimer != null) {
                 countDownTimer.cancel();
             }
