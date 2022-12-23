@@ -2,7 +2,6 @@ package com.github.tvbox.osc.util;
 
 import android.content.Context;
 
-import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.util.SSL.SSLSocketFactoryCompat;
 import com.lzy.okgo.OkGo;
@@ -151,7 +150,7 @@ public class OkGoHelper {
             th.printStackTrace();
         }
 
-        HttpHeaders.setUserAgent(ApiConfig.userAgent);
+        HttpHeaders.setUserAgent("okhttp/3.12.11");
 
         OkHttpClient okHttpClient = builder.build();
         OkGo.getInstance().setOkHttpClient(okHttpClient);
