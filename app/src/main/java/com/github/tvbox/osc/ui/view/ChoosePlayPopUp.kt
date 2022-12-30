@@ -7,6 +7,8 @@ import android.graphics.Rect
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.blankj.utilcode.util.ScreenUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.github.tvbox.osc.R
@@ -107,6 +109,13 @@ class ChoosePlayPopUp(context: Context?) : BasePopupWindow(context) {
             }
         }, 500)
 
+        mGridView?.addOnScrollListener(object : OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                mHandler.removeCallbacks(dismissRunnable)
+                mHandler.postDelayed(dismissRunnable, 4000)
+            }
+        })
 
     }
 
