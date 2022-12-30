@@ -24,7 +24,7 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 public class LiveController extends BaseController {
     protected ProgressBar mLoading;
     private int minFlingDistance = 100;             //最小识别距离
-    private int minFlingVelocity = 10;              //最小识别速度
+    private int minFlingVelocity = 100;              //最小识别速度
     private ImageView mProgressIcon;
     private TextView mProgressText;
     private View mProgressContainer;
@@ -143,9 +143,9 @@ public class LiveController extends BaseController {
         } else if (e2.getX() - e1.getX() > minFlingDistance && Math.abs(velocityX) > minFlingVelocity) {
             listener.changeSource(1);           //右滑
         } else if (e1.getY() - e2.getY() > minFlingDistance && Math.abs(velocityY) > minFlingVelocity && enableFling()) {
-            listener.preChanel();
-        } else if (e2.getY() - e1.getY() > minFlingDistance && Math.abs(velocityY) > minFlingVelocity && enableFling()) {
             listener.nextChanel();
+        } else if (e2.getY() - e1.getY() > minFlingDistance && Math.abs(velocityY) > minFlingVelocity && enableFling()) {
+            listener.preChanel();
         }
         return false;
     }

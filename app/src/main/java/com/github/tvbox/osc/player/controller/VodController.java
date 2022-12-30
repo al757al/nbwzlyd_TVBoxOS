@@ -60,7 +60,8 @@ public class VodController extends BaseController {
 
     SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
-
+    private int minFlingDistance = 100;             //最小识别距离
+    private int minFlingVelocity = 100;              //最小识别速度
     SeekBar mSeekBar;
     TextView mCurrentTime;
     TextView mTotalTime;
@@ -1218,5 +1219,17 @@ public class VodController extends BaseController {
         return false;
     }
 
-
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (e1.getX() - e2.getX() > minFlingDistance && Math.abs(velocityX) > minFlingVelocity) {
+//            listener.changeSource(-1);          //左滑
+        } else if (e2.getX() - e1.getX() > minFlingDistance && Math.abs(velocityX) > minFlingVelocity) {
+//            listener.changeSource(1);           //右滑
+        } else if (e1.getY() - e2.getY() > minFlingDistance && Math.abs(velocityY) > minFlingVelocity && enableFling()) {
+            listener.playNext(false);
+        } else if (e2.getY() - e1.getY() > minFlingDistance && Math.abs(velocityY) > minFlingVelocity && enableFling()) {
+            listener.playPre();
+        }
+        return false;
+    }
 }
