@@ -142,8 +142,10 @@ public class LiveController extends BaseController {
             listener.changeSource(-1);          //左滑
         } else if (e2.getX() - e1.getX() > minFlingDistance && Math.abs(velocityX) > minFlingVelocity) {
             listener.changeSource(1);           //右滑
-        } else if (e1.getY() - e2.getY() > minFlingDistance && Math.abs(velocityY) > minFlingVelocity) {
-        } else if (e2.getY() - e1.getY() > minFlingDistance && Math.abs(velocityY) > minFlingVelocity) {
+        } else if (e1.getY() - e2.getY() > minFlingDistance && Math.abs(velocityY) > minFlingVelocity && enableFling()) {
+            listener.preChanel();
+        } else if (e2.getY() - e1.getY() > minFlingDistance && Math.abs(velocityY) > minFlingVelocity && enableFling()) {
+            listener.nextChanel();
         }
         return false;
     }

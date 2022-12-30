@@ -432,6 +432,7 @@ public class LivePlayActivity extends BaseActivity {
             } else {
                 tv_srcinfo.setText("[线路" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
             }
+            mHandler.removeCallbacks(mUpdateNetSpeedRun);
             mHandler.post(mUpdateNetSpeedRun);
         }
     }
@@ -1151,11 +1152,14 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void nextChanel() {
-
+                playNext();
+                ToastUtils.showShort("下一频道");
             }
 
             @Override
             public void preChanel() {
+                playPrevious();
+                ToastUtils.showShort("上一频道");
 
             }
         });
@@ -1756,6 +1760,7 @@ public class LivePlayActivity extends BaseActivity {
 
     private void showNetSpeed() {
         if (Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
+            mHandler.removeCallbacks(mUpdateNetSpeedRun);
             mHandler.post(mUpdateNetSpeedRun);
             tvNetSpeed.setVisibility(View.VISIBLE);
         } else {
@@ -1764,7 +1769,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-    private Runnable mUpdateNetSpeedRun = new Runnable() {
+    private final Runnable mUpdateNetSpeedRun = new Runnable() {
         @Override
         public void run() {
             if (mVideoView == null) return;
