@@ -89,6 +89,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     boolean isForbidDialog = Hawk.get(HawkConfig.FORBID_JAR_DIALOG, true);
     private int homeCellsCount = Hawk.get(HawkConfig.HOME_CELLS_COUNT, 2);
     boolean isLastOpen = Hawk.get(HawkConfig.IMMERSIVE_SWITCH, false);
+    private String showCells;
 
     public static ModelSettingFragment newInstance() {
         return new ModelSettingFragment().setArguments();
@@ -144,7 +145,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         mForbidDialogText = findViewById(R.id.forbidJarDialogText);
         mForbidDialogText.setText(isForbidDialog ? "已打开" : "已关闭");
 //        tvEpgApi.setText("EPG地址已隐藏");
-        String showCells = String.format("%d%s", homeCellsCount, "列");
+        showCells = String.format("%d%s", homeCellsCount, "列");
         mHomeCellText.setText(showCells);
 
         findViewById(R.id.home_cells).setOnClickListener(new View.OnClickListener() {
@@ -779,6 +780,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             public void click(String value, int pos) {
                 Hawk.put(HawkConfig.HOME_CELLS_COUNT, pos + 1);
                 mHomeCellText.setText(data.get(pos));
+                ModelSettingFragment.this.showCells = mHomeCellText.getText().toString();
                 dialog.dismiss();
             }
 
