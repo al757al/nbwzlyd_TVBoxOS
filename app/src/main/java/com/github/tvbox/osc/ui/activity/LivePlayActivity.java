@@ -1685,7 +1685,10 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveSettingGroupList() {
-        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "直播地址", "悬浮播放", "退出直播"));
+        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "直播地址", "退出直播"));
+        if (!com.github.tvbox.osc.util.ScreenUtils.isTv(this)) {
+            groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "直播地址", "悬浮播放", "退出直播"));
+        }
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
         ArrayList<String> sourceItems = new ArrayList<>();
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
@@ -1697,7 +1700,9 @@ public class LivePlayActivity extends BaseActivity {
         itemsArrayList.add(playerDecoderItems);
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
-        itemsArrayList.add(new ArrayList<>());
+        if (!com.github.tvbox.osc.util.ScreenUtils.isTv(this)) {
+            itemsArrayList.add(new ArrayList<>());
+        }
         itemsArrayList.add(new ArrayList<>());
         itemsArrayList.add(new ArrayList<>());
 
