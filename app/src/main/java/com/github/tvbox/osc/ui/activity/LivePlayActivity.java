@@ -1700,10 +1700,10 @@ public class LivePlayActivity extends BaseActivity {
         itemsArrayList.add(playerDecoderItems);
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
+        itemsArrayList.add(new ArrayList<>());
         if (!com.github.tvbox.osc.util.ScreenUtils.isTv(this)) {
             itemsArrayList.add(new ArrayList<>());
         }
-        itemsArrayList.add(new ArrayList<>());
         itemsArrayList.add(new ArrayList<>());
 
         liveSettingGroupList.clear();
