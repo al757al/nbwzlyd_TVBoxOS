@@ -55,6 +55,7 @@ import com.github.tvbox.osc.util.Force;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LiveFloatViewUtil;
 import com.github.tvbox.osc.util.M3uLiveParser;
+import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.viewmodel.LiveViewModel;
 import com.google.gson.JsonArray;
@@ -1477,6 +1478,29 @@ public class LivePlayActivity extends BaseActivity {
                 FastClickCheckUtil.check(view);
                 clickSettingItem(position);
             }
+        });
+        liveSettingItemAdapter.setOnItemLongClickListener((adapter, view, position) -> {
+            int settingGroupIndex = liveSettingGroupAdapter.getSelectedGroupIndex();
+            if (settingGroupIndex == 2) {
+                switch (position) {
+                    case 0:
+                    case 1:
+                        Hawk.put(HawkConfig.LIVE_PLAY_TYPE, position);
+                        break;
+                    case 2:
+                        Hawk.put(HawkConfig.LIVE_PLAY_TYPE, 1);
+                        break;
+                    case 3:
+                        Hawk.put(HawkConfig.LIVE_PLAY_TYPE, 2);
+                        break;
+                    case 4:
+                        Hawk.put(HawkConfig.LIVE_PLAY_TYPE, 3);
+                        break;
+                }
+                ToastUtils.make().setGravity(0, 0, Gravity.CENTER).show("已设置直播默认播放器为" + PlayerHelper.getPlayerName(Hawk.get(HawkConfig.LIVE_PLAY_TYPE, 1)));
+            }
+
+            return false;
         });
     }
 

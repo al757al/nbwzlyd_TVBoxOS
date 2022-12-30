@@ -17,7 +17,11 @@ public class LivePlayerManager {
 
     public void init(VideoView videoView) {
         try {
-            defaultPlayerConfig.put("pl", Hawk.get(HawkConfig.PLAY_TYPE, 1));//Aliplayer
+            int playType = Hawk.get(HawkConfig.PLAY_TYPE, 1);
+            if (Hawk.contains(HawkConfig.LIVE_PLAY_TYPE)) {
+                playType = Hawk.get(HawkConfig.LIVE_PLAY_TYPE);
+            }
+            defaultPlayerConfig.put("pl", playType);
             defaultPlayerConfig.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, "硬解码"));
             defaultPlayerConfig.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 2));
             defaultPlayerConfig.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
