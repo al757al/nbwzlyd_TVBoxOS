@@ -116,13 +116,18 @@ class ChoosePlayPopUp(context: Context?) : BasePopupWindow(context) {
                 mHandler.postDelayed(dismissRunnable, 4000)
             }
         })
+        mGridView?.setOnTouchListener { v, event ->
+            mHandler.removeCallbacks(dismissRunnable)
+            mHandler.postDelayed(dismissRunnable, 4000)
+            false
+        }
 
     }
 
     override fun showPopupWindow(anchorView: View?) {
         super.showPopupWindow(anchorView)
         popupWindow.isFocusable = true
-        mHandler.postDelayed(dismissRunnable, 4000)
+        mHandler.postDelayed(dismissRunnable, 14000)
     }
 
     override fun dismiss() {
