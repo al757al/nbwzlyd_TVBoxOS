@@ -23,8 +23,8 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 
 public class LiveController extends BaseController {
     protected ProgressBar mLoading;
-    private int minFlingDistance = 100;             //最小识别距离
-    private int minFlingVelocity = 100;              //最小识别速度
+    private int minFlingDistance = 150;             //最小识别距离
+    private int minFlingVelocity = 2000;              //最小识别速度
     private ImageView mProgressIcon;
     private TextView mProgressText;
     private View mProgressContainer;

@@ -60,8 +60,8 @@ public class VodController extends BaseController {
 
     SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
-    private int minFlingDistance = 100;             //最小识别距离
-    private int minFlingVelocity = 100;              //最小识别速度
+    private int minFlingDistance = 150;             //最小识别距离
+    private int minFlingVelocity = 2000;              //最小识别速度
     SeekBar mSeekBar;
     TextView mCurrentTime;
     TextView mTotalTime;
