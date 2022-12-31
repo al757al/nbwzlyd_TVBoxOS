@@ -283,7 +283,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 || isLocked() //锁住了屏幕
                 || isEdge) //处于屏幕边沿
         {
-            handleFling(isEdge);//如果是边缘的话，让fling处理事件
+            handleFling(PlayerUtils.isXEdge(getContext(), e1));//如果是边缘的话，让fling处理事件
             return true;
         }
         float deltaX = e1.getX() - e2.getX();

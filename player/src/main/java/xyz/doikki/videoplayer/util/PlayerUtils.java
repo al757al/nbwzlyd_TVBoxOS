@@ -169,6 +169,12 @@ public final class PlayerUtils {
                 || e.getRawY() > getScreenHeight(context, true) - edgeSize;
     }
 
+    public static boolean isXEdge(Context context, MotionEvent e) {
+        int edgeSize = dp2px(context, 60);
+        return e.getRawX() < edgeSize
+                || e.getRawX() > getScreenWidth(context, true) - edgeSize;
+    }
+
 
     public static final int NO_NETWORK = 0;
     public static final int NETWORK_CLOSED = 1;
