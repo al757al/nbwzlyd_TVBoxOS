@@ -457,14 +457,13 @@ public class PlayActivity extends BaseActivity {
             trackInfo = ((IjkMediaPlayer) mediaPlayer).getTrackInfo();
         }
         if (mediaPlayer instanceof ExoMediaPlayer) {
-            trackInfo = ExoPlayerSubTitleUtil.getSubTitleTrackInfo();
+            trackInfo = ExoPlayerSubTitleUtil.getTrackInfo();
         }
-        if (trackInfo == null) {
+        if (trackInfo == null || trackInfo.getSubtitle().isEmpty()) {
             Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
             return;
         }
         List<TrackInfoBean> bean = trackInfo.getSubtitle();
-        if (bean.size() < 1) return;
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(PlayActivity.this);
         dialog.setTip("切换内置字幕");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
@@ -485,7 +484,8 @@ public class PlayActivity extends BaseActivity {
                     }
                     if (mediaPlayer instanceof ExoMediaPlayer) {
                         DefaultTrackSelector trackSelector = (DefaultTrackSelector) ((ExoMediaPlayer) mediaPlayer).getTrackSelector();
-                        trackSelector.setParameters(trackSelector.getParameters().buildUpon().setPreferredTextLanguage(value.language).
+                        trackSelector.setParameters(trackSelector.getParameters().buildUpon().
+                                setPreferredTextLanguage(value.language).
                                 setSelectUndeterminedTextLanguage(true).
                                 build());//这个方法就是字幕轨道
                     }
@@ -503,7 +503,11 @@ public class PlayActivity extends BaseActivity {
 
             @Override
             public String getDisplay(TrackInfoBean val) {
-                return val.index + " : " + val.name;
+                String name = val.name;
+                if (TextUtils.isEmpty(name)) {
+                    name = val.language;
+                }
+                return val.index + " : " + name;
             }
         }, new DiffUtil.ItemCallback<TrackInfoBean>() {
             @Override
@@ -617,17 +621,20 @@ public class PlayActivity extends BaseActivity {
 
         if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
             try {
-                ExoPlayerSubTitleUtil.initTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector());
-                if (ExoPlayerSubTitleUtil.getSubTitleTrackInfo() != null) {
-                    mController.mSubtitleView.isInternal = true;
-                }
-                if (mController.mSubtitleView.isInternal) {
-                    ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(text -> {
-                        com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
-                        subtitle.content = text;
-                        mController.mSubtitleView.onSubtitleChanged(subtitle);
-                    });
-                }
+                ExoPlayerSubTitleUtil.initTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector(), new ExoPlayerSubTitleUtil.TrackInfoCallBack() {
+                    @Override
+                    public void onTrackInfoGet(TrackInfo trackInfo) {
+                        mController.mSubtitleView.hasInternal = trackInfo.getSubtitle().size() > 0;
+                        if (mController.mSubtitleView.hasInternal) {
+                            ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(text -> {
+                                com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+                                subtitle.content = text.replace("null", "");
+                                mController.mSubtitleView.onSubtitleChanged(subtitle);
+                            });
+                        }
+                    }
+                });
+
             } catch (Exception e) {
 
             }

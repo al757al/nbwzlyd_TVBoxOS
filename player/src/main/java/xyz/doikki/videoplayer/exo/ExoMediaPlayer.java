@@ -38,7 +38,7 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     protected Context mAppContext;
-    protected SimpleExoPlayer mInternalPlayer;
+    public SimpleExoPlayer mInternalPlayer;
     protected MediaSource mMediaSource;
     protected ExoMediaSourceHelper mMediaSourceHelper;
 

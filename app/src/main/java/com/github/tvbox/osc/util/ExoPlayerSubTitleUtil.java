@@ -19,13 +19,10 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
  * </pre>
  */
 public class ExoPlayerSubTitleUtil {
+    private static TrackInfo trackInfo;
 
-    private static TrackInfo mAudioTrackInfo;
-    private static TrackInfo mSubTitleTrackInfo;
-
-    public static void initTrackSelector(TrackSelector trackSelector) {
-        mAudioTrackInfo = null;
-        mSubTitleTrackInfo = null;
+    public static void initTrackSelector(TrackSelector trackSelector, TrackInfoCallBack trackInfoCallBack) {
+        trackInfo = new TrackInfo();
         if (trackSelector instanceof DefaultTrackSelector) {
             DefaultTrackSelector mapTrackSelector = (DefaultTrackSelector) trackSelector;
             MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mapTrackSelector.getCurrentMappedTrackInfo();
@@ -33,7 +30,6 @@ public class ExoPlayerSubTitleUtil {
                 for (int i = 0; i < mappedTrackInfo.getRendererCount(); i++) {
                     TrackGroupArray rendererTrackGroups = mappedTrackInfo.getTrackGroups(i);
                     if (C.TRACK_TYPE_AUDIO == mappedTrackInfo.getRendererType(i)) { //判断是否是音轨
-                        TrackInfo trackInfo = new TrackInfo();
                         for (int groupIndex = 0; groupIndex < rendererTrackGroups.length; groupIndex++) {
                             TrackGroup trackGroup = rendererTrackGroups.get(groupIndex);
                             TrackInfoBean audioTrackInfo = new TrackInfoBean();
@@ -41,15 +37,13 @@ public class ExoPlayerSubTitleUtil {
                             audioTrackInfo.index = groupIndex;
                             audioTrackInfo.name = format.label;
                             audioTrackInfo.language = format.language;
-                            trackInfo.addSubtitle(audioTrackInfo);
+                            trackInfo.addAudio(audioTrackInfo);
 //                            LogUtils.d("checkAudio", trackGroup.getFormat(0).language);
-                            mapTrackSelector.setParameters(
-                                    mapTrackSelector.getParameters().buildUpon()
-                                            .setPreferredAudioLanguage(trackGroup.getFormat(0).language));
+//                            mapTrackSelector.setParameters(
+//                                    mapTrackSelector.getParameters().buildUpon()
+//                                            .setPreferredAudioLanguage(trackGroup.getFormat(0).language));
                         }
-                        mAudioTrackInfo = trackInfo;
                     } else if (C.TRACK_TYPE_TEXT == mappedTrackInfo.getRendererType(i)) { //判断是否是字幕
-                        TrackInfo trackInfo = new TrackInfo();
                         for (int groupIndex = 0; groupIndex < rendererTrackGroups.length; groupIndex++) {
                             TrackGroup trackGroup = rendererTrackGroups.get(groupIndex);
                             TrackInfoBean titleTrackInfo = new TrackInfoBean();
@@ -62,18 +56,19 @@ public class ExoPlayerSubTitleUtil {
 //                                    mapTrackSelector.getParameters().buildUpon()
 //                                            .setPreferredTextLanguage(trackGroup.getFormat(0).language));//这个方法就是字幕轨道
                         }
-                        mSubTitleTrackInfo = trackInfo;
                     }
                 }
+                trackInfoCallBack.onTrackInfoGet(trackInfo);
             }
         }
     }
 
-    public static TrackInfo getAudioTrackInfo() {
-        return mAudioTrackInfo;
+    public interface TrackInfoCallBack {
+        void onTrackInfoGet(TrackInfo trackInfo);
     }
 
-    public static TrackInfo getSubTitleTrackInfo() {
-        return mSubTitleTrackInfo;
+
+    public static TrackInfo getTrackInfo() {
+        return trackInfo;
     }
 }
