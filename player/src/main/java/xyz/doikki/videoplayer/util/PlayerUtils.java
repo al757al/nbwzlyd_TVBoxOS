@@ -162,7 +162,7 @@ public final class PlayerUtils {
      * 边缘检测
      */
     public static boolean isEdge(Context context, MotionEvent e) {
-        int edgeSize = dp2px(context, 40);
+        int edgeSize = dp2px(context, 60);
         return e.getRawX() < edgeSize
                 || e.getRawX() > getScreenWidth(context, true) - edgeSize
                 || e.getRawY() < edgeSize

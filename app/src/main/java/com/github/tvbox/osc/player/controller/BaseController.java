@@ -44,6 +44,9 @@ public abstract class BaseController extends BaseVideoController implements Gest
     private int mCurPlayState;
     protected OnFloatListener floatListener;
 
+    protected int minFlingDistance = 150;             //最小识别距离
+    protected int minFlingVelocity = 600;
+
     protected Handler mHandler;
 
     protected HandlerCallback mHandlerCallback;

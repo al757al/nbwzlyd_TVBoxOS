@@ -29,8 +29,6 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 public class LiveFloatController extends BaseController {
 
     protected ProgressBar mLoading;
-    private int minFlingDistance = 150;             //最小识别距离
-    private int minFlingVelocity = 700;              //最小识别速度
     private ImageView mProgressIcon;
     private TextView mProgressText;
     private View mProgressContainer;
