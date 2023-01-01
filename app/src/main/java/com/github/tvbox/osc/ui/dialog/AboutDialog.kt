@@ -15,11 +15,8 @@ class AboutDialog(context: Context) : BaseDialog(context) {
             .append(BuildConfig.VERSION_NAME + "更新日志:")
             .append("\n").append(
                 """  
-                    1、直播/影视增加边缘切换模式，可在边缘滑动切换频道/上下集了
-                    2、影视，直播播放器解耦，直播长按播放器可单独设置直播播放器
-                    3、选集模式优化，避免过早消失
-                    4、优化直播线路偶现的错乱问题
-                    5、其他UI小优化
+                    1、直播右上角展示epg信息
+                    2、直播地址与线路解耦，直播地址不在根据线路变化。切换线路只会保存直播地址
     """.trimIndent()
             ).create()
     }
