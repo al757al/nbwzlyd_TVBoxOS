@@ -51,7 +51,6 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,51 +185,50 @@ public class ApiConfig implements Serializable {
         } else {
             stringGetRequest.headers("User-Agent", userAgent);
         }
-        stringGetRequest.cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3L * 24L * 60L * 60L * 1000L)
-                .execute(new AbsCallback<String>() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        if (isConfigLoadCache) {
-                            return;
-                        }
-                        configLoad(response, configKey, apiUrl, cache, callback);
-                    }
+        stringGetRequest.cacheMode(CacheMode.IF_NONE_CACHE_REQUEST).cacheTime(3L * 24L * 60L * 60L * 1000L).execute(new AbsCallback<String>() {
+            @Override
+            public void onSuccess(Response<String> response) {
+                if (isConfigLoadCache) {
+                    return;
+                }
+                configLoad(response, configKey, apiUrl, cache, callback);
+            }
 
-                    @Override
-                    public void onCacheSuccess(Response<String> response) {
-                        super.onCacheSuccess(response);
-                        try {
-                            response.setBody(fixRelativePath(response.body(), apiUrl));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        isConfigLoadCache = true;
-                        configLoad(response, configKey, apiUrl, cache, callback);
-                    }
+            @Override
+            public void onCacheSuccess(Response<String> response) {
+                super.onCacheSuccess(response);
+                try {
+                    response.setBody(fixRelativePath(response.body(), apiUrl));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                isConfigLoadCache = true;
+                configLoad(response, configKey, apiUrl, cache, callback);
+            }
 
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        if (cache.exists()) {
-                            try {
-                                parseJson(apiUrl, cache);
-                                callback.success();
-                                return;
-                            } catch (Throwable th) {
-                                th.printStackTrace();
-                            }
-                        }
-                        callback.error("拉取配置失败\n" + (response.getException() != null ? response.getException().getMessage() : ""));
+            @Override
+            public void onError(Response<String> response) {
+                super.onError(response);
+                if (cache.exists()) {
+                    try {
+                        parseJson(apiUrl, cache);
+                        callback.success();
+                        return;
+                    } catch (Throwable th) {
+                        th.printStackTrace();
                     }
+                }
+                callback.error("拉取配置失败\n" + (response.getException() != null ? response.getException().getMessage() : ""));
+            }
 
-                    public String convertResponse(okhttp3.Response response) throws Throwable {
-                        String responseStr = "";
-                        if (response.body() != null) {
-                            responseStr = response.body().string();
-                        }
-                        return fixRelativePath(responseStr, apiUrl);
-                    }
-                });
+            public String convertResponse(okhttp3.Response response) throws Throwable {
+                String responseStr = "";
+                if (response.body() != null) {
+                    responseStr = response.body().string();
+                }
+                return fixRelativePath(responseStr, apiUrl);
+            }
+        });
     }
 
     private String fixRelativePath(String responseBoy, String apiUrl) throws IOException {
@@ -255,10 +253,8 @@ public class ApiConfig implements Serializable {
             parseJson(apiUrl, json);
             try {
                 File cacheDir = cache.getParentFile();
-                if (!cacheDir.exists())
-                    cacheDir.mkdirs();
-                if (cache.exists())
-                    cache.delete();
+                if (!cacheDir.exists()) cacheDir.mkdirs();
+                if (cache.exists()) cache.delete();
                 FileOutputStream fos = new FileOutputStream(cache);
                 fos.write(json.getBytes("UTF-8"));
                 fos.flush();
@@ -293,8 +289,7 @@ public class ApiConfig implements Serializable {
         }
         boolean isJarInImg = jarUrl.startsWith("img+");
         jarUrl = jarUrl.replace("img+", "");
-        GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar")
-                .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST).cacheTime(10L * 60L * 60L * 1000);
+        GetRequest<File> request = OkGo.<File>get(jarUrl).tag("downLoadJar").cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST).cacheTime(10L * 60L * 60L * 1000);
         isCacheReady = false;
         if (jarUrl.startsWith("https://gitea")) {
             request.headers("User-Agent", UA.randomOne());
@@ -306,10 +301,8 @@ public class ApiConfig implements Serializable {
             @Override
             public File convertResponse(okhttp3.Response response) throws Throwable {
                 File cacheDir = cache.getParentFile();
-                if (!cacheDir.exists())
-                    cacheDir.mkdirs();
-                if (cache.exists())
-                    cache.delete();
+                if (!cacheDir.exists()) cacheDir.mkdirs();
+                if (cache.exists()) cache.delete();
                 FileOutputStream fos = new FileOutputStream(cache);
                 if (isJarInImg) {
                     String respData = response.body().string();
@@ -404,8 +397,7 @@ public class ApiConfig implements Serializable {
             sb.setPlayerType(DefaultConfig.safeJsonInt(obj, "playerType", -1));
             sb.setCategories(DefaultConfig.safeJsonStringList(obj, "categories"));
             sb.setClickSelector(DefaultConfig.safeJsonString(obj, "click", ""));
-            if (firstSite == null)
-                firstSite = sb;
+            if (firstSite == null) firstSite = sb;
             sourceBeanList.put(siteKey, sb);
             if (siteKey.toLowerCase().contains("alist") || sb.getApi().toLowerCase().contains("alist")) {
                 executorService.execute(() -> OkGo.<String>get(sb.getExt()).execute(new StringCallback() {
@@ -455,15 +447,21 @@ public class ApiConfig implements Serializable {
         // 获取默认解析
         if (parseBeanList != null && parseBeanList.size() > 0) {
             String defaultParse = Hawk.get(HawkConfig.DEFAULT_PARSE, "");
-            if (!TextUtils.isEmpty(defaultParse))
-                for (ParseBean pb : parseBeanList) {
-                    if (pb.getName().equals(defaultParse))
-                        setDefaultParse(pb);
-                }
-            if (mDefaultParse == null)
-                setDefaultParse(parseBeanList.get(0));
+            if (!TextUtils.isEmpty(defaultParse)) for (ParseBean pb : parseBeanList) {
+                if (pb.getName().equals(defaultParse)) setDefaultParse(pb);
+            }
+            if (mDefaultParse == null) setDefaultParse(parseBeanList.get(0));
         }
-        loadLiveSourceUrl(apiUrl, infoJson);
+        LiveSourceBean liveSourceBean = Hawk.get(HawkConfig.LIVE_SOURCE_URL_CURRENT, null);
+        if (liveSourceBean != null) {//如果当前有选中的直播地址，则直接用选中的
+            selectLiveUrlAndLoad(liveSourceBean);
+            //如果当前选中的直播地址和当前线路不一致，则保存当前线路的直播地址
+            if (!TextUtils.equals(apiUrl, liveSourceBean.getExtraKey())) {
+                saveServerLivesUrl(getLiveUrlFromServer(apiUrl, infoJson));
+            }
+        } else {
+            loadLiveSourceUrl(apiUrl, infoJson);
+        }
         //video parse rule for host
         if (infoJson.has("rules")) {
             VideoParseRuler.clearRule();
@@ -544,71 +542,11 @@ public class ApiConfig implements Serializable {
         // 直播源
         liveChannelGroupList.clear();           //修复从后台切换重复加载频道列表
         try {
-            LiveSourceBean liveSourceBean = Hawk.get(HawkConfig.LIVE_SOURCE_URL_CURRENT, null);
-            String liveSource;
-            if (liveSourceBean != null) {
-                //这个时候切换了主页源，且当前选中的是官方源，要以新的主页源的直播为准
-                if (!TextUtils.isEmpty(apiUrl) && !TextUtils.equals(apiUrl, liveSourceBean.getExtraKey()) && liveSourceBean.isOfficial()) {
-                    JsonObject livesOBJ = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject();
-                    liveSource = livesOBJ.toString();
-                } else {
-                    liveSource = "proxy://do=live&type=txt&ext=" + liveSourceBean.getSourceUrl() + "\"";
-                }
-            } else {
-                liveSourceBean = new LiveSourceBean();
-                liveSourceBean.setOfficial(true);
-                JsonObject livesOBJ = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject();
-                liveSource = livesOBJ.toString();
-            }
-            int index = liveSource.indexOf("proxy://");
-            if (index != -1) {
-                int endIndex = liveSource.lastIndexOf("\"");
-                String realUrl;
-                realUrl = DefaultConfig.checkReplaceProxy(liveSource.substring(index, endIndex));
-                //clan
-                String extUrl = Uri.parse(realUrl).getQueryParameter("ext");
-                if (extUrl != null && !extUrl.isEmpty()) {
-                    String extUrlFix = "";
-                    if (extUrl.startsWith("http") || extUrl.startsWith("https")) {
-                        extUrlFix = extUrl;
-                    } else {
-                        extUrlFix = new String(Base64.decode(extUrl, Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
-                    }
-
-                    if (extUrlFix.startsWith("clan://")) {
-                        extUrlFix = clanContentFix(clanToAddress(apiUrl), extUrlFix);
-                        extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
-                        realUrl = realUrl.replace(extUrl, extUrlFix);
-                    }
-                    //修复直播明文加载错误
-                    if (extUrlFix.startsWith("http") || extUrlFix.startsWith("https")) {
-                        extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
-                        realUrl = realUrl.replace(extUrl, extUrlFix);
-                    }
-
-                    ArrayList<LiveSourceBean> list = Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, new ArrayList<>());
-                    Iterator<LiveSourceBean> iterator = list.iterator();
-                    liveSourceBean.setSourceUrl(extUrlFix);
-                    liveSourceBean.setExtraKey(apiUrl);
-                    while (iterator.hasNext()) {
-                        LiveSourceBean next = iterator.next();
-                        //同一个源，移除
-                        if (TextUtils.equals(next.getSourceUrl(), extUrlFix)) {
-                            iterator.remove();
-                        }
-                    }
-                    if (liveSourceBean.isOfficial()) {
-                        MoreSourceBean moreSourceBean = Hawk.get(HawkConfig.API_URL_BEAN, null);
-                        if (moreSourceBean != null && moreSourceBean.getSourceUrl().equals(apiUrl)) {//修复直接推送线路导致直播显示重复问题
-                            liveSourceBean.setSourceName(moreSourceBean.getSourceName() + "直播");
-                        }
-                    }
-                    list.add(0, liveSourceBean);
-                    Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, list);
-                    Hawk.put(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean);
-                }
+            String liveUrl = getLiveUrlFromServer(apiUrl, infoJson);
+            if (!TextUtils.isEmpty(liveUrl)) {
+                saveServerLivesUrl(liveUrl);
                 LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
-                liveChannelGroup.setGroupName(realUrl);
+                liveChannelGroup.setGroupName(liveUrl);
                 liveChannelGroupList.add(liveChannelGroup);
             } else {
                 String lives = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject().toString();
@@ -629,9 +567,10 @@ public class ApiConfig implements Serializable {
                     }
                 }
             }
-        } catch (Throwable th) {
-            th.printStackTrace();
+        } catch (Exception e) {
+
         }
+
     }
 
     public void loadLives(JsonArray livesArray) {
@@ -646,10 +585,8 @@ public class ApiConfig implements Serializable {
             String groupName = ((JsonObject) groupElement).get("group").getAsString().trim();
             String[] splitGroupName = groupName.split("_", 2);
             liveChannelGroup.setGroupName(splitGroupName[0]);
-            if (splitGroupName.length > 1)
-                liveChannelGroup.setGroupPassword(splitGroupName[1]);
-            else
-                liveChannelGroup.setGroupPassword("");
+            if (splitGroupName.length > 1) liveChannelGroup.setGroupPassword(splitGroupName[1]);
+            else liveChannelGroup.setGroupPassword("");
             channelIndex = 0;
             for (JsonElement channelElement : ((JsonObject) groupElement).get("channels").getAsJsonArray()) {
                 JsonObject obj = (JsonObject) channelElement;
@@ -664,10 +601,8 @@ public class ApiConfig implements Serializable {
                 for (String url : urls) {
                     String[] splitText = url.split("\\$", 2);
                     sourceUrls.add(splitText[0]);
-                    if (splitText.length > 1)
-                        sourceNames.add(splitText[1]);
-                    else
-                        sourceNames.add("源" + Integer.toString(sourceIndex));
+                    if (splitText.length > 1) sourceNames.add(splitText[1]);
+                    else sourceNames.add("源" + Integer.toString(sourceIndex));
                     sourceIndex++;
                 }
                 liveChannelItem.setChannelSourceNames(sourceNames);
@@ -706,8 +641,7 @@ public class ApiConfig implements Serializable {
         try {
             String doStr = param.get("do").toString();
             if (param.containsKey("api")) {
-                if (doStr.equals("ck"))
-                    return PythonLoader.getInstance().proxyLocal("", "", param);
+                if (doStr.equals("ck")) return PythonLoader.getInstance().proxyLocal("", "", param);
                 SourceBean sourceBean = ApiConfig.get().getSource(doStr);
                 return PythonLoader.getInstance().proxyLocal(sourceBean.getKey(), sourceBean.getExt(), param);
             } else {
@@ -743,8 +677,7 @@ public class ApiConfig implements Serializable {
     }
 
     public SourceBean getSource(String key) {
-        if (!sourceBeanList.containsKey(key))
-            return null;
+        if (!sourceBeanList.containsKey(key)) return null;
         return sourceBeanList.get(key);
     }
 
@@ -759,8 +692,7 @@ public class ApiConfig implements Serializable {
     }
 
     public void setDefaultParse(ParseBean parseBean) {
-        if (this.mDefaultParse != null)
-            this.mDefaultParse.setDefault(false);
+        if (this.mDefaultParse != null) this.mDefaultParse.setDefault(false);
         this.mDefaultParse = parseBean;
         Hawk.put(HawkConfig.DEFAULT_PARSE, parseBean.getName());
         parseBean.setDefault(true);
@@ -804,8 +736,7 @@ public class ApiConfig implements Serializable {
             return null;
         }
         for (IJKCode code : ijkCodes) {
-            if (code.getName().equals(name))
-                return code;
+            if (code.getName().equals(name)) return code;
         }
         return ijkCodes.get(0);
     }
@@ -837,4 +768,85 @@ public class ApiConfig implements Serializable {
     }
 
 
+    //获取配置文件中的直播地址
+    private String getLiveUrlFromServer(String apiUrl, JsonObject infoJson) {
+        if (infoJson == null) {
+            return "";
+        }
+        try {
+            JsonObject livesOBJ = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject();
+            String liveSource = livesOBJ.toString();
+            int index = liveSource.indexOf("proxy://");
+            if (index != -1) {
+                int endIndex = liveSource.lastIndexOf("\"");
+                String realUrl;
+                realUrl = DefaultConfig.checkReplaceProxy(liveSource.substring(index, endIndex));
+                //clan
+                String extUrl = Uri.parse(realUrl).getQueryParameter("ext");
+                if (extUrl != null && !extUrl.isEmpty()) {
+                    String extUrlFix = "";
+                    if (extUrl.startsWith("http") || extUrl.startsWith("https")) {
+                        extUrlFix = extUrl;
+                    } else {
+                        extUrlFix = new String(Base64.decode(extUrl, Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
+                    }
+
+                    if (extUrlFix.startsWith("clan://")) {
+                        extUrlFix = clanContentFix(clanToAddress(extUrlFix), extUrlFix);
+                        extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                        realUrl = realUrl.replace(extUrl, extUrlFix);
+                    }
+                    //修复直播明文加载错误
+                    if (extUrlFix.startsWith("http") || extUrlFix.startsWith("https")) {
+                        extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                        realUrl = realUrl.replace(extUrl, extUrlFix);
+                    }
+                }
+                return realUrl;
+            }
+        } catch (Exception e) {
+            return "";
+        }
+
+        return "";
+    }
+
+    //选中直播地址并重载
+    public void selectLiveUrlAndLoad(LiveSourceBean liveSourceBean) {
+        liveChannelGroupList.clear();
+        LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
+        String url = liveSourceBean.getSourceUrl();
+        if (!url.startsWith("http://127.0.0.1")) {
+            if (isBase64Url(url)) {
+                url = new String(Base64.decode(url, Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP));
+            }
+            url = "http://127.0.0.1:9978/proxy?do=live&type=txt&ext=" + url;
+        }
+        liveChannelGroup.setGroupName(url);
+        liveChannelGroupList.add(liveChannelGroup);
+    }
+
+    /**
+     * 保存直播地址，但是不再切换到该地址
+     */
+    private void saveServerLivesUrl(String liveUrl) {//
+        LiveSourceBean liveSourceBean = new LiveSourceBean();
+        liveSourceBean.setSourceUrl(liveUrl);
+        liveSourceBean.setOfficial(true);
+        liveSourceBean.setExtraKey(Hawk.get(HawkConfig.API_URL));
+        MoreSourceBean moreSourceBean = Hawk.get(HawkConfig.API_URL_BEAN);
+        if (moreSourceBean != null) {
+            liveSourceBean.setSourceName(moreSourceBean.getSourceName());
+        }
+        ArrayList<LiveSourceBean> liveSourceBeanArrayList = Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, new ArrayList<>());
+        if (!liveSourceBeanArrayList.contains(liveSourceBean)) {
+            liveSourceBeanArrayList.add(liveSourceBean);
+        }
+        Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, liveSourceBeanArrayList);
+    }
+
+    public boolean isBase64Url(String originUrl) {
+        String base64Pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
+        return Pattern.matches(base64Pattern, originUrl);
+    }
 }

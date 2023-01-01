@@ -1,8 +1,6 @@
 package com.github.tvbox.osc.ui.adapter;
 
 import android.graphics.Color;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -68,7 +66,6 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
         }
         textview.setText(value.title);
         timeview.setText(value.start + "--" + value.end);
-        Log.e("roinlong", "getView: " + selectedEpgIndex);
         if (!ShiyiSelection) {
             Date now = new Date();
             if (now.compareTo(value.startdateTime) >= 0 && now.compareTo(value.enddateTime) <= 0) {
@@ -106,18 +103,18 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
     }
 
     public void setSelectedEpgIndex(int selectedEpgIndex) {
-        if (selectedEpgIndex == this.selectedEpgIndex) return;
-        int preSelectedIndex = this.selectedEpgIndex;
-        this.selectedEpgIndex = selectedEpgIndex;
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                if (preSelectedIndex != -1)
-                    notifyItemChanged(preSelectedIndex);
-                if (selectedEpgIndex != -1)
-                    notifyItemChanged(selectedEpgIndex);
-            }
-        });
+//        if (selectedEpgIndex == this.selectedEpgIndex) return;
+//        int preSelectedIndex = this.selectedEpgIndex;
+//        this.selectedEpgIndex = selectedEpgIndex;
+//        new Handler().post(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (preSelectedIndex != -1)
+//                    notifyItemChanged(preSelectedIndex);
+//                if (selectedEpgIndex != -1)
+//                    notifyItemChanged(selectedEpgIndex);
+//            }
+//        });
     }
 
     public int getFocusedEpgIndex() {
@@ -129,14 +126,14 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
         // V7LinearLayoutManager@58489aa, context:com.github.tvbox.osc.ui.activity.LivePlayActivity@59687f3
 
 
-        int preSelectedIndex = this.selectedEpgIndex;
-        this.focusedEpgIndex = focusedEpgIndex;
-        new Handler().post(() -> {
-            if (preSelectedIndex != -1)
-                notifyItemChanged(preSelectedIndex);
-            else if (focusedEpgIndex != -1)
-                notifyItemChanged(focusedEpgIndex);
-        });
+//        int preSelectedIndex = this.selectedEpgIndex;
+//        this.focusedEpgIndex = focusedEpgIndex;
+//        new Handler().post(() -> {
+//            if (preSelectedIndex != -1)
+//                notifyItemChanged(preSelectedIndex);
+//            else if (focusedEpgIndex != -1)
+//                notifyItemChanged(focusedEpgIndex);
+//        });
 
     }
 }

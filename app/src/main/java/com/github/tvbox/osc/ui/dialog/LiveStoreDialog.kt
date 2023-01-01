@@ -156,7 +156,8 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
     private fun selectNewLiveSource(liveSourceBean: LiveSourceBean) {
         Hawk.put(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean)
         this.dismiss()
-        ApiConfig.get().loadLiveSourceUrl(Hawk.get(HawkConfig.API_URL, ""), null)
+        ApiConfig.get().selectLiveUrlAndLoad(liveSourceBean)//重载直播地址
+//        ApiConfig.get().loadLiveSourceUrl(Hawk.get(HawkConfig.API_URL, ""), null)
         ActivityUtils.getTopActivity().finish()//结束掉直播页，不然会onNewIntent
         val intent = Intent(context, LivePlayActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
