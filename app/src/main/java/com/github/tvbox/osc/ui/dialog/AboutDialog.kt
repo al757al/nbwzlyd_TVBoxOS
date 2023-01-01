@@ -18,6 +18,7 @@ class AboutDialog(context: Context) : BaseDialog(context) {
                     1、直播右上角展示epg信息
                     2、直播地址与线路解耦，直播地址不再根据线路变化。切换线路只会保存直播地址
                     3、修复遥控器模式下直播选中频道后偶现焦点丢失问题
+                    4、修复豆瓣显示内容不全问题
                     
     """.trimIndent()
             ).create()
