@@ -16,7 +16,8 @@ class AboutDialog(context: Context) : BaseDialog(context) {
             .append("\n").append(
                 """  
                     1、直播右上角展示epg信息
-                    2、直播地址与线路解耦，直播地址不在根据线路变化。切换线路只会保存直播地址
+                    2、直播地址与线路解耦，直播地址不再根据线路变化。切换线路只会保存直播地址
+                    
     """.trimIndent()
             ).create()
     }
