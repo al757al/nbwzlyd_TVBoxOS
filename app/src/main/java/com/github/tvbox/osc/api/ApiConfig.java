@@ -822,6 +822,10 @@ public class ApiConfig implements Serializable {
             }
             url = "http://127.0.0.1:9978/proxy?do=live&type=txt&ext=" + url;
         }
+        ArrayList<LiveSourceBean> liveSourceBeanArrayList = Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, new ArrayList<>());
+        liveSourceBeanArrayList.remove(liveSourceBean);
+        liveSourceBeanArrayList.add(0, liveSourceBean);
+        Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, liveSourceBeanArrayList);
         liveChannelGroup.setGroupName(url);
         liveChannelGroupList.add(liveChannelGroup);
     }
@@ -836,7 +840,7 @@ public class ApiConfig implements Serializable {
         liveSourceBean.setExtraKey(Hawk.get(HawkConfig.API_URL));
         MoreSourceBean moreSourceBean = Hawk.get(HawkConfig.API_URL_BEAN);
         if (moreSourceBean != null) {
-            liveSourceBean.setSourceName(moreSourceBean.getSourceName());
+            liveSourceBean.setSourceName(moreSourceBean.getSourceName() + "直播");
         }
         ArrayList<LiveSourceBean> liveSourceBeanArrayList = Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, new ArrayList<>());
         if (!liveSourceBeanArrayList.contains(liveSourceBean)) {
