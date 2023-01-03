@@ -293,6 +293,7 @@ public class HomeActivity extends BaseActivity {
         Looper.myQueue().addIdleHandler(() -> {
             ControlManager.init(HomeActivity.this);
             ControlManager.get().startServer();
+            ApiConfig.get().refreshSavedLiveBeans();
             return false;
         });
         //解决偶现的OkGo没有初始化问题

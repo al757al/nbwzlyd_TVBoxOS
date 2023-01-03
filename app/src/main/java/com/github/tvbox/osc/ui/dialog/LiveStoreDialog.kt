@@ -7,7 +7,6 @@ import android.util.Base64
 import android.view.View
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.SpanUtils
@@ -20,7 +19,6 @@ import com.github.tvbox.osc.event.RefreshEvent
 import com.github.tvbox.osc.ext.removeFirstIf
 import com.github.tvbox.osc.server.ControlManager
 import com.github.tvbox.osc.ui.activity.LivePlayActivity
-import com.github.tvbox.osc.ui.dialog.util.AdapterDiffCallBack
 import com.github.tvbox.osc.ui.dialog.util.MyItemTouchHelper
 import com.github.tvbox.osc.ui.tv.QRCodeGen
 import com.github.tvbox.osc.util.HawkConfig
@@ -187,40 +185,21 @@ class LiveStoreDialog(private val activity: Activity) : BaseDialog(activity) {
 
 
     private fun inflateCustomSource(result: MutableList<LiveSourceBean>) {
-        val localData =
-            Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, ArrayList<LiveSourceBean>())
-        if (localData.isEmpty() && result.isNotEmpty()) {//如果本地保存的是空的，就把新的结果放进去
-            localData.addAll(result)
-        } else {//否则进行匹配，只保存本地没有的
-            val customMap = localData.associateBy { it.uniKey }
-            val newResultMap = result.associateBy { it.uniKey }
-            newResultMap.forEach {
-                if (customMap[it.key] == null) {
-                    localData.add(it.value)
-                }
-            }
-        }
         val lastSelectBean =
             Hawk.get(
                 HawkConfig.LIVE_SOURCE_URL_CURRENT,
                 LiveSourceBean()
             )
         var index = 0
-        localData.forEach {
-            if (it.sourceUrl != lastSelectBean?.sourceUrl) {
+        result.forEach {
+            if (it.uniKey != lastSelectBean.uniKey) {
                 it.isSelected = false
             } else {
                 it.isSelected = true
                 index = result.indexOf(it)
             }
         }
-        val diffResult =
-            DiffUtil.calculateDiff(AdapterDiffCallBack(mAdapter.data, localData), false)
-        //为了适配diffUtil才这么写的
-        mAdapter.data.clear()
-        mAdapter.data.addAll(localData)
-        //更新最新的地址
-        diffResult.dispatchUpdatesTo(mAdapter)
+        mAdapter.setNewData(result)
         if (index != -1) {
             mRecyclerView?.post {
                 mRecyclerView?.scrollToPosition(index)

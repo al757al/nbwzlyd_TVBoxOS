@@ -335,7 +335,11 @@ public class LivePlayActivity extends BaseActivity {
             epgListAdapter.setNewData(epgdata);
         }
         if (!CollectionUtils.isEmpty(epgdata)) {
-            tvShow.setText("当前节目: " + epgdata.get(getLastEpg()).title);
+            int lastEpgIndex = getLastEpg();
+            if (lastEpgIndex == -1) {
+                return;
+            }
+            tvShow.setText("当前节目: " + epgdata.get(lastEpgIndex).title);
             tvShow.setVisibility(View.VISIBLE);
         }
     }

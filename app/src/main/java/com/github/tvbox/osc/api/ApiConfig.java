@@ -541,36 +541,13 @@ public class ApiConfig implements Serializable {
     public void loadLiveSourceUrl(String apiUrl, JsonObject infoJson) {
         // 直播源
         liveChannelGroupList.clear();           //修复从后台切换重复加载频道列表
-        try {
-            String liveUrl = getLiveUrlFromServer(apiUrl, infoJson);
-            if (!TextUtils.isEmpty(liveUrl)) {
-                saveServerLivesUrl(liveUrl);
-                LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
-                liveChannelGroup.setGroupName(liveUrl);
-                liveChannelGroupList.add(liveChannelGroup);
-            } else {
-                String lives = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject().toString();
-                if (!lives.contains("type")) {
-                    loadLives(infoJson.get("lives").getAsJsonArray());
-                } else {
-                    JsonObject fengMiLives = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject();
-                    String type = fengMiLives.get("type").getAsString();
-                    if (type.equals("0")) {
-                        String url = fengMiLives.get("url").getAsString();
-                        if (url.startsWith("http")) {
-                            url = Base64.encodeToString(url.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
-                        }
-                        url = "http://127.0.0.1:9978/proxy?do=live&type=txt&ext=" + url;
-                        LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
-                        liveChannelGroup.setGroupName(url);
-                        liveChannelGroupList.add(liveChannelGroup);
-                    }
-                }
-            }
-        } catch (Exception e) {
-
+        String liveUrl = getLiveUrlFromServer(apiUrl, infoJson);
+        if (!TextUtils.isEmpty(liveUrl)) {
+            saveServerLivesUrl(liveUrl);
+            LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
+            liveChannelGroup.setGroupName(liveUrl);
+            liveChannelGroupList.add(liveChannelGroup);
         }
-
     }
 
     public void loadLives(JsonArray livesArray) {
@@ -803,6 +780,22 @@ public class ApiConfig implements Serializable {
                     }
                 }
                 return realUrl;
+            } else {
+                String lives = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject().toString();
+                if (!lives.contains("type")) {
+                    loadLives(infoJson.get("lives").getAsJsonArray());
+                } else {
+                    JsonObject fengMiLives = infoJson.get("lives").getAsJsonArray().get(0).getAsJsonObject();
+                    String type = fengMiLives.get("type").getAsString();
+                    if (type.equals("0")) {
+                        String url = fengMiLives.get("url").getAsString();
+                        if (url.startsWith("http")) {
+                            url = Base64.encodeToString(url.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                        }
+                        url = "http://127.0.0.1:9978/proxy?do=live&type=txt&ext=" + url;
+                        return url;
+                    }
+                }
             }
         } catch (Exception e) {
             return "";
@@ -852,5 +845,38 @@ public class ApiConfig implements Serializable {
     public boolean isBase64Url(String originUrl) {
         String base64Pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
         return Pattern.matches(base64Pattern, originUrl);
+    }
+
+    public void refreshSavedLiveBeans() {
+        ArrayList<LiveSourceBean> liveSourceBeanArrayList = Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, new ArrayList<>());
+        boolean needUpdate = false;
+        for (LiveSourceBean liveSourceBean : liveSourceBeanArrayList) {
+            String url = liveSourceBean.getSourceUrl();
+            if (!url.startsWith("http://127.0.0.1")) {
+                if (isBase64Url(url)) {
+                    url = new String(Base64.decode(url, Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP));
+                }
+                url = "http://127.0.0.1:9978/proxy?do=live&type=txt&ext=" + url;
+                liveSourceBeanArrayList.remove(liveSourceBean);
+                liveSourceBean.setSourceUrl(url);
+                needUpdate = true;
+            }
+        }
+        if (!liveSourceBeanArrayList.isEmpty() && needUpdate) {
+            Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, liveSourceBeanArrayList);
+        }
+        LiveSourceBean liveSourceBean = Hawk.get(HawkConfig.LIVE_SOURCE_URL_CURRENT, null);
+        if (liveSourceBean != null) {
+            String url = liveSourceBean.getSourceUrl();
+            if (!url.startsWith("http://127.0.0.1")) {
+                if (isBase64Url(url)) {
+                    url = new String(Base64.decode(url, Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP));
+                }
+                url = "http://127.0.0.1:9978/proxy?do=live&type=txt&ext=" + url;
+                liveSourceBean.setSourceUrl(url);
+                Hawk.put(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean);
+            }
+        }
+
     }
 }
