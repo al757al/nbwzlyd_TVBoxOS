@@ -286,6 +286,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
             handleFling(PlayerUtils.isXEdge(getContext(), e1));//如果是边缘的话，让fling处理事件
             return true;
         }
+        handleFling(false);
         float deltaX = e1.getX() - e2.getX();
         float deltaY = e1.getY() - e2.getY();
         if (mFirstTouch) {
