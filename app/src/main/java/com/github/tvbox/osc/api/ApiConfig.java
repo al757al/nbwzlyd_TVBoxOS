@@ -769,7 +769,7 @@ public class ApiConfig implements Serializable {
                     }
 
                     if (extUrlFix.startsWith("clan://")) {
-                        extUrlFix = clanContentFix(clanToAddress(extUrlFix), extUrlFix);
+                        extUrlFix = clanContentFix(clanToAddress(apiUrl), extUrlFix);
                         extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
                         realUrl = realUrl.replace(extUrl, extUrlFix);
                     }
@@ -841,6 +841,9 @@ public class ApiConfig implements Serializable {
         ArrayList<LiveSourceBean> liveSourceBeanArrayList = Hawk.get(HawkConfig.LIVE_SOURCE_URL_HISTORY, new ArrayList<>());
         if (!liveSourceBeanArrayList.contains(liveSourceBean)) {
             liveSourceBeanArrayList.add(liveSourceBean);
+            if (liveSourceBeanArrayList.size() == 1) {
+                Hawk.put(HawkConfig.LIVE_SOURCE_URL_CURRENT, liveSourceBean);
+            }
         }
         Hawk.put(HawkConfig.LIVE_SOURCE_URL_HISTORY, liveSourceBeanArrayList);
     }

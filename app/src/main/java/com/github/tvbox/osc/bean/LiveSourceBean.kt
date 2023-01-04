@@ -16,6 +16,6 @@ class LiveSourceBean : BaseItem() {
     var canDelete = true
     var extraKey = ""
     override val uniKey: String
-        get() = (sourceUrl + sourceName).hashCode().toString()
+        get() = sourceUrl.hashCode().toString()
 
 }
