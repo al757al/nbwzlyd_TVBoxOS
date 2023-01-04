@@ -216,7 +216,6 @@ public class PlayActivity extends BaseActivity {
         mController.setListener(new VodController.VodControlListener() {
             @Override
             public void playNext(boolean rmProgress) {
-                ToastUtils.showShort("下一集");
                 String preProgressKey = progressKey;
                 PlayActivity.this.playNext(rmProgress);
                 if (rmProgress && preProgressKey != null)
@@ -225,7 +224,6 @@ public class PlayActivity extends BaseActivity {
 
             @Override
             public void playPre() {
-                ToastUtils.showShort("上一集");
                 PlayActivity.this.playPrevious();
             }
 
