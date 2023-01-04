@@ -227,7 +227,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     }
                 }
             }
-            String doubanUrl = "https://movie.douban.com/j/new_search_subjects?sort=U&range=0,10&tags=&playable=1&start=0&year_range=" + year + "," + 2022;
+            String doubanUrl = "https://movie.douban.com/j/new_search_subjects?sort=U&range=0,10&tags=&playable=1&start=0&year_range=" + year + "," + year;
             OkGo.<String>get(doubanUrl)
                     .headers("User-Agent", UA.randomOne())
                     .execute(new AbsCallback<String>() {
