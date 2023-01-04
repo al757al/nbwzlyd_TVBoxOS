@@ -32,6 +32,7 @@ import com.github.tvbox.osc.subtitle.widget.SimpleSubtitleView;
 import com.github.tvbox.osc.ui.adapter.ParseAdapter;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
+import com.github.tvbox.osc.ui.dialog.SpeedPlayDialog;
 import com.github.tvbox.osc.ui.view.ChoosePlayPopUp;
 import com.github.tvbox.osc.ui.view.PlayerMoreFucPop;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
@@ -397,7 +398,7 @@ public class VodController extends BaseController {
                                 scaleVideoView(textView);
                             }
                             if (textView.getId() == R.id.play_speed) {
-                                setSpeedVideoView(textView);
+//                                setSpeedVideoView(textView);
                             }
                             if (textView.getId() == R.id.audio_track_select) {
                                 setAudioTrack();
@@ -536,45 +537,20 @@ public class VodController extends BaseController {
         mPlayerSpeedBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                setSpeedVideoView((TextView) v);
+                if (mActivity == null || mActivity.isDestroyed() || mActivity.isFinishing()) {
+                    return;
+                }
+                double defaultSpeed = mPlayerConfig.optDouble("sp", 1.0);
+                new SpeedPlayDialog().showSpeedSelectDialog(mActivity, defaultSpeed, value -> {
+                    setSpeedVideoView((TextView) v, value);
+                    return null;
+                });
+
             }
         });
         mPlayerBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                myHandle.removeCallbacks(myRunnable);
-                myHandle.postDelayed(myRunnable, myHandleSeconds);
-                try {
-                    int playerType = mPlayerConfig.getInt("pl");
-                    ArrayList<Integer> exsitPlayerTypes = PlayerHelper.getExistPlayerTypes();
-                    int playerTypeIdx = 0;
-                    int playerTypeSize = exsitPlayerTypes.size();
-                    for (int i = 0; i < playerTypeSize; i++) {
-                        if (playerType == exsitPlayerTypes.get(i)) {
-                            if (i == playerTypeSize - 1) {
-                                playerTypeIdx = 0;
-                            } else {
-                                playerTypeIdx = i + 1;
-                            }
-                        }
-                    }
-                    playerType = exsitPlayerTypes.get(playerTypeIdx);
-                    mPlayerConfig.put("pl", playerType);
-                    updatePlayerCfgView();
-                    listener.updatePlayerCfg();
-                    listener.replay(false);
-//                    hideBottom();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                mPlayerBtn.requestFocus();
-                mPlayerBtn.requestFocusFromTouch();
-            }
-        });
-
-        mPlayerBtn.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 FastClickCheckUtil.check(view);
@@ -631,7 +607,6 @@ public class VodController extends BaseController {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                return true;
             }
         });
         mPlayerIJKBtn.setOnClickListener(new OnClickListener() {
@@ -773,19 +748,15 @@ public class VodController extends BaseController {
         hideBottom();
     }
 
-    private void setSpeedVideoView(TextView textView) {
+    private void setSpeedVideoView(TextView textView, double speed) {
         myHandle.removeCallbacks(myRunnable);
         myHandle.postDelayed(myRunnable, myHandleSeconds);
         try {
-            float speed = (float) mPlayerConfig.getDouble("sp");
-            speed += 0.25f;
-            if (speed > 3)
-                speed = 0.5f;
             mPlayerConfig.put("sp", speed);
             updatePlayerCfgView();
             textView.setText("x" + mPlayerConfig.getDouble("sp"));
             listener.updatePlayerCfg();
-            mControlWrapper.setSpeed(speed);
+            mControlWrapper.setSpeed((float) speed);
         } catch (JSONException e) {
             e.printStackTrace();
         }
