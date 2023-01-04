@@ -807,6 +807,9 @@ public class ApiConfig implements Serializable {
     //选中直播地址并重载
     public void selectLiveUrlAndLoad(LiveSourceBean liveSourceBean) {
         liveChannelGroupList.clear();
+        if (liveSourceBean == null) {
+            return;
+        }
         LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
         String url = liveSourceBean.getSourceUrl();
         if (!url.startsWith("http://127.0.0.1")) {
