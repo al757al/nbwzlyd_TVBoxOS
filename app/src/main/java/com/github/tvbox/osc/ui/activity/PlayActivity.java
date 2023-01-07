@@ -483,6 +483,19 @@ public class PlayActivity extends BaseActivity {
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.index);
                     }
                     if (mediaPlayer instanceof ExoMediaPlayer) {
+//                        ExoMediaPlayer player = (ExoMediaPlayer) mediaPlayer;
+//                        player.getCurrentTracks().getGroups();
+//
+//                        player.setTrackSelectionParameters(
+//                                player.getTrackSelectionParameters()
+//                                        .buildUpon()
+//                                        .setOverrideForType(
+//                                                new TrackSelectionOverride(
+//                                                        player.getCurrentTracks().getGroups().get(pos).getMediaTrackGroup(),
+//                                                        /* trackIndex= */ 0))
+//                                        .build());
+
+
                         DefaultTrackSelector trackSelector = (DefaultTrackSelector) ((ExoMediaPlayer) mediaPlayer).getTrackSelector();
                         ((ExoMediaPlayer) mediaPlayer).setTrackSelectionParameters(trackSelector.getParameters().buildUpon().
                                 setPreferredTextLanguage(value.language).

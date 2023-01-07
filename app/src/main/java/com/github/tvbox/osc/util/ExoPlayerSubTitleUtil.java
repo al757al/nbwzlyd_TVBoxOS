@@ -22,6 +22,8 @@ import com.google.common.collect.ImmutableList;
 public class ExoPlayerSubTitleUtil {
     private static TrackInfo trackInfo;
 
+    private static TrackGroup trackGroup;
+
     public static final ImmutableList<Integer> SUPPORTED_TRACK_TYPES = ImmutableList.of(C.TRACK_TYPE_VIDEO, C.TRACK_TYPE_AUDIO, C.TRACK_TYPE_TEXT);
 
     public static void initTrackSelector(TrackSelector trackSelector, TrackInfoCallBack trackInfoCallBack) {
@@ -61,6 +63,10 @@ public class ExoPlayerSubTitleUtil {
 
     public interface TrackInfoCallBack {
         void onTrackInfoGet(TrackInfo trackInfo);
+    }
+
+    public static TrackGroup getTrackGroup() {
+        return trackGroup;
     }
 
 
