@@ -2,6 +2,7 @@ package xyz.doikki.videoplayer.exo;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -18,8 +19,10 @@ import com.google.android.exoplayer2.analytics.DefaultAnalyticsCollector;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.text.Cue;
+import com.google.android.exoplayer2.text.CueGroup;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Clock;
@@ -81,9 +84,22 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         mTrackSelector = trackSelector;
     }
 
+    public void setTrackSelectionParameters(TrackSelectionParameters trackSelectionParameters) {
+        mInternalPlayer.setTrackSelectionParameters(trackSelectionParameters);
+    }
+
     public TrackSelector getTrackSelector() {
         return mTrackSelector;
     }
+
+    public Tracks getCurrentTracks() {
+        return mInternalPlayer.getCurrentTracks();
+    }
+
+    public TrackSelectionParameters getTrackSelectionParameters() {
+        return mInternalPlayer.getTrackSelectionParameters();
+    }
+
 
     public void setRenderersFactory(RenderersFactory renderersFactory) {
         mRenderersFactory = renderersFactory;
@@ -143,6 +159,19 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             String text = cues.get(0).text + "";
             subTitleChangeListener.onSubTitleChange(text);
         }
+    }
+
+    @Override
+    public void onCues(CueGroup cueGroup) {
+        Player.Listener.super.onCues(cueGroup);
+        for (Cue cue : cueGroup.cues) {
+            Log.d("derek110", "onCues: " + cue.text);
+        }
+    }
+
+    @Override
+    public void onTrackSelectionParametersChanged(TrackSelectionParameters parameters) {
+        Player.Listener.super.onTrackSelectionParametersChanged(parameters);
     }
 
     public void setOnSubTitleChangeListener(SubtitleChangeListener subTitleChangeListener) {

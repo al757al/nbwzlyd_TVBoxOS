@@ -421,14 +421,18 @@ public class LivePlayActivity extends BaseActivity {
                 }
             };
             countDownTimer.start();
-            if (channel_Name == null || channel_Name.getSourceNum() <= 0) {
-                tv_srcinfo.setText("1/1");
-            } else {
-                tv_srcinfo.setText("[线路" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
-            }
+            updateTvScriptInfo();
             tvShow.setVisibility(View.GONE);
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
             mHandler.post(mUpdateNetSpeedRun);
+        }
+    }
+
+    private void updateTvScriptInfo() {
+        if (channel_Name == null || channel_Name.getSourceNum() <= 0) {
+            tv_srcinfo.setText("1/1");
+        } else {
+            tv_srcinfo.setText("[线路" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
         }
     }
 
@@ -1123,6 +1127,7 @@ public class LivePlayActivity extends BaseActivity {
                         tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                         tv_duration.setText(durationToString((int) mVideoView.getDuration()));
                         liveController.hideProgressContainer();
+                        tip_chname.setText(channel_Name.getChannelName() + "  [" + mVideoView.getVideoSize()[0] + "x" + mVideoView.getVideoSize()[1] + "]");
                         break;
                     case VideoView.STATE_ERROR:
                     case VideoView.STATE_PLAYBACK_COMPLETED:

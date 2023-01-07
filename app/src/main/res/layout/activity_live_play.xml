@@ -389,7 +389,7 @@
                 android:ellipsize="marquee"
                 android:gravity="center"
                 android:marqueeRepeatLimit="marquee_forever"
-                android:paddingRight="12dp"
+                android:paddingRight="8dp"
                 android:shadowColor="#CC000000"
                 android:singleLine="true"
                 android:text="10"

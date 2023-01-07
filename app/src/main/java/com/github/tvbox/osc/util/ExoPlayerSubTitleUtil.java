@@ -9,6 +9,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.common.collect.ImmutableList;
 
 /**
  * <pre>
@@ -20,6 +21,8 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
  */
 public class ExoPlayerSubTitleUtil {
     private static TrackInfo trackInfo;
+
+    public static final ImmutableList<Integer> SUPPORTED_TRACK_TYPES = ImmutableList.of(C.TRACK_TYPE_VIDEO, C.TRACK_TYPE_AUDIO, C.TRACK_TYPE_TEXT);
 
     public static void initTrackSelector(TrackSelector trackSelector, TrackInfoCallBack trackInfoCallBack) {
         trackInfo = new TrackInfo();
@@ -38,10 +41,6 @@ public class ExoPlayerSubTitleUtil {
                             audioTrackInfo.name = format.label;
                             audioTrackInfo.language = format.language;
                             trackInfo.addAudio(audioTrackInfo);
-//                            LogUtils.d("checkAudio", trackGroup.getFormat(0).language);
-//                            mapTrackSelector.setParameters(
-//                                    mapTrackSelector.getParameters().buildUpon()
-//                                            .setPreferredAudioLanguage(trackGroup.getFormat(0).language));
                         }
                     } else if (C.TRACK_TYPE_TEXT == mappedTrackInfo.getRendererType(i)) { //判断是否是字幕
                         for (int groupIndex = 0; groupIndex < rendererTrackGroups.length; groupIndex++) {
@@ -52,9 +51,6 @@ public class ExoPlayerSubTitleUtil {
                             titleTrackInfo.name = format.label;
                             titleTrackInfo.language = format.language;
                             trackInfo.addSubtitle(titleTrackInfo);
-//                            mapTrackSelector.setParameters(
-//                                    mapTrackSelector.getParameters().buildUpon()
-//                                            .setPreferredTextLanguage(trackGroup.getFormat(0).language));//这个方法就是字幕轨道
                         }
                     }
                 }

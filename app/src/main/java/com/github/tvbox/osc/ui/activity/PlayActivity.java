@@ -484,10 +484,9 @@ public class PlayActivity extends BaseActivity {
                     }
                     if (mediaPlayer instanceof ExoMediaPlayer) {
                         DefaultTrackSelector trackSelector = (DefaultTrackSelector) ((ExoMediaPlayer) mediaPlayer).getTrackSelector();
-                        trackSelector.setParameters(trackSelector.getParameters().buildUpon().
+                        ((ExoMediaPlayer) mediaPlayer).setTrackSelectionParameters(trackSelector.getParameters().buildUpon().
                                 setPreferredTextLanguage(value.language).
-                                setSelectUndeterminedTextLanguage(true).
-                                build());//这个方法就是字幕轨道
+                                build());
                     }
 
                     new Handler().postDelayed(() -> {
@@ -621,17 +620,14 @@ public class PlayActivity extends BaseActivity {
 
         if (mVideoView.getMediaPlayer() instanceof ExoMediaPlayer) {
             try {
-                ExoPlayerSubTitleUtil.initTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector(), new ExoPlayerSubTitleUtil.TrackInfoCallBack() {
-                    @Override
-                    public void onTrackInfoGet(TrackInfo trackInfo) {
-                        mController.mSubtitleView.hasInternal = trackInfo.getSubtitle().size() > 0;
-                        if (mController.mSubtitleView.hasInternal) {
-                            ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(text -> {
-                                com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
-                                subtitle.content = text.replace("null", "");
-                                mController.mSubtitleView.onSubtitleChanged(subtitle);
-                            });
-                        }
+                ExoPlayerSubTitleUtil.initTrackSelector(((ExoMediaPlayer) (mVideoView.getMediaPlayer())).getTrackSelector(), trackInfo1 -> {
+                    mController.mSubtitleView.hasInternal = trackInfo1.getSubtitle().size() > 0;
+                    if (mController.mSubtitleView.hasInternal) {
+                        ((ExoMediaPlayer) mVideoView.getMediaPlayer()).setOnSubTitleChangeListener(text -> {
+                            com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+                            subtitle.content = text.replace("null", "");
+                            mController.mSubtitleView.onSubtitleChanged(subtitle);
+                        });
                     }
                 });
 
