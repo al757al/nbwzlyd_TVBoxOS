@@ -122,6 +122,9 @@ class ChoosePlayPopUp(context: Context?) : BasePopupWindow(context) {
             false
         }
 
+        mGridView?.scrollToPositionWithOffset(vodInfo?.playIndex ?: 0, 0, true)
+
+
     }
 
     override fun showPopupWindow(anchorView: View?) {
