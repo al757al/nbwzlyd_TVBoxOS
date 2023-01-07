@@ -13,7 +13,6 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -974,6 +973,11 @@ public class DetailActivity extends BaseActivity {
                 return true;
             }
         }
+        if (!fullWindows) {
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                toggleFullPreview();
+            }
+        }
         return super.onKeyUp(keyCode, event);
     }
 
@@ -985,18 +989,6 @@ public class DetailActivity extends BaseActivity {
             }
         }
         return super.onKeyLongPress(keyCode, event);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (showPreview && !fullWindows) {
-            Rect editTextRect = new Rect();
-            llPlayerFragmentContainerBlock.getHitRect(editTextRect);
-            if (editTextRect.contains((int) ev.getX(), (int) ev.getY())) {
-                return true;
-            }
-        }
-        return super.dispatchTouchEvent(ev);
     }
 
     // preview
