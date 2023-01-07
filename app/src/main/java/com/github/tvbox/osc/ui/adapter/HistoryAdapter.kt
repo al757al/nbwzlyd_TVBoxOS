@@ -6,8 +6,8 @@ import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.github.tvbox.osc.R
-import com.github.tvbox.osc.api.ApiConfig
 import com.github.tvbox.osc.bean.VodInfo
+import com.github.tvbox.osc.ext.letGone
 import com.github.tvbox.osc.ext.letVisible
 import com.github.tvbox.osc.picasso.RoundTransformation
 import com.github.tvbox.osc.util.DefaultConfig
@@ -23,8 +23,13 @@ import me.jessyan.autosize.utils.AutoSizeUtils
 class HistoryAdapter : BaseQuickAdapter<VodInfo, BaseViewHolder>(R.layout.item_grid, ArrayList()) {
     override fun convert(helper: BaseViewHolder, item: VodInfo) {
         val tvYear = helper.getView<TextView>(R.id.tvYear)
-        tvYear.text = ApiConfig.get().getSource(item.sourceKey).name
-        tvYear.letVisible()
+
+        if (!item.sourceName.isNullOrEmpty()) {
+            tvYear.letVisible()
+            tvYear.text = item.sourceName
+        } else {
+            tvYear.letGone()
+        }
         helper.setVisible(R.id.tvLang, false)
         helper.setVisible(R.id.tvArea, false)
         helper.setVisible(R.id.tvNote, false)

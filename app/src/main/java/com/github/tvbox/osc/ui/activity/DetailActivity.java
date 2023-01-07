@@ -813,8 +813,9 @@ public class DetailActivity extends BaseActivity {
         } catch (Throwable th) {
             vodInfo.playNote = "";
         }
+        vodInfo.sourceName = ApiConfig.get().getSource(sourceKey).getName();
         RoomDataManger.insertVodRecord(sourceKey, vodInfo);
-        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HISTORY_REFRESH));
+//        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HISTORY_REFRESH));
     }
 
     private void initViewModel() {

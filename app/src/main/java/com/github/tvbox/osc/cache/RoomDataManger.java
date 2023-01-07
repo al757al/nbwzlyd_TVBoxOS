@@ -4,8 +4,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.github.tvbox.osc.api.ApiConfig;
-import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.data.AppDataManager;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -106,9 +104,6 @@ public class RoomDataManger {
                         info = getVodInfoGson().fromJson(record.dataJson, new TypeToken<VodInfo>() {
                         }.getType());
                         info.sourceKey = record.sourceKey;
-                        SourceBean sourceBean = ApiConfig.get().getSource(info.sourceKey);
-                        if (sourceBean == null || info.name == null)
-                            info = null;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

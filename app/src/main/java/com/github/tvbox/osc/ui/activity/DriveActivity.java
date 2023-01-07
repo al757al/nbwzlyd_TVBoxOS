@@ -331,6 +331,23 @@ public class DriveActivity extends BaseActivity {
         bundle.putSerializable("VodInfo", vodInfo);
         // takagen99 - to play file here zzzzzzzzzzzzzzz
         jumpActivity(PlayActivity.class, bundle);
+//
+//        vodInfo.seriesFlags = new ArrayList<>();
+//        vodInfo.seriesFlags.add(new VodInfo.VodSeriesFlag("drive"));
+//        vodInfo.sourceKey = currentDrive.name;
+//        vodInfo.sourceName = currentDrive.name;
+//        vodInfo.pic ="https://avatars.githubusercontent.com/u/97389433?s=120&v=4";
+//        vodInfo.seriesMap = new LinkedHashMap<>();
+//        vodInfo.playFlag = vodInfo.sourceKey;
+//
+//        ArrayList<VodInfo.VodSeries> data = new ArrayList<>();
+//        VodInfo.VodSeries  vodSeries = new VodInfo.VodSeries();
+//        vodSeries.name = name;
+//        vodSeries.url = fileUrl;
+//        data.add(vodSeries);
+//        vodInfo.seriesMap.put(vodInfo.sourceKey,data);
+//        RoomDataManger.insertVodRecord(vodInfo.sourceKey, vodInfo);
+////
         mHandler.postDelayed(this::showSuccess, 300);
     }
 
