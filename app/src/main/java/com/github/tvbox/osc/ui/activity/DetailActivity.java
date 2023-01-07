@@ -1060,7 +1060,7 @@ public class DetailActivity extends BaseActivity {
     }
 
     private void scrollToPlayPosAndRequestFoucuse(int freshIndex) {
-        if (mGridView != null && mGridView.getLayoutManager() != null) {
+        if (mGridView != null && mGridView.getLayoutManager() != null && !fullWindows) {
             mGridView.getLayoutManager().scrollToPosition(freshIndex);
             new Handler().postDelayed(() -> {
                 View requestView = mGridView.getLayoutManager().findViewByPosition(freshIndex);
