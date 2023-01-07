@@ -166,6 +166,7 @@ public class LivePlayActivity extends BaseActivity {
     private View iv_playpause;
     private LiveController liveController;
     private ViewGroup mPlayRoot;
+    private boolean hasFloatViewBtn = false;
 
     @Override
     protected int getLayoutResID() {
@@ -1404,10 +1405,10 @@ public class LivePlayActivity extends BaseActivity {
         if (position == 5) {
             showLiveSourceDialog();
         }
-        if (position == 6) {
+        if (position == 6 && hasFloatViewBtn) {
             new LiveFloatViewUtil().openFloat(mVideoView, currentLiveChannelItem, (ArrayList<LiveChannelGroup>) liveChannelGroupList, currentChannelGroupIndex);
         }
-        if (position == 7) {
+        if (position == (hasFloatViewBtn ? 7 : 6)) {
             onBackPressed();
             finish();
         }
@@ -1693,6 +1694,7 @@ public class LivePlayActivity extends BaseActivity {
     private void initLiveSettingGroupList() {
         ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "直播地址", "退出直播"));
         if (!com.github.tvbox.osc.util.ScreenUtils.isTv(this)) {
+            hasFloatViewBtn = true;
             groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "直播地址", "悬浮播放", "退出直播"));
         }
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();

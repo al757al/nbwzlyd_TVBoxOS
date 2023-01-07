@@ -19,6 +19,7 @@ class AboutDialog(context: Context) : BaseDialog(context) {
                     2、优化播放器选择页面焦点展示
                     3、支持播放器切换选择框
                     4、优化直播长按后默认播放器立马全局生效
+                    5、直播增加分辨率展示
                     
     """.trimIndent()
             ).create()
