@@ -32,6 +32,14 @@ public class LivePlayerManager {
     }
 
     public void getDefaultLiveChannelPlayer(VideoView videoView) {
+        if (Hawk.contains(HawkConfig.LIVE_PLAY_TYPE)) {
+            int playType = Hawk.get(HawkConfig.LIVE_PLAY_TYPE);
+            try {
+                defaultPlayerConfig.put("pl", playType);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         PlayerHelper.updateCfg(videoView, defaultPlayerConfig);
         try {
             currentPlayerConfig = new JSONObject(defaultPlayerConfig.toString());
