@@ -48,7 +48,7 @@ class HistoryAdapter : BaseQuickAdapter<VodInfo, BaseViewHolder>(R.layout.item_g
                             AutoSizeUtils.mm2px(mContext, 400f)
                         )
                         .roundRadius(
-                            AutoSizeUtils.mm2px(mContext, 10f),
+                            AutoSizeUtils.mm2px(mContext, 12f),
                             RoundTransformation.RoundType.ALL
                         )
                 )

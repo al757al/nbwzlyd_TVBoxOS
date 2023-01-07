@@ -184,7 +184,7 @@ public class GridFragment extends BaseLazyFragment {
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                itemView.animate().scaleX(1.07f).scaleY(1.07f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
 
             @Override

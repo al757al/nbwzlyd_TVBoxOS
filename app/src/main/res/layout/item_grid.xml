@@ -4,14 +4,13 @@
     android:layout_width="@dimen/vs_214"
     android:layout_height="@dimen/vs_280"
     android:background="@drawable/shape_user_focus"
-    android:focusable="true"
-    android:padding="@dimen/vs_1">
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/ivThumb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/vs_1"
+        android:padding="@dimen/vs_2"
         android:scaleType="fitXY" />
 
     <LinearLayout
