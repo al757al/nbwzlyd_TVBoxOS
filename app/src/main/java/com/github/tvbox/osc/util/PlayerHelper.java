@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import tv.danmaku.ijk.media.player.IjkLibLoader;
+import xyz.doikki.videoplayer.aliplayer.AliyunMediaPlayerFactory;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
 import xyz.doikki.videoplayer.player.AndroidMediaPlayerFactory;
 import xyz.doikki.videoplayer.player.PlayerFactory;
@@ -66,7 +67,9 @@ public class PlayerHelper {
             }
         } else if (playerType == 2) {
             playerFactory = ExoMediaPlayerFactory.create();
-        } else {
+        } else if (playerType==3){
+            playerFactory = AliyunMediaPlayerFactory.create();
+        }else {
             playerFactory = AndroidMediaPlayerFactory.create();
         }
         RenderViewFactory renderViewFactory = null;
@@ -162,6 +165,7 @@ public class PlayerHelper {
             playersInfo.put(0, "系统播放器");
             playersInfo.put(1, "IJK播放器");
             playersInfo.put(2, "Exo播放器");
+            playersInfo.put(3, "阿里播放器");
             playersInfo.put(10, "MX播放器");
             playersInfo.put(11, "Reex播放器");
             playersInfo.put(12, "Kodi播放器");
@@ -178,6 +182,7 @@ public class PlayerHelper {
             playersExist.put(0, true);
             playersExist.put(1, true);
             playersExist.put(2, true);
+            playersExist.put(3, true);
             playersExist.put(10, MXPlayer.getPackageInfo() != null);
             playersExist.put(11, ReexPlayer.getPackageInfo() != null);
             playersExist.put(12, Kodi.getPackageInfo() != null);
