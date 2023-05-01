@@ -154,7 +154,7 @@ public class PushActivity extends BaseActivity {
     private LinkedHashMap<String, String> readLine(String content) {
         LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes(UTF-8)), UTF-8));
+            BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes("UTF-8")), "UTF-8"));
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.trim().contains("http")) {

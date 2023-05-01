@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
+import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.base.BaseLazyFragment;
 import com.github.tvbox.osc.bean.AbsSortXml;
@@ -170,7 +172,7 @@ public class HomeActivity extends BaseActivity {
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
                     MovieSort.SortData sortData = sortAdapter.getItem(position);
-                    if (!sortData.filters.isEmpty()) {
+                    if (sortData != null && !sortData.filters.isEmpty()) {
                         showFilterIcon(sortData.filterSelectCount());
                     }
                     HomeActivity.this.sortFocusView = view;
@@ -493,11 +495,13 @@ public class HomeActivity extends BaseActivity {
             jarInitOk = false;
             initData();
         } else if (event.type == RefreshEvent.ALI_TOKEN) {
-            Toast.makeText(mContext, "已获取到alitoken", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "已获取到alitoken,重新加载数据", Toast.LENGTH_SHORT).show();
             Hawk.put(HawkConfig.ALI_TOKEN, event.obj + "");
-            dataInitOk = false;
-            jarInitOk = false;
-            initData();
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                Intent intent = new Intent(App.getInstance(),HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                jumpActivity(HomeActivity.class);
+            }, 1000);
         }
     }
 
