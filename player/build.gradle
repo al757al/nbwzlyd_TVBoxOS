@@ -6,7 +6,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 18
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -41,6 +41,7 @@ dependencies {
     api "com.google.android.exoplayer:exoplayer-rtsp:2.14.2"
     api "com.google.android.exoplayer:extension-rtmp:2.14.2"
     api "com.google.android.exoplayer:extension-okhttp:2.14.2"
-    implementation 'com.aliyun.sdk.android:AliyunPlayer:5.5.1.0-full'
+    api 'com.aliyun.sdk.android:AliyunPlayer:4.5.0-full'
+    api 'com.alivc.conan:AlivcConan:0.9.5'
     api 'xyz.doikki.android.dkplayer:dkplayer-ui:3.3.5'
 }

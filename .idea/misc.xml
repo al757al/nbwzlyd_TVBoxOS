@@ -41,6 +41,7 @@
         <entry key="..\:/tvbox/TVBoxOS/app/src/main/res/layout/player_vod_control_view.xml" value="0.3619791666666667" />
         <entry key="app/src/main/res/layout/activity_fast_search.xml" value="0.5786666666666667" />
         <entry key="app/src/main/res/layout/activity_live_play.xml" value="0.2670906200317965" />
+        <entry key="app/src/main/res/layout/activity_push.xml" value="0.45" />
         <entry key="app/src/main/res/layout/dialog_checkbox_search.xml" value="0.5786666666666667" />
         <entry key="app/src/main/res/layout/dialog_select.xml" value="0.5786666666666667" />
         <entry key="app/src/main/res/layout/fragment_model.xml" value="0.5786666666666667" />
@@ -51,10 +52,18 @@
     </option>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$" />
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="SwUserDefinedSpecifications">
+    <option name="specTypeByUrl">
+      <map />
+    </option>
   </component>
 </project>

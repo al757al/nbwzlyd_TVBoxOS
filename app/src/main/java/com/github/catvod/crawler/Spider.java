@@ -2,7 +2,9 @@ package com.github.catvod.crawler;
 
 import android.content.Context;
 
+import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.OkGoHelper;
+import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONObject;
 
@@ -106,6 +108,14 @@ public abstract class Spider {
      */
     public boolean manualVideoCheck() {
         return false;
+    }
+
+    public String getToken(){
+        return Hawk.get(HawkConfig.ALI_TOKEN,"");
+    }
+
+    public void setToken(String newToken){
+        Hawk.put(HawkConfig.ALI_TOKEN,newToken);
     }
 
     public static Dns safeDns() {

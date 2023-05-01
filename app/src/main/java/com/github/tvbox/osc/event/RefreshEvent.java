@@ -20,6 +20,9 @@ public class RefreshEvent {
     public static final int TYPE_SETTING_SEARCH_TV = 11;
     public static final int TYPE_SUBTITLE_SIZE_CHANGE = 12;
     public static final int TYPE_FILTER_CHANGE = 13;
+
+    public static final int RE_LOAD_HOME_DATA = 25;//重新加载首页数据
+    public static final int ALI_TOKEN = 26;//接收到阿里token
     public int type;
     public Object obj;
 

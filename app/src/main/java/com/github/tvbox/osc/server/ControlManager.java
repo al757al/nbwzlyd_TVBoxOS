@@ -82,6 +82,11 @@ public class ControlManager {
                 public void onPushReceived(String url) {
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PUSH_URL, url));
                 }
+
+                @Override
+                public void onTokenReceived(String token) {
+                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.RE_LOAD_HOME_DATA,token));
+                }
             });
             try {
                 mServer.start();

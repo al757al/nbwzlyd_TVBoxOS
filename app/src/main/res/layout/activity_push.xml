@@ -1,47 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rootLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:focusable="true"
+              android:gravity="center"
+              android:layout_gravity="center"
+              android:focusableInTouchMode="true"
+              android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/vs_480"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/ivQRCode"
-            android:layout_width="@dimen/vs_300"
-            android:layout_height="@dimen/vs_300"
-            android:layout_gravity="center" />
+                android:id="@+id/ivQRCode"
+                android:layout_width="@dimen/vs_300"
+                android:layout_height="@dimen/vs_300"/>
 
         <TextView
-            android:id="@+id/tvAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/vs_20"
-            android:gravity="center"
-            android:lineSpacingMultiplier="1.5"
-            android:textAlignment="gravity"
-            android:textColor="@color/color_FFFFFF"
-            android:textSize="@dimen/ts_24"
-            tools:text="1111111111111111111111111111111111111111111111111111" />
+                android:id="@+id/tvAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vs_20"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.5"
+                android:textAlignment="gravity"
+                android:textColor="@color/color_FFFFFF"
+                android:textSize="@dimen/ts_24"
+                tools:text="11"/>
 
         <TextView
-            android:id="@+id/pushLocal"
+                android:id="@+id/pushLocal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vs_20"
+                android:background="@drawable/shape_user_focus"
+                android:focusable="true"
+                android:padding="@dimen/vs_10"
+                android:text="推送剪贴板内容"
+                android:textColor="@color/color_FFFFFF"
+                android:textSize="@dimen/ts_24"/>
+
+    </LinearLayout>
+
+    <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/vs_20"
-            android:background="@drawable/shape_user_focus"
-            android:focusable="true"
+            android:layout_marginTop="@dimen/vs_10"
             android:gravity="center"
-            android:padding="@dimen/vs_10"
-            android:text="推送剪贴板内容"
-            android:textColor="@color/color_FFFFFF"
-            android:textSize="@dimen/ts_24" />
+            android:layout_marginLeft="@dimen/vs_15"
+            android:orientation="vertical">
+
+        <EditText
+                android:id="@+id/et_push_url"
+                android:layout_width="@dimen/vs_420"
+                android:layout_height="@dimen/vs_440"
+                android:layout_gravity="center"
+                android:background="@drawable/input_search"
+                android:gravity="top"
+                android:padding="@dimen/vs_10"
+                android:hint="粘贴播放链接\n如果是推送阿里token,格式为token@xxxxxxx(xxxx为alitoken的值)
+\n扫码推送直接粘贴alitoken的值即可，无需填写token@"
+                android:paddingHorizontal="@dimen/dp_10"
+                android:paddingVertical="@dimen/dp_4"
+                android:textColor="@color/color_FFFFFF"
+                android:textColorHint="@color/color_6CFFFFFF"
+                android:textSize="@dimen/ts_22"/>
+
+        <TextView
+                android:id="@+id/confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingHorizontal="@dimen/vs_60"
+                android:paddingVertical="@dimen/vs_10"
+                android:background="@drawable/shape_user_focus"
+                android:focusable="false"
+                android:gravity="center"
+                android:text="确定"
+                android:layout_marginTop="@dimen/vs_10"
+                android:textColor="@color/color_FFFFFF"
+                android:textSize="@dimen/ts_24"/>
     </LinearLayout>
-</FrameLayout>
+</LinearLayout>
