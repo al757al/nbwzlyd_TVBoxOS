@@ -11,8 +11,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.bean.VodInfo;
@@ -79,13 +79,13 @@ public class PushActivity extends BaseActivity {
                 EditText editText = findViewById(R.id.et_push_url);
                 Editable text = editText.getText();
                 if (TextUtils.isEmpty(text)) {
-                    ToastUtils.showShort("请输入推送链接");
+                    Toast.makeText(mContext, "请输入推送链接", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 String textStr = text.toString().trim();
                 if (textStr.startsWith("token@")) {
-                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.ALI_TOKE_RECEIVE, textStr.split("@")[1]));
+                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.ALI_TOKEN, textStr.split("@")[1]));
                     finish();
                     return;
                 }
@@ -145,12 +145,6 @@ public class PushActivity extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putString("id", vodInfo.id);
         bundle.putString("sourceKey", vodInfo.sourceKey);
-        //说明是网盘的历史记录
-        if (vodInfo.sourceKey.contains(DriveActivity.DRIVE_KEY)) {
-
-            bundle.putSerializable("VodInfo", buildVodInfo(vodInfo));
-            jumpActivity(PlayActivity.class, bundle);
-        }
         jumpActivity(DetailActivity.class, bundle);
 
 
@@ -160,7 +154,7 @@ public class PushActivity extends BaseActivity {
     private LinkedHashMap<String, String> readLine(String content) {
         LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
+            BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes(UTF-8)), UTF-8));
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.trim().contains("http")) {
