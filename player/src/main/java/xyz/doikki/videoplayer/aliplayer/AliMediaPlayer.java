@@ -52,6 +52,7 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
         aliPlayer = AliPlayerFactory.createAliPlayer(context);
 //        Android播放器SDK支持使用HTTP/2协议，该协议通过多路复用，避免队头阻塞，以改善播放性能。示例如下：
 //        AliPlayerGlobalSettings.setUseHttp2(true);
+//        AliPlayerGlobalSettings.enableBufferToLocalCache(true);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
         aliPlayer.setOnStateChangedListener(onStateChangedListener);
         aliPlayer.setOnLoadingStatusListener(onLoadingStatusListener);
         aliPlayer.setOnSeekCompleteListener(onSeekCompleteListener);
-        aliPlayer.setOnSubtitleDisplayListener(onSubtitleDisplayListener);
+//        aliPlayer.setOnSubtitleDisplayListener(onSubtitleDisplayListener);
     }
 
     @Override
@@ -207,22 +208,22 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     }
 
+    private String TAG = "AliPlayer";
     private final IPlayer.OnLoadingStatusListener onLoadingStatusListener = new IPlayer.OnLoadingStatusListener() {
         @Override
         public void onLoadingBegin() {
-            //Log.e(TAG, "onLoadingStatusListener onLoadingBegin ");
+//            mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
 //            notifyOnInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_START, 0);
         }
 
         @Override
         public void onLoadingProgress(int percent, float netSpeed) {
-            //Log.e(TAG, "onLoadingStatusListener onLoadingProgress percent = " + percent + " netSpeed = " + netSpeed);
             bufferPercent = percent;
         }
 
         @Override
         public void onLoadingEnd() {
-            //Log.e(TAG, "onLoadingStatusListener onLoadingEnd ");
+//            mPlayerEventListener.onInfo(AbstractPlayer.MEDIA_INFO_RENDERING_START, 0);
 //            notifyOnInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_END, 0);
         }
     };
@@ -344,11 +345,12 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
             String msg = infoBean.getExtraMsg();//信息内容。
             long value = infoBean.getExtraValue(); //信息值。
             Log.d("derek110", "onInfo: " + code + " msg " + msg + "value " + value);
-            if (infoBean.getCode() == InfoCode.CurrentDownloadSpeed) {
-                //当前下载速度
-                netSpeedLong = infoBean.getExtraValue();
-                //Log.e(TAG, "sourceVideoPlayerInfo CurrentDownloadSpeed = " + netSpeedLong);
-            } else if (infoBean.getCode() == InfoCode.BufferedPosition) {
+//            if (infoBean.getCode() == InfoCode.CurrentDownloadSpeed) {
+//                //当前下载速度
+//                netSpeedLong = infoBean.getExtraValue();
+//                //Log.e(TAG, "sourceVideoPlayerInfo CurrentDownloadSpeed = " + netSpeedLong);
+//            } else
+            if (infoBean.getCode() == InfoCode.BufferedPosition) {
 //                //更新bufferedPosition
 //                mVideoBufferedPosition = infoBean.getExtraValue();
             } else if (infoBean.getCode() == InfoCode.CurrentPosition) {
@@ -385,28 +387,28 @@ public class AliMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     };
 
-    private final IPlayer.OnSubtitleDisplayListener onSubtitleDisplayListener = new IPlayer.OnSubtitleDisplayListener() {
-        @Override
-        public void onSubtitleExtAdded(int i, String s) {
-            Log.d("derek110", "onSubtitleExtAdded: " + s);
-        }
-
-        @Override
-        public void onSubtitleShow(int i, long l, String s) {
-            Log.d("derek110", "onSubtitleShow: " + s);
-
-        }
-
-        @Override
-        public void onSubtitleHide(int i, long l) {
-            Log.d("derek110", "onSubtitleHide: ");
-        }
-
-        @Override
-        public void onSubtitleHeader(int i, String s) {
-            Log.d("derek110", "onSubtitleHeader: " + s);
-        }
-    };
+//    private final IPlayer.OnSubtitleDisplayListener onSubtitleDisplayListener = new IPlayer.OnSubtitleDisplayListener() {
+//        @Override
+//        public void onSubtitleExtAdded(int i, String s) {
+//            Log.d("derek110", "onSubtitleExtAdded: " + s);
+//        }
+//
+//        @Override
+//        public void onSubtitleShow(int i, long l, String s) {
+//            Log.d("derek110", "onSubtitleShow: " + s);
+//
+//        }
+//
+//        @Override
+//        public void onSubtitleHide(int i, long l) {
+//            Log.d("derek110", "onSubtitleHide: ");
+//        }
+//
+//        @Override
+//        public void onSubtitleHeader(int i, String s) {
+//            Log.d("derek110", "onSubtitleHeader: " + s);
+//        }
+//    };
 
     private final IPlayer.OnErrorListener onErrorListener = new IPlayer.OnErrorListener() {
         @Override
